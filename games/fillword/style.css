@@ -1,0 +1,113 @@
+.fw-wrap {
+  max-width: 480px;
+}
+
+.fw-board {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 6), 1fr);
+  gap: 4px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  container-type: inline-size;
+}
+
+.fw-board.shake {
+  animation: fw-shake 0.35s;
+}
+
+.fw-cell {
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-weight: 800;
+  font-size: calc(52cqw / var(--n, 6));
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+
+.fw-cell.sel {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: scale(0.95);
+}
+
+.fw-cell.done {
+  background: hsl(var(--h) 70% 52%);
+  border-color: transparent;
+  color: #fff;
+  cursor: default;
+}
+
+.fw-cell.hint {
+  animation: fw-hint 1.2s ease var(--delay, 0s) 2;
+}
+
+.fw-current {
+  min-height: 1.6em;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.fw-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+  max-width: 480px;
+  justify-content: center;
+}
+
+.fw-words li {
+  display: flex;
+  gap: 2px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.fw-words li i {
+  width: 9px;
+  height: 3px;
+  margin-top: 0.6em;
+  border-radius: 2px;
+  background: var(--muted);
+  opacity: 0.6;
+}
+
+.fw-words li.found {
+  background: hsl(var(--h) 70% 52%);
+  border-color: transparent;
+  color: #fff;
+}
+
+@keyframes fw-shake {
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes fw-hint {
+  50% {
+    background: var(--warning);
+    color: #111;
+    transform: scale(1.08);
+  }
+}
