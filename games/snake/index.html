@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Змейка — SimpleGames</title>
+  <meta name="description" content="Классическая змейка в браузере: собирайте яблоки и растите.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../assets/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Змейка</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="stage-wrap">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:1" aria-label="Игровое поле змейки"></canvas>
+          <div class="overlay" id="overlay">
+            <h2 id="overlay-title">Змейка</h2>
+            <p id="overlay-text">Собирайте яблоки и не врезайтесь в стены и в собственный хвост.</p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-controls">
+          <div class="seg" id="speed" role="group" aria-label="Скорость">
+            <button type="button" data-value="slow">Медленно</button>
+            <button type="button" data-value="normal">Нормально</button>
+            <button type="button" data-value="fast">Быстро</button>
+          </div>
+          <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
+        </div>
+
+        <div class="dpad" aria-label="Управление">
+          <button type="button" data-dir="up" aria-label="Вверх">▲</button>
+          <button type="button" data-dir="left" aria-label="Влево">◀</button>
+          <button type="button" data-dir="right" aria-label="Вправо">▶</button>
+          <button type="button" data-dir="down" aria-label="Вниз">▼</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Управляйте змейкой стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>.</li>
+            <li>На телефоне — свайпами по полю или кнопками под ним.</li>
+            <li>Каждое яблоко — +1 очко, а змейка становится длиннее и быстрее.</li>
+            <li><kbd>Пробел</kbd> или <kbd>P</kbd> — пауза.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

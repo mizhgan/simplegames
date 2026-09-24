@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мемори — SimpleGames</title>
+  <meta name="description" content="Игра на память: найдите все пары карточек за наименьшее число ходов.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../assets/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Мемори</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
+        <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">—</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="size" role="group" aria-label="Размер поля">
+            <button type="button" data-value="s">4 × 4</button>
+            <button type="button" data-value="m">5 × 4</button>
+            <button type="button" data-value="l">6 × 6</button>
+          </div>
+          <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+        </div>
+
+        <div class="stage-wrap mem-wrap">
+          <div class="mem-board" id="board" aria-label="Карточки"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2 id="overlay-title">Готово!</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="again-btn">Сыграть ещё</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Все карточки лежат рубашкой вверх. За ход открываются две.</li>
+            <li>Если картинки совпали — пара остаётся открытой, иначе карточки переворачиваются обратно.</li>
+            <li>Найдите все пары за наименьшее число ходов.</li>
+            <li>Рекорд хранится отдельно для каждого размера поля.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

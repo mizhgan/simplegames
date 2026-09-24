@@ -1,0 +1,90 @@
+.ttt-wrap {
+  max-width: 420px;
+}
+
+.ttt-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 10px;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow);
+}
+
+.ttt-cell {
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 14px;
+  background: var(--board-cell);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, transform 0.15s;
+  touch-action: manipulation;
+}
+
+.ttt-cell:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.ttt-cell:disabled {
+  cursor: default;
+}
+
+.ttt-cell svg {
+  width: 62%;
+  height: 62%;
+  overflow: visible;
+}
+
+.ttt-cell .mark {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: ttt-draw 260ms ease forwards;
+}
+
+.ttt-cell .mark-x {
+  stroke: var(--accent-3);
+}
+
+.ttt-cell .mark-x + .mark-x {
+  animation-delay: 120ms;
+}
+
+.ttt-cell .mark-o {
+  stroke: var(--accent-2);
+}
+
+.ttt-cell.win {
+  background: color-mix(in srgb, var(--success) 25%, var(--board-cell));
+  animation: ttt-win 500ms ease;
+}
+
+.ttt-board.finished .ttt-cell:not(.win) svg {
+  opacity: 0.35;
+}
+
+.stat-x .stat-value {
+  color: var(--accent-3);
+}
+
+.stat-o .stat-value {
+  color: var(--accent-2);
+}
+
+@keyframes ttt-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ttt-win {
+  50% {
+    transform: scale(1.06);
+  }
+}

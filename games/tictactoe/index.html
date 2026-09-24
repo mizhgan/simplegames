@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Крестики-нолики — SimpleGames</title>
+  <meta name="description" content="Крестики-нолики против компьютера или вдвоём на одном экране.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../assets/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Крестики-нолики</h1>
+      <div class="stats">
+        <div class="stat stat-x"><span class="stat-label" id="label-x">Вы · X</span><span class="stat-value" id="score-x">0</span></div>
+        <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
+        <div class="stat stat-o"><span class="stat-label" id="label-o">Компьютер · O</span><span class="stat-value" id="score-o">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+            <button type="button" data-value="pvp">Вдвоём</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+
+        <div class="stage-wrap ttt-wrap">
+          <div class="ttt-board" id="board" role="grid" aria-label="Поле 3 на 3"></div>
+        </div>
+
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-round">Новый раунд</button>
+          <button class="btn btn-ghost" type="button" id="reset-score">Сбросить счёт</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Игроки по очереди ставят крестики и нолики на поле 3×3.</li>
+            <li>Побеждает тот, кто первым выстроит три своих знака в ряд — по горизонтали, вертикали или диагонали.</li>
+            <li>Первый ход в раундах переходит от игрока к игроку.</li>
+            <li>На уровне «Сложно» компьютер не ошибается — лучшее, на что можно рассчитывать, это ничья.</li>
+            <li>Можно ходить клавишами <kbd>1</kbd>–<kbd>9</kbd> (как на цифровом блоке).</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

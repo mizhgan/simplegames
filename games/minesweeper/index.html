@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Сапёр — SimpleGames</title>
+  <meta name="description" content="Классический сапёр в браузере: три уровня сложности, флажки и рекорды времени.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../assets/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Сапёр</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Мины</span><span class="stat-value" id="mines-left">0</span></div>
+        <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">—</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="level" role="group" aria-label="Сложность">
+            <button type="button" data-value="beginner">Новичок</button>
+            <button type="button" data-value="intermediate">Любитель</button>
+            <button type="button" data-value="expert">Профи</button>
+          </div>
+        </div>
+
+        <div class="game-controls">
+          <button class="btn btn-ghost ms-face" type="button" id="face" aria-label="Новая игра" title="Новая игра">🙂</button>
+          <button class="btn btn-ghost" type="button" id="flag-mode" aria-pressed="false">🚩 Режим флажков</button>
+        </div>
+
+        <div class="ms-scroll">
+          <div class="ms-board" id="board" aria-label="Минное поле"></div>
+        </div>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Откройте все клетки, в которых нет мин. Первый ход всегда безопасен.</li>
+            <li>Число в клетке — сколько мин среди восьми соседей.</li>
+            <li><b>Флажок:</b> правый клик, долгое нажатие на телефоне или «Режим флажков».</li>
+            <li>Клик по открытому числу, вокруг которого уже стоит нужное число флажков, открывает остальных соседей.</li>
+            <li>Рекорд времени хранится для каждого уровня.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
