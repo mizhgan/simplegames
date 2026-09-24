@@ -147,7 +147,7 @@
     let ctx = null;
     let master = null;
     let noiseBuf = null;
-    let enabled = store.get('sound', true);
+    let enabled = store.get('sound', false); // по умолчанию звук выключен
     const listeners = [];
 
     function ensure() {
