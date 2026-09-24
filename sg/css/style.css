@@ -327,8 +327,10 @@ button {
 
 .section-title {
   display: flex;
-  align-items: baseline;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin: 12px 0 18px;
 }
 
@@ -361,6 +363,10 @@ button {
   text-decoration: none;
   box-shadow: var(--shadow);
   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.game-card[hidden] {
+  display: none;
 }
 
 .game-card:hover {

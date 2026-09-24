@@ -1,0 +1,144 @@
+.sd-wrap {
+  max-width: 500px;
+}
+
+.sd-board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  aspect-ratio: 1;
+  border: 2px solid var(--muted);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  container-type: inline-size;
+}
+
+.sd-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 6.2cqw;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.sd-cell:nth-child(9n) {
+  border-right: 0;
+}
+
+.sd-cell:nth-child(n + 73) {
+  border-bottom: 0;
+}
+
+.sd-cell.br {
+  border-right: 2px solid var(--muted);
+}
+
+.sd-cell.bb {
+  border-bottom: 2px solid var(--muted);
+}
+
+.sd-cell.given {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.sd-cell.hinted {
+  color: var(--success);
+  font-weight: 800;
+}
+
+.sd-cell.peer {
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+}
+
+.sd-cell.same {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+}
+
+.sd-cell.selected {
+  background: color-mix(in srgb, var(--accent) 34%, var(--surface));
+}
+
+.sd-cell.conflict {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 16%, var(--surface));
+}
+
+.sd-cell:focus-visible {
+  outline: none;
+}
+
+.sd-notes {
+  position: absolute;
+  inset: 2px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  place-items: center;
+}
+
+.sd-notes i {
+  font-style: normal;
+  font-size: 2.2cqw;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.sd-pad {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.sd-digit {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  max-height: 64px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent);
+  font-size: clamp(1.1rem, 4.5vw, 1.6rem);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.sd-digit small {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+.sd-digit:active {
+  transform: scale(0.95);
+}
+
+.sd-digit.done {
+  opacity: 0.3;
+}
+
+.sd-pad.notes .sd-digit {
+  color: var(--muted);
+  font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+}
+
+#notes-btn[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
