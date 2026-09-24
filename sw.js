@@ -1,5 +1,5 @@
 /* Service worker SimpleGames: офлайн-режим. Файл генерируется: python3 tools/build-sw.py */
-const VERSION = '344a6984ee39';
+const VERSION = '64ef1ba0973f';
 const CACHE = 'sg-' + VERSION;
 const PRECACHE = [
   "./",
@@ -152,7 +152,9 @@ const PRECACHE = [
   "sg/img/icon-512.png",
   "sg/img/icon-maskable-512.png",
   "sg/js/common.js",
-  "sg/js/site.js"
+  "sg/js/net.js",
+  "sg/js/site.js",
+  "sg/vendor/peerjs.min.js"
 ];
 
 self.addEventListener('install', (event) => {

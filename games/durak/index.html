@@ -39,8 +39,13 @@
 
     <div class="game-layout">
       <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+          </div>
+        </div>
         <div class="dk">
-          <div class="dk-label"><span>Компьютер</span><span>карт: <b id="ai-count">6</b></span></div>
+          <div class="dk-label"><span id="opp-name">Компьютер</span><span>карт: <b id="ai-count">6</b></span></div>
           <div class="dk-hand" id="ai-hand" aria-label="Карты компьютера"></div>
           <div class="dk-middle">
             <div class="dk-deck" id="deck" aria-label="Колода"></div>
@@ -66,6 +71,7 @@
             <li>Не можете или не хотите отбиваться — нажмите «Беру»: заберёте все карты со стола. Отбились — карты уходят в «бито», и ход переходит к вам.</li>
             <li>После каждого кона игроки добирают карты до шести. Кто первым избавился от карт, когда колода кончилась, — победил; оставшийся с картами — «дурак».</li>
             <li>Кликните по карте, чтобы сходить или отбиться. Подходящие карты приподняты. <kbd>Пробел</kbd> — «Бито»/«Беру».</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами.</li>
           </ul>
         </div>
       </aside>
@@ -81,6 +87,7 @@
 
   <script src="../../sg/js/common.js"></script>
   <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

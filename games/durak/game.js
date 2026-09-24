@@ -15,6 +15,10 @@
   const actionBtn = $('action-btn');
 
   let deck, trump, trumpCard, me, ai, table, attacker, taking, limit, discard, busy, over;
+  // сетевая игра: соперник занимает место компьютера («ai»), обе стороны ведут одинаковую партию
+  let mode = 'ai';
+  let bout = 0; // номер раунда — чтобы не применить запоздавшее сообщение
+  const OPP = () => (mode === 'net' ? 'Соперник' : 'Компьютер');
 
   const isRed = (c) => c.suit === 1 || c.suit === 2;
   const value = (c) => c.rank + (c.suit === trump ? 100 : 0);
@@ -96,10 +100,13 @@
   function startBout() {
     table = [];
     taking = false;
+    bout++;
     limit = Math.min(6, hand(defender()).length);
     busy = false;
     render();
-    if (attacker === 'ai') {
+    if (attacker === 'ai' && mode === 'net') {
+      statusEl.textContent = net.active ? 'Ходит соперник…' : 'Нет соединения с соперником';
+    } else if (attacker === 'ai') {
       statusEl.textContent = 'Компьютер ходит…';
       busy = true;
       setTimeout(aiAttack, AI_DELAY);
@@ -109,6 +116,7 @@
   }
 
   function aiAttack() {
+    if (mode !== 'ai') return;
     const card = aiAttackCard();
     if (!card) {
       endBout();
@@ -127,6 +135,7 @@
   }
 
   function aiThrowMore() {
+    if (mode !== 'ai') return;
     const card = aiAttackCard();
     if (card && table.length < limit) {
       ai.splice(ai.indexOf(card), 1);
@@ -140,6 +149,7 @@
   }
 
   function aiRespond() {
+    if (mode !== 'ai') return;
     // компьютер защищается
     if (taking) {
       finishIfDone();
@@ -169,7 +179,12 @@
     const canMore = me.some((c) => canAdd(c));
     if (!canMore && (taking || !unbeaten().length)) {
       busy = true;
-      setTimeout(endBout, 500);
+      const b = bout;
+      setTimeout(() => {
+        if (b !== bout) return;
+        if (mode === 'net') net.send({ t: 'done', b, taking });
+        endBout();
+      }, 500);
     }
   }
 
@@ -180,6 +195,13 @@
       me.splice(me.indexOf(card), 1);
       table.push({ a: card, d: null });
       SG.sound.play('card');
+      if (mode === 'net') {
+        net.send({ t: 'attack', b: bout, id: card.id });
+        statusEl.textContent = taking ? 'Соперник берёт. Подкиньте ещё или нажмите «Пусть берёт».' : 'Соперник отбивается…';
+        render();
+        finishIfDone();
+        return;
+      }
       render();
       busy = true;
       setTimeout(aiRespond, AI_DELAY);
@@ -191,6 +213,11 @@
       target.d = card;
       SG.sound.play('card');
       render();
+      if (mode === 'net') {
+        net.send({ t: 'defend', b: bout, id: card.id, a: target.a.id });
+        if (!unbeaten().length) statusEl.textContent = 'Отбились! Соперник решает, подкинуть ли ещё…';
+        return;
+      }
       if (!unbeaten().length) {
         busy = true;
         statusEl.textContent = 'Отбились! Компьютер думает, подкинуть ли ещё…';
@@ -200,6 +227,7 @@
   }
 
   function aiAfterBeaten() {
+    if (mode !== 'ai') return;
     const card = me.length ? aiAttackCard() : null;
     if (card) {
       ai.splice(ai.indexOf(card), 1);
@@ -227,9 +255,17 @@
     if (over) return;
     if (attacker === 'me') {
       if (busy || !table.length || (!taking && unbeaten().length)) return;
+      if (mode === 'net') net.send({ t: 'done', b: bout, taking });
       endBout();
     } else {
       if (busy || taking || !table.length) return;
+      if (mode === 'net') {
+        net.send({ t: 'take', b: bout });
+        taking = true;
+        statusEl.textContent = 'Вы берёте. Соперник может подкинуть ещё…';
+        render();
+        return;
+      }
       taking = true;
       busy = true;
       statusEl.textContent = 'Вы берёте. Компьютер подкидывает…';
@@ -267,7 +303,7 @@
       text = 'Ничья — карты кончились одновременно 🤝';
       SG.sound.play('draw');
     } else if (!me.length) {
-      text = 'Вы победили! Компьютер остался в дураках 🎉';
+      text = 'Вы победили! ' + OPP() + ' остался в дураках 🎉';
       SG.store.set('durak-wins', SG.store.get('durak-wins', 0) + 1);
       SG.sound.play('win');
     } else {
@@ -305,6 +341,9 @@
       })
       .join('');
 
+    fitHand(aiHandEl, -0.42);
+    fitHand(myHandEl, -0.3);
+
     if (attacker === 'me') {
       actionBtn.textContent = taking ? 'Пусть берёт' : 'Бито';
       actionBtn.disabled = busy || over || !table.length || (!taking && unbeaten().length > 0);
@@ -314,23 +353,45 @@
     }
   }
 
+  // много карт на руке — сдвигаем их плотнее, чтобы ряд помещался в ширину стола
+  function fitHand(el, base) {
+    const n = el.children.length;
+    const first = el.firstElementChild;
+    if (n < 2 || !first) return el.style.removeProperty('--ov');
+    const cw = first.offsetWidth;
+    const avail = el.clientWidth - cw * 0.6 - 4;
+    const need = 1 - (avail / cw - 1) / (n - 1);
+    el.style.setProperty('--ov', Math.min(base, -need).toFixed(3));
+  }
+
   function renderScore() {
     $('wins').textContent = SG.store.get('durak-wins', 0);
     $('losses').textContent = SG.store.get('durak-losses', 0);
   }
 
-  function newGame() {
+  function newGame(order) {
     deck = [];
     let id = 0;
     for (let s = 0; s < 4; s++) for (let r = 6; r <= 14; r++) deck.push({ id: id++, suit: s, rank: r });
-    SG.shuffle(deck);
+    if (order) deck = order.map((i) => deck[i]);
+    else SG.shuffle(deck);
+    // по сети колоду тасует тот, кто начал партию, и отправляет её порядок
+    if (mode === 'net' && !order) net.send({ t: 'new', deck: deck.map((c) => c.id) });
+    $('opp-name').textContent = OPP();
+    bout = 0;
     // нижняя карта колоды — козырь, её возьмут последней
     trumpCard = deck[0];
     trump = trumpCard.suit;
     me = [];
     ai = [];
-    draw('me');
-    draw('ai');
+    // первым сдаются карты тому, кто тасовал: так раздача одинакова у обоих игроков
+    if (order) {
+      draw('ai');
+      draw('me');
+    } else {
+      draw('me');
+      draw('ai');
+    }
     sortHand(me);
     discard = 0;
     over = false;
@@ -354,7 +415,80 @@
   });
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net' && !net.active) return;
     newGame();
+  });
+
+  // ---------- игра по сети ----------
+
+  const byId = (h, id) => h.find((c) => c.id === id);
+
+  const net = SG.net.setup({
+    game: 'durak',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      net.info('карты соперника скрыты');
+      if (role === 'host') newGame();
+      else {
+        $('opp-name').textContent = OPP();
+        busy = true;
+        statusEl.textContent = 'Соперник раздаёт карты…';
+      }
+    },
+    onMessage(msg) {
+      if (msg.t === 'new' && Array.isArray(msg.deck) && msg.deck.length === 36) return newGame(msg.deck);
+      if (over || msg.b !== bout) return;
+      if (msg.t === 'attack' && attacker === 'ai') {
+        const card = byId(ai, msg.id);
+        if (!card || !canAdd(card)) return;
+        ai.splice(ai.indexOf(card), 1);
+        table.push({ a: card, d: null });
+        SG.sound.play('card');
+        busy = false;
+        statusEl.textContent = taking ? 'Соперник подкидывает…' : 'Отбивайтесь или берите.';
+        render();
+      } else if (msg.t === 'defend' && attacker === 'me') {
+        const card = byId(ai, msg.id);
+        const pair = table.find((p) => p.a.id === msg.a && !p.d);
+        if (!card || !pair || !beats(card, pair.a)) return;
+        ai.splice(ai.indexOf(card), 1);
+        pair.d = card;
+        SG.sound.play('card');
+        statusEl.textContent = unbeaten().length ? 'Соперник отбивается…' : 'Соперник отбился. Подкиньте карту или нажмите «Бито».';
+        render();
+        finishIfDone();
+      } else if (msg.t === 'take' && attacker === 'me' && !taking) {
+        taking = true;
+        SG.sound.play('error');
+        statusEl.textContent = 'Соперник берёт. Можете подкинуть ещё или нажмите «Пусть берёт».';
+        render();
+        finishIfDone();
+      } else if (msg.t === 'done' && attacker === 'ai') {
+        // конец раунда определяет атакующий
+        taking = !!msg.taking;
+        endBout();
+      }
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        mode = 'ai';
+        modeSeg.set('ai');
+        newGame();
+      } else {
+        busy = true;
+        render();
+        statusEl.textContent = 'Нет соединения с соперником';
+      }
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), 'ai', () => {
+    if (mode !== 'ai') {
+      mode = 'ai';
+      newGame();
+    }
   });
   document.addEventListener('keydown', (e) => {
     if (e.code === 'Space' || e.code === 'Enter') {

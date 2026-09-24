@@ -18,6 +18,12 @@
 
   let S; // { me: {pos, off, turns}, ai: {...} }
   let turn, dice, seqs, done, turnStart, selectedFrom, over, busy;
+  // сетевая игра: у каждого игрока своя «белая» сторона, соперник показывается чёрными
+  let mode = 'ai';
+  let doneMoves = [];
+  let oppStart = null; // позиция до хода соперника — для его «переходить»
+  const netScore = { me: 0, ai: 0 };
+  const OPP = () => (mode === 'net' ? 'Соперник' : 'Компьютер');
 
   const opp = (who) => (who === ME ? AI : ME);
   const toBoard = (who, i) => (who === ME ? i : (i + 12) % 24);
@@ -170,12 +176,17 @@
     turn = who;
     selectedFrom = null;
     done = [];
+    doneMoves = [];
     dice = null;
     seqs = null;
     render();
     if (who === ME) {
-      statusEl.textContent = 'Ваш ход: бросьте кости.';
-      rollBtn.disabled = false;
+      statusEl.textContent = mode === 'net' && !net.active ? 'Нет соединения с соперником' : 'Ваш ход: бросьте кости.';
+      rollBtn.disabled = mode === 'net' && !net.active;
+    } else if (mode === 'net') {
+      statusEl.textContent = net.active ? 'Ход соперника…' : 'Нет соединения с соперником';
+      rollBtn.disabled = true;
+      oppStart = clone(S);
     } else {
       statusEl.textContent = 'Ходит компьютер…';
       rollBtn.disabled = true;
@@ -186,13 +197,15 @@
 
   function rollDice() {
     if (turn !== ME || dice || over) return;
+    if (mode === 'net' && !net.active) return;
     dice = roll();
+    if (mode === 'net') net.send({ t: 'roll', dice });
     SG.sound.play('drop');
     turnStart = clone(S);
     seqs = sequences(S, ME, dice);
     rollBtn.disabled = true;
     if (!seqs.length || !seqs[0].moves.length) {
-      statusEl.textContent = 'Выпало ' + dice.join(' и ') + ' — ходов нет, ход переходит компьютеру.';
+      statusEl.textContent = 'Выпало ' + dice.join(' и ') + ' — ходов нет, ход переходит ' + (mode === 'net' ? 'сопернику.' : 'компьютеру.');
       render();
       setTimeout(() => endTurn(ME), 1400);
       return;
@@ -202,19 +215,22 @@
   }
 
   function aiTurn() {
+    // пока ждали, могли переключиться на игру по сети
+    if (mode !== 'ai' || over) return;
     dice = roll();
     SG.sound.play('drop');
     const list = sequences(S, AI, dice, true);
     render();
     if (!list.length || !list[0].moves.length) {
       statusEl.textContent = 'У компьютера ' + dice.join(' и ') + ' — ходов нет.';
-      setTimeout(() => endTurn(AI), 1200);
+      setTimeout(() => mode === 'ai' && endTurn(AI), 1200);
       return;
     }
     const pick = aiPick(list);
     statusEl.textContent = 'Компьютер: ' + dice.join(' и ');
     let k = 0;
     const step = () => {
+      if (mode !== 'ai') return;
       const m = pick.moves[k];
       applyMove(S, AI, m.from, m.d);
       done.push(m.d);
@@ -223,12 +239,13 @@
       k++;
       if (checkWin(AI)) return;
       if (k < pick.moves.length) setTimeout(step, STEP_MS);
-      else setTimeout(() => endTurn(AI), STEP_MS + 150);
+      else setTimeout(() => mode === 'ai' && endTurn(AI), STEP_MS + 150);
     };
     setTimeout(step, STEP_MS);
   }
 
   function endTurn(who) {
+    if (mode === 'net' && who === ME) net.send({ t: 'end' });
     S[who].turns++;
     busy = false;
     startTurn(opp(who));
@@ -249,6 +266,8 @@
   function playerMove(m) {
     applyMove(S, ME, m.from, m.d);
     done.push(m.d);
+    doneMoves.push(m);
+    if (mode === 'net') net.send({ t: 'step', from: m.from, d: m.d });
     const k = done.length - 1;
     seqs = seqs.filter((s) => s.moves[k] && s.moves[k].from === m.from && s.moves[k].d === m.d);
     selectedFrom = null;
@@ -291,6 +310,8 @@
     if (turn !== ME || !turnStart || !done.length || over) return;
     S = clone(turnStart);
     done = [];
+    doneMoves = [];
+    if (mode === 'net') net.send({ t: 'undo' });
     seqs = sequences(S, ME, dice);
     selectedFrom = null;
     SG.sound.play('click');
@@ -303,13 +324,16 @@
     busy = true;
     const mars = S[opp(who)].off === 0;
     const pts = mars ? 2 : 1;
-    const score = SG.store.get('nardy-score', { me: 0, ai: 0 });
-    score[who] += pts;
-    SG.store.set('nardy-score', score);
+    if (mode === 'net') netScore[who] += pts;
+    else {
+      const score = SG.store.get('nardy-score', { me: 0, ai: 0 });
+      score[who] += pts;
+      SG.store.set('nardy-score', score);
+    }
     if (who === ME) SG.store.set('nardy-wins', SG.store.get('nardy-wins', 0) + 1);
     SG.sound.play(who === ME ? 'win' : 'lose');
     statusEl.textContent =
-      (who === ME ? 'Вы победили' : 'Компьютер победил') + (mars ? ' с марсом (2 очка)!' : '!') + (who === ME ? ' 🎉' : ' 🤖');
+      (who === ME ? 'Вы победили' : OPP() + ' победил') + (mars ? ' с марсом (2 очка)!' : '!') + (who === ME ? ' 🎉' : mode === 'net' ? '' : ' 🤖');
     render();
     return true;
   }
@@ -386,12 +410,13 @@
       diceEl.innerHTML = '';
     }
     undoBtn.disabled = turn !== ME || !done.length || over;
-    const score = SG.store.get('nardy-score', { me: 0, ai: 0 });
+    const score = mode === 'net' ? netScore : SG.store.get('nardy-score', { me: 0, ai: 0 });
     $('score-me').textContent = score.me;
     $('score-ai').textContent = score.ai;
+    $('label-ai').textContent = OPP();
   }
 
-  function newGame() {
+  function newGame(lots) {
     S = {
       me: { pos: [15, ...Array(23).fill(0)], off: 0, turns: 0 },
       ai: { pos: [15, ...Array(23).fill(0)], off: 0, turns: 0 },
@@ -402,13 +427,19 @@
     // кто ходит первым — решает бросок по одной кости
     let a;
     let b;
-    do {
-      a = 1 + Math.floor(Math.random() * 6);
-      b = 1 + Math.floor(Math.random() * 6);
-    } while (a === b);
+    if (lots) [a, b] = lots;
+    else {
+      do {
+        a = 1 + Math.floor(Math.random() * 6);
+        b = 1 + Math.floor(Math.random() * 6);
+      } while (a === b);
+      // сопернику жребий отправляем с его стороны
+      if (mode === 'net') net.send({ t: 'new', lots: [b, a] });
+    }
     render();
     startTurn(a > b ? ME : AI);
-    statusEl.textContent = 'Жребий: у вас ' + a + ', у компьютера ' + b + '. ' + (a > b ? 'Вы ходите первым — бросьте кости.' : 'Первым ходит компьютер…');
+    const who = mode === 'net' ? 'у соперника' : 'у компьютера';
+    statusEl.textContent = 'Жребий: у вас ' + a + ', ' + who + ' ' + b + '. ' + (a > b ? 'Вы ходите первым — бросьте кости.' : 'Первым ходит ' + OPP().toLowerCase() + '…');
   }
 
   rollBtn.addEventListener('click', () => {
@@ -422,8 +453,79 @@
   $('off-tray').addEventListener('click', onOff);
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net') {
+      if (net.active) newGame();
+      return;
+    }
     if (busy && !over) return;
     newGame();
+  });
+
+  // ---------- игра по сети ----------
+
+  const net = SG.net.setup({
+    game: 'nardy',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      netScore.me = netScore.ai = 0;
+      net.info('вы — белые, соперник — чёрные');
+      // жребий бросает хозяин
+      if (role === 'host') newGame();
+      else {
+        S = {
+          me: { pos: [15, ...Array(23).fill(0)], off: 0, turns: 0 },
+          ai: { pos: [15, ...Array(23).fill(0)], off: 0, turns: 0 },
+        };
+        over = false;
+        busy = true;
+        turn = AI;
+        dice = null;
+        render();
+        statusEl.textContent = 'Соперник бросает жребий…';
+      }
+    },
+    onMessage(msg) {
+      const okMove = (m) => Number.isInteger(m.from) && Number.isInteger(m.d) && m.d >= 1 && m.d <= 6;
+      if (msg.t === 'new' && Array.isArray(msg.lots)) newGame(msg.lots);
+      else if (turn !== AI || over) return;
+      else if (msg.t === 'roll' && Array.isArray(msg.dice)) {
+        dice = msg.dice;
+        done = [];
+        oppStart = clone(S);
+        SG.sound.play('drop');
+        statusEl.textContent = 'У соперника ' + dice.join(' и ') + '.';
+        render();
+      } else if (msg.t === 'step' && okMove(msg) && canMove(S, AI, msg.from, msg.d, 0, 99)) {
+        applyMove(S, AI, msg.from, msg.d);
+        done.push(msg.d);
+        SG.sound.play('place', 3);
+        render();
+        checkWin(AI);
+      } else if (msg.t === 'undo' && oppStart) {
+        S = clone(oppStart);
+        done = [];
+        render();
+      } else if (msg.t === 'end') endTurn(AI);
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        mode = 'ai';
+        modeSeg.set('ai');
+        newGame();
+      } else {
+        rollBtn.disabled = true;
+        statusEl.textContent = 'Нет соединения с соперником';
+      }
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), 'ai', () => {
+    if (mode !== 'ai') {
+      mode = 'ai';
+      newGame();
+    }
   });
   document.addEventListener('keydown', (e) => {
     if (e.code === 'Space' || e.code === 'Enter') {

@@ -35,6 +35,9 @@
 
   let difficulty = SG.store.get('balda-diff', 'normal');
   let grid, used, scores, words, turn, skips, over, firstPlayer = 'ai';
+  // в сетевой игре соперник занимает место компьютера («ai»)
+  let mode = 'ai';
+  const OPP = () => (mode === 'net' ? 'Соперник' : 'Компьютер');
   let pendingCell = -1; // куда игрок поставил новую букву
   let pendingLetter = '';
   let path = [];
@@ -151,6 +154,7 @@
       boardEl.classList.add('shake');
       return;
     }
+    if (mode === 'net') net.send({ t: 'word', cell: pendingCell, letter: pendingLetter, word, path });
     commit('me', pendingCell, pendingLetter, word);
   }
 
@@ -166,6 +170,7 @@
   function skip() {
     if (turn !== 'me' || over) return;
     cancel();
+    if (mode === 'net') net.send({ t: 'skip' });
     turn = null;
     skips++;
     SG.sound.play('slide');
@@ -192,7 +197,9 @@
     if (grid.every(Boolean) || skips >= MAX_SKIPS) return finish();
     turn = who;
     render();
-    if (who === 'ai') {
+    if (who === 'ai' && mode === 'net') {
+      statusEl.textContent = net.active ? 'Соперник думает…' : 'Нет соединения с соперником';
+    } else if (who === 'ai') {
       statusEl.textContent = 'Компьютер думает…';
       setTimeout(aiMove, 600);
     } else {
@@ -231,12 +238,12 @@
   }
 
   function aiMove() {
-    if (over) return;
+    if (over || mode !== 'ai') return;
     const list = aiCandidates();
     if (!list.length) {
       skips++;
       statusEl.textContent = 'Компьютер пропускает ход.';
-      setTimeout(() => nextTurn('me'), 900);
+      setTimeout(() => mode === 'ai' && nextTurn('me'), 900);
       return;
     }
     list.sort((a, b) => b.word.length - a.word.length);
@@ -260,6 +267,7 @@
     render();
     statusEl.textContent = 'Компьютер: «' + pick.word + '» (+' + pick.word.length + ')';
     setTimeout(() => {
+      if (mode !== 'ai') return;
       const msg = statusEl.textContent;
       commit('ai', pick.cell, pick.letter, pick.word);
       if (!over) statusEl.textContent = msg + '. Ваш ход.';
@@ -274,12 +282,13 @@
     render();
     const me = scores.me;
     const ai = scores.ai;
+    $('label-ai').textContent = OPP();
     if (me > ai) {
       statusEl.textContent = 'Вы победили ' + me + ':' + ai + '! 🎉';
       SG.store.set('balda-wins', SG.store.get('balda-wins', 0) + 1);
       SG.sound.play('win');
     } else if (me < ai) {
-      statusEl.textContent = 'Компьютер победил ' + ai + ':' + me + ' 🤖';
+      statusEl.textContent = OPP() + ' победил ' + ai + ':' + me + (mode === 'net' ? '' : ' 🤖');
       SG.sound.play('lose');
     } else {
       statusEl.textContent = 'Ничья ' + me + ':' + ai + ' 🤝';
@@ -287,9 +296,13 @@
     }
   }
 
-  function newGame() {
+  function newGame(net_) {
     grid = Array(N * N).fill('');
-    const start = START_WORDS[Math.floor(Math.random() * START_WORDS.length)];
+    let start = START_WORDS[Math.floor(Math.random() * START_WORDS.length)];
+    if (net_) {
+      start = net_.start;
+      firstPlayer = net_.first === 'me' ? 'ai' : 'me'; // ниже переключится обратно
+    }
     [...start].forEach((ch, k) => (grid[2 * N + k] = ch));
     used = new Set([start]);
     scores = { me: 0, ai: 0 };
@@ -300,6 +313,9 @@
     pendingLetter = '';
     path = [];
     firstPlayer = firstPlayer === 'me' ? 'ai' : 'me';
+    $('label-ai').textContent = OPP();
+    // сопернику сообщаем стартовое слово и кто ходит первым — с его стороны
+    if (mode === 'net' && !net_) net.send({ t: 'new', start, first: firstPlayer === 'me' ? 'ai' : 'me' });
     nextTurn(firstPlayer);
   }
 
@@ -310,6 +326,7 @@
   $('skip-btn').addEventListener('click', skip);
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net' && !net.active) return;
     newGame();
   });
   document.addEventListener('keydown', (e) => {
@@ -319,6 +336,64 @@
     else if (e.key === 'Enter' && pendingLetter) submit();
     else if (e.key === 'Escape') cancel();
   });
+  // ---------- игра по сети ----------
+
+  const net = SG.net.setup({
+    game: 'balda',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      $('difficulty').style.display = 'none';
+      net.info('вы против друга');
+      if (role === 'host') newGame();
+      else {
+        turn = null;
+        render();
+        statusEl.textContent = 'Соперник начинает игру…';
+      }
+    },
+    onMessage(msg) {
+      if (msg.t === 'new' && START_WORDS.includes(msg.start)) return newGame({ start: msg.start, first: msg.first });
+      if (turn !== 'ai' || over) return;
+      if (msg.t === 'skip') {
+        skips++;
+        statusEl.textContent = 'Соперник пропускает ход.';
+        nextTurn('me');
+        if (!over) statusEl.textContent = 'Соперник пропустил ход. Ваш ход.';
+      } else if (msg.t === 'word' && Array.isArray(msg.path) && canPlace(msg.cell) && DICT.has(msg.word) && !used.has(msg.word)) {
+        path = msg.path;
+        pendingCell = msg.cell;
+        pendingLetter = msg.letter;
+        render();
+        const text = 'Соперник: «' + msg.word + '» (+' + msg.word.length + ')';
+        statusEl.textContent = text;
+        commit('ai', msg.cell, msg.letter, msg.word);
+        if (!over) statusEl.textContent = text + '. Ваш ход.';
+      }
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        mode = 'ai';
+        modeSeg.set('ai');
+        $('difficulty').style.display = '';
+        newGame();
+      } else {
+        turn = null;
+        render();
+        statusEl.textContent = 'Нет соединения с соперником';
+      }
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), 'ai', () => {
+    if (mode !== 'ai') {
+      mode = 'ai';
+      $('difficulty').style.display = '';
+      newGame();
+    }
+  });
+
   SG.segmented($('difficulty'), difficulty, (v) => {
     difficulty = v;
     SG.store.set('balda-diff', v);

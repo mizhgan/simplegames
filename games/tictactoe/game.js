@@ -29,6 +29,7 @@
   let starter = 'O'; // первый newRound() переключит на X
   let finished = false;
   let thinking = null;
+  let mySide = 'X'; // в сетевой игре: за кого играем мы
   const scores = { X: 0, O: 0, D: 0 };
 
   const cells = [];
@@ -104,6 +105,7 @@
       turn = turn === 'X' ? 'O' : 'X';
       updateStatus();
       if (mode === 'ai' && turn === 'O') scheduleAi();
+      if (mode === 'net') lockBoard(turn !== mySide || !net.active);
     }
   }
 
@@ -123,6 +125,10 @@
   function humanMove(i) {
     if (finished || board[i] || thinking) return;
     if (mode === 'ai' && turn === 'O') return;
+    if (mode === 'net') {
+      if (!net.active || turn !== mySide) return;
+      net.send({ t: 'move', i });
+    }
     place(i);
   }
 
@@ -132,18 +138,21 @@
     boardEl.classList.add('finished');
     scores[res.winner]++;
     if (res.line) res.line.forEach((i) => cells[i].classList.add('win'));
-    if (mode === 'ai' && res.winner === 'X') {
+    if ((mode === 'ai' && res.winner === 'X') || (mode === 'net' && res.winner === mySide)) {
       SG.store.set('ttt-wins', SG.store.get('ttt-wins', 0) + 1);
     }
     renderScores();
-    SG.sound.play(res.winner === 'D' ? 'draw' : mode === 'ai' && res.winner === 'O' ? 'lose' : 'win');
+    const lost = (mode === 'ai' && res.winner === 'O') || (mode === 'net' && res.winner !== mySide);
+    SG.sound.play(res.winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
     if (res.winner === 'D') statusEl.textContent = 'Ничья 🤝';
+    else if (mode === 'net') statusEl.textContent = res.winner === mySide ? 'Вы победили! 🎉' : 'Соперник победил';
     else if (mode === 'ai') statusEl.textContent = res.winner === 'X' ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
     else statusEl.textContent = 'Победили ' + (res.winner === 'X' ? 'крестики ✕' : 'нолики ◯') + '!';
   }
 
   function updateStatus() {
-    if (mode === 'ai') statusEl.textContent = turn === 'X' ? 'Ваш ход' : 'Компьютер думает…';
+    if (mode === 'net') statusEl.textContent = !net.active ? 'Нет соединения с соперником' : turn === mySide ? 'Ваш ход' : 'Ход соперника…';
+    else if (mode === 'ai') statusEl.textContent = turn === 'X' ? 'Ваш ход' : 'Компьютер думает…';
     else statusEl.textContent = 'Ходят ' + (turn === 'X' ? 'крестики ✕' : 'нолики ◯');
   }
 
@@ -151,16 +160,17 @@
     $('score-x').textContent = scores.X;
     $('score-o').textContent = scores.O;
     $('score-d').textContent = scores.D;
-    $('label-x').textContent = mode === 'ai' ? 'Вы · X' : 'Игрок X';
-    $('label-o').textContent = mode === 'ai' ? 'Компьютер · O' : 'Игрок O';
+    const net = mode === 'net';
+    $('label-x').textContent = net ? (mySide === 'X' ? 'Вы · X' : 'Соперник · X') : mode === 'ai' ? 'Вы · X' : 'Игрок X';
+    $('label-o').textContent = net ? (mySide === 'O' ? 'Вы · O' : 'Соперник · O') : mode === 'ai' ? 'Компьютер · O' : 'Игрок O';
   }
 
-  function newRound() {
+  function newRound(first) {
     clearTimeout(thinking);
     thinking = null;
     board = Array(9).fill(null);
     finished = false;
-    starter = starter === 'X' ? 'O' : 'X';
+    starter = first || (starter === 'X' ? 'O' : 'X');
     turn = starter;
     boardEl.classList.remove('finished');
     cells.forEach((c, i) => {
@@ -171,6 +181,7 @@
     });
     updateStatus();
     if (mode === 'ai' && turn === 'O') scheduleAi();
+    if (mode === 'net') lockBoard(turn !== mySide || !net.active);
   }
 
   function resetScores() {
@@ -184,7 +195,38 @@
     diffEl.style.display = mode === 'ai' ? '' : 'none';
   }
 
-  SG.segmented($('mode'), mode, (v) => {
+  // ---------- игра по сети ----------
+
+  const net = SG.net.setup({
+    game: 'tictactoe',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      mySide = role === 'host' ? 'X' : 'O';
+      net.info('вы играете за ' + (mySide === 'X' ? 'крестики ✕' : 'нолики ◯'));
+      syncDifficultyVisibility();
+      resetScores();
+    },
+    onMessage(msg) {
+      if (msg.t === 'move' && !finished && turn !== mySide && Number.isInteger(msg.i) && !board[msg.i]) place(msg.i);
+      else if (msg.t === 'new') newRound(msg.first);
+      else if (msg.t === 'reset') resetScores();
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        modeSeg.set('pvp');
+        mode = 'pvp';
+        syncDifficultyVisibility();
+        resetScores();
+      } else {
+        lockBoard(true);
+        updateStatus();
+      }
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;
     SG.store.set('ttt-mode', v);
     syncDifficultyVisibility();
@@ -199,10 +241,19 @@
 
   $('new-round').addEventListener('click', (e) => {
     e.currentTarget.blur();
-    newRound();
+    if (mode === 'net') {
+      if (!net.active) return;
+      const first = starter === 'X' ? 'O' : 'X';
+      net.send({ t: 'new', first });
+      newRound(first);
+    } else newRound();
   });
   $('reset-score').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net') {
+      if (!net.active) return;
+      net.send({ t: 'reset' });
+    }
     resetScores();
   });
 
@@ -213,7 +264,7 @@
       humanMove(NUMPAD[key]);
     } else if ((key === 'Enter' || key === ' ') && finished) {
       e.preventDefault();
-      newRound();
+      $('new-round').click();
     }
   });
 
