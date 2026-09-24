@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  const WORDS = window.FILLWORD_WORDS;
+  const WORDS = window.SG_NOUNS;
   const BY_LEN = {};
   WORDS.forEach((w) => (BY_LEN[w.length] = BY_LEN[w.length] || []).push(w));
   const SIZES = { 5: { min: 3, max: 6 }, 6: { min: 3, max: 7 }, 7: { min: 4, max: 8 }, 8: { min: 4, max: 8 } };

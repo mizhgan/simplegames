@@ -1,0 +1,90 @@
+.hg-gallows {
+  width: min(220px, 55vw);
+  height: auto;
+  color: var(--text);
+}
+
+.hg-gallows .part {
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.hg-gallows .part.on {
+  opacity: 1;
+}
+
+.hg-word {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.hg-letter {
+  display: grid;
+  place-items: end center;
+  width: clamp(30px, 9vw, 44px);
+  height: clamp(38px, 11vw, 52px);
+  padding-bottom: 4px;
+  border-bottom: 3px solid var(--muted);
+  font-size: clamp(1.3rem, 6vw, 2rem);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hg-letter.shown {
+  border-color: var(--success);
+  animation: hg-pop 0.25s;
+}
+
+.hg-letter.missed {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.hg-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.hg-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.hg-key {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 44px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface-2);
+  font-weight: 700;
+  font-size: clamp(0.85rem, 3.6vw, 1.05rem);
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.hg-key.hit {
+  background: var(--success);
+  color: #fff;
+  border-color: transparent;
+}
+
+.hg-key.miss {
+  background: var(--muted);
+  color: var(--bg);
+  opacity: 0.5;
+  border-color: transparent;
+}
+
+@keyframes hg-pop {
+  50% { transform: translateY(-6px); }
+}

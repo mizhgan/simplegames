@@ -1,0 +1,88 @@
+.sk-wrap {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  justify-content: center;
+}
+
+.sk-board {
+  --cell: 44px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--w), var(--cell));
+  grid-auto-rows: var(--cell);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.sk-cell.wall {
+  border-radius: 4px;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.18) 2px, transparent 2px) 0 0 / 100% 50%,
+    linear-gradient(90deg, rgba(0, 0, 0, 0.18) 2px, transparent 2px) 0 0 / 50% 50%,
+    #9a5b3c;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.sk-cell.floor {
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.sk-cell.goal {
+  background: radial-gradient(circle, transparent 0 17%, #f59e0b 18% 27%, transparent 28%), var(--surface-2);
+}
+
+.sk-box,
+.sk-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--cell);
+  height: var(--cell);
+  transition: transform 0.09s linear;
+  pointer-events: none;
+}
+
+.sk-box::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 6px;
+  background:
+    linear-gradient(45deg, transparent 44%, rgba(0, 0, 0, 0.25) 45% 55%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, rgba(0, 0, 0, 0.25) 45% 55%, transparent 56%),
+    #d99a4e;
+  box-shadow: inset 0 0 0 3px #a0652a, 0 2px 3px rgba(0, 0, 0, 0.3);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.sk-box.on::before {
+  background:
+    linear-gradient(45deg, transparent 44%, rgba(0, 0, 0, 0.2) 45% 55%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, rgba(0, 0, 0, 0.2) 45% 55%, transparent 56%),
+    #4ade80;
+  box-shadow: inset 0 0 0 3px #16a34a, 0 0 10px rgba(34, 197, 94, 0.6);
+}
+
+.sk-player::before {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #93c5fd, #2563eb 70%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.sk-player::after {
+  content: "";
+  position: absolute;
+  left: 36%;
+  top: 38%;
+  width: 28%;
+  height: 10%;
+  border-left: 4px solid #fff;
+  border-right: 4px solid #fff;
+  box-sizing: border-box;
+}

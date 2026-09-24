@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Достижения — SimpleGames</title>
+  <meta name="description" content="Ваши достижения в играх SimpleGames: пробуйте новые игры, ставьте рекорды и выполняйте задания дня.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="sg/img/icon-180.png">
+  <link rel="stylesheet" href="sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <img class="logo-mark" src="sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Достижения</h1>
+    </div>
+
+    <div class="ach-head">
+      <div class="ach-total">
+        <div>Получено: <b id="ach-summary">0</b></div>
+        <div class="ach-bar"><i id="ach-progress" style="width:0"></i></div>
+      </div>
+      <div class="stat"><span class="stat-label">Сыграно игр</span><span class="stat-value" id="ach-played">0</span></div>
+      <div class="stat"><span class="stat-label">Заданий дня</span><span class="stat-value" id="ach-daily">0</span></div>
+      <div class="stat"><span class="stat-label">Лучшая серия</span><span class="stat-value" id="ach-streak">0</span></div>
+    </div>
+
+    <div class="ach-grid" id="achievements"></div>
+
+    <p style="color:var(--muted);margin-top:24px">Достижения и рекорды хранятся только в этом браузере. Если очистить данные сайта, они пропадут.</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="sg/js/common.js"></script>
+  <script src="sg/js/site.js"></script>
+</body>
+</html>

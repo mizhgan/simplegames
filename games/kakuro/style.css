@@ -1,0 +1,124 @@
+.kk-board {
+  --c: 9;
+  display: grid;
+  grid-template-columns: repeat(var(--c), 1fr);
+  gap: 2px;
+  width: min(520px, 92vw);
+  padding: 3px;
+  border-radius: 10px;
+  background: #1f2937;
+  box-shadow: var(--shadow);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.kk-block,
+.kk-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 3px;
+}
+
+.kk-block {
+  background: #374151;
+}
+
+.kk-block.clue {
+  background: linear-gradient(to top right, #4b5563 calc(50% - 1px), rgba(255, 255, 255, 0.35) 50%, #4b5563 calc(50% + 1px));
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(0.55rem, 2.4vw, 0.85rem);
+}
+
+.kk-block span {
+  position: absolute;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.kk-block .h {
+  top: 12%;
+  right: 10%;
+}
+
+.kk-block .v {
+  bottom: 12%;
+  left: 10%;
+}
+
+.kk-block span.active {
+  color: #fde047;
+}
+
+.kk-block span.ok {
+  color: #86efac;
+}
+
+.kk-block span.bad {
+  color: #fca5a5;
+}
+
+.kk-cell {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  color: var(--accent);
+  font-size: clamp(0.95rem, 4.6vw, 1.6rem);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.kk-cell.given {
+  color: var(--muted);
+}
+
+.kk-cell.run {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.kk-cell.sel {
+  background: color-mix(in srgb, var(--accent) 30%, var(--surface));
+}
+
+.kk-cell.bad {
+  color: var(--danger);
+}
+
+.kk-combos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 2.6em;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.kk-combos b {
+  color: var(--text);
+}
+
+.kk-pad {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  width: min(520px, 92vw);
+}
+
+.kk-pad button {
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.kk-pad button:active {
+  background: var(--accent);
+  color: #fff;
+}

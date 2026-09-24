@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Саймон — SimpleGames</title>
+  <meta name="description" content="Саймон говорит: запоминайте и повторяйте растущую последовательность цветов.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Саймон</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Шагов</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="status-line" id="status" aria-live="polite">Нажмите «Старт» и запоминайте.</div>
+        <div class="sm-board">
+          <button type="button" class="sm-pad" aria-label="Зелёная"></button>
+          <button type="button" class="sm-pad" aria-label="Красная"></button>
+          <button type="button" class="sm-pad" aria-label="Жёлтая"></button>
+          <button type="button" class="sm-pad" aria-label="Синяя"></button>
+          <button type="button" class="sm-center" id="center" aria-label="Старт">▶</button>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="start-btn">Старт</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Кнопки загораются по очереди — запомните порядок и повторите его.</li>
+            <li>Каждый раунд к последовательности добавляется ещё один шаг, а показ становится быстрее.</li>
+            <li>Одна ошибка — и игра окончена. Рекорд — самая длинная повторённая цепочка.</li>
+            <li>Клавиатура: <kbd>1</kbd>–<kbd>4</kbd> или <kbd>Q</kbd> <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd>. У каждой кнопки свой звук — включите звук в шапке, так запоминать легче.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

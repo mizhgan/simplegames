@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Лягушка — SimpleGames</title>
+  <meta name="description" content="Игра «Лягушка» (Frogger) онлайн: переведите лягушку через оживлённую дорогу и бурную реку.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Лягушка</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Очки</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Жизни</span><span class="stat-value" id="lives">🐸🐸🐸</span></div>
+        <div class="stat"><span class="stat-label">Уровень</span><span class="stat-value" id="level">1</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="stage-wrap" style="max-width:440px">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:11/13" aria-label="Игровое поле"></canvas>
+          <div class="overlay" id="overlay">
+            <h2 id="overlay-title">Лягушка</h2>
+            <p id="overlay-text">Переведите лягушек через дорогу и реку домой.</p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+            </div>
+          </div>
+        </div>
+        <div class="dpad" aria-label="Управление">
+          <button type="button" data-dir="up" aria-label="Вверх">▲</button>
+          <button type="button" data-dir="left" aria-label="Влево">◀</button>
+          <button type="button" data-dir="right" aria-label="Вправо">▶</button>
+          <button type="button" data-dir="down" aria-label="Вниз">▼</button>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Прыгайте стрелками или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. На телефоне — свайпы по полю или кнопки.</li>
+            <li>На дороге уворачивайтесь от машин. В реке прыгайте только по брёвнам и черепахам — в воде лягушка тонет.</li>
+            <li>Некоторые черепахи ныряют: когда они бледнеют, скоро уйдут под воду.</li>
+            <li>Заведите лягушек во все пять домиков наверху — начнётся следующий уровень, быстрее прежнего.</li>
+            <li>На каждую лягушку — 30 секунд (жёлтая полоса внизу). Оставшееся время приносит бонус. <kbd>P</kbd> — пауза.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

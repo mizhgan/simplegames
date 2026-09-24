@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Покер на костях — SimpleGames</title>
+  <meta name="description" content="Покер на костях (Yahtzee) онлайн: 5 кубиков, 3 броска и 13 комбинаций. Против компьютера или в одиночку.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Покер на костях</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Раунд</span><span class="stat-value" id="round">1/13</span></div>
+        <div class="stat"><span class="stat-label">Побед</span><span class="stat-value" id="wins">0</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+            <button type="button" data-value="solo">Один</button>
+          </div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="yz-dice" id="dice" aria-label="Кости"></div>
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="roll-btn">Бросить кости</button>
+          <button class="btn btn-ghost" type="button" id="new-btn">Новая игра</button>
+        </div>
+        <table class="yz-table" id="scores"></table>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>В каждом раунде можно бросить 5 костей до трёх раз. Нажмите на кость, чтобы оставить её, и перебросьте остальные.</li>
+            <li>После бросков запишите результат в одну из свободных строк таблицы — в каждую строку можно записать только один раз, даже если выйдет 0.</li>
+            <li>Верхняя часть: сумма костей с этим числом. Набрали 63 и больше — бонус +35.</li>
+            <li>Тройка и каре — сумма всех костей. Фулл-хаус (3+2) — 25, малый стрейт (4 подряд) — 30, большой (5 подряд) — 40, покер (5 одинаковых) — 50, шанс — сумма всех.</li>
+            <li>Игра длится 13 раундов. Клавиши: <kbd>Пробел</kbd> — бросок, <kbd>1</kbd>–<kbd>5</kbd> — оставить кость.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

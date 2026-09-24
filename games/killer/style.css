@@ -1,0 +1,58 @@
+/* поверх стилей судоку: рамки клеток-сумм */
+.kl-cell {
+  overflow: visible;
+}
+
+.kl-cage {
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  border: 0 dashed color-mix(in srgb, var(--text) 55%, transparent);
+}
+
+.kl-cage.t { top: 3px; border-top-width: 1.5px; }
+.kl-cage.b { bottom: 3px; border-bottom-width: 1.5px; }
+.kl-cage.l { left: 3px; border-left-width: 1.5px; }
+.kl-cage.r { right: 3px; border-right-width: 1.5px; }
+
+.kl-sum {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  z-index: 1;
+  padding: 0 2px;
+  border-radius: 3px;
+  background: inherit;
+  color: var(--text);
+  font-size: 2.3cqw;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.kl-val {
+  position: relative;
+  top: 0.08em;
+}
+
+.kl-cell.in-cage {
+  background: color-mix(in srgb, var(--warning, #f59e0b) 14%, var(--surface));
+}
+
+.kl-cell.in-cage.selected {
+  background: color-mix(in srgb, var(--accent) 34%, var(--surface));
+}
+
+.kl-combos {
+  min-height: 1.4em;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.kl-combos b {
+  color: var(--text);
+}
+
+.sd-board {
+  grid-template-rows: repeat(9, minmax(0, 1fr));
+}

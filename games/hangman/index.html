@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Виселица — SimpleGames</title>
+  <meta name="description" content="Виселица: угадайте слово по буквам, пока человечек не нарисован до конца.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Виселица</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Ошибки</span><span class="stat-value" id="mistakes">0/7</span></div>
+        <div class="stat"><span class="stat-label">Серия</span><span class="stat-value" id="streak">0</span></div>
+        <div class="stat"><span class="stat-label">Побед</span><span class="stat-value" id="wins">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <svg class="hg-gallows" id="gallows" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" aria-hidden="true">
+          <path d="M20 190 H120"/>
+          <path class="part" d="M50 190 V20"/>
+          <path class="part" d="M50 20 H140 M50 55 L85 20"/>
+          <path class="part" d="M140 20 V45"/>
+          <circle class="part" cx="140" cy="62" r="17"/>
+          <path class="part" d="M140 79 V130"/>
+          <path class="part" d="M140 92 L115 115 M140 92 L165 115"/>
+          <path class="part" d="M140 130 L118 165 M140 130 L162 165"/>
+        </svg>
+        <div class="hg-word" id="word" aria-live="polite"></div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="hg-keyboard" id="keyboard" aria-label="Буквы"></div>
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новое слово</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Загадано существительное из 5–8 букв. Называйте буквы по одной — на экранной или обычной клавиатуре.</li>
+            <li>Если буква есть в слове, она откроется во всех местах. Если нет — дорисовывается часть виселицы.</li>
+            <li>После 7 ошибок игра проиграна. Угадайте слово раньше!</li>
+            <li>Серия — сколько слов подряд вы угадали. Печатать можно и в английской раскладке.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/data/nouns.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
