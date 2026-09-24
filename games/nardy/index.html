@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Нарды — SimpleGames</title>
+  <meta name="description" content="Длинные нарды против компьютера: кости, голова, дом и выброс шашек.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Нарды</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Вы</span><span class="stat-value" id="score-me">0</span></div>
+        <div class="stat"><span class="stat-label">Компьютер</span><span class="stat-value" id="score-ai">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="nd-dice" id="dice" aria-live="polite"></div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="nd-wrap">
+          <div class="nd-frame">
+            <div class="nd-board" id="board" aria-label="Доска для нард"></div>
+            <div class="nd-side">
+              <div class="nd-ai-off" title="Компьютер выбросил">⚫<br><b id="off-ai">0</b></div>
+              <button class="nd-tray" type="button" id="off-tray" aria-label="Выбросить шашку" title="Выбросить шашку"><span>⚪ ⇥</span><b id="off-me">0</b></button>
+            </div>
+          </div>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="roll-btn">🎲 Бросить кости</button>
+          <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Переходить</button>
+          <button class="btn btn-ghost" type="button" id="new-btn">Новая партия</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Вы играете белыми, компьютер — чёрными. У каждого 15 шашек, в начале все стоят на «голове» (белые — справа внизу, чёрные — слева вверху).</li>
+            <li>Обе стороны ходят против часовой стрелки: белые по нижнему ряду влево, затем по верхнему вправо. Цель — привести все шашки в свой «дом» (правая верхняя четверть) и выбросить их.</li>
+            <li>Бросьте кости и передвигайте шашки на выпавшие значения. Дубль играется четыре раза. Нельзя ставить шашку на пункт, где стоит шашка соперника.</li>
+            <li>С головы за ход можно снять только одну шашку (кроме первого хода с дублем 6-6, 4-4 или 3-3). Нельзя строить забор из 6 пунктов подряд, если перед ним нет шашек соперника.</li>
+            <li>Нужно использовать как можно больше очков. Если можно сыграть только одну кость — обязательно большую.</li>
+            <li>Кликните по шашке, затем по подсвеченному пункту. Когда все шашки в доме, выбрасывайте их кликом по лотку справа от доски (⚪ ⇥). «Переходить» отменяет ходы в пределах броска. Победа с «марсом» (соперник ничего не выбросил) — 2 очка.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Дурак — SimpleGames</title>
+  <meta name="description" content="Подкидной дурак против компьютера: колода 36 карт, козыри, подкидывание.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/cards.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Дурак</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Победы</span><span class="stat-value" id="wins">0</span></div>
+        <div class="stat"><span class="stat-label">Поражения</span><span class="stat-value" id="losses">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="dk">
+          <div class="dk-label"><span>Компьютер</span><span>карт: <b id="ai-count">6</b></span></div>
+          <div class="dk-hand" id="ai-hand" aria-label="Карты компьютера"></div>
+          <div class="dk-middle">
+            <div class="dk-deck" id="deck" aria-label="Колода"></div>
+            <div class="dk-table" id="table" aria-label="Стол"></div>
+          </div>
+          <div class="dk-info"><span>Козырь: <b id="trump-name"></b></span><span>Бито: <b id="discard">0</b></span></div>
+          <div class="dk-hand mine" id="my-hand" aria-label="Ваши карты"></div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="action-btn">Бито</button>
+          <button class="btn btn-ghost" type="button" id="new-btn">Новая партия</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Играют колодой 36 карт (от шестёрки до туза). Козырь — масть карты под колодой; козырь бьёт любую некозырную карту.</li>
+            <li>Первым ходит тот, у кого младший козырь. Атакующий кладёт карту, защищающийся бьёт её старшей картой той же масти или козырем.</li>
+            <li>Подкидывать можно карты того же достоинства, что уже лежат на столе, — не больше шести и не больше, чем карт у отбивающегося.</li>
+            <li>Не можете или не хотите отбиваться — нажмите «Беру»: заберёте все карты со стола. Отбились — карты уходят в «бито», и ход переходит к вам.</li>
+            <li>После каждого кона игроки добирают карты до шести. Кто первым избавился от карт, когда колода кончилась, — победил; оставшийся с картами — «дурак».</li>
+            <li>Кликните по карте, чтобы сходить или отбиться. Подходящие карты приподняты. <kbd>Пробел</kbd> — «Бито»/«Беру».</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

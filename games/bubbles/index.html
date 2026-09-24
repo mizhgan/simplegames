@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Шарики — SimpleGames</title>
+  <meta name="description" content="Шарики (Bubble Shooter): стреляйте и собирайте три шарика одного цвета.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Шарики</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">До нового ряда</span><span class="stat-value" id="shots">6</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="stage-wrap" style="max-width:420px">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:400/600" aria-label="Игровое поле"></canvas>
+          <div class="overlay" id="overlay" hidden>
+            <h2 id="overlay-title">Шарики</h2>
+            <p id="overlay-text">Цельтесь мышью или пальцем и стреляйте. Три шарика одного цвета лопаются.</p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Цельтесь мышью (выстрел — клик) или ведите пальцем по полю и отпустите. На клавиатуре: <kbd>←</kbd> <kbd>→</kbd> и <kbd>Пробел</kbd>.</li>
+            <li>Соберите три и более шарика одного цвета — они лопнут (+10 за каждый).</li>
+            <li>Шарики, которые больше ни к чему не прикреплены, падают (+20 за каждый).</li>
+            <li>Шарики отскакивают от стен — используйте рикошет. Клик по «далее» (или <kbd>X</kbd>) меняет шарики местами.</li>
+            <li>После каждых шести выстрелов без попадания сверху появляется новый ряд. Шарики дошли до пунктирной линии — игра окончена.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

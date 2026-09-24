@@ -1,0 +1,94 @@
+.mj-wrap {
+  max-width: 760px;
+}
+
+.mj-board {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius);
+  background: radial-gradient(ellipse at center, #1f6f4a, #0f3d28);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mj-tile {
+  position: absolute;
+  width: var(--tw);
+  height: var(--th);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border: 1px solid #b8a67a;
+  border-radius: calc(var(--tw) * 0.14);
+  background: linear-gradient(145deg, #fffdf5, #efe6cc);
+  box-shadow: 2px 2px 0 #cbbb8f, 4px 4px 0 #8f7c4e, 5px 6px 6px rgba(0, 0, 0, 0.35);
+  color: #1f2937;
+  cursor: pointer;
+  transition: opacity 0.18s, transform 0.18s, background 0.15s;
+  font-family: "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", "Hiragino Sans", system-ui, sans-serif;
+}
+
+.mj-tile:not(.free) {
+  filter: brightness(0.86);
+}
+
+.mj-tile.selected {
+  background: linear-gradient(145deg, #fef9c3, #fde047);
+  transform: translateY(-3px);
+}
+
+.mj-tile.hint {
+  animation: mj-hint 0.7s ease-in-out 3;
+}
+
+.mj-tile.gone {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.mj-tile.nope {
+  animation: mj-nope 0.3s;
+}
+
+.mj-main {
+  font-weight: 800;
+  font-size: calc(var(--tw) * 0.5);
+}
+
+.mj-sub {
+  font-size: calc(var(--tw) * 0.32);
+  margin-top: 2px;
+}
+
+.mj-tile.wan .mj-main { color: #1e3a8a; }
+.mj-tile.wan .mj-sub { color: #dc2626; }
+.mj-tile.tong .mj-main { color: #b91c1c; }
+.mj-tile.tong .mj-sub { color: #1d4ed8; }
+.mj-tile.tiao .mj-main { color: #166534; }
+.mj-tile.tiao .mj-sub { color: #15803d; }
+.mj-tile.wind .mj-main { color: #111827; font-size: calc(var(--tw) * 0.6); }
+.mj-tile.dragon .mj-main { font-size: calc(var(--tw) * 0.62); }
+.mj-tile.dragon.red .mj-main { color: #dc2626; }
+.mj-tile.dragon.green .mj-main { color: #15803d; }
+.mj-tile.dragon.white .mj-main {
+  color: #1d4ed8;
+  outline: 2px solid #1d4ed8;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+@keyframes mj-hint {
+  50% {
+    background: linear-gradient(145deg, #bbf7d0, #4ade80);
+  }
+}
+
+@keyframes mj-nope {
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}

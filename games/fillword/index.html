@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Филворд — SimpleGames</title>
+  <meta name="description" content="Филворд: найдите слова, спрятанные змейкой на поле из букв.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Филворд</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Найдено</span><span class="stat-value" id="found">0/0</span></div>
+        <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">—</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="size" role="group" aria-label="Размер поля">
+            <button type="button" data-value="5">5 × 5</button>
+            <button type="button" data-value="6">6 × 6</button>
+            <button type="button" data-value="7">7 × 7</button>
+            <button type="button" data-value="8">8 × 8</button>
+          </div>
+          <button class="btn btn-primary" type="button" id="new-btn">Новое поле</button>
+          <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+        </div>
+        <div class="fw-current" id="current" aria-live="polite"></div>
+        <div class="stage-wrap fw-wrap">
+          <div class="fw-board" id="board" aria-label="Поле с буквами"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2>Все слова найдены! 🎉</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="again-btn">Новое поле</button>
+            </div>
+          </div>
+        </div>
+        <ul class="fw-words" id="words" aria-label="Слова"></ul>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Всё поле заполнено словами — существительными в начальной форме. Каждая буква принадлежит ровно одному слову.</li>
+            <li>Слово может изгибаться под прямым углом, но буквы идут только по соседним клеткам — вверх, вниз, влево или вправо, без диагоналей.</li>
+            <li>Проведите пальцем или мышью по буквам слова от первой до последней. Чтобы отменить букву, вернитесь на шаг назад.</li>
+            <li>Внизу видно, сколько слов и какой они длины. Подсказка подсветит первые буквы одного из слов.</li>
+            <li>Рекорд времени хранится для каждого размера поля.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="words.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
