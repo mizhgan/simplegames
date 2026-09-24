@@ -22,12 +22,12 @@
 ## Структура
 
 ```
-index.html            главная страница
-404.html              страница «не найдено»
-assets/css/style.css  общие стили и темы
-assets/js/common.js   общие утилиты (тема, рекорды, свайпы)
-assets/img/           иконки
-games/<игра>/         index.html + game.js (+ style.css) каждой игры
+index.html          главная страница
+404.html            страница «не найдено»
+sg/css/style.css    общие стили и темы
+sg/js/common.js     общие утилиты (тема, рекорды, свайпы)
+sg/img/             иконки
+games/<игра>/       index.html + game.js (+ style.css) каждой игры
 ```
 
 ## Развёртывание
