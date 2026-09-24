@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Змейка — SimpleGames</title>
-  <meta name="description" content="Классическая змейка в браузере: собирайте яблоки и растите.">
+  <title>Пакман — SimpleGames</title>
+  <meta name="description" content="Пакман: собирайте точки в лабиринте и убегайте от привидений.">
   <meta name="theme-color" content="#0d0e1a">
   <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../../manifest.webmanifest">
@@ -28,35 +28,27 @@
   <main class="container game-page">
     <a class="back-link" href="../../index.html">← Все игры</a>
     <div class="game-head">
-      <h1>Змейка</h1>
+      <h1>Пакман</h1>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Уровень</span><span class="stat-value" id="level">1</span></div>
+        <div class="stat"><span class="stat-label">Жизни</span><span class="stat-value" id="lives">●●●</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
       </div>
     </div>
 
     <div class="game-layout">
       <div class="game-stage">
-        <div class="stage-wrap">
-          <canvas id="board" class="board-canvas" style="aspect-ratio:1" aria-label="Игровое поле змейки"></canvas>
-          <div class="overlay" id="overlay">
-            <h2 id="overlay-title">Змейка</h2>
-            <p id="overlay-text">Собирайте яблоки и не врезайтесь в стены и в собственный хвост.</p>
+        <div class="stage-wrap" style="max-width:480px">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:28/31" aria-label="Лабиринт"></canvas>
+          <div class="overlay on-dark" id="overlay">
+            <h2 id="overlay-title">Пакман</h2>
+            <p id="overlay-text">Съешьте все точки и не попадитесь привидениям. Большая точка делает их съедобными!</p>
             <div class="overlay-actions">
               <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
             </div>
           </div>
         </div>
-
-        <div class="game-controls">
-          <div class="seg" id="speed" role="group" aria-label="Скорость">
-            <button type="button" data-value="slow">Медленно</button>
-            <button type="button" data-value="normal">Нормально</button>
-            <button type="button" data-value="fast">Быстро</button>
-          </div>
-          <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
-        </div>
-
         <div class="dpad" aria-label="Управление">
           <button type="button" data-dir="up" aria-label="Вверх">▲</button>
           <button type="button" data-dir="left" aria-label="Влево">◀</button>
@@ -69,10 +61,11 @@
         <div class="info-card">
           <h2>Как играть</h2>
           <ul>
-            <li>Управляйте змейкой стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>.</li>
-            <li>На телефоне — свайпами по полю или кнопками под ним.</li>
-            <li>Каждое яблоко — +1 очко, а змейка становится длиннее и быстрее.</li>
-            <li><kbd>Пробел</kbd> или <kbd>P</kbd> — пауза.</li>
+            <li>Управление: стрелки или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, свайпы по полю или кнопки под ним. Поворот можно нажать заранее — Пакман свернёт на ближайшем перекрёстке.</li>
+            <li>Точка — 10 очков, энергайзер — 50. После энергайзера привидения синеют, и их можно съесть: 200, 400, 800, 1600 очков.</li>
+            <li>У каждого привидения свой характер: красное преследует, розовое заходит наперёд, голубое — в клещи, оранжевое то нападает, то отступает.</li>
+            <li>Боковой туннель переносит на другую сторону лабиринта; привидения в нём медленнее.</li>
+            <li>Съешьте все точки — следующий уровень будет быстрее. Три жизни.</li>
           </ul>
         </div>
       </aside>

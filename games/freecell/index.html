@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Маджонг — SimpleGames</title>
-  <meta name="description" content="Маджонг-пасьянс: снимайте пары одинаковых свободных костей. Раскладка «черепаха».">
+  <title>Свободная ячейка — SimpleGames</title>
+  <meta name="description" content="Пасьянс «Свободная ячейка» (FreeCell): почти любая раздача решаема.">
   <meta name="theme-color" content="#0d0e1a">
   <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../../manifest.webmanifest">
   <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
   <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/cards.css">
   <link rel="stylesheet" href="style.css">
   <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
@@ -29,9 +30,9 @@
   <main class="container game-page">
     <a class="back-link" href="../../index.html">← Все игры</a>
     <div class="game-head">
-      <h1>Маджонг</h1>
+      <h1>Свободная ячейка</h1>
       <div class="stats">
-        <div class="stat"><span class="stat-label">Пар осталось</span><span class="stat-value" id="left">68</span></div>
+        <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
         <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">—</span></div>
       </div>
@@ -40,19 +41,17 @@
     <div class="game-layout">
       <div class="game-stage">
         <div class="game-controls">
-          <button class="btn btn-primary" type="button" id="new-btn">Новая раскладка</button>
-          <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
-          <button class="btn btn-ghost" type="button" id="shuffle-btn">🔀 Перемешать</button>
+          <button class="btn btn-primary" type="button" id="new-btn">Новая раздача</button>
           <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить</button>
         </div>
-        <div class="status-line" id="status" aria-live="polite"></div>
-        <div class="stage-wrap mj-wrap">
-          <div class="mj-board" id="board" aria-label="Кости маджонга"></div>
+        <div class="fc-info" id="status" aria-live="polite"></div>
+        <div class="stage-wrap sol-wrap fc-wrap">
+          <div class="sol-table" id="table" aria-label="Игровой стол"></div>
           <div class="overlay" id="overlay" hidden>
-            <h2>Победа! 🎉</h2>
+            <h2>Пасьянс сошёлся! 🎉</h2>
             <p id="overlay-text"></p>
             <div class="overlay-actions">
-              <button class="btn btn-primary" type="button" id="again-btn">Новая раскладка</button>
+              <button class="btn btn-primary" type="button" id="again-btn">Новая раздача</button>
             </div>
           </div>
         </div>
@@ -62,11 +61,11 @@
         <div class="info-card">
           <h2>Как играть</h2>
           <ul>
-            <li>Снимайте с поля пары одинаковых костей. Цель — убрать все 136 костей.</li>
-            <li>Кость свободна, если на ней ничего не лежит и хотя бы один её край — левый или правый — открыт. Закрытые кости чуть темнее.</li>
-            <li>Кликните по свободной кости, затем по такой же свободной — пара исчезнет.</li>
-            <li>Каждая раскладка решаема. Если зашли в тупик — отмените ходы или перемешайте оставшиеся кости.</li>
-            <li>Масти: 萬 (символы), 筒 (круги), 條 (бамбук) от 1 до 9, ветры 東 南 西 北 и драконы 中 發 白.</li>
+            <li>Все 52 карты сразу открыты и разложены в 8 столбцов. Цель — собрать их в четыре «дома» (справа вверху) по мастям от туза до короля.</li>
+            <li>В столбцах карты кладутся по убыванию с чередованием цвета. В пустой столбец можно положить любую карту.</li>
+            <li>Четыре свободные ячейки (слева вверху) вмещают по одной карте — это временное хранилище.</li>
+            <li>Переносить можно сразу несколько карт — столько, сколько позволяют свободные ячейки и пустые столбцы.</li>
+            <li>Перетаскивайте карты или кликните по карте — она сама переместится. Карты, которые больше не нужны на поле, уходят в дом автоматически.</li>
           </ul>
         </div>
       </aside>

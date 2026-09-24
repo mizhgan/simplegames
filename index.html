@@ -4,12 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SimpleGames — простые браузерные игры</title>
-  <meta name="description" content="Коллекция простых браузерных игр: дурак, нарды, маджонг, тетрис, вордли, филворд, косынка, шашки, морской бой, три в ряд, 2048, судоку и другие. Без регистрации и установки.">
+  <meta name="description" content="Коллекция простых браузерных игр: пакман, дурак, нарды, балда, маджонг, тетрис, вордли, филворд, косынка, шашки, морской бой, судоку и другие. Без регистрации и установки.">
   <meta name="theme-color" content="#0d0e1a">
   <meta property="og:title" content="SimpleGames — простые браузерные игры">
-  <meta property="og:description" content="Дурак, нарды, маджонг, тетрис, вордли, косынка, шашки, морской бой, 2048, судоку и другие игры прямо в браузере.">
+  <meta property="og:description" content="Пакман, дурак, нарды, балда, маджонг, тетрис, вордли, косынка, шашки, судоку и другие игры прямо в браузере.">
   <meta property="og:type" content="website">
   <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="sg/img/icon-180.png">
   <link rel="stylesheet" href="sg/css/style.css">
   <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
@@ -21,6 +23,7 @@
         <span>Simple<b>Games</b></span>
       </a>
       <div class="header-nav">
+        <button class="btn btn-ghost install-btn" type="button" data-install hidden>⬇ Установить</button>
         <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
       </div>
     </div>
@@ -28,7 +31,7 @@
 
   <main>
     <section class="hero container">
-      <div class="hero-badge"><span class="dot"></span>26 игр · бесплатно · без регистрации</div>
+      <div class="hero-badge"><span class="dot"></span>31 игра · бесплатно · без регистрации · работает офлайн</div>
       <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
       <p>Классика, в которую приятно сыграть пару минут: на компьютере, планшете или телефоне. Ничего не нужно устанавливать, а рекорды сохраняются у вас в браузере.</p>
     </section>
@@ -36,6 +39,7 @@
     <section class="container" aria-labelledby="games-title">
       <div class="section-title">
         <h2 id="games-title">Игры</h2>
+        <input class="search" type="search" id="search" placeholder="Поиск игры…" aria-label="Поиск игры" autocomplete="off">
         <div class="seg" id="filter" role="group" aria-label="Категории">
           <button type="button" data-value="all">Все</button>
           <button type="button" data-value="arcade">Аркады</button>
@@ -622,14 +626,102 @@
             <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="fillword-wins" data-best-label="Решено"></span></div>
           </div>
         </a>
+
+        <a class="game-card" href="games/pacman/index.html" data-cat="arcade" style="--g1:#facc15;--g2:#1e1b4b">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="14" y="14" width="132" height="72" rx="10" fill="#05061a" stroke="#3b5bdb" stroke-width="3"/>
+              <path d="M52 50 L74 37 A26 26 0 1 0 74 63 Z" fill="#facc15" transform="translate(-14 0)"/>
+              <g fill="#fde68a"><circle cx="78" cy="50" r="3"/><circle cx="92" cy="50" r="3"/><circle cx="106" cy="50" r="6"/></g>
+              <g transform="translate(118 36)"><path d="M0 14 A12 12 0 0 1 24 14 V28 l-4 -4 -4 4 -4 -4 -4 4 -4 -4 -4 4Z" fill="#ef4444"/><circle cx="7" cy="12" r="4" fill="#fff"/><circle cx="17" cy="12" r="4" fill="#fff"/><circle cx="8.5" cy="12" r="2" fill="#1e3a8a"/><circle cx="18.5" cy="12" r="2" fill="#1e3a8a"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Пакман</h3>
+            <p>Легендарный лабиринт: ешьте точки, убегайте от привидений, а после энергайзера — охотьтесь на них.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="pacman-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/balda/index.html" data-cat="puzzle" style="--g1:#6366f1;--g2:#312e81">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="800" font-size="12" text-anchor="middle">
+              <rect x="40" y="6" width="88" height="88" rx="8" fill="rgba(255,255,255,.15)"/>
+              <g fill="#eef2ff"><rect x="44" y="44" width="15" height="15" rx="3"/><rect x="61" y="44" width="15" height="15" rx="3"/><rect x="78" y="44" width="15" height="15" rx="3"/><rect x="95" y="44" width="15" height="15" rx="3"/><rect x="112" y="44" width="15" height="15" rx="3"/></g>
+              <g fill="#818cf8"><rect x="78" y="27" width="15" height="15" rx="3"/><rect x="95" y="27" width="15" height="15" rx="3"/></g>
+              <rect x="95" y="10" width="15" height="15" rx="3" fill="#facc15"/>
+              <g fill="#312e81"><text x="51.5" y="55.5">Б</text><text x="68.5" y="55.5">А</text><text x="85.5" y="55.5">Л</text><text x="102.5" y="55.5">Д</text><text x="119.5" y="55.5">А</text></g>
+              <g fill="#fff"><text x="85.5" y="38.5">Е</text><text x="102.5" y="38.5">С</text></g><text x="102.5" y="21.5" fill="#312e81">Н</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Балда</h3>
+            <p>Словесная дуэль с компьютером: добавляйте букву и составляйте слова на поле 5×5.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="balda-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/freecell/index.html" data-cat="board" style="--g1:#0891b2;--g2:#164e63">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="800">
+              <g fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-dasharray="4 3"><rect x="24" y="12" width="24" height="34" rx="4"/><rect x="52" y="12" width="24" height="34" rx="4"/></g>
+              <rect x="84" y="12" width="24" height="34" rx="4" fill="#fff"/><text x="88" y="24" font-size="9" fill="#dc2626">A</text><text x="96" y="40" font-size="14" text-anchor="middle" fill="#dc2626">♥</text>
+              <rect x="112" y="12" width="24" height="34" rx="4" fill="#fff"/><text x="116" y="24" font-size="9" fill="#111827">2</text><text x="124" y="40" font-size="14" text-anchor="middle" fill="#111827">♠</text>
+              <g stroke="#d1d5db"><rect x="40" y="52" width="24" height="34" rx="4" fill="#fff"/><rect x="40" y="62" width="24" height="34" rx="4" fill="#fff"/><rect x="70" y="52" width="24" height="34" rx="4" fill="#fff"/><rect x="100" y="52" width="24" height="34" rx="4" fill="#fff"/><rect x="100" y="62" width="24" height="34" rx="4" fill="#fff"/></g>
+              <text x="44" y="73" font-size="9" fill="#111827">9♣</text><text x="74" y="63" font-size="9" fill="#dc2626">K♦</text><text x="104" y="73" font-size="9" fill="#dc2626">7♥</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Свободная ячейка</h3>
+            <p>Пасьянс FreeCell: все карты открыты, а четыре ячейки помогут разложить почти любую раздачу.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="freecell-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/nonogram/index.html" data-cat="puzzle" style="--g1:#64748b;--g2:#0f172a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="700" font-size="7" fill="#e2e8f0">
+              <rect x="58" y="22" width="70" height="70" fill="#f8fafc"/>
+              <g fill="#0f172a">
+                <rect x="65" y="29" width="7" height="7"/><rect x="72" y="29" width="7" height="7"/><rect x="107" y="29" width="7" height="7"/><rect x="114" y="29" width="7" height="7"/>
+                <rect x="58" y="36" width="7" height="7"/><rect x="65" y="36" width="56" height="7"/><rect x="121" y="36" width="7" height="7"/>
+                <rect x="58" y="43" width="70" height="14"/><rect x="65" y="57" width="56" height="7"/><rect x="72" y="64" width="42" height="7"/><rect x="79" y="71" width="28" height="7"/><rect x="86" y="78" width="14" height="7"/>
+              </g>
+              <text x="52" y="35" text-anchor="end">2 2</text><text x="52" y="42" text-anchor="end">10</text><text x="52" y="56" text-anchor="end">10</text><text x="52" y="63" text-anchor="end">8</text><text x="52" y="70" text-anchor="end">6</text><text x="52" y="77" text-anchor="end">4</text><text x="52" y="84" text-anchor="end">2</text>
+              <text x="61" y="18" text-anchor="middle">3</text><text x="68" y="18" text-anchor="middle">5</text><text x="75" y="18" text-anchor="middle">6</text><text x="82" y="18" text-anchor="middle">6</text><text x="89" y="18" text-anchor="middle">7</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Японские кроссворды</h3>
+            <p>Закрашивайте клетки по числовым подсказкам — и из них проявится картинка. Всё решается логикой.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="nonogram-solved" data-best-label="Решено"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/jumper/index.html" data-cat="arcade" style="--g1:#84cc16;--g2:#3f6212">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g fill="#bbf7d0"><rect x="34" y="80" width="30" height="7" rx="3.5"/><rect x="92" y="58" width="30" height="7" rx="3.5"/><rect x="50" y="34" width="30" height="7" rx="3.5"/></g>
+              <rect x="100" y="12" width="30" height="7" rx="3.5" fill="#93c5fd"/>
+              <g transform="translate(68 44)"><rect x="0" y="0" width="20" height="18" rx="6" fill="#facc15"/><rect x="16" y="6" width="8" height="5" rx="2.5" fill="#facc15"/><circle cx="13" cy="6" r="2" fill="#111827"/><rect x="3" y="16" width="4" height="6" fill="#16a34a"/><rect x="13" y="16" width="4" height="6" fill="#16a34a"/></g>
+              <path d="M78 72 q-4 -12 0 -24" stroke="rgba(255,255,255,.5)" stroke-width="2" fill="none" stroke-dasharray="3 3"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Прыгун</h3>
+            <p>Прыгайте по платформам всё выше: пружины, ломающиеся и движущиеся платформы.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="jumper-best"></span></div>
+          </div>
+        </a>
       </div>
+      <p class="no-results" id="no-results" hidden>Ничего не нашлось. Попробуйте другое слово или категорию «Все».</p>
     </section>
 
     <section class="container features" aria-label="Особенности">
       <div class="feature">
         <div class="feature-icon">⚡</div>
-        <h3>Мгновенный старт</h3>
-        <p>Игры открываются сразу: никаких загрузок, аккаунтов и рекламы.</p>
+        <h3>Работает без интернета</h3>
+        <p>Сайт можно установить как приложение: после первого визита игры открываются и офлайн.</p>
       </div>
       <div class="feature">
         <div class="feature-icon">📱</div>
@@ -660,15 +752,39 @@
   <script>
     (function () {
       var cards = document.querySelectorAll('.game-card');
-      var apply = function (cat) {
-        cards.forEach(function (c) { c.hidden = cat !== 'all' && c.dataset.cat !== cat; });
+      var search = document.getElementById('search');
+      var empty = document.getElementById('no-results');
+      var category = SG.store.get('home-filter', 'all');
+      var norm = function (t) { return t.toLowerCase().replace(/ё/g, 'е'); };
+      cards.forEach(function (c) { c.dataset.text = norm(c.textContent); });
+      var apply = function () {
+        var q = norm(search.value.trim());
+        var shown = 0;
+        cards.forEach(function (c) {
+          var ok = (category === 'all' || c.dataset.cat === category) && (!q || c.dataset.text.indexOf(q) !== -1);
+          c.hidden = !ok;
+          if (ok) shown++;
+        });
+        empty.hidden = shown > 0;
       };
-      var saved = SG.store.get('home-filter', 'all');
-      SG.segmented(document.getElementById('filter'), saved, function (v) {
+      SG.segmented(document.getElementById('filter'), category, function (v) {
+        category = v;
         SG.store.set('home-filter', v);
-        apply(v);
+        apply();
       });
-      apply(saved);
+      search.addEventListener('input', apply);
+      // «/» — быстрый переход к поиску
+      document.addEventListener('keydown', function (e) {
+        if (e.key === '/' && document.activeElement !== search) {
+          e.preventDefault();
+          search.focus();
+        } else if (e.key === 'Escape' && document.activeElement === search) {
+          search.value = '';
+          apply();
+          search.blur();
+        }
+      });
+      apply();
     })();
   </script>
 </body>

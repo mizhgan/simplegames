@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Динозаврик — SimpleGames</title>
-  <meta name="description" content="Динозаврик-бегун: прыгайте через кактусы и пригибайтесь от птиц.">
+  <title>Прыгун — SimpleGames</title>
+  <meta name="description" content="Прыгун: прыгайте по платформам всё выше и выше.">
   <meta name="theme-color" content="#0d0e1a">
   <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../../manifest.webmanifest">
   <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
   <link rel="stylesheet" href="../../sg/css/style.css">
-  <link rel="stylesheet" href="style.css">
   <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
@@ -29,28 +28,24 @@
   <main class="container game-page">
     <a class="back-link" href="../../index.html">← Все игры</a>
     <div class="game-head">
-      <h1>Динозаврик</h1>
+      <h1>Прыгун</h1>
       <div class="stats">
-        <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Высота</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
       </div>
     </div>
 
     <div class="game-layout">
       <div class="game-stage">
-        <div class="stage-wrap" style="max-width:720px">
-          <canvas id="board" class="board-canvas" style="aspect-ratio:600/220" aria-label="Игровое поле"></canvas>
+        <div class="stage-wrap" style="max-width:400px">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:360/600" aria-label="Игровое поле"></canvas>
           <div class="overlay" id="overlay">
-            <h2 id="overlay-title">Динозаврик</h2>
-            <p id="overlay-text">Пробел или касание — прыжок, стрелка вниз — пригнуться.</p>
+            <h2 id="overlay-title">Прыгун</h2>
+            <p id="overlay-text">Прыгайте по платформам как можно выше. Стрелки, касание половин экрана или наклон телефона.</p>
             <div class="overlay-actions">
-              <button class="btn btn-primary" type="button" id="start-btn">Бежать</button>
+              <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
             </div>
           </div>
-        </div>
-        <div class="dino-pad">
-          <button type="button" id="duck-btn">▼ Пригнуться</button>
-          <button type="button" id="jump-btn">▲ Прыжок</button>
         </div>
       </div>
 
@@ -58,11 +53,11 @@
         <div class="info-card">
           <h2>Как играть</h2>
           <ul>
-            <li>Динозаврик бежит сам, скорость постепенно растёт.</li>
-            <li><kbd>Пробел</kbd> или <kbd>↑</kbd> — прыжок. Чем дольше держите, тем выше прыжок.</li>
-            <li><kbd>↓</kbd> — пригнуться (от птиц на средней высоте) или быстрее приземлиться.</li>
-            <li>На телефоне: касание поля — прыжок, внизу есть кнопки прыжка и приседания.</li>
-            <li>Птицы появляются после 250 очков: низких перепрыгивайте, от средних пригибайтесь.</li>
+            <li>Прыгун сам отталкивается от платформ — вы управляете только движением влево и вправо.</li>
+            <li>Клавиатура: <kbd>←</kbd> <kbd>→</kbd> (или <kbd>A</kbd> <kbd>D</kbd>). Телефон: касание левой или правой половины поля либо наклон устройства.</li>
+            <li>Уйдя за край экрана, прыгун появляется с другой стороны.</li>
+            <li>Зелёные платформы обычные, синие ездят, коричневые ломаются. Пружина подбрасывает очень высоко.</li>
+            <li>Упали вниз — игра окончена.</li>
           </ul>
         </div>
       </aside>
