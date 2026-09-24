@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2048 — SimpleGames</title>
+  <meta name="description" content="Игра 2048 в браузере: объединяйте плитки и соберите 2048.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../assets/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>2048</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="stage-wrap">
+          <div class="g2048" id="board" aria-label="Игровое поле 2048">
+            <div class="g2048-cells" id="cells"></div>
+            <div class="g2048-tiles" id="tiles"></div>
+          </div>
+          <div class="overlay" id="overlay" hidden>
+            <h2 id="overlay-title"></h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-ghost" type="button" id="continue-btn">Продолжить</button>
+              <button class="btn btn-primary" type="button" id="retry-btn">Новая игра</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+          <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить ход</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Сдвигайте все плитки стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd>, клавишами <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> или свайпами.</li>
+            <li>Две одинаковые плитки при столкновении сливаются в одну с удвоенным числом.</li>
+            <li>После каждого хода появляется новая плитка 2 или 4.</li>
+            <li>Цель — собрать плитку <b>2048</b>. После победы можно продолжать.</li>
+            <li>Один последний ход можно отменить (<kbd>Z</kbd>).</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

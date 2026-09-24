@@ -1,0 +1,93 @@
+.mem-wrap {
+  max-width: 560px;
+}
+
+.mem-board {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  gap: clamp(6px, 1.6vw, 12px);
+  padding: clamp(8px, 2vw, 14px);
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow);
+}
+
+.mem-card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  perspective: 800px;
+  touch-action: manipulation;
+}
+
+.mem-card:disabled {
+  cursor: default;
+}
+
+.mem-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.3, 0.8, 0.4, 1);
+}
+
+.mem-card.flipped .mem-inner,
+.mem-card.matched .mem-inner {
+  transform: rotateY(180deg);
+}
+
+.mem-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.mem-back {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.25), transparent 50%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0 6px, transparent 6px 12px),
+    linear-gradient(135deg, var(--accent), var(--accent-3));
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mem-back::after {
+  content: "?";
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 800;
+  font-size: clamp(1rem, 4vw, 1.6rem);
+}
+
+.mem-front {
+  transform: rotateY(180deg);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  font-size: clamp(1.4rem, 6vw, 2.6rem);
+  line-height: 1;
+}
+
+.mem-board[data-size="l"] .mem-front {
+  font-size: clamp(1.1rem, 5vw, 2rem);
+}
+
+.mem-card.matched .mem-front {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 14%, var(--surface));
+  animation: mem-match 0.45s ease;
+}
+
+.mem-card:hover:not(.flipped):not(.matched) .mem-inner {
+  transform: translateY(-3px);
+}
+
+@keyframes mem-match {
+  50% {
+    transform: rotateY(180deg) scale(1.08);
+  }
+}
