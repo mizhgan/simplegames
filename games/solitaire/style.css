@@ -1,0 +1,152 @@
+.sol-wrap {
+  width: 100%;
+  max-width: 760px;
+}
+
+.sol-table {
+  position: relative;
+  width: 100%;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sol-slot,
+.sol-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: calc(var(--cw) * 0.1);
+}
+
+.sol-slot {
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--border);
+  background: color-mix(in srgb, var(--board-bg) 60%, transparent);
+}
+
+.sol-slot::after {
+  content: attr(data-label);
+  color: var(--muted);
+  opacity: 0.5;
+  font-weight: 800;
+  font-size: calc(var(--cw) * 0.3);
+}
+
+.sol-slot:first-child {
+  cursor: pointer;
+}
+
+.sol-slot:first-child::after {
+  opacity: 0;
+}
+
+.sol-slot.recycle::after {
+  opacity: 0.8;
+}
+
+.sol-card {
+  cursor: pointer;
+  transition: transform 0.18s ease;
+  will-change: transform;
+}
+
+.sol-table.no-anim .sol-card,
+.sol-card.dragging {
+  transition: none;
+}
+
+.sol-card.dragging {
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.3));
+}
+
+.sol-face,
+.sol-back {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.sol-face {
+  display: none;
+  background: #fff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.sol-card.red .sol-face {
+  color: #dc2626;
+}
+
+.sol-card.up .sol-face {
+  display: block;
+}
+
+.sol-card.up .sol-back {
+  display: none;
+}
+
+.sol-back {
+  border: 2px solid #fff;
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.14) 0 4px, transparent 4px 8px),
+    linear-gradient(135deg, var(--accent), #4338ca);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.sol-face .tl,
+.sol-face .br {
+  position: absolute;
+  font-weight: 800;
+  font-size: calc(var(--cw) * 0.2);
+  line-height: 0.95;
+  text-align: center;
+}
+
+.sol-face .tl {
+  top: 5%;
+  left: 7%;
+}
+
+.sol-face .br {
+  right: 7%;
+  bottom: 5%;
+  transform: rotate(180deg);
+}
+
+.sol-face .mid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--cw) * 0.48);
+  padding-top: 10%;
+}
+
+.sol-card.nope {
+  animation: sol-nope 0.3s;
+}
+
+.sol-table.won .sol-card {
+  animation: sol-won 0.6s ease;
+}
+
+@keyframes sol-nope {
+  25% {
+    margin-left: -4px;
+  }
+  75% {
+    margin-left: 4px;
+  }
+}
+
+@keyframes sol-won {
+  50% {
+    filter: brightness(1.2) drop-shadow(0 0 8px gold);
+  }
+}

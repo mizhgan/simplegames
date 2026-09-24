@@ -1,0 +1,275 @@
+.wd-wrap {
+  position: relative;
+  width: 100%;
+  max-width: min(350px, 34vh);
+  min-width: 240px;
+}
+
+.wd-board {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.wd-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.wd-row.shake {
+  animation: wd-shake 0.45s;
+}
+
+.wd-tile {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: clamp(1.4rem, 7vw, 2rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.wd-tile.filled {
+  border-color: var(--muted);
+  animation: wd-pop 0.1s;
+}
+
+.wd-tile.flip {
+  animation: wd-flip 0.5s ease forwards;
+}
+
+.wd-tile.correct,
+.wd-tile.present,
+.wd-tile.absent {
+  color: #fff;
+  border-color: transparent;
+}
+
+.wd-tile.correct,
+.wd-key.correct {
+  background: #16a34a;
+}
+
+.wd-tile.present,
+.wd-key.present {
+  background: #d9a406;
+}
+
+.wd-tile.absent,
+.wd-key.absent {
+  background: #64748b;
+}
+
+.wd-key.correct,
+.wd-key.present,
+.wd-key.absent {
+  color: #fff;
+  border-color: transparent;
+}
+
+.wd-tile.bounce {
+  animation: wd-bounce 0.5s ease;
+}
+
+.wd-toast {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  z-index: 3;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -6px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.wd-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.wd-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 520px;
+  user-select: none;
+}
+
+.wd-kb-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.wd-key {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 54px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface-2);
+  font-size: clamp(0.8rem, 3.6vw, 1.05rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background 0.2s;
+}
+
+.wd-key.wide {
+  flex: 1.6 1 0;
+  font-size: clamp(0.7rem, 3vw, 0.9rem);
+}
+
+.wd-key:active {
+  transform: scale(0.95);
+}
+
+.wd-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  animation: fade-in 0.2s;
+}
+
+.wd-modal[hidden] {
+  display: none;
+}
+
+.wd-dialog {
+  width: 100%;
+  max-width: 400px;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.wd-dialog h2 {
+  margin: 0 0 4px;
+}
+
+.wd-answer {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-weight: 600;
+  min-height: 1.4em;
+}
+
+.wd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.wd-stats b {
+  display: block;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+.wd-stats span {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.wd-dialog h3 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.wd-dist-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.wd-dist-bar {
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: #64748b;
+  color: #fff;
+  text-align: right;
+}
+
+.wd-dist-bar.hl {
+  background: #16a34a;
+}
+
+.wd-countdown {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.wd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+@keyframes wd-pop {
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes wd-flip {
+  0% {
+    transform: rotateX(0);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+@keyframes wd-shake {
+  20%, 60% {
+    transform: translateX(-6px);
+  }
+  40%, 80% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes wd-bounce {
+  40% {
+    transform: translateY(-14px);
+  }
+  70% {
+    transform: translateY(3px);
+  }
+}

@@ -1,0 +1,30 @@
+.dino-pad {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.dino-pad button {
+  height: 60px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 1.1rem;
+  font-weight: 700;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dino-pad button:active {
+  background: var(--accent);
+  color: #fff;
+}
+
+@media (pointer: coarse) {
+  .dino-pad {
+    display: grid;
+  }
+}

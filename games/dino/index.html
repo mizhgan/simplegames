@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Динозаврик — SimpleGames</title>
+  <meta name="description" content="Динозаврик-бегун: прыгайте через кактусы и пригибайтесь от птиц.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Динозаврик</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="stage-wrap" style="max-width:720px">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:600/220" aria-label="Игровое поле"></canvas>
+          <div class="overlay" id="overlay">
+            <h2 id="overlay-title">Динозаврик</h2>
+            <p id="overlay-text">Пробел или касание — прыжок, стрелка вниз — пригнуться.</p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="start-btn">Бежать</button>
+            </div>
+          </div>
+        </div>
+        <div class="dino-pad">
+          <button type="button" id="duck-btn">▼ Пригнуться</button>
+          <button type="button" id="jump-btn">▲ Прыжок</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Динозаврик бежит сам, скорость постепенно растёт.</li>
+            <li><kbd>Пробел</kbd> или <kbd>↑</kbd> — прыжок. Чем дольше держите, тем выше прыжок.</li>
+            <li><kbd>↓</kbd> — пригнуться (от птиц на средней высоте) или быстрее приземлиться.</li>
+            <li>На телефоне: касание поля — прыжок, внизу есть кнопки прыжка и приседания.</li>
+            <li>Птицы появляются после 250 очков: низких перепрыгивайте, от средних пригибайтесь.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
