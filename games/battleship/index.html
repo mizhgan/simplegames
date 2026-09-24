@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Морской бой — SimpleGames</title>
+  <meta name="description" content="Морской бой против компьютера: классический флот, три уровня сложности.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Морской бой</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Выстрелы</span><span class="stat-value" id="shots">0</span></div>
+        <div class="stat"><span class="stat-label">Точность</span><span class="stat-value" id="accuracy">—</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="game-controls" id="setup">
+          <button class="btn btn-ghost" type="button" id="shuffle-btn">🔀 Перемешать флот</button>
+          <button class="btn btn-primary" type="button" id="start-btn">В бой!</button>
+        </div>
+        <div class="bs-boards">
+          <div class="bs-side">
+            <h2>Ваш флот <span>кораблей: <b id="my-left">10</b></span></h2>
+            <div class="bs-grid" id="my-board" aria-label="Ваше поле"></div>
+          </div>
+          <div class="bs-side enemy">
+            <h2>Противник <span>кораблей: <b id="enemy-left">10</b></span></h2>
+            <div class="bs-grid" id="enemy-board" aria-label="Поле противника"></div>
+          </div>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-ghost" type="button" id="surrender-btn" hidden>🏳 Сдаться</button>
+          <div id="restart-row" hidden><button class="btn btn-primary" type="button" id="again-btn">Новая игра</button></div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>У каждого флот из 10 кораблей: один четырёхпалубный, два трёхпалубных, три двухпалубных и четыре однопалубных. Корабли не касаются друг друга даже углами.</li>
+            <li>Нажмите «Перемешать флот», чтобы выбрать расстановку, и «В бой!».</li>
+            <li>Стреляйте по полю противника. Попали — стреляете ещё раз, промахнулись — ход переходит к противнику.</li>
+            <li>Клетки вокруг потопленного корабля отмечаются автоматически — там кораблей быть не может.</li>
+            <li>На уровне «Сложно» компьютер стреляет по карте вероятностей и добивает раненые корабли.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

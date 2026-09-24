@@ -642,6 +642,16 @@ main {
   display: none;
 }
 
+/* Оверлей поверх тёмного холста — светлый текст в любой теме */
+.overlay.on-dark {
+  background: rgba(8, 10, 24, 0.55);
+  color: #fff;
+}
+
+.overlay.on-dark p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
 .overlay h2 {
   margin: 0;
   font-size: clamp(1.5rem, 5vw, 2.1rem);
