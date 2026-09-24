@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SimpleGames — простые браузерные игры</title>
-  <meta name="description" content="Коллекция простых браузерных игр: тетрис, вордли, косынка, шашки, змейка, 2048, судоку, сапёр, линии и другие. Без регистрации и установки.">
+  <meta name="description" content="Коллекция простых браузерных игр: тетрис, вордли, косынка, паук, шашки, реверси, морской бой, три в ряд, 2048, судоку, сапёр и другие. Без регистрации и установки.">
   <meta name="theme-color" content="#0d0e1a">
   <meta property="og:title" content="SimpleGames — простые браузерные игры">
-  <meta property="og:description" content="Тетрис, вордли, косынка, шашки, змейка, 2048, судоку, сапёр и другие игры прямо в браузере.">
+  <meta property="og:description" content="Тетрис, вордли, косынка, паук, шашки, морской бой, три в ряд, 2048, судоку и другие игры прямо в браузере.">
   <meta property="og:type" content="website">
   <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="sg/css/style.css">
@@ -28,7 +28,7 @@
 
   <main>
     <section class="hero container">
-      <div class="hero-badge"><span class="dot"></span>16 игр · бесплатно · без регистрации</div>
+      <div class="hero-badge"><span class="dot"></span>21 игра · бесплатно · без регистрации</div>
       <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
       <p>Классика, в которую приятно сыграть пару минут: на компьютере, планшете или телефоне. Ничего не нужно устанавливать, а рекорды сохраняются у вас в браузере.</p>
     </section>
@@ -430,6 +430,106 @@
             <h3>Линии</h3>
             <p>Легендарные Lines 98: передвигайте шарики и собирайте линии по пять одного цвета.</p>
             <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="lines-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/spider/index.html" data-cat="board" style="--g1:#0d9488;--g2:#134e4a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="800">
+              <g stroke="#d1d5db">
+                <rect x="28" y="10" width="30" height="42" rx="4" fill="#fff"/><rect x="28" y="22" width="30" height="42" rx="4" fill="#fff"/><rect x="28" y="34" width="30" height="42" rx="4" fill="#fff"/>
+                <rect x="65" y="10" width="30" height="42" rx="4" fill="#fff"/><rect x="65" y="22" width="30" height="42" rx="4" fill="#fff"/><rect x="65" y="34" width="30" height="42" rx="4" fill="#fff"/><rect x="65" y="46" width="30" height="42" rx="4" fill="#fff"/>
+                <rect x="102" y="10" width="30" height="42" rx="4" fill="#fff"/><rect x="102" y="22" width="30" height="42" rx="4" fill="#fff"/>
+              </g>
+              <g font-size="9" fill="#111827">
+                <text x="31" y="19">K♠</text><text x="31" y="31">Q♠</text><text x="31" y="43">J♠</text>
+                <text x="68" y="19">9♠</text><text x="68" y="31">8♠</text><text x="68" y="43">7♠</text><text x="68" y="55">6♠</text>
+                <text x="105" y="19">5♠</text><text x="105" y="31">4♠</text>
+              </g>
+              <text x="43" y="66" font-size="16" text-anchor="middle" fill="#111827">♠</text>
+              <text x="80" y="78" font-size="16" text-anchor="middle" fill="#111827">♠</text>
+              <text x="117" y="44" font-size="16" text-anchor="middle" fill="#111827">♠</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Паук</h3>
+            <p>Пасьянс из двух колод: собирайте ряды от короля до туза. Одна, две или четыре масти.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="spider-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/reversi/index.html" data-cat="board" style="--g1:#22c55e;--g2:#14532d">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="40" y="10" width="80" height="80" rx="6" fill="#1f7a43"/>
+              <path d="M60 10v80M80 10v80M100 10v80M40 30h80M40 50h80M40 70h80" stroke="#14532d" stroke-width="2"/>
+              <g fill="#111827"><circle cx="70" cy="40" r="8"/><circle cx="90" cy="60" r="8"/><circle cx="90" cy="40" r="8"/><circle cx="50" cy="20" r="8"/></g>
+              <g fill="#f8fafc"><circle cx="70" cy="60" r="8"/><circle cx="110" cy="40" r="8"/><circle cx="70" cy="80" r="8"/></g>
+              <circle cx="110" cy="60" r="3" fill="rgba(255,255,255,.4)"/><circle cx="50" cy="60" r="3" fill="rgba(255,255,255,.4)"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Реверси</h3>
+            <p>Окружайте фишки соперника, чтобы перевернуть их. Против компьютера или вдвоём.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="reversi-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/battleship/index.html" data-cat="board" style="--g1:#0284c7;--g2:#0c4a6e">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="30" y="10" width="100" height="80" rx="6" fill="rgba(255,255,255,.14)"/>
+              <path d="M40 10v80M50 10v80M60 10v80M70 10v80M80 10v80M90 10v80M100 10v80M110 10v80M120 10v80M30 20h100M30 30h100M30 40h100M30 50h100M30 60h100M30 70h100M30 80h100" stroke="rgba(255,255,255,.18)"/>
+              <rect x="41" y="31" width="38" height="8" rx="2" fill="#cbd5e1"/>
+              <rect x="101" y="21" width="8" height="28" rx="2" fill="#cbd5e1"/>
+              <rect x="61" y="61" width="18" height="8" rx="2" fill="#b91c1c"/>
+              <g fill="#f97316"><rect x="101" y="61" width="8" height="8" rx="2"/></g>
+              <g fill="rgba(255,255,255,.7)"><circle cx="45" cy="75" r="2"/><circle cx="95" cy="45" r="2"/><circle cx="115" cy="75" r="2"/><circle cx="85" cy="25" r="2"/></g>
+              <text x="65" y="68.5" font-size="8" fill="#fff" font-weight="900">✕✕</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Морской бой</h3>
+            <p>Найдите и потопите флот противника раньше, чем он потопит ваш. Три уровня сложности.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="battleship-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/match3/index.html" data-cat="puzzle" style="--g1:#d946ef;--g2:#6b21a8">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="38" y="8" width="84" height="84" rx="8" fill="rgba(255,255,255,.14)"/>
+              <g>
+                <circle cx="52" cy="22" r="9" fill="#ef4444"/><rect x="70" y="13" width="18" height="18" rx="4" fill="#3b82f6"/><path d="M108 13l9 9-9 9-9-9z" fill="#22c55e"/>
+                <path d="M52 41l9 16H43z" fill="#eab308"/><circle cx="80" cy="50" r="9" fill="#ef4444"/><rect x="99" y="41" width="18" height="18" rx="4" fill="#3b82f6"/>
+                <circle cx="52" cy="78" r="9" fill="#ef4444"/><circle cx="80" cy="78" r="9" fill="#ef4444"/><circle cx="108" cy="78" r="9" fill="#ef4444"/>
+              </g>
+              <rect x="40" y="66" width="80" height="24" rx="12" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 3"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Три в ряд</h3>
+            <p>Меняйте камни местами, собирайте ряды и устраивайте каскады. 30 ходов на рекорд.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="match3-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/stack/index.html" data-cat="arcade" style="--g1:#f43f5e;--g2:#7c2d12">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g>
+                <rect x="45" y="78" width="70" height="12" fill="#fda4af"/><path d="M45 78l6-6h70l-6 6z" fill="#ffe4e6"/><path d="M115 78l6-6v12l-6 6z" fill="#e11d48"/>
+                <rect x="47" y="64" width="66" height="12" fill="#fdba74"/><path d="M47 64l6-6h66l-6 6z" fill="#ffedd5"/><path d="M113 64l6-6v12l-6 6z" fill="#ea580c"/>
+                <rect x="52" y="50" width="58" height="12" fill="#fde047"/><path d="M52 50l6-6h58l-6 6z" fill="#fef9c3"/><path d="M110 50l6-6v12l-6 6z" fill="#ca8a04"/>
+                <rect x="72" y="22" width="58" height="12" fill="#86efac"/><path d="M72 22l6-6h58l-6 6z" fill="#dcfce7"/><path d="M130 22l6-6v12l-6 6z" fill="#16a34a"/>
+              </g>
+              <path d="M80 38v6" stroke="#fff" stroke-width="2" stroke-dasharray="2 2"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Stack</h3>
+            <p>Одно касание — один блок. Ставьте их ровно друг на друга и стройте башню до небес.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="stack-best"></span></div>
           </div>
         </a>
       </div>

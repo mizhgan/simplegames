@@ -1,0 +1,99 @@
+.m3-wrap {
+  max-width: 480px;
+}
+
+.m3-board {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background:
+    repeating-conic-gradient(var(--board-cell) 0 25%, var(--board-bg) 0 50%) 0 0 / 25% 25%;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.m3-gem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12.5%;
+  height: 12.5%;
+  transform: translate(calc(var(--c) * 100%), calc(var(--r) * 100%));
+  transition: transform 0.23s cubic-bezier(0.4, 0.1, 0.4, 1.2);
+  cursor: pointer;
+}
+
+.m3-gem span {
+  position: absolute;
+  inset: 12%;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.m3-gem.selected span {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 6px #fff);
+}
+
+.m3-gem.hint span {
+  animation: m3-hint 0.6s ease-in-out infinite;
+}
+
+.m3-gem.vanish span {
+  transform: scale(0) rotate(90deg);
+  opacity: 0;
+}
+
+.m3-gem[data-t="0"] span { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fecaca, #ef4444 55%, #991b1b); }
+.m3-gem[data-t="1"] span { border-radius: 22%; background: radial-gradient(circle at 35% 30%, #bfdbfe, #3b82f6 55%, #1e3a8a); }
+.m3-gem[data-t="2"] span { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); background: linear-gradient(135deg, #bbf7d0, #22c55e 50%, #14532d); }
+.m3-gem[data-t="3"] span { clip-path: polygon(50% 4%, 97% 90%, 3% 90%); background: linear-gradient(160deg, #fef08a, #eab308 55%, #854d0e); }
+.m3-gem[data-t="4"] span { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); background: linear-gradient(135deg, #e9d5ff, #a855f7 50%, #581c87); }
+.m3-gem[data-t="5"] span { clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 92%, 50% 70%, 21% 92%, 32% 57%, 2% 35%, 39% 35%); background: linear-gradient(135deg, #fed7aa, #f97316 50%, #9a3412); }
+
+.m3-popup {
+  position: absolute;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.2rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  animation: m3-popup 0.9s ease-out forwards;
+}
+
+.m3-toast {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  z-index: 6;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 700;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.m3-toast.show {
+  opacity: 1;
+}
+
+@keyframes m3-hint {
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes m3-popup {
+  to {
+    transform: translate(-50%, -150%);
+    opacity: 0;
+  }
+}

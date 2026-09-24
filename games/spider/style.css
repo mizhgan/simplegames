@@ -1,0 +1,14 @@
+.spider-wrap {
+  max-width: 900px;
+}
+
+.spider-stock::after {
+  content: "∅";
+}
+
+.spider-info {
+  min-height: 1.4em;
+  color: var(--danger);
+  font-weight: 600;
+  text-align: center;
+}

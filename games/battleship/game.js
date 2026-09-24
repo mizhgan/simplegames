@@ -1,0 +1,336 @@
+/* Морской бой */
+(() => {
+  'use strict';
+
+  const N = 10;
+  const FLEET = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+  const LETTERS = 'АБВГДЕЖЗИК';
+  // Состояние клетки глазами стреляющего
+  const UNKNOWN = 0;
+  const MISS = 1;
+  const HIT = 2;
+  const SUNK = 3;
+
+  const $ = (id) => document.getElementById(id);
+  const myEl = $('my-board');
+  const enemyEl = $('enemy-board');
+  const statusEl = $('status');
+  const setupEl = $('setup');
+
+  let difficulty = SG.store.get('battleship-diff', 'normal');
+  let phase; // setup | player | enemy | over
+  let me, enemy; // { ships: [{cells, hits}], at: Map(cell → ship), shots: Array(N*N) }
+  let shots = 0;
+  let hits = 0;
+  let aiTimer = 0;
+
+  const idx = (r, c) => r * N + c;
+  const inside = (r, c) => r >= 0 && r < N && c >= 0 && c < N;
+
+  function around(i, diag = true) {
+    const r = Math.floor(i / N);
+    const c = i % N;
+    const out = [];
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if ((!dr && !dc) || (!diag && dr && dc)) continue;
+        if (inside(r + dr, c + dc)) out.push(idx(r + dr, c + dc));
+      }
+    }
+    return out;
+  }
+
+  // ---------- расстановка ----------
+
+  function randomFleet() {
+    for (;;) {
+      const at = new Map();
+      const ships = [];
+      let ok = true;
+      for (const len of FLEET) {
+        let placed = false;
+        for (let attempt = 0; attempt < 300 && !placed; attempt++) {
+          const vert = Math.random() < 0.5;
+          const r = Math.floor(Math.random() * (vert ? N - len + 1 : N));
+          const c = Math.floor(Math.random() * (vert ? N : N - len + 1));
+          const shipCells = Array.from({ length: len }, (_, k) => (vert ? idx(r + k, c) : idx(r, c + k)));
+          // корабли не касаются друг друга даже углами
+          if (shipCells.some((i) => at.has(i) || around(i).some((n) => at.has(n)))) continue;
+          const ship = { cells: shipCells, hits: 0 };
+          shipCells.forEach((i) => at.set(i, ship));
+          ships.push(ship);
+          placed = true;
+        }
+        if (!placed) {
+          ok = false;
+          break;
+        }
+      }
+      if (ok) return { ships, at, shots: Array(N * N).fill(UNKNOWN) };
+    }
+  }
+
+  // ---------- выстрел ----------
+
+  // Возвращает 'miss' | 'hit' | 'sunk'
+  function fire(target, i) {
+    const ship = target.at.get(i);
+    if (!ship) {
+      target.shots[i] = MISS;
+      return 'miss';
+    }
+    target.shots[i] = HIT;
+    ship.hits++;
+    if (ship.hits < ship.cells.length) return 'hit';
+    ship.cells.forEach((c) => (target.shots[c] = SUNK));
+    // клетки вокруг потопленного корабля заведомо пусты
+    ship.cells.forEach((c) => around(c).forEach((n) => target.shots[n] === UNKNOWN && (target.shots[n] = MISS)));
+    return 'sunk';
+  }
+
+  const fleetLeft = (side) => side.ships.filter((s) => s.hits < s.cells.length).length;
+  const allSunk = (side) => fleetLeft(side) === 0;
+
+  // ---------- ИИ ----------
+
+  function aiKnowledge() {
+    const k = me.shots.slice();
+    // по диагонали от попадания кораблей быть не может
+    k.forEach((v, i) => {
+      if (v !== HIT) return;
+      const r = Math.floor(i / N);
+      const c = i % N;
+      for (const [dr, dc] of [[-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+        if (inside(r + dr, c + dc) && k[idx(r + dr, c + dc)] === UNKNOWN) k[idx(r + dr, c + dc)] = MISS;
+      }
+    });
+    return k;
+  }
+
+  function remainingLengths() {
+    return me.ships.filter((s) => s.hits < s.cells.length).map((s) => s.cells.length);
+  }
+
+  function aiChoose() {
+    const k = aiKnowledge();
+    const unknown = [];
+    k.forEach((v, i) => v === UNKNOWN && unknown.push(i));
+    const hitsOpen = [];
+    k.forEach((v, i) => v === HIT && hitsOpen.push(i));
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    if (difficulty === 'easy') return pick(unknown);
+
+    if (difficulty === 'normal') {
+      if (hitsOpen.length) {
+        // добиваем раненый корабль: продолжаем линию или пробуем соседей
+        let cand = [];
+        if (hitsOpen.length > 1) {
+          const vert = hitsOpen[0] % N === hitsOpen[1] % N;
+          const sorted = hitsOpen.slice().sort((a, b) => a - b);
+          const step = vert ? N : 1;
+          const ends = [sorted[0] - step, sorted[sorted.length - 1] + step];
+          cand = ends.filter((i) => i >= 0 && i < N * N && k[i] === UNKNOWN && (vert || Math.floor(i / N) === Math.floor(sorted[0] / N)));
+        }
+        if (!cand.length) hitsOpen.forEach((h) => around(h, false).forEach((n) => k[n] === UNKNOWN && cand.push(n)));
+        if (cand.length) return pick(cand);
+      }
+      // поиск по «шахматке»: самый маленький из оставшихся кораблей не проскочит
+      const minLen = Math.min(...remainingLengths());
+      const parity = unknown.filter((i) => (Math.floor(i / N) + (i % N)) % Math.max(2, minLen) === 0);
+      return pick(parity.length ? parity : unknown);
+    }
+
+    // hard: карта вероятностей — сколько способов поставить оставшиеся корабли через клетку
+    const heat = Array(N * N).fill(0);
+    for (const len of remainingLengths()) {
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          for (const vert of [false, true]) {
+            if (vert ? r + len > N : c + len > N) continue;
+            const cellsP = Array.from({ length: len }, (_, t) => (vert ? idx(r + t, c) : idx(r, c + t)));
+            if (cellsP.some((i) => k[i] === MISS || k[i] === SUNK)) continue;
+            const covered = cellsP.filter((i) => k[i] === HIT).length;
+            if (hitsOpen.length && !covered) continue;
+            const w = hitsOpen.length ? 1 + covered * 20 : 1;
+            cellsP.forEach((i) => k[i] === UNKNOWN && (heat[i] += w));
+          }
+        }
+      }
+    }
+    let best = -1;
+    let bestCells = [];
+    unknown.forEach((i) => {
+      if (heat[i] > best) {
+        best = heat[i];
+        bestCells = [i];
+      } else if (heat[i] === best) bestCells.push(i);
+    });
+    return pick(bestCells.length ? bestCells : unknown);
+  }
+
+  // ---------- отрисовка ----------
+
+  function buildGrid(el, onClick) {
+    el.innerHTML = '';
+    const corner = document.createElement('span');
+    corner.className = 'bs-label';
+    el.appendChild(corner);
+    for (let c = 0; c < N; c++) {
+      const l = document.createElement('span');
+      l.className = 'bs-label';
+      l.textContent = LETTERS[c];
+      el.appendChild(l);
+    }
+    const cellsOut = [];
+    for (let r = 0; r < N; r++) {
+      const l = document.createElement('span');
+      l.className = 'bs-label';
+      l.textContent = r + 1;
+      el.appendChild(l);
+      for (let c = 0; c < N; c++) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'bs-cell';
+        b.setAttribute('aria-label', LETTERS[c] + (r + 1));
+        if (onClick) b.addEventListener('click', () => onClick(idx(r, c)));
+        el.appendChild(b);
+        cellsOut.push(b);
+      }
+    }
+    return cellsOut;
+  }
+
+  const myCells = buildGrid(myEl, null);
+  const enemyCells = buildGrid(enemyEl, playerShoot);
+
+  function paint(cellsArr, side, showShips) {
+    cellsArr.forEach((el, i) => {
+      const s = side.shots[i];
+      const ship = side.at.get(i);
+      el.className = 'bs-cell';
+      if (showShips && ship) el.classList.add('ship');
+      if (s === MISS) el.classList.add('miss');
+      if (s === HIT) el.classList.add('hit');
+      if (s === SUNK) el.classList.add('sunk');
+      el.disabled = !(side === enemy && phase === 'player' && s === UNKNOWN);
+    });
+  }
+
+  function render() {
+    paint(myCells, me, true);
+    paint(enemyCells, enemy, phase === 'over');
+    $('my-left').textContent = fleetLeft(me);
+    $('enemy-left').textContent = fleetLeft(enemy);
+    $('shots').textContent = shots;
+    $('accuracy').textContent = shots ? Math.round((hits / shots) * 100) + '%' : '—';
+    enemyEl.classList.toggle('active', phase === 'player');
+    myEl.classList.toggle('active', phase === 'enemy');
+    setupEl.hidden = phase !== 'setup';
+    $('surrender-btn').hidden = phase !== 'player' && phase !== 'enemy';
+  }
+
+  function flash(cellsArr, i, cls) {
+    const el = cellsArr[i];
+    el.classList.add(cls);
+  }
+
+  // ---------- ход ----------
+
+  function playerShoot(i) {
+    if (phase !== 'player' || enemy.shots[i] !== UNKNOWN) return;
+    const res = fire(enemy, i);
+    shots++;
+    if (res !== 'miss') hits++;
+    render();
+    flash(enemyCells, i, 'boom');
+    if (res === 'miss') {
+      SG.sound.play('drop');
+      phase = 'enemy';
+      statusEl.textContent = 'Мимо. Стреляет противник…';
+      render();
+      aiTimer = setTimeout(aiShoot, 750);
+    } else if (res === 'hit') {
+      SG.sound.play('hit');
+      statusEl.textContent = 'Попадание! Стреляйте ещё.';
+    } else {
+      SG.sound.play('explode');
+      if (allSunk(enemy)) return finish(true);
+      statusEl.textContent = 'Корабль потоплен! Стреляйте ещё.';
+    }
+  }
+
+  function aiShoot() {
+    if (phase !== 'enemy') return;
+    const i = aiChoose();
+    const res = fire(me, i);
+    render();
+    flash(myCells, i, 'boom');
+    const where = LETTERS[i % N] + (Math.floor(i / N) + 1);
+    if (res === 'miss') {
+      SG.sound.play('drop');
+      phase = 'player';
+      statusEl.textContent = 'Противник промахнулся (' + where + '). Ваш выстрел!';
+      render();
+      return;
+    }
+    SG.sound.play(res === 'hit' ? 'hit' : 'explode');
+    if (res === 'sunk' && allSunk(me)) return finish(false);
+    statusEl.textContent = (res === 'hit' ? 'Противник попал в ' : 'Противник потопил корабль в ') + where + '…';
+    aiTimer = setTimeout(aiShoot, 850);
+  }
+
+  function finish(won) {
+    phase = 'over';
+    clearTimeout(aiTimer);
+    if (won) {
+      SG.store.set('battleship-wins', SG.store.get('battleship-wins', 0) + 1);
+      const best = SG.store.get('battleship-best', null);
+      if (best === null || shots < best) SG.store.set('battleship-best', shots);
+    }
+    SG.sound.play(won ? 'win' : 'lose');
+    statusEl.textContent = won
+      ? 'Победа! Флот противника уничтожен за ' + shots + ' выстрелов 🎉'
+      : 'Поражение: ваш флот потоплен. Корабли противника показаны на поле.';
+    render();
+    $('restart-row').hidden = false;
+  }
+
+  function newGame() {
+    clearTimeout(aiTimer);
+    me = randomFleet();
+    enemy = randomFleet();
+    shots = 0;
+    hits = 0;
+    phase = 'setup';
+    statusEl.textContent = 'Расставьте флот: нажмите «Перемешать», пока расстановка не понравится.';
+    $('restart-row').hidden = true;
+    render();
+  }
+
+  $('shuffle-btn').addEventListener('click', (e) => {
+    e.currentTarget.blur();
+    me = randomFleet();
+    SG.sound.play('slide');
+    render();
+  });
+  $('start-btn').addEventListener('click', (e) => {
+    e.currentTarget.blur();
+    phase = 'player';
+    statusEl.textContent = 'Ваш выстрел — кликните по полю противника.';
+    SG.sound.play('click');
+    render();
+  });
+  $('surrender-btn').addEventListener('click', (e) => {
+    e.currentTarget.blur();
+    finish(false);
+  });
+  $('again-btn').addEventListener('click', newGame);
+
+  SG.segmented($('difficulty'), difficulty, (v) => {
+    difficulty = v;
+    SG.store.set('battleship-diff', v);
+  });
+
+  newGame();
+})();
