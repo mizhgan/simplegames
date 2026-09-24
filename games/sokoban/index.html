@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Сокобан — SimpleGames</title>
+  <meta name="description" content="Сокобан онлайн: толкайте ящики на отмеченные места. 32 уровня от простых к сложным.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Сокобан</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Уровень</span><span class="stat-value" id="level">1/32</span></div>
+        <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
+        <div class="stat"><span class="stat-label">Толчки</span><span class="stat-value" id="pushes">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <button class="btn btn-ghost" type="button" id="prev-btn">◀ Уровень</button>
+          <button class="btn btn-ghost" type="button" id="next-btn">Уровень ▶</button>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="stage-wrap sk-wrap">
+          <div class="sk-board" id="board" aria-label="Склад"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2>Уровень пройден! 🎉</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="again-btn">Следующий уровень</button>
+            </div>
+          </div>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-ghost" type="button" id="undo-btn">↶ Отменить</button>
+          <button class="btn btn-ghost" type="button" id="restart-btn">⟲ Заново</button>
+        </div>
+        <div class="dpad" aria-label="Управление">
+          <button type="button" data-dir="up" aria-label="Вверх">▲</button>
+          <button type="button" data-dir="left" aria-label="Влево">◀</button>
+          <button type="button" data-dir="right" aria-label="Вправо">▶</button>
+          <button type="button" data-dir="down" aria-label="Вниз">▼</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Вы — кладовщик. Задача — расставить все ящики на отмеченные кружками места.</li>
+            <li>Ящики можно только <b>толкать</b>, и только по одному. Тянуть ящик нельзя — не загоняйте его в угол.</li>
+            <li>Управление: стрелки или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, свайпы или кнопки на экране. Можно нажать на клетку — кладовщик сам дойдёт до неё.</li>
+            <li><kbd>Z</kbd> — отменить ход, <kbd>R</kbd> — начать уровень заново.</li>
+            <li>Все 32 уровня проверены компьютером: у каждого есть решение. После прохождения видно минимально возможное число толчков.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

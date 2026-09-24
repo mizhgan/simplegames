@@ -1,0 +1,131 @@
+.yz-dice {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2.5vw, 14px);
+}
+
+.yz-die {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  gap: 3px;
+  width: clamp(48px, 14vw, 64px);
+  aspect-ratio: 1;
+  padding: clamp(7px, 2vw, 10px);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 0 #cbd5e1, 0 6px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.yz-die:disabled {
+  cursor: default;
+}
+
+.yz-die i {
+  border-radius: 50%;
+}
+
+.yz-die i.on {
+  background: #111827;
+}
+
+.yz-die.blank i.on {
+  background: #cbd5e1;
+}
+
+.yz-die.held {
+  border-color: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 60%, #000), 0 10px 16px rgba(0, 0, 0, 0.2);
+}
+
+.yz-die.rolling {
+  animation: yz-roll 0.4s ease-out;
+}
+
+.yz-table {
+  width: 100%;
+  max-width: 420px;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.yz-table th,
+.yz-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.yz-table thead th {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.yz-table tbody th {
+  font-weight: 600;
+  text-align: left;
+}
+
+.yz-table small {
+  margin-left: 6px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.yz-table td {
+  width: 72px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.yz-table td.fresh {
+  color: var(--accent);
+}
+
+.yz-table tr.sub th,
+.yz-table tr.sub td {
+  background: var(--surface-2);
+  font-size: 0.85rem;
+}
+
+.yz-table tr.total th,
+.yz-table tr.total td {
+  border-bottom: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.yz-pick {
+  width: 100%;
+  padding: 0;
+  line-height: 1.5;
+  border: 1px dashed var(--accent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.yz-pick.zero {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+
+.yz-pick:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+@keyframes yz-roll {
+  0% { transform: rotate(0) scale(0.8); }
+  60% { transform: rotate(300deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}

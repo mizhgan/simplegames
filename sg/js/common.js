@@ -120,6 +120,28 @@
     );
   }
 
+  // Экранные кнопки-«клавиши» для аркад: [data-key] внутри el. Пока кнопка нажата, keys[код] = true.
+  function touchKeys(el, keys, onPress) {
+    el.querySelectorAll('[data-key]').forEach((b) => {
+      const code = b.dataset.key;
+      const off = () => {
+        keys[code] = false;
+        b.classList.remove('down');
+      };
+      b.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        b.setPointerCapture(e.pointerId);
+        keys[code] = true;
+        b.classList.add('down');
+        if (onPress) onPress(code);
+      });
+      b.addEventListener('pointerup', off);
+      b.addEventListener('pointercancel', off);
+      b.addEventListener('lostpointercapture', off);
+      b.addEventListener('contextmenu', (e) => e.preventDefault());
+    });
+  }
+
   // Сегментированный переключатель: [data-value] кнопки внутри .seg.
   function segmented(el, value, onChange) {
     const buttons = [...el.querySelectorAll('button[data-value]')];
@@ -329,7 +351,7 @@
     nav.insertBefore(btn, nav.firstChild);
   }
 
-  window.SG = { store, cssVar, currentTheme, formatTime, onSwipe, segmented, shuffle, sound };
+  window.SG = { store, cssVar, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound };
 
   // ---------- офлайн-режим и установка как приложения ----------
 

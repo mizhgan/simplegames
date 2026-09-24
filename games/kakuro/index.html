@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Какуро — SimpleGames</title>
+  <meta name="description" content="Какуро онлайн — «японский кроссворд из цифр»: заполните клетки так, чтобы совпали суммы. Бесконечные головоломки с единственным решением.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Какуро</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">—</span></div>
+        <div class="stat"><span class="stat-label">Решено</span><span class="stat-value" id="solved">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="level" role="group" aria-label="Размер">
+            <button type="button" data-value="easy">Малое</button>
+            <button type="button" data-value="medium">Среднее</button>
+            <button type="button" data-value="hard">Большое</button>
+          </div>
+          <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="stage-wrap">
+          <div class="kk-board" id="board" aria-label="Поле какуро"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2>Решено! 🎉</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="again-btn">Новая головоломка</button>
+            </div>
+          </div>
+        </div>
+        <div class="kk-combos" id="combos" aria-live="polite"></div>
+        <div class="kk-pad" id="pad" aria-label="Цифры"></div>
+        <div class="game-controls">
+          <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Впишите в белые клетки цифры от 1 до 9.</li>
+            <li>Число в тёмной клетке — сумма цифр в серии: над диагональю — для серии вправо (→), под диагональю — для серии вниз (↓).</li>
+            <li>В одной серии цифры не повторяются. Например, 4 в двух клетках — только 1 и 3.</li>
+            <li>Под полем показаны все наборы цифр, подходящие для серий выбранной клетки. Выполненные суммы подсвечиваются зелёным, ошибки — красным.</li>
+            <li>Управление: клик по клетке и цифра на панели или клавиатуре, стрелки — перемещение, <kbd>H</kbd> — подсказка. У каждой головоломки ровно одно решение.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="gen.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

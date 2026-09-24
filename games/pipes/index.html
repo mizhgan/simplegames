@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Водопроводчик — SimpleGames</title>
+  <meta name="description" content="Головоломка «Водопроводчик»: поворачивайте трубы, чтобы вода из источника дошла до всех домов.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Водопроводчик</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
+        <div class="stat"><span class="stat-label">Вода</span><span class="stat-value" id="wet">0%</span></div>
+        <div class="stat"><span class="stat-label">Решено</span><span class="stat-value" id="solved">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="size" role="group" aria-label="Размер поля">
+            <button type="button" data-value="5">5×5</button>
+            <button type="button" data-value="7">7×7</button>
+            <button type="button" data-value="9">9×9</button>
+          </div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="stage-wrap">
+          <div class="pp-board" id="board" aria-label="Поле с трубами"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2>Водопровод готов! 🎉</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="again-btn">Следующий уровень</button>
+            </div>
+          </div>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новый уровень</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>В центре — источник воды, по краям труб — дома. Нажимайте на клетки, чтобы поворачивать трубы.</li>
+            <li>Клик (касание) поворачивает трубу по часовой стрелке, правый клик — против.</li>
+            <li>Трубы, до которых дошла вода, становятся голубыми.</li>
+            <li>Цель — провести воду ко всем клеткам так, чтобы не осталось ни одного незакрытого конца трубы.</li>
+            <li>Подсказка: начинайте с краёв и углов — там у труб меньше всего вариантов поворота.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

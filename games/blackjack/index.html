@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Двадцать одно — SimpleGames</title>
+  <meta name="description" content="Блэкджек (двадцать одно) онлайн: наберите больше дилера, но не больше 21.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/cards.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Двадцать одно</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Банк</span><span class="stat-value" id="balance">1000</span></div>
+        <div class="stat"><span class="stat-label">Ставка</span><span class="stat-value" id="stake">50</span></div>
+        <div class="stat"><span class="stat-label">Побед</span><span class="stat-value" id="wins">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="bj">
+          <div class="bj-label"><span>Дилер</span><b id="dealer-total"></b></div>
+          <div class="bj-hand" id="dealer" aria-label="Карты дилера"></div>
+          <div class="bj-rule">Блэкджек платит 3:2 · дилер останавливается на 17</div>
+          <div class="bj-hand" id="player" aria-label="Ваши карты"></div>
+          <div class="bj-label"><span>Вы</span><b id="player-total"></b></div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="game-controls">
+          <div class="seg" id="bet" role="group" aria-label="Ставка">
+            <button type="button" data-value="10">10</button>
+            <button type="button" data-value="25">25</button>
+            <button type="button" data-value="50">50</button>
+            <button type="button" data-value="100">100</button>
+          </div>
+          <button class="btn btn-primary" type="button" id="deal-btn">Раздать</button>
+          <button class="btn btn-primary" type="button" id="hit-btn" hidden>Ещё</button>
+          <button class="btn btn-ghost" type="button" id="stand-btn" hidden>Хватит</button>
+          <button class="btn btn-ghost" type="button" id="double-btn" hidden>Удвоить</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Цель — набрать больше очков, чем дилер, но не больше 21. Карты 2–10 — по номиналу, картинки — 10, туз — 1 или 11.</li>
+            <li>Выберите ставку и нажмите «Раздать». «Ещё» — взять карту, «Хватит» — остановиться.</li>
+            <li>«Удвоить» — удвоить ставку, взять ровно одну карту и остановиться (только на первых двух картах).</li>
+            <li>Туз и десятка с первой раздачи — блэкджек, он платит 3:2. Дилер берёт карты, пока у него меньше 17.</li>
+            <li>Стартовый банк — 1000 фишек, он сохраняется между визитами. Клавиши: <kbd>H</kbd> — ещё, <kbd>S</kbd> — хватит, <kbd>D</kbd> — удвоить, <kbd>Enter</kbd> — раздать.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

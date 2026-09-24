@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Космические захватчики — SimpleGames</title>
+  <meta name="description" content="Космические захватчики онлайн: отбейте атаку пришельцев из лазерной пушки. Классическая аркада в браузере.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Космические захватчики</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Очки</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Жизни</span><span class="stat-value" id="lives">♥♥♥</span></div>
+        <div class="stat"><span class="stat-label">Волна</span><span class="stat-value" id="wave">1</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="stage-wrap" style="max-width:480px">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:6/7" aria-label="Игровое поле"></canvas>
+          <div class="overlay" id="overlay">
+            <h2 id="overlay-title">Космические захватчики</h2>
+            <p id="overlay-text">Защитите Землю от волн пришельцев!</p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+            </div>
+          </div>
+        </div>
+        <div class="touch-keys" id="touch">
+          <button type="button" data-key="ArrowLeft" aria-label="Влево">◀</button>
+          <button type="button" data-key="Space" class="wide" aria-label="Огонь">🔥</button>
+          <button type="button" data-key="ArrowRight" aria-label="Вправо">▶</button>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Двигайте пушку клавишами <kbd>←</kbd> <kbd>→</kbd> (<kbd>A</kbd> <kbd>D</kbd>), стреляйте — <kbd>Пробел</kbd>. На телефоне — кнопки под полем.</li>
+            <li>Одновременно в полёте может быть только один ваш выстрел — цельтесь точнее.</li>
+            <li>Прячьтесь за зелёными укрытиями, но помните: их разрушают и ваши выстрелы, и бомбы пришельцев.</li>
+            <li>Чем меньше пришельцев осталось, тем быстрее они движутся. Дошли до земли — игра окончена.</li>
+            <li>Верхний ряд стоит 30 очков, средние — 20, нижние — 10. Красная летающая тарелка — от 50 до 300. <kbd>P</kbd> — пауза.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+.db-board {
+  width: min(480px, 92vw);
+  height: auto;
+  padding: 8px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  --p1: #3b82f6;
+  --p2: #ef4444;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.db-dot {
+  fill: var(--text);
+}
+
+.db-line .hit {
+  stroke: transparent;
+  stroke-width: 22;
+  cursor: pointer;
+}
+
+.db-line .vis {
+  stroke: var(--border);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 3 7;
+  pointer-events: none;
+  transition: stroke 0.15s;
+}
+
+.db-board[data-turn="1"] .db-line:not(.on):hover .vis {
+  stroke: var(--p1);
+  stroke-dasharray: none;
+  opacity: 0.5;
+}
+
+.db-board[data-turn="2"] .db-line:not(.on):hover .vis {
+  stroke: var(--p2);
+  stroke-dasharray: none;
+  opacity: 0.5;
+}
+
+.db-line.on .hit {
+  cursor: default;
+}
+
+.db-line.on .vis {
+  stroke: var(--text);
+  stroke-width: 6;
+  stroke-dasharray: none;
+}
+
+.db-line.last .vis {
+  stroke: #f59e0b;
+}
+
+.db-box rect {
+  fill: transparent;
+  transition: fill 0.25s;
+}
+
+.db-box[data-o="1"] rect {
+  fill: color-mix(in srgb, var(--p1) 35%, transparent);
+}
+
+.db-box[data-o="2"] rect {
+  fill: color-mix(in srgb, var(--p2) 35%, transparent);
+}
+
+.db-box text {
+  fill: var(--text);
+  font-size: 22px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.stat.p1 .stat-value { color: #3b82f6; }
+.stat.p2 .stat-value { color: #ef4444; }

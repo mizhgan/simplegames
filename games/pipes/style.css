@@ -1,0 +1,101 @@
+.pp-board {
+  --n: 7;
+  --pipe: #64748b;
+  --water: #0ea5e9;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  gap: 2px;
+  width: min(500px, 92vw);
+  aspect-ratio: 1;
+  padding: 6px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pp-tile {
+  position: relative;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+.pp-in {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.15s ease;
+}
+
+.pp-in i {
+  position: absolute;
+  background: var(--pipe);
+  transition: background 0.2s;
+}
+
+.pp-tile.wet .pp-in i {
+  background: var(--water);
+}
+
+.pp-in .arm.u,
+.pp-in .arm.d {
+  left: 38%;
+  width: 24%;
+  height: 50%;
+}
+
+.pp-in .arm.u { top: 0; }
+.pp-in .arm.d { bottom: 0; }
+
+.pp-in .arm.l,
+.pp-in .arm.r {
+  top: 38%;
+  height: 24%;
+  width: 50%;
+}
+
+.pp-in .arm.l { left: 0; }
+.pp-in .arm.r { right: 0; }
+
+.pp-in .hub {
+  left: 38%;
+  top: 38%;
+  width: 24%;
+  height: 24%;
+}
+
+.pp-in .home,
+.pp-in .src {
+  left: 22%;
+  top: 22%;
+  width: 56%;
+  height: 56%;
+  border-radius: 8px;
+  background: var(--surface-2) !important;
+  border: 3px solid var(--pipe);
+}
+
+.pp-tile.wet .pp-in .home {
+  border-color: var(--water);
+  background: color-mix(in srgb, var(--water) 30%, var(--surface)) !important;
+}
+
+.pp-in .src {
+  border-radius: 50%;
+  border-color: var(--water);
+  background: var(--water) !important;
+  box-shadow: 0 0 10px var(--water);
+}
+
+.pp-board.done .pp-tile {
+  animation: pp-glow 0.6s ease-out;
+}
+
+@keyframes pp-glow {
+  50% { background: color-mix(in srgb, var(--water) 25%, var(--surface)); }
+}

@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SimpleGames — простые браузерные игры</title>
-  <meta name="description" content="Коллекция простых браузерных игр: пакман, дурак, нарды, балда, маджонг, тетрис, вордли, филворд, косынка, шашки, морской бой, судоку и другие. Без регистрации и установки.">
+  <meta name="description" content="Коллекция простых браузерных игр: танчики, яйцелов «Ну, погоди!», пакман, дурак, нарды, балда, сокобан, тетрис, вордли, косынка, шашки, судоку, какуро и другие. Без регистрации и установки.">
   <meta name="theme-color" content="#0d0e1a">
   <meta property="og:title" content="SimpleGames — простые браузерные игры">
-  <meta property="og:description" content="Пакман, дурак, нарды, балда, маджонг, тетрис, вордли, косынка, шашки, судоку и другие игры прямо в браузере.">
+  <meta property="og:description" content="Танчики, яйцелов, пакман, дурак, нарды, сокобан, тетрис, вордли, косынка, шашки, судоку и ещё 38 игр прямо в браузере.">
   <meta property="og:type" content="website">
   <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
@@ -31,9 +31,17 @@
 
   <main>
     <section class="hero container">
-      <div class="hero-badge"><span class="dot"></span>31 игра · бесплатно · без регистрации · работает офлайн</div>
+      <div class="hero-badge"><span class="dot"></span>49 игр · бесплатно · без регистрации · работает офлайн</div>
       <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
       <p>Классика, в которую приятно сыграть пару минут: на компьютере, планшете или телефоне. Ничего не нужно устанавливать, а рекорды сохраняются у вас в браузере.</p>
+    </section>
+
+    <section class="container home-top" id="home-top">
+      <div id="daily" hidden></div>
+      <div class="recent-box" id="recent" hidden>
+        <h2>Вы недавно играли</h2>
+        <div class="mini-list"></div>
+      </div>
     </section>
 
     <section class="container" aria-labelledby="games-title">
@@ -45,6 +53,7 @@
           <button type="button" data-value="arcade">Аркады</button>
           <button type="button" data-value="puzzle">Головоломки</button>
           <button type="button" data-value="board">Настольные</button>
+          <button type="button" data-value="fav">★ Избранное</button>
         </div>
       </div>
 
@@ -713,6 +722,318 @@
             <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="jumper-best"></span></div>
           </div>
         </a>
+
+        <a class="game-card" href="games/pong/index.html" data-cat="arcade" style="--g1:#0ea5e9;--g2:#1e3a8a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <path d="M80 12 V88" stroke="rgba(255,255,255,.35)" stroke-width="3" stroke-dasharray="6 6"/>
+              <rect x="20" y="26" width="9" height="38" rx="3" fill="#e0f2fe"/>
+              <rect x="131" y="40" width="9" height="38" rx="3" fill="#7dd3fc"/>
+              <path d="M40 60 L90 44" stroke="rgba(255,255,255,.35)" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 8"/>
+              <circle cx="100" cy="41" r="7" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Понг</h3>
+            <p>Легендарный теннис для двоих: против компьютера или вдвоём на одной клавиатуре.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="pong-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/simon/index.html" data-cat="puzzle" style="--g1:#a855f7;--g2:#4c1d95">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g transform="translate(80 50)">
+                <path d="M-4 -4 V-42 A38 38 0 0 0 -42 -4 Z" fill="#22c55e" opacity=".75"/>
+                <path d="M4 -4 H42 A38 38 0 0 0 4 -42 Z" fill="#ef4444"/>
+                <path d="M-4 4 H-42 A38 38 0 0 0 -4 42 Z" fill="#facc15" opacity=".75"/>
+                <path d="M4 4 V42 A38 38 0 0 0 42 4 Z" fill="#3b82f6" opacity=".75"/>
+                <circle r="14" fill="#1e1b4b"/>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Саймон</h3>
+            <p>Запоминайте и повторяйте мелодию из цветных огней — каждый раунд длиннее.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="simon-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/hangman/index.html" data-cat="puzzle" style="--g1:#64748b;--g2:#1e293b">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <path d="M24 88 H64 M38 88 V14 H84 V24" stroke="#e2e8f0" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="84" cy="33" r="8" stroke="#fde68a" stroke-width="4" fill="none"/>
+              <path d="M84 41 V62 M84 48 L75 56 M84 48 L93 56 M84 62 L77 74" stroke="#fde68a" stroke-width="4" stroke-linecap="round"/>
+              <g font-family="system-ui, sans-serif" font-weight="800" font-size="15" fill="#fff" text-anchor="middle">
+                <text x="112" y="84">С</text><text x="126" y="84">_</text><text x="140" y="84">О</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Виселица</h3>
+            <p>Угадайте слово по буквам, пока не нарисован человечек. Тысячи русских слов.</p>
+            <div class="card-meta"><span class="tag">Слова</span><span class="best" data-best="hangman-wins" data-best-label="Угадано"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/wordsmith/index.html" data-cat="puzzle" style="--g1:#f97316;--g2:#9a3412">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g font-family="system-ui, sans-serif" font-weight="800" text-anchor="middle">
+                <g fill="#fff7ed"><rect x="17" y="18" width="22" height="26" rx="5"/><rect x="43" y="18" width="22" height="26" rx="5"/><rect x="69" y="18" width="22" height="26" rx="5"/><rect x="95" y="18" width="22" height="26" rx="5"/><rect x="121" y="18" width="22" height="26" rx="5"/></g>
+                <g fill="#9a3412" font-size="17"><text x="28" y="37">С</text><text x="54" y="37">Л</text><text x="80" y="37">О</text><text x="106" y="37">В</text><text x="132" y="37">О</text></g>
+                <g fill="rgba(255,255,255,.28)"><rect x="26" y="58" width="48" height="20" rx="10"/><rect x="84" y="58" width="50" height="20" rx="10"/></g>
+                <g fill="#fff" font-size="12"><text x="50" y="72">ЛОВ</text><text x="109" y="72">СЛОВ</text></g>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Слова из слова</h3>
+            <p>Составляйте слова из букв одного длинного слова. Найдёте все?</p>
+            <div class="card-meta"><span class="tag">Слова</span><span class="best" data-best="wordsmith-best" data-best-suffix=" слов"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/gomoku/index.html" data-cat="board" style="--g1:#d97706;--g2:#92400e">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g stroke="rgba(60,30,5,.45)" stroke-width="1.5"><path d="M30 14V86M50 14V86M70 14V86M90 14V86M110 14V86M130 14V86M24 20H136M24 36H136M24 52H136M24 68H136M24 84H136"/></g>
+              <g fill="#111"><circle cx="50" cy="84" r="7"/><circle cx="70" cy="68" r="7"/><circle cx="90" cy="52" r="7"/><circle cx="110" cy="36" r="7"/><circle cx="130" cy="20" r="7"/></g>
+              <g fill="#fff"><circle cx="70" cy="52" r="7"/><circle cx="90" cy="68" r="7"/><circle cx="50" cy="36" r="7"/></g>
+              <path d="M44 90 L136 14" stroke="#22c55e" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Гомоку</h3>
+            <p>Пять в ряд на большой доске: против компьютера или вдвоём.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="gomoku-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/dots/index.html" data-cat="board" style="--g1:#3b82f6;--g2:#1d4ed8">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="38" y="18" width="28" height="28" fill="rgba(147,197,253,.55)"/>
+              <rect x="66" y="46" width="28" height="28" fill="rgba(252,165,165,.6)"/>
+              <g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M38 18H66V46H38Z M66 46H94V74H66 M94 74V46 M94 18H122 M122 46V74"/></g>
+              <g fill="#fff"><circle cx="38" cy="18" r="4"/><circle cx="66" cy="18" r="4"/><circle cx="94" cy="18" r="4"/><circle cx="122" cy="18" r="4"/><circle cx="38" cy="46" r="4"/><circle cx="66" cy="46" r="4"/><circle cx="94" cy="46" r="4"/><circle cx="122" cy="46" r="4"/><circle cx="38" cy="74" r="4"/><circle cx="66" cy="74" r="4"/><circle cx="94" cy="74" r="4"/><circle cx="122" cy="74" r="4"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Точки и квадраты</h3>
+            <p>Соединяйте точки линиями и замыкайте квадраты — кто больше?</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="dots-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/blackjack/index.html" data-cat="board" style="--g1:#16a34a;--g2:#14532d">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g font-family="system-ui, sans-serif" font-weight="800">
+                <g transform="rotate(-10 62 52)"><rect x="40" y="18" width="46" height="64" rx="6" fill="#fff"/><text x="47" y="36" font-size="15" fill="#111">A</text><text x="63" y="62" font-size="24" fill="#111" text-anchor="middle">♠</text></g>
+                <g transform="rotate(10 100 52)"><rect x="78" y="18" width="46" height="64" rx="6" fill="#fff"/><text x="85" y="36" font-size="15" fill="#dc2626">K</text><text x="101" y="62" font-size="24" fill="#dc2626" text-anchor="middle">♥</text></g>
+                <text x="140" y="92" font-size="14" fill="#fde047" text-anchor="end">21</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Двадцать одно</h3>
+            <p>Блэкджек: наберите больше дилера, но не больше 21. Банк сохраняется.</p>
+            <div class="card-meta"><span class="tag">Карты</span><span class="best" data-best="blackjack-best" data-best-label="Лучший банк"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/yahtzee/index.html" data-cat="board" style="--g1:#ef4444;--g2:#7f1d1d">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g transform="rotate(-12 42 54)"><rect x="22" y="34" width="40" height="40" rx="9" fill="#fff"/><g fill="#111"><circle cx="32" cy="44" r="4"/><circle cx="42" cy="54" r="4"/><circle cx="52" cy="64" r="4"/></g></g>
+              <rect x="60" y="22" width="40" height="40" rx="9" fill="#fff"/><g fill="#111"><circle cx="70" cy="32" r="4"/><circle cx="90" cy="32" r="4"/><circle cx="70" cy="52" r="4"/><circle cx="90" cy="52" r="4"/><circle cx="80" cy="42" r="4"/></g>
+              <g transform="rotate(14 118 60)"><rect x="98" y="40" width="40" height="40" rx="9" fill="#fff"/><g fill="#111"><circle cx="108" cy="50" r="4"/><circle cx="128" cy="50" r="4"/><circle cx="108" cy="60" r="4"/><circle cx="128" cy="60" r="4"/><circle cx="108" cy="70" r="4"/><circle cx="128" cy="70" r="4"/></g></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Покер на костях</h3>
+            <p>Пять кубиков, три броска и тринадцать комбинаций. Против компьютера.</p>
+            <div class="card-meta"><span class="tag">Кости</span><span class="best" data-best="yahtzee-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/flow/index.html" data-cat="puzzle" style="--g1:#06b6d4;--g2:#0e7490">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="36" y="10" width="88" height="80" rx="8" fill="#111827"/>
+              <g fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M50 24 H78 V50" stroke="#ef4444"/><path d="M50 40 V76 H74" stroke="#3b82f6"/><path d="M110 24 H94 V62 H110 V76" stroke="#facc15"/>
+              </g>
+              <g><circle cx="50" cy="24" r="7" fill="#ef4444"/><circle cx="78" cy="50" r="7" fill="#ef4444"/><circle cx="50" cy="40" r="7" fill="#3b82f6"/><circle cx="74" cy="76" r="7" fill="#3b82f6"/><circle cx="110" cy="24" r="7" fill="#facc15"/><circle cx="110" cy="76" r="7" fill="#facc15"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Соедини точки</h3>
+            <p>Соедините пары точек одного цвета так, чтобы линии заполнили всё поле.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="flow-solved" data-best-label="Решено"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/pipes/index.html" data-cat="puzzle" style="--g1:#0ea5e9;--g2:#0c4a6e">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M80 50 H40 V24 M80 50 V80 H112 M80 50 H124 V22" stroke="#7dd3fc"/>
+                <path d="M40 80 H58" stroke="rgba(255,255,255,.45)"/>
+              </g>
+              <circle cx="80" cy="50" r="12" fill="#38bdf8" stroke="#e0f2fe" stroke-width="3"/>
+              <g fill="#e0f2fe"><rect x="31" y="14" width="18" height="16" rx="3"/><rect x="115" y="12" width="18" height="16" rx="3"/><rect x="104" y="72" width="18" height="16" rx="3"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Водопроводчик</h3>
+            <p>Поворачивайте трубы, чтобы вода из источника дошла до всех домов.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="pipes-solved" data-best-label="Решено"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/sokoban/index.html" data-cat="puzzle" style="--g1:#b45309;--g2:#78350f">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g fill="#9a5b3c" stroke="rgba(0,0,0,.25)" stroke-width="2"><rect x="18" y="14" width="124" height="16"/><rect x="18" y="30" width="16" height="56"/><rect x="126" y="30" width="16" height="56"/><rect x="34" y="70" width="92" height="16"/></g>
+              <rect x="62" y="38" width="26" height="26" rx="4" fill="#d99a4e" stroke="#a0652a" stroke-width="3"/>
+              <path d="M64 40 L86 62 M86 40 L64 62" stroke="rgba(0,0,0,.25)" stroke-width="3"/>
+              <circle cx="108" cy="51" r="7" fill="none" stroke="#f59e0b" stroke-width="3"/>
+              <circle cx="46" cy="51" r="9" fill="#3b82f6"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Сокобан</h3>
+            <p>Толкайте ящики на отмеченные места. 32 уровня, и у каждого есть решение.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="sokoban-solved" data-best-label="Пройдено" data-best-suffix=" из 32"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/kakuro/index.html" data-cat="puzzle" style="--g1:#6366f1;--g2:#3730a3">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g font-family="system-ui, sans-serif" font-weight="800">
+                <g fill="#374151"><rect x="40" y="12" width="26" height="26"/><rect x="68" y="12" width="26" height="26"/><rect x="96" y="12" width="26" height="26"/><rect x="40" y="40" width="26" height="26"/><rect x="40" y="68" width="26" height="26"/></g>
+                <g stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M68 12 L94 38 M96 12 L122 38 M40 40 L66 66 M40 68 L66 94"/></g>
+                <g fill="#fff" font-size="9"><text x="72" y="35">12</text><text x="101" y="35">3</text><text x="55" y="51">4</text><text x="52" y="79">15</text></g>
+                <g fill="#fff"><rect x="68" y="40" width="26" height="26"/><rect x="96" y="40" width="26" height="26"/><rect x="68" y="68" width="26" height="26"/><rect x="96" y="68" width="26" height="26"/></g>
+                <g fill="#4f46e5" font-size="17" text-anchor="middle"><text x="81" y="60">3</text><text x="109" y="60">1</text><text x="81" y="88">9</text></g>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Какуро</h3>
+            <p>Цифровой кроссворд: впишите цифры так, чтобы совпали суммы в строках и столбцах.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="kakuro-solved" data-best-label="Решено"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/killer/index.html" data-cat="puzzle" style="--g1:#8b5cf6;--g2:#5b21b6">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="44" y="10" width="72" height="80" rx="6" fill="#fff"/>
+              <g stroke="#c4b5fd" stroke-width="1.5"><path d="M68 10V90M92 10V90M44 37H116M44 63H116"/></g>
+              <g fill="none" stroke="#5b21b6" stroke-width="1.5" stroke-dasharray="3 3"><rect x="48" y="14" width="40" height="19" rx="2"/><rect x="96" y="14" width="16" height="45" rx="2"/><rect x="48" y="41" width="16" height="45" rx="2"/><rect x="72" y="41" width="16" height="45" rx="2"/></g>
+              <g font-family="system-ui, sans-serif" font-weight="800" font-size="8" fill="#5b21b6"><text x="50" y="21">11</text><text x="98" y="21">9</text><text x="50" y="48">7</text><text x="74" y="48">15</text></g>
+              <g font-family="system-ui, sans-serif" font-weight="800" font-size="15" fill="#6d28d9" text-anchor="middle"><text x="80" y="30">6</text><text x="104" y="56">4</text></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Киллер-судоку</h3>
+            <p>Судоку без готовых цифр: вместо них суммы в пунктирных клетках.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="killer-best-easy" data-best-format="time" data-best-label="Лучшее время"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/frogger/index.html" data-cat="arcade" style="--g1:#22c55e;--g2:#1e3a8a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="10" y="10" width="140" height="34" fill="#1e40af"/>
+              <rect x="30" y="18" width="62" height="18" rx="9" fill="#92400e"/>
+              <rect x="10" y="44" width="140" height="10" fill="#6d28d9"/>
+              <rect x="10" y="54" width="140" height="36" fill="#1f2937"/>
+              <path d="M20 72 H44 M60 72 H84 M100 72 H124" stroke="rgba(255,255,255,.4)" stroke-width="2"/>
+              <rect x="104" y="58" width="32" height="12" rx="4" fill="#f472b6"/>
+              <rect x="22" y="75" width="26" height="12" rx="4" fill="#facc15"/>
+              <g transform="translate(62 27)"><ellipse rx="10" ry="11" fill="#4ade80"/><circle cx="-5" cy="-8" r="4" fill="#fff"/><circle cx="5" cy="-8" r="4" fill="#fff"/><circle cx="-5" cy="-9" r="2" fill="#111"/><circle cx="5" cy="-9" r="2" fill="#111"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Лягушка</h3>
+            <p>Переведите лягушку через оживлённую дорогу и бурную реку домой.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="frogger-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/invaders/index.html" data-cat="arcade" style="--g1:#4338ca;--g2:#0f172a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g fill="#22d3ee" transform="translate(28 14) scale(3)"><path d="M2 0h1v1H2zM8 0h1v1H8zM3 1h1v1H3zM7 1h1v1H7zM2 2h7v1H2zM1 3h2v1H1zM4 3h3v1H4zM8 3h2v1H8zM0 4h11v1H0zM0 5h1v2H0zM2 5h7v1H2zM10 5h1v2H10zM2 6h1v1H2zM8 6h1v1H8zM3 7h2v1H3zM6 7h2v1H6z"/></g>
+              <g fill="#f472b6" transform="translate(94 18) scale(2.4)"><path d="M3 0h2v1H3zM2 1h4v1H2zM1 2h6v1H1zM0 3h2v1H0zM3 3h2v1H3zM6 3h2v1H6zM0 4h8v1H0zM2 5h1v1H2zM5 5h1v1H5zM1 6h1v1H1zM3 6h2v1H3zM6 6h1v1H6z"/></g>
+              <rect x="94" y="56" width="3" height="10" fill="#fff"/>
+              <g fill="#60a5fa"><rect x="84" y="80" width="24" height="8" rx="1"/><rect x="92" y="74" width="8" height="6"/><rect x="95" y="70" width="2" height="4"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Космические захватчики</h3>
+            <p>Отбейте атаку пришельцев из лазерной пушки. Классика 1978 года.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="invaders-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/asteroids/index.html" data-cat="arcade" style="--g1:#475569;--g2:#0f172a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g fill="none" stroke="#e2e8f0" stroke-width="3" stroke-linejoin="round">
+                <path d="M22 30 L38 16 L58 20 L64 38 L52 54 L30 52 Z"/>
+                <path d="M110 58 L124 50 L138 58 L136 76 L118 82 L106 72 Z"/>
+                <path d="M112 16 L122 14 L126 24 L116 28 Z"/>
+              </g>
+              <g transform="translate(76 66) rotate(-35)"><path d="M0 -14 L10 12 L0 7 L-10 12 Z" fill="none" stroke="#93c5fd" stroke-width="3" stroke-linejoin="round"/></g>
+              <g fill="#fde68a"><circle cx="86" cy="48" r="2.5"/><circle cx="94" cy="37" r="2.5"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Астероиды</h3>
+            <p>Управляйте кораблём и расстреливайте астероиды, пока они не разбили вас.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="asteroids-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/eggs/index.html" data-cat="arcade" style="--g1:#84cc16;--g2:#3f6212">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <path d="M14 22 L70 46 M146 22 L90 46" stroke="#1f2a1d" stroke-width="4" stroke-linecap="round"/>
+              <g fill="#fffbeb" stroke="#1f2a1d" stroke-width="2"><ellipse cx="34" cy="24" rx="6" ry="8"/><ellipse cx="58" cy="34" rx="6" ry="8"/><ellipse cx="116" cy="28" rx="6" ry="8"/></g>
+              <path d="M52 62 H96 L90 82 H58 Z" fill="#b45309" stroke="#1f2a1d" stroke-width="3" stroke-linejoin="round"/>
+              <ellipse cx="74" cy="60" rx="7" ry="8" fill="#fffbeb" stroke="#1f2a1d" stroke-width="2"/>
+              <g transform="translate(118 78)"><circle r="8" fill="#fde047" stroke="#1f2a1d" stroke-width="2"/><circle cx="2" cy="-2" r="1.5" fill="#1f2a1d"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Яйцелов</h3>
+            <p>По мотивам «Ну, погоди!»: ловите яйца корзиной, пока они не разбились.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="eggs-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/tanks/index.html" data-cat="arcade" style="--g1:#78716c;--g2:#292524">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g fill="#b45309" stroke="#78350f" stroke-width="2"><rect x="20" y="20" width="22" height="14"/><rect x="42" y="20" width="22" height="14"/><rect x="20" y="34" width="22" height="14"/><rect x="118" y="56" width="22" height="14"/><rect x="118" y="70" width="22" height="14"/></g>
+              <g fill="#9ca3af"><rect x="96" y="16" width="22" height="22"/></g><rect x="101" y="21" width="12" height="12" fill="#e5e7eb"/>
+              <g transform="translate(70 66)"><rect x="-17" y="-14" width="8" height="28" fill="#1f2937"/><rect x="9" y="-14" width="8" height="28" fill="#1f2937"/><rect x="-10" y="-11" width="20" height="23" fill="#facc15"/><circle r="7" fill="#fbbf24"/><rect x="-2.5" y="-24" width="5" height="18" fill="#facc15"/></g>
+              <rect x="68" y="30" width="5" height="5" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Танчики</h3>
+            <p>По мотивам Battle City: защищайте штаб и уничтожайте вражеские танки.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="tanks-best"></span></div>
+          </div>
+        </a>
       </div>
       <p class="no-results" id="no-results" hidden>Ничего не нашлось. Попробуйте другое слово или категорию «Все».</p>
     </section>
@@ -749,6 +1070,7 @@
   </footer>
 
   <script src="sg/js/common.js"></script>
+  <script src="sg/js/site.js"></script>
   <script>
     (function () {
       var cards = document.querySelectorAll('.game-card');
@@ -761,11 +1083,15 @@
         var q = norm(search.value.trim());
         var shown = 0;
         cards.forEach(function (c) {
-          var ok = (category === 'all' || c.dataset.cat === category) && (!q || c.dataset.text.indexOf(q) !== -1);
+          var inCat = category === 'all' || (category === 'fav' ? c.dataset.fav === '1' : c.dataset.cat === category);
+          var ok = inCat && (!q || c.dataset.text.indexOf(q) !== -1);
           c.hidden = !ok;
           if (ok) shown++;
         });
         empty.hidden = shown > 0;
+        empty.textContent = category === 'fav' && !q
+          ? 'В избранном пока пусто. Нажмите ☆ на карточке игры, чтобы добавить её сюда.'
+          : 'Ничего не нашлось. Попробуйте другое слово или категорию «Все».';
       };
       SG.segmented(document.getElementById('filter'), category, function (v) {
         category = v;
@@ -773,6 +1099,7 @@
         apply();
       });
       search.addEventListener('input', apply);
+      document.addEventListener('sg:favchange', apply);
       // «/» — быстрый переход к поиску
       document.addEventListener('keydown', function (e) {
         if (e.key === '/' && document.activeElement !== search) {

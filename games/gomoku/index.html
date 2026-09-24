@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Гомоку — SimpleGames</title>
+  <meta name="description" content="Гомоку (пять в ряд) онлайн: против компьютера или вдвоём на поле 15×15.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Гомоку</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Побед</span><span class="stat-value" id="wins">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+            <button type="button" data-value="pvp">Вдвоём</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="stage-wrap">
+          <div class="gm-board" id="board" aria-label="Доска 15 на 15"></div>
+        </div>
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+          <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить ход</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Игроки по очереди ставят камни на пересечения линий. Чёрные ходят первыми.</li>
+            <li>Побеждает тот, кто первым выстроит пять (или больше) своих камней подряд — по горизонтали, вертикали или диагонали.</li>
+            <li>Следите за угрозами соперника: открытую «тройку» и «четвёрку» нужно закрывать сразу.</li>
+            <li>Лучший приём — «вилка»: ход, создающий сразу две угрозы, от которых нельзя защититься одним ходом.</li>
+            <li>Последний ход отмечен красной точкой. Ход можно отменить.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

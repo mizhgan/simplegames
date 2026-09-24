@@ -1,0 +1,92 @@
+.ws-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: 560px;
+}
+
+.ws-tile {
+  width: clamp(36px, 9vw, 50px);
+  height: clamp(42px, 10vw, 56px);
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, var(--accent-2)));
+  color: #fff;
+  font-size: clamp(1.2rem, 5vw, 1.7rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+  touch-action: manipulation;
+  transition: transform 0.1s, opacity 0.15s;
+}
+
+.ws-tile:active {
+  transform: translateY(2px);
+}
+
+.ws-tile.used {
+  opacity: 0.3;
+}
+
+.ws-input {
+  min-width: 200px;
+  min-height: 52px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+.ws-input.shake {
+  animation: ws-shake 0.35s;
+}
+
+.ws-goal {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.ws-found {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.ws-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.ws-group b {
+  min-width: 70px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.ws-group span {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--success) 18%, var(--surface));
+  font-weight: 600;
+}
+
+.ws-group.missed span {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+@keyframes ws-shake {
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
