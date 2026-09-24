@@ -1,0 +1,112 @@
+.c4-wrap {
+  max-width: 520px;
+}
+
+.c4-markers,
+.c4-board {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: clamp(4px, 1.4vw, 8px);
+  padding: 0 clamp(8px, 2vw, 12px);
+}
+
+.c4-markers {
+  margin-bottom: 6px;
+}
+
+.c4-marker {
+  height: 22px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.c4-marker::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 11px solid var(--c4-turn, #ef4444);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.c4-markers[data-turn="2"] {
+  --c4-turn: #facc15;
+}
+
+.c4-marker.hover::after,
+.c4-marker:hover::after,
+.c4-marker:focus-visible::after {
+  opacity: 1;
+}
+
+.c4-board {
+  padding-top: clamp(8px, 2vw, 12px);
+  padding-bottom: clamp(8px, 2vw, 12px);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #3b5bdb, #2b3fb0);
+  box-shadow: var(--shadow), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.c4-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.c4-disc {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.c4-cell.p1 .c4-disc,
+.c4-cell.p2 .c4-disc {
+  opacity: 1;
+  animation: c4-drop calc(0.12s + var(--fall, 6) * 0.05s) cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+.c4-cell.p1 .c4-disc {
+  background: radial-gradient(circle at 35% 30%, #fca5a5, #ef4444 45%, #b91c1c);
+}
+
+.c4-cell.p2 .c4-disc {
+  background: radial-gradient(circle at 35% 30%, #fef08a, #facc15 45%, #ca8a04);
+}
+
+.c4-board.finished .c4-cell:not(.win) .c4-disc {
+  filter: saturate(0.4) brightness(0.8);
+}
+
+.c4-cell.win .c4-disc {
+  box-shadow: 0 0 0 3px #fff, 0 0 18px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes c4-drop {
+  from {
+    transform: translateY(calc(var(--fall, 6) * -125%));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.stat-p1 .stat-value {
+  color: #ef4444;
+}
+
+.stat-p2 .stat-value {
+  color: #eab308;
+}

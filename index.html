@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SimpleGames — простые браузерные игры</title>
-  <meta name="description" content="Коллекция простых браузерных игр: змейка, 2048, крестики-нолики, мемори, сапёр и арканоид. Без регистрации и установки.">
+  <meta name="description" content="Коллекция простых браузерных игр: тетрис, змейка, 2048, судоку, сапёр, пятнашки, арканоид и другие. Без регистрации и установки.">
   <meta name="theme-color" content="#0d0e1a">
   <meta property="og:title" content="SimpleGames — простые браузерные игры">
-  <meta property="og:description" content="Змейка, 2048, крестики-нолики, мемори, сапёр и арканоид прямо в браузере.">
+  <meta property="og:description" content="Тетрис, змейка, 2048, судоку, сапёр, пятнашки и другие игры прямо в браузере.">
   <meta property="og:type" content="website">
   <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="sg/css/style.css">
@@ -28,7 +28,7 @@
 
   <main>
     <section class="hero container">
-      <div class="hero-badge"><span class="dot"></span>6 игр · бесплатно · без регистрации</div>
+      <div class="hero-badge"><span class="dot"></span>11 игр · бесплатно · без регистрации</div>
       <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
       <p>Классика, в которую приятно сыграть пару минут: на компьютере, планшете или телефоне. Ничего не нужно устанавливать, а рекорды сохраняются у вас в браузере.</p>
     </section>
@@ -36,11 +36,16 @@
     <section class="container" aria-labelledby="games-title">
       <div class="section-title">
         <h2 id="games-title">Игры</h2>
-        <span>Выберите любую</span>
+        <div class="seg" id="filter" role="group" aria-label="Категории">
+          <button type="button" data-value="all">Все</button>
+          <button type="button" data-value="arcade">Аркады</button>
+          <button type="button" data-value="puzzle">Головоломки</button>
+          <button type="button" data-value="board">Настольные</button>
+        </div>
       </div>
 
       <div class="games-grid">
-        <a class="game-card" href="games/snake/index.html" style="--g1:#10b981;--g2:#0f766e">
+        <a class="game-card" href="games/snake/index.html" data-cat="arcade" style="--g1:#10b981;--g2:#0f766e">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true">
               <g fill="rgba(255,255,255,.08)">
@@ -61,7 +66,7 @@
           </div>
         </a>
 
-        <a class="game-card" href="games/2048/index.html" style="--g1:#f59e0b;--g2:#ea580c">
+        <a class="game-card" href="games/2048/index.html" data-cat="puzzle" style="--g1:#f59e0b;--g2:#ea580c">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="800" text-anchor="middle">
               <rect x="30" y="8" width="100" height="84" rx="10" fill="rgba(255,255,255,.18)"/>
@@ -82,7 +87,7 @@
           </div>
         </a>
 
-        <a class="game-card" href="games/tictactoe/index.html" style="--g1:#8b5cf6;--g2:#4338ca">
+        <a class="game-card" href="games/tictactoe/index.html" data-cat="board" style="--g1:#8b5cf6;--g2:#4338ca">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
               <g stroke="rgba(255,255,255,.45)" stroke-width="3">
@@ -103,11 +108,11 @@
           <div class="card-body">
             <h3>Крестики-нолики</h3>
             <p>Против компьютера с тремя уровнями сложности или вдвоём на одном экране.</p>
-            <div class="card-meta"><span class="tag">Логика</span><span class="best" data-best="ttt-wins" data-best-label="Побед"></span></div>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="ttt-wins" data-best-label="Побед"></span></div>
           </div>
         </a>
 
-        <a class="game-card" href="games/memory/index.html" style="--g1:#ec4899;--g2:#be185d">
+        <a class="game-card" href="games/memory/index.html" data-cat="puzzle" style="--g1:#ec4899;--g2:#be185d">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true" font-size="20" text-anchor="middle">
               <g transform="rotate(-8 50 50)">
@@ -125,11 +130,11 @@
           <div class="card-body">
             <h3>Мемори</h3>
             <p>Открывайте карточки и ищите пары. Тренирует память — и занимает ровно одну чашку чая.</p>
-            <div class="card-meta"><span class="tag">Память</span><span class="best" data-best="memory-best-s" data-best-label="Лучший" data-best-suffix=" ходов"></span></div>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="memory-best-s" data-best-label="Лучший" data-best-suffix=" ходов"></span></div>
           </div>
         </a>
 
-        <a class="game-card" href="games/minesweeper/index.html" style="--g1:#64748b;--g2:#1e293b">
+        <a class="game-card" href="games/minesweeper/index.html" data-cat="puzzle" style="--g1:#64748b;--g2:#1e293b">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="800" font-size="14" text-anchor="middle">
               <g fill="rgba(255,255,255,.9)">
@@ -158,11 +163,11 @@
           <div class="card-body">
             <h3>Сапёр</h3>
             <p>Откройте все клетки и не наступите на мину. Три уровня сложности — от новичка до профи.</p>
-            <div class="card-meta"><span class="tag">Логика</span><span class="best" data-best="mines-best-beginner" data-best-format="time" data-best-label="Лучшее время"></span></div>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="mines-best-beginner" data-best-format="time" data-best-label="Лучшее время"></span></div>
           </div>
         </a>
 
-        <a class="game-card" href="games/breakout/index.html" style="--g1:#06b6d4;--g2:#2563eb">
+        <a class="game-card" href="games/breakout/index.html" data-cat="arcade" style="--g1:#06b6d4;--g2:#2563eb">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true">
               <g>
@@ -186,6 +191,137 @@
             <h3>Арканоид</h3>
             <p>Отбивайте мяч платформой и разбивайте все кирпичи. С каждым уровнем мяч всё быстрее.</p>
             <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="breakout-best"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/tetris/index.html" data-cat="arcade" style="--g1:#6366f1;--g2:#312e81">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <g stroke="rgba(0,0,0,.18)" stroke-width="1">
+                <rect x="56" y="10" width="14" height="14" rx="3" fill="#c084fc"/>
+                <rect x="42" y="24" width="14" height="14" rx="3" fill="#c084fc"/>
+                <rect x="56" y="24" width="14" height="14" rx="3" fill="#c084fc"/>
+                <rect x="70" y="24" width="14" height="14" rx="3" fill="#c084fc"/>
+                <rect x="40" y="76" width="14" height="14" rx="3" fill="#67e8f9"/>
+                <rect x="54" y="76" width="14" height="14" rx="3" fill="#67e8f9"/>
+                <rect x="68" y="76" width="14" height="14" rx="3" fill="#67e8f9"/>
+                <rect x="82" y="76" width="14" height="14" rx="3" fill="#67e8f9"/>
+                <rect x="96" y="76" width="14" height="14" rx="3" fill="#fde047"/>
+                <rect x="110" y="76" width="14" height="14" rx="3" fill="#fde047"/>
+                <rect x="96" y="62" width="14" height="14" rx="3" fill="#fde047"/>
+                <rect x="110" y="62" width="14" height="14" rx="3" fill="#fde047"/>
+                <rect x="40" y="62" width="14" height="14" rx="3" fill="#fb923c"/>
+                <rect x="54" y="62" width="14" height="14" rx="3" fill="#fb923c"/>
+                <rect x="68" y="62" width="14" height="14" rx="3" fill="#fb923c"/>
+                <rect x="68" y="48" width="14" height="14" rx="3" fill="#fb923c"/>
+              </g>
+              <path d="M63 42 v6" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-dasharray="2 3"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Тетрис</h3>
+            <p>Легендарная головоломка: поворачивайте падающие фигуры и собирайте полные линии.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="tetris-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/flappy/index.html" data-cat="arcade" style="--g1:#38bdf8;--g2:#0369a1">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="100" y="0" width="22" height="34" fill="#4ade80"/>
+              <rect x="97" y="28" width="28" height="8" rx="2" fill="#16a34a"/>
+              <rect x="100" y="70" width="22" height="30" fill="#4ade80"/>
+              <rect x="97" y="68" width="28" height="8" rx="2" fill="#16a34a"/>
+              <circle cx="30" cy="30" r="9" fill="rgba(255,255,255,.7)"/>
+              <circle cx="42" cy="26" r="11" fill="rgba(255,255,255,.7)"/>
+              <circle cx="54" cy="31" r="8" fill="rgba(255,255,255,.7)"/>
+              <g transform="translate(66 54) rotate(-12)">
+                <ellipse rx="15" ry="12" fill="#facc15"/>
+                <ellipse cx="-5" cy="2" rx="7" ry="4.5" fill="#fef08a"/>
+                <circle cx="6" cy="-4" r="4.5" fill="#fff"/>
+                <circle cx="7.5" cy="-4" r="2" fill="#111827"/>
+                <path d="M11 0 L20 3 L11 6z" fill="#f97316"/>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Птичка</h3>
+            <p>Один клик — один взмах. Проведите птичку между трубами как можно дальше.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="flappy-best"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/sudoku/index.html" data-cat="puzzle" style="--g1:#14b8a6;--g2:#115e59">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="700" font-size="13" text-anchor="middle">
+              <rect x="44" y="8" width="84" height="84" rx="8" fill="#f0fdfa"/>
+              <path d="M72 8v84M100 8v84M44 36h84M44 64h84" stroke="#0f766e" stroke-width="2"/>
+              <path d="M53.3 8v84M62.6 8v84M81.3 8v84M90.6 8v84M109.3 8v84M118.6 8v84M44 17.3h84M44 26.6h84M44 45.3h84M44 54.6h84M44 73.3h84M44 82.6h84" stroke="#99f6e4" stroke-width=".8"/>
+              <text x="49" y="16" font-size="8" fill="#134e4a">5</text>
+              <text x="67" y="25" font-size="8" fill="#134e4a">3</text>
+              <text x="86" y="44" font-size="8" fill="#134e4a">7</text>
+              <text x="105" y="16" font-size="8" fill="#134e4a">9</text>
+              <text x="58" y="62" font-size="8" fill="#134e4a">1</text>
+              <text x="95" y="71" font-size="8" fill="#0d9488">4</text>
+              <text x="123" y="53" font-size="8" fill="#134e4a">8</text>
+              <text x="77" y="89" font-size="8" fill="#134e4a">6</text>
+              <text x="114" y="89" font-size="8" fill="#0d9488">2</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Судоку</h3>
+            <p>Японская числовая головоломка: три уровня сложности, заметки, подсказки и сохранение партии.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="sudoku-best-medium" data-best-format="time" data-best-label="Лучшее время"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/fifteen/index.html" data-cat="puzzle" style="--g1:#a855f7;--g2:#6d28d9">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="800" font-size="12" text-anchor="middle" fill="#fff">
+              <rect x="38" y="6" width="88" height="88" rx="10" fill="rgba(255,255,255,.18)"/>
+              <g fill="#f5f3ff">
+                <rect x="43" y="11" width="18" height="18" rx="4"/><rect x="63" y="11" width="18" height="18" rx="4"/><rect x="83" y="11" width="18" height="18" rx="4"/><rect x="103" y="11" width="18" height="18" rx="4"/>
+                <rect x="43" y="31" width="18" height="18" rx="4"/><rect x="63" y="31" width="18" height="18" rx="4"/><rect x="83" y="31" width="18" height="18" rx="4"/><rect x="103" y="31" width="18" height="18" rx="4"/>
+                <rect x="43" y="51" width="18" height="18" rx="4"/><rect x="63" y="51" width="18" height="18" rx="4"/><rect x="83" y="51" width="18" height="18" rx="4"/><rect x="103" y="51" width="18" height="18" rx="4"/>
+                <rect x="43" y="71" width="18" height="18" rx="4"/><rect x="63" y="71" width="18" height="18" rx="4"/><rect x="83" y="71" width="18" height="18" rx="4"/>
+              </g>
+              <g fill="#6d28d9">
+                <text x="52" y="24">1</text><text x="72" y="24">2</text><text x="92" y="24">3</text><text x="112" y="24">4</text>
+                <text x="52" y="44">5</text><text x="72" y="44">6</text><text x="92" y="44">7</text><text x="112" y="44">8</text>
+                <text x="52" y="64">9</text><text x="72" y="64">10</text><text x="92" y="64">11</text><text x="112" y="64">12</text>
+                <text x="52" y="84">13</text><text x="72" y="84">14</text><text x="92" y="84">15</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Пятнашки</h3>
+            <p>Двигайте плитки и расставьте числа по порядку. Поля 3×3, 4×4 и 5×5.</p>
+            <div class="card-meta"><span class="tag">Головоломка</span><span class="best" data-best="fifteen-best-4" data-best-label="Лучший" data-best-suffix=" ходов"></span></div>
+          </div>
+        </a>
+
+        <a class="game-card" href="games/connect4/index.html" data-cat="board" style="--g1:#3b82f6;--g2:#1e3a8a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true">
+              <rect x="34" y="14" width="92" height="80" rx="8" fill="#2b3fb0"/>
+              <g fill="#0d0e1a">
+                <circle cx="46" cy="26" r="6"/><circle cx="59" cy="26" r="6"/><circle cx="72" cy="26" r="6"/><circle cx="85" cy="26" r="6"/><circle cx="98" cy="26" r="6"/><circle cx="111" cy="26" r="6"/>
+                <circle cx="46" cy="39" r="6"/><circle cx="59" cy="39" r="6"/><circle cx="72" cy="39" r="6"/><circle cx="98" cy="39" r="6"/><circle cx="111" cy="39" r="6"/>
+                <circle cx="46" cy="52" r="6"/><circle cx="59" cy="52" r="6"/><circle cx="98" cy="52" r="6"/><circle cx="111" cy="52" r="6"/>
+                <circle cx="46" cy="65" r="6"/><circle cx="111" cy="65" r="6"/>
+              </g>
+              <g fill="#ef4444">
+                <circle cx="85" cy="39" r="6"/><circle cx="72" cy="52" r="6"/><circle cx="59" cy="65" r="6"/><circle cx="46" cy="78" r="6"/><circle cx="85" cy="65" r="6"/>
+              </g>
+              <g fill="#facc15">
+                <circle cx="85" cy="52" r="6"/><circle cx="72" cy="65" r="6"/><circle cx="59" cy="78" r="6"/><circle cx="72" cy="78" r="6"/><circle cx="98" cy="65" r="6"/><circle cx="85" cy="78" r="6"/><circle cx="98" cy="78" r="6"/><circle cx="111" cy="78" r="6"/>
+              </g>
+              <circle cx="124" cy="8" r="6" fill="#ef4444"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Четыре в ряд</h3>
+            <p>Бросайте фишки и выстройте четыре в ряд раньше соперника — компьютера или друга.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="best" data-best="c4-wins" data-best-label="Побед"></span></div>
           </div>
         </a>
       </div>
@@ -223,5 +359,19 @@
   </footer>
 
   <script src="sg/js/common.js"></script>
+  <script>
+    (function () {
+      var cards = document.querySelectorAll('.game-card');
+      var apply = function (cat) {
+        cards.forEach(function (c) { c.hidden = cat !== 'all' && c.dataset.cat !== cat; });
+      };
+      var saved = SG.store.get('home-filter', 'all');
+      SG.segmented(document.getElementById('filter'), saved, function (v) {
+        SG.store.set('home-filter', v);
+        apply(v);
+      });
+      apply(saved);
+    })();
+  </script>
 </body>
 </html>

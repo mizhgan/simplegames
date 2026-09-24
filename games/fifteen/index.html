@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Пятнашки — SimpleGames</title>
+  <meta name="description" content="Пятнашки в браузере: расставьте плитки по порядку за наименьшее число ходов.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Пятнашки</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
+        <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">—</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="size" role="group" aria-label="Размер поля">
+            <button type="button" data-value="3">3 × 3</button>
+            <button type="button" data-value="4">4 × 4</button>
+            <button type="button" data-value="5">5 × 5</button>
+          </div>
+          <button class="btn btn-primary" type="button" id="new-btn">Перемешать</button>
+        </div>
+        <div class="stage-wrap ft-wrap">
+          <div class="ft-board" id="board" aria-label="Поле пятнашек"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2>Собрано! 🎉</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="again-btn">Сыграть ещё</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Расставьте плитки по порядку: слева направо, сверху вниз, пустая клетка — в правом нижнем углу.</li>
+            <li>Кликните по плитке рядом с пустой клеткой, чтобы сдвинуть её. Клик по плитке в том же ряду сдвигает сразу несколько.</li>
+            <li>Также можно стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> или свайпами.</li>
+            <li>Плитки на своих местах подсвечиваются зелёным.</li>
+            <li>Рекорд — наименьшее число ходов для каждого размера поля.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

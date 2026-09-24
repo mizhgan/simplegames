@@ -1,0 +1,55 @@
+.ft-wrap {
+  max-width: 460px;
+}
+
+.ft-board {
+  --gap: clamp(6px, 1.8vw, 10px);
+  position: relative;
+  aspect-ratio: 1;
+  padding: var(--gap);
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  container-type: inline-size;
+  overflow: hidden;
+}
+
+.ft-tile {
+  position: absolute;
+  top: var(--gap);
+  left: var(--gap);
+  width: calc((100% - (var(--n) + 1) * var(--gap)) / var(--n));
+  height: calc((100% - (var(--n) + 1) * var(--gap)) / var(--n));
+  transform: translate(calc(var(--c) * (100% + var(--gap))), calc(var(--r) * (100% + var(--gap))));
+  transition: transform 0.12s ease, background 0.2s;
+  border: 0;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.25), transparent 60%),
+    linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 50%, var(--accent-2)));
+  color: #fff;
+  font-weight: 800;
+  font-size: calc(40cqw / var(--n));
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+  touch-action: manipulation;
+}
+
+.ft-tile.in-place {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.25), transparent 60%),
+    linear-gradient(135deg, #10b981, #0e9f9f);
+}
+
+.ft-board.solved .ft-tile {
+  animation: ft-win 0.6s ease;
+}
+
+@keyframes ft-win {
+  50% {
+    transform: translate(calc(var(--c) * (100% + var(--gap))), calc(var(--r) * (100% + var(--gap)))) scale(1.08);
+  }
+}
