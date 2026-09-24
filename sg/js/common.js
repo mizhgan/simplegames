@@ -4,6 +4,8 @@
 
   const THEME_KEY = 'sg-theme';
   const root = document.documentElement;
+  // адрес этого скрипта: от него считаем корень сайта (сайт может лежать и в подпапке)
+  const SCRIPT_URL = document.currentScript ? document.currentScript.src : location.href;
 
   // Безопасная обёртка над localStorage: в приватном режиме он может быть недоступен.
   const store = {
@@ -329,7 +331,38 @@
 
   window.SG = { store, cssVar, currentTheme, formatTime, onSwipe, segmented, shuffle, sound };
 
+  // ---------- офлайн-режим и установка как приложения ----------
+
+  function initOffline() {
+    if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
+    const swUrl = new URL('../../sw.js', SCRIPT_URL);
+    const scope = new URL('../../', SCRIPT_URL).pathname;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register(swUrl.href, { scope }).catch(() => {
+        /* без офлайн-режима сайт работает как обычно */
+      });
+    });
+
+    const installBtn = document.querySelector('[data-install]');
+    if (!installBtn) return;
+    let deferred = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferred = e;
+      installBtn.hidden = false;
+    });
+    installBtn.addEventListener('click', async () => {
+      if (!deferred) return;
+      deferred.prompt();
+      await deferred.userChoice.catch(() => null);
+      deferred = null;
+      installBtn.hidden = true;
+    });
+    window.addEventListener('appinstalled', () => (installBtn.hidden = true));
+  }
+
   const ready = () => {
+    initOffline();
     initSoundToggle();
     initThemeToggle();
     initBestBadges();

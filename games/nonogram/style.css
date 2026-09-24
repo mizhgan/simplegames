@@ -1,0 +1,103 @@
+.ng-scroll {
+  width: 100%;
+  overflow-x: auto;
+  container-type: inline-size;
+}
+
+.ng-board {
+  --clue-w: calc(var(--rc) * 0.62em + 0.6em);
+  --cell: clamp(16px, calc((100cqw - var(--clue-w) - 24px) / var(--n)), 34px);
+  display: grid;
+  grid-template-columns: var(--clue-w) repeat(var(--n), var(--cell));
+  grid-template-rows: auto repeat(var(--n), var(--cell));
+  width: max-content;
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  font-size: clamp(0.62rem, calc(var(--cell) * 0.42), 0.9rem);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ng-clue {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0 0.35em;
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ng-clue.col {
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.1em;
+  padding: 0.3em 0;
+}
+
+.ng-clue.done {
+  color: var(--muted);
+  opacity: 0.45;
+}
+
+.ng-cell {
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--board-cell);
+  cursor: pointer;
+  position: relative;
+}
+
+.ng-cell.sep-r {
+  border-right: 2px solid var(--muted);
+}
+
+.ng-cell.sep-b {
+  border-bottom: 2px solid var(--muted);
+}
+
+.ng-cell.fill {
+  background: var(--text);
+}
+
+.ng-cell.cross::before,
+.ng-cell.cross::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  width: 1.5px;
+  height: 64%;
+  background: var(--muted);
+  transform: rotate(45deg);
+}
+
+.ng-cell.cross::after {
+  transform: rotate(-45deg);
+}
+
+.ng-board.solved .ng-cell.fill {
+  background: var(--accent);
+  transition: background 0.6s;
+}
+
+.ng-board.solved .ng-cell:not(.fill) {
+  background: var(--surface);
+}
+
+.ng-corner {
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+#cross-btn[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}

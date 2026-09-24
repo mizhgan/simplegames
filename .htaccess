@@ -4,6 +4,7 @@ ErrorDocument 404 /404.html
 
 <IfModule mod_mime.c>
   AddType image/svg+xml .svg
+  AddType application/manifest+json .webmanifest
   AddCharset utf-8 .html .css .js .svg
 </IfModule>
 
@@ -18,3 +19,10 @@ ErrorDocument 404 /404.html
   ExpiresByType application/javascript "access plus 7 days"
   ExpiresByType image/svg+xml "access plus 30 days"
 </IfModule>
+
+# service worker всегда проверяется заново, иначе обновления сайта будут доходить с задержкой
+<Files "sw.js">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache"
+  </IfModule>
+</Files>
