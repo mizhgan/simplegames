@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вордли — SimpleGames</title>
+  <meta name="description" content="Вордли на русском: угадайте слово из пяти букв за шесть попыток.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Вордли</h1>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="daily">Слово дня</button>
+            <button type="button" data-value="free">Свободная игра</button>
+          </div>
+          <button class="btn btn-ghost" type="button" id="stats-btn">📊 Статистика</button>
+        </div>
+        <div class="wd-wrap">
+          <div class="wd-toast" id="toast" role="status" aria-live="polite"></div>
+          <div class="wd-board" id="board" aria-label="Попытки"></div>
+        </div>
+        <div class="wd-keyboard" id="keyboard" aria-label="Клавиатура"></div>
+        <div class="wd-modal" id="overlay" hidden>
+          <div class="wd-dialog" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+            <h2 id="overlay-title">Статистика</h2>
+            <p class="wd-answer" id="overlay-word"></p>
+            <div class="wd-stats">
+              <div><b id="st-played">0</b><span>сыграно</span></div>
+              <div><b id="st-winrate">0</b><span>% побед</span></div>
+              <div><b id="st-streak">0</b><span>серия</span></div>
+              <div><b id="st-max">0</b><span>лучшая серия</span></div>
+            </div>
+            <h3>Попыток до победы</h3>
+            <div id="dist"></div>
+            <p class="wd-countdown" id="countdown"></p>
+            <div class="wd-actions">
+              <button class="btn btn-primary" type="button" id="share-btn">Поделиться</button>
+              <button class="btn btn-primary" type="button" id="next-btn">Новое слово</button>
+              <button class="btn btn-ghost" type="button" id="close-btn">Закрыть</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Угадайте загаданное существительное из пяти букв за шесть попыток.</li>
+            <li>После каждой попытки буквы подсвечиваются: <b style="color:#16a34a">зелёная</b> — буква на своём месте, <b style="color:#d9a406">жёлтая</b> — есть в слове, но в другом месте, серая — буквы в слове нет.</li>
+            <li>Принимаются только существительные в начальной форме. Буквы Е и Ё не различаются.</li>
+            <li>«Слово дня» одно и то же для всех игроков и меняется в полночь. В «Свободной игре» можно играть сколько угодно.</li>
+            <li>Печатать можно и на английской раскладке — буквы берутся по положению клавиш ЙЦУКЕН.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="words.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

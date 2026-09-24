@@ -1,0 +1,112 @@
+.ln-wrap {
+  max-width: 480px;
+}
+
+.ln-next {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.ln-next .ln-ball {
+  position: static;
+  display: block;
+  width: 22px;
+  height: 22px;
+  transform: none;
+}
+
+.ln-board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 3px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ln-cell {
+  position: relative;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--board-cell);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.ln-cell:hover {
+  background: color-mix(in srgb, var(--accent) 10%, var(--board-cell));
+}
+
+.ln-ball {
+  position: absolute;
+  inset: 13%;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.12s;
+}
+
+.ln-cell.has .ln-ball {
+  transform: scale(1);
+}
+
+.ln-cell.appear .ln-ball {
+  animation: ln-appear 0.25s ease;
+}
+
+.ln-cell.vanish .ln-ball {
+  animation: ln-vanish 0.3s ease forwards;
+}
+
+.ln-cell.selected .ln-ball {
+  animation: ln-bounce 0.55s ease-in-out infinite;
+}
+
+.ln-cell.blocked {
+  animation: ln-blocked 0.3s;
+}
+
+[data-c="1"].has .ln-ball, .ln-ball[data-c="1"] { background: radial-gradient(circle at 35% 30%, #fecaca, #ef4444 50%, #991b1b); }
+[data-c="2"].has .ln-ball, .ln-ball[data-c="2"] { background: radial-gradient(circle at 35% 30%, #bbf7d0, #22c55e 50%, #166534); }
+[data-c="3"].has .ln-ball, .ln-ball[data-c="3"] { background: radial-gradient(circle at 35% 30%, #bfdbfe, #3b82f6 50%, #1e3a8a); }
+[data-c="4"].has .ln-ball, .ln-ball[data-c="4"] { background: radial-gradient(circle at 35% 30%, #fef08a, #eab308 50%, #854d0e); }
+[data-c="5"].has .ln-ball, .ln-ball[data-c="5"] { background: radial-gradient(circle at 35% 30%, #e9d5ff, #a855f7 50%, #581c87); }
+[data-c="6"].has .ln-ball, .ln-ball[data-c="6"] { background: radial-gradient(circle at 35% 30%, #a5f3fc, #06b6d4 50%, #155e75); }
+[data-c="7"].has .ln-ball, .ln-ball[data-c="7"] { background: radial-gradient(circle at 35% 30%, #fed7aa, #f97316 50%, #9a3412); }
+
+@keyframes ln-appear {
+  from {
+    transform: scale(0);
+  }
+}
+
+@keyframes ln-vanish {
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes ln-bounce {
+  50% {
+    transform: translateY(-14%) scale(1.04, 0.96);
+  }
+}
+
+@keyframes ln-blocked {
+  0%, 100% {
+    background: var(--board-cell);
+  }
+  50% {
+    background: color-mix(in srgb, var(--danger) 35%, var(--board-cell));
+  }
+}

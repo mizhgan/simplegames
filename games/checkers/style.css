@@ -1,0 +1,112 @@
+.ck-wrap {
+  max-width: 520px;
+}
+
+.ck-frame {
+  position: relative;
+  padding: clamp(6px, 1.6vw, 10px);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #7c4a1e, #4a2a10);
+  box-shadow: var(--shadow);
+}
+
+.ck-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.ck-sq.light {
+  background: #f0d9b5;
+}
+
+.ck-sq.dark {
+  background: #b58863;
+  position: relative;
+}
+
+.ck-sq.last {
+  background: #c9a15b;
+}
+
+.ck-sq.from {
+  background: #9c7a3c;
+}
+
+.ck-sq.target::after {
+  content: "";
+  position: absolute;
+  inset: 34%;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.8);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
+}
+
+.ck-pieces {
+  position: absolute;
+  inset: clamp(6px, 1.6vw, 10px);
+  pointer-events: none;
+}
+
+.ck-piece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12.5%;
+  height: 12.5%;
+  transform: translate(calc(var(--c) * 100%), calc(var(--r) * 100%));
+  transition: transform 0.18s ease, opacity 0.25s;
+}
+
+.ck-piece::before {
+  content: "";
+  position: absolute;
+  inset: 11%;
+  border-radius: 50%;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), inset 0 0 0 3px rgba(0, 0, 0, 0.12), inset 0 0 0 6px rgba(255, 255, 255, 0.12);
+}
+
+.ck-piece.white::before {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #f1efe7 50%, #d6d0bf);
+}
+
+.ck-piece.black::before {
+  background: radial-gradient(circle at 35% 30%, #5b5b66, #26262e 55%, #111114);
+}
+
+.ck-piece.king::after {
+  content: "♛";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(0.8rem, 4vw, 1.6rem);
+  line-height: 1;
+}
+
+.ck-piece.white.king::after {
+  color: #b45309;
+}
+
+.ck-piece.black.king::after {
+  color: #fbbf24;
+}
+
+.ck-piece.movable::before {
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), 0 0 0 3px rgba(250, 204, 21, 0.75);
+}
+
+.ck-piece.selected::before {
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), 0 0 0 4px #22c55e;
+}
+
+.ck-piece.taken {
+  opacity: 0;
+}
+
+.stat-w .stat-value {
+  color: var(--text);
+}

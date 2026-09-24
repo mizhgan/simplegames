@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Косынка — SimpleGames</title>
+  <meta name="description" content="Пасьянс «Косынка» (Klondike): по одной или по три карты, отмена ходов и автозавершение.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Косынка</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
+        <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">—</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="draw" role="group" aria-label="Сдача из колоды">
+            <button type="button" data-value="1">По 1 карте</button>
+            <button type="button" data-value="3">По 3 карты</button>
+          </div>
+          <button class="btn btn-primary" type="button" id="new-btn">Новая раздача</button>
+          <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить</button>
+          <button class="btn btn-ghost" type="button" id="auto-btn" hidden>⚡ Доложить</button>
+        </div>
+        <div class="stage-wrap sol-wrap">
+          <div class="sol-table" id="table" aria-label="Игровой стол"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2>Пасьянс сошёлся! 🎉</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="again-btn">Новая раздача</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Цель — собрать все карты в четыре «дома» справа вверху: по мастям, от туза до короля.</li>
+            <li>На игровом поле карты кладутся по убыванию с чередованием цвета: на чёрную девятку — красная восьмёрка.</li>
+            <li>В пустой столбец можно положить только короля (вместе с картами на нём).</li>
+            <li>Перетаскивайте карты или просто кликните по карте — она сама переместится в подходящее место.</li>
+            <li>Клик по колоде открывает новые карты; когда колода кончится, клик вернёт карты обратно.</li>
+            <li>Когда все карты открыты, кнопка «Доложить» сама разложит их по домам.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
