@@ -69,11 +69,13 @@
       addPipe(W + 40);
     }
     bird.vy = FLAP;
+    SG.sound.play('flap');
   }
 
   function die() {
     if (state !== 'playing') return;
     state = 'dying';
+    SG.sound.play('hit');
     if (navigator.vibrate) navigator.vibrate(40);
   }
 
@@ -135,6 +137,7 @@
         if (!p.passed && p.x + PIPE_W < BIRD_X - BIRD_R) {
           p.passed = true;
           score++;
+          SG.sound.play('coin');
           $('score').textContent = score;
         }
         if (hitsPipe(p)) die();

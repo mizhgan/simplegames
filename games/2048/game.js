@@ -206,6 +206,8 @@
     updateScore();
 
     pending = { removed, merged: [...merged], timer: 0 };
+    if (merged.size) SG.sound.play('merge', Math.min(12, Math.log2(Math.max(...[...merged].map((t) => t.value))) - 2));
+    else SG.sound.play('move');
     addRandomTile();
     pending.timer = setTimeout(flush, ANIM_MS);
     afterMove();
@@ -230,6 +232,7 @@
       won = true;
       save();
       setTimeout(() => {
+        SG.sound.play('win');
         showOverlay('Победа! 🎉', 'Вы собрали плитку 2048. Можно продолжить и побить собственный рекорд.', true);
       }, ANIM_MS + 150);
       return;
@@ -238,6 +241,7 @@
       over = true;
       save();
       setTimeout(() => {
+        SG.sound.play('lose');
         showOverlay('Ходов больше нет', 'Ваш счёт: ' + score + '. Попробуйте ещё раз!', false);
       }, ANIM_MS + 250);
       return;

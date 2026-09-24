@@ -141,9 +141,196 @@
     return arr;
   };
 
-  window.SG = { store, cssVar, currentTheme, formatTime, onSwipe, segmented, shuffle };
+  // ---------- Звуки: синтезируются через Web Audio API, без аудиофайлов ----------
+
+  const sound = (() => {
+    let ctx = null;
+    let master = null;
+    let noiseBuf = null;
+    let enabled = store.get('sound', true);
+    const listeners = [];
+
+    function ensure() {
+      if (!enabled) return null;
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
+        master = ctx.createGain();
+        master.gain.value = 0.22;
+        master.connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    }
+
+    const semis = (base, n = 0) => base * Math.pow(2, n / 12);
+
+    function tone({ freq = 440, to = 0, type = 'sine', dur = 0.1, vol = 0.5, delay = 0, attack = 0.005 }) {
+      const t0 = ctx.currentTime + delay;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, t0);
+      if (to) o.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol, t0 + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g);
+      g.connect(master);
+      o.start(t0);
+      o.stop(t0 + dur + 0.03);
+    }
+
+    function noise({ dur = 0.15, vol = 0.4, delay = 0, filter = 1500, q = 0.7 }) {
+      if (!noiseBuf) {
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+        const data = noiseBuf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      }
+      const t0 = ctx.currentTime + delay;
+      const src = ctx.createBufferSource();
+      const f = ctx.createBiquadFilter();
+      const g = ctx.createGain();
+      src.buffer = noiseBuf;
+      f.type = 'lowpass';
+      f.frequency.value = filter;
+      f.Q.value = q;
+      g.gain.setValueAtTime(vol, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      src.connect(f);
+      f.connect(g);
+      g.connect(master);
+      src.start(t0);
+      src.stop(t0 + dur + 0.03);
+    }
+
+    const arp = (notes, { type = 'triangle', step = 0.09, dur = 0.16, vol = 0.4 } = {}) =>
+      notes.forEach((f, i) => tone({ freq: f, type, dur, vol, delay: i * step }));
+
+    // p — сдвиг высоты в полутонах (например, для комбо)
+    const PRESETS = {
+      click: () => tone({ freq: 760, type: 'triangle', dur: 0.04, vol: 0.35 }),
+      key: () => tone({ freq: 560, type: 'triangle', dur: 0.035, vol: 0.25 }),
+      move: () => tone({ freq: 320, to: 230, dur: 0.07, vol: 0.35 }),
+      slide: () => tone({ freq: 420, to: 300, type: 'triangle', dur: 0.06, vol: 0.3 }),
+      tick: () => tone({ freq: 1100, type: 'square', dur: 0.018, vol: 0.08 }),
+      rotate: () => tone({ freq: 620, to: 880, type: 'triangle', dur: 0.05, vol: 0.25 }),
+      place: (p = 0) => tone({ freq: semis(440, p), type: 'triangle', dur: 0.09, vol: 0.45 }),
+      drop: () => {
+        tone({ freq: 220, to: 80, dur: 0.14, vol: 0.6 });
+        noise({ dur: 0.05, vol: 0.15, filter: 2500 });
+      },
+      merge: (p = 0) => tone({ freq: semis(520, p), to: semis(780, p), dur: 0.09, vol: 0.4 }),
+      eat: () => {
+        tone({ freq: 880, type: 'square', dur: 0.05, vol: 0.15 });
+        tone({ freq: 1320, type: 'square', dur: 0.08, vol: 0.15, delay: 0.05 });
+      },
+      coin: () => {
+        tone({ freq: 988, type: 'square', dur: 0.06, vol: 0.14 });
+        tone({ freq: 1319, type: 'square', dur: 0.14, vol: 0.14, delay: 0.06 });
+      },
+      flip: () => noise({ dur: 0.06, vol: 0.3, filter: 3200 }),
+      card: () => noise({ dur: 0.045, vol: 0.28, filter: 4500, q: 1.5 }),
+      match: () => arp([659, 988], { type: 'sine', step: 0.08, vol: 0.35 }),
+      error: () => {
+        tone({ freq: 196, type: 'sawtooth', dur: 0.12, vol: 0.14 });
+        tone({ freq: 147, type: 'sawtooth', dur: 0.16, vol: 0.14, delay: 0.09 });
+      },
+      flag: () => tone({ freq: 1000, to: 1500, type: 'triangle', dur: 0.07, vol: 0.28 }),
+      reveal: () => tone({ freq: 480, to: 960, dur: 0.12, vol: 0.3 }),
+      explode: () => {
+        noise({ dur: 0.7, vol: 0.9, filter: 700 });
+        tone({ freq: 140, to: 35, dur: 0.5, vol: 0.6 });
+      },
+      bounce: () => tone({ freq: 460, type: 'square', dur: 0.035, vol: 0.14 }),
+      brick: (p = 0) => tone({ freq: semis(660, p), type: 'square', dur: 0.05, vol: 0.14 }),
+      line: (n = 1) => arp([523, 659, 784, 1047, 1319].slice(0, Math.min(5, n + 1)), { type: 'square', step: 0.06, vol: 0.14 }),
+      jump: () => tone({ freq: 380, to: 820, type: 'square', dur: 0.11, vol: 0.13 }),
+      flap: () => tone({ freq: 520, to: 760, dur: 0.07, vol: 0.28 }),
+      hit: () => {
+        noise({ dur: 0.22, vol: 0.55, filter: 1300 });
+        tone({ freq: 220, to: 60, type: 'square', dur: 0.25, vol: 0.14 });
+      },
+      capture: () => {
+        tone({ freq: 330, type: 'triangle', dur: 0.08, vol: 0.4 });
+        tone({ freq: 660, to: 990, dur: 0.1, vol: 0.3, delay: 0.06 });
+      },
+      hint: () => arp([1047, 1319, 1568], { type: 'sine', step: 0.05, dur: 0.12, vol: 0.25 }),
+      level: () => arp([523, 784, 1047], { type: 'square', step: 0.08, vol: 0.14 }),
+      win: () => arp([523, 659, 784, 1047, 1319], { step: 0.1, dur: 0.22, vol: 0.4 }),
+      lose: () => arp([392, 330, 262, 196], { type: 'triangle', step: 0.14, dur: 0.24, vol: 0.35 }),
+      draw: () => arp([440, 440], { type: 'triangle', step: 0.15, vol: 0.3 }),
+    };
+
+    function play(name, arg) {
+      if (!enabled || !PRESETS[name]) return;
+      if (!ensure()) return;
+      try {
+        PRESETS[name](arg);
+      } catch (e) {
+        /* звук — не критичная часть игры */
+      }
+    }
+
+    function setEnabled(v) {
+      enabled = v;
+      store.set('sound', v);
+      if (v) play('click');
+      listeners.forEach((fn) => fn(v));
+    }
+
+    // браузеры разрешают звук только после действия пользователя
+    const unlock = () => {
+      if (enabled) ensure();
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('keydown', unlock);
+
+    return {
+      play,
+      get enabled() {
+        return enabled;
+      },
+      toggle: () => setEnabled(!enabled),
+      onChange: (fn) => listeners.push(fn),
+    };
+  })();
+
+  const SOUND_ON =
+    '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  const SOUND_OFF =
+    '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>';
+
+  // Кнопка звука добавляется в шапку автоматически, рядом с переключателем темы
+  function initSoundToggle() {
+    const nav = document.querySelector('.header-nav');
+    if (!nav) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'icon-btn';
+    btn.dataset.soundToggle = '';
+    const render = (on) => {
+      btn.innerHTML = on ? SOUND_ON : SOUND_OFF;
+      btn.setAttribute('aria-pressed', String(on));
+      btn.setAttribute('aria-label', on ? 'Выключить звук' : 'Включить звук');
+      btn.title = on ? 'Звук включён' : 'Звук выключен';
+    };
+    render(sound.enabled);
+    sound.onChange(render);
+    btn.addEventListener('click', () => {
+      sound.toggle();
+      btn.blur();
+    });
+    nav.insertBefore(btn, nav.firstChild);
+  }
+
+  window.SG = { store, cssVar, currentTheme, formatTime, onSwipe, segmented, shuffle, sound };
 
   const ready = () => {
+    initSoundToggle();
     initThemeToggle();
     initBestBadges();
     document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));

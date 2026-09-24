@@ -72,10 +72,14 @@
       if (performance.now() - overAt > 400) start();
       return;
     }
-    if (dino.y === 0 && !dino.ducking) dino.vy = JUMP_V;
+    if (dino.y === 0 && !dino.ducking) {
+      dino.vy = JUMP_V;
+      SG.sound.play('jump');
+    }
   }
 
   function gameOver() {
+    SG.sound.play('hit');
     state = 'over';
     overAt = performance.now();
     const s = score();
@@ -124,7 +128,9 @@
     if (state !== 'running') return;
 
     speed = Math.min(MAX_SPEED, speed + 9 * dt);
+    const prevScore = score();
     distance += speed * dt;
+    if (Math.floor(score() / 100) > Math.floor(prevScore / 100)) SG.sound.play('coin');
     $('score').textContent = score();
 
     dino.ducking = duckHeld;

@@ -301,7 +301,9 @@
       history.push({ board: board.slice(), turn, quiet, lastMove });
       const wasKingMove = isKing(board[m.from]);
       applyMove(board, m);
+      SG.sound.play(m.captured.length ? 'capture' : 'place');
       if (m.promote) el.classList.add('king');
+      if (m.promote) SG.sound.play('level');
       pieceEls[m.to] = el;
       quiet = !m.captured.length && wasKingMove ? quiet + 1 : 0;
       lastMove = m;
@@ -334,6 +336,7 @@
     }
     const own = legal.filter((m) => m.from === i);
     selected = own.length ? { from: i, step: 0, candidates: own, at: i } : null;
+    if (own.length) SG.sound.play('click');
     renderHints();
   }
 
@@ -344,6 +347,7 @@
     renderScores();
     renderHints();
     undoBtn.disabled = true;
+    SG.sound.play(winner === 'D' ? 'draw' : mode === 'ai' && winner === -1 ? 'lose' : 'win');
     if (winner === 'D') statusEl.textContent = 'Ничья: 15 ходов дамками без взятий 🤝';
     else if (mode === 'ai') statusEl.textContent = winner === 1 ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
     else statusEl.textContent = (winner === 1 ? 'Белые' : 'Чёрные') + ' победили!';

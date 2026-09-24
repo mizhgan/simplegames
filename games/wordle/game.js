@@ -129,6 +129,7 @@
   function type(ch) {
     if (busy || game.done || current.length >= LEN) return;
     current += ch === 'ё' ? 'е' : ch;
+    SG.sound.play('key');
     const t = tiles[game.guesses.length][current.length - 1];
     t.textContent = current[current.length - 1];
     t.classList.add('filled');
@@ -156,6 +157,7 @@
     row.forEach((t, i) => {
       setTimeout(() => {
         t.classList.add('flip');
+        SG.sound.play('flip');
         setTimeout(() => t.classList.add(res[i]), 250);
       }, i * 280);
     });
@@ -167,9 +169,11 @@
       busy = false;
       renderKeyboard();
       if (won) {
+        SG.sound.play('win');
         row.forEach((t, i) => setTimeout(() => t.classList.add('bounce'), i * 90));
         toast(['Гениально!', 'Великолепно!', 'Отлично!', 'Здорово!', 'Хорошо!', 'Фух!'][game.guesses.length - 1]);
       } else if (lost) {
+        SG.sound.play('lose');
         toast(game.answer.toUpperCase(), 2500);
       }
       if (won || lost) setTimeout(showResult, 1600);
@@ -177,6 +181,7 @@
   }
 
   function reject(row, msg) {
+    SG.sound.play('error');
     toast(msg);
     const el = row[0].parentElement;
     el.classList.remove('shake');

@@ -129,6 +129,7 @@
   }
 
   function afterMove() {
+    SG.sound.play('slide');
     if (!startTime) {
       startTime = Date.now();
       timer = setInterval(() => (timeEl.textContent = SG.formatTime((Date.now() - startTime) / 1000)), 250);
@@ -140,6 +141,7 @@
 
   function win() {
     solved = true;
+    SG.sound.play('win');
     clearInterval(timer);
     const seconds = (Date.now() - startTime) / 1000;
     timeEl.textContent = SG.formatTime(seconds);

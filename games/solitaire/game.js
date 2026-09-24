@@ -185,6 +185,7 @@
     loc.pile.splice(loc.index, group.length);
     const target = dest.name === 'f' ? foundations[dest.i] : tableau[dest.i];
     target.push(...group);
+    SG.sound.play(dest.name === 'f' ? 'place' : 'card', 7);
     if (loc.name === 't' && loc.pile.length && !top(loc.pile).up) top(loc.pile).up = true;
     countMove();
     layout();
@@ -194,6 +195,7 @@
   function drawFromStock() {
     if (!stock.length && !waste.length) return;
     snapshot();
+    SG.sound.play('card');
     if (!stock.length) {
       while (waste.length) {
         const c = waste.pop();
@@ -268,6 +270,7 @@
   function checkWin() {
     if (won || foundations.some((p) => p.length !== 13)) return;
     won = true;
+    SG.sound.play('win');
     clearInterval(timer);
     const seconds = Math.round((Date.now() - startTime) / 1000);
     const key = 'solitaire-best-' + drawCount;
@@ -290,6 +293,7 @@
 
   function undo() {
     const h = history.pop();
+    SG.sound.play('click');
     if (!h || won) return;
     const byId = (ids) => ids.map((id) => cards[id]);
     stock = byId(h.stock);
@@ -385,6 +389,7 @@
         d.card.el.classList.remove('nope');
         void d.card.el.offsetWidth;
         d.card.el.classList.add('nope');
+        SG.sound.play('error');
       }
       return;
     }

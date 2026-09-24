@@ -159,6 +159,7 @@
   const isPaused = () => state && state.paused;
 
   function gameOver() {
+    SG.sound.play('lose');
     state = 'over';
     cancelAnimationFrame(rafId);
     draw();
@@ -199,6 +200,7 @@
       }
 
       b.hp--;
+      SG.sound.play('brick', b.hp > 0 ? -7 : 0);
       if (b.hp <= 0) {
         score += b.points;
         spawnParticles(b);
@@ -240,12 +242,14 @@
       ball.vx = ball.speed * Math.sin(angle);
       ball.vy = -ball.speed * Math.cos(angle);
       ball.y = PADDLE_Y - BALL_R;
+      SG.sound.play('bounce');
     }
 
     hitBrick();
 
     if (ball.y - BALL_R > H) {
       lives--;
+      if (lives > 0) SG.sound.play('hit');
       updateHud();
       if (lives <= 0) {
         gameOver();
@@ -269,6 +273,7 @@
       for (let i = 0; i < steps && state === 'playing'; i++) stepBall(dt / steps);
       if (state === 'playing' && bricks.length === 0) {
         level++;
+        SG.sound.play('level');
         score += 100;
         buildLevel();
         resetBall();

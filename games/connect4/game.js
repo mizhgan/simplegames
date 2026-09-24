@@ -172,6 +172,7 @@
     const el = cellEls[r * COLS + c];
     el.classList.add('p' + turn);
     el.style.setProperty('--fall', ROWS - r);
+    SG.sound.play('drop');
     const line = lineThrough(grid, r, c);
     if (line) return finish(turn, line);
     if (heights.every((h) => h >= ROWS)) return finish('D');
@@ -202,6 +203,7 @@
     }
     if (mode === 'ai' && winner === 1) SG.store.set('c4-wins', SG.store.get('c4-wins', 0) + 1);
     renderScores();
+    SG.sound.play(winner === 'D' ? 'draw' : mode === 'ai' && winner === 2 ? 'lose' : 'win');
     if (winner === 'D') statusEl.textContent = 'Ничья 🤝';
     else if (mode === 'ai') statusEl.textContent = winner === 1 ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
     else statusEl.textContent = (winner === 1 ? 'Красные' : 'Жёлтые') + ' победили!';
