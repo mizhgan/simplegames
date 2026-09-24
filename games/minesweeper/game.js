@@ -137,6 +137,7 @@
       lose(i);
       return;
     }
+    const openedBefore = opened;
     const stack = [i];
     while (stack.length) {
       const j = stack.pop();
@@ -145,6 +146,7 @@
       openCell(j);
       if (c.adj === 0) stack.push(...neighbors(j));
     }
+    if (!over) SG.sound.play(opened - openedBefore > 1 ? 'reveal' : 'click');
     checkWin();
   }
 
@@ -164,6 +166,7 @@
     const cell = cells[i];
     if (over || cell.open) return;
     cell.flag = !cell.flag;
+    SG.sound.play('flag');
     flags += cell.flag ? 1 : -1;
     cell.el.classList.toggle('flag', cell.flag);
     cell.el.setAttribute('aria-label', cell.flag ? 'Флажок' : 'Закрытая клетка');
@@ -184,6 +187,7 @@
     flags = mineCount;
     updateMinesLeft();
     faceBtn.textContent = '😎';
+    SG.sound.play('win');
     const key = 'mines-best-' + level;
     const best = SG.store.get(key, null);
     const record = best === null || seconds < best;
@@ -194,6 +198,7 @@
   }
 
   function lose(i) {
+    SG.sound.play('explode');
     over = true;
     stopTimer();
     faceBtn.textContent = '😵';

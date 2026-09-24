@@ -128,6 +128,7 @@
 
   function gameOver(win) {
     state = 'over';
+    SG.sound.play(win ? 'win' : 'lose');
     cancelAnimationFrame(rafId);
     draw();
     const record = score > 0 && score >= best ? ' Новый рекорд!' : '';
@@ -159,6 +160,7 @@
     snake.unshift(head);
     if (eats) {
       score++;
+      SG.sound.play('eat');
       stepMs = Math.max(55, SPEEDS[speed] - score * 2);
       updateScore();
       placeFood();

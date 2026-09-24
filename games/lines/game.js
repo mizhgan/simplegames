@@ -135,6 +135,7 @@
     });
     setTimeout(() => all.forEach((i) => paint(i)), 300);
     setScore(score + pointsFor(all.size));
+    SG.sound.play('line', all.size - 3);
     return all.size;
   }
 
@@ -163,6 +164,7 @@
     if (grid[i]) {
       if (selected >= 0) cells[selected].classList.remove('selected');
       selected = selected === i ? -1 : i;
+      SG.sound.play('click');
       if (selected >= 0) cells[selected].classList.add('selected');
       return;
     }
@@ -172,6 +174,7 @@
       cells[i].classList.remove('blocked');
       void cells[i].offsetWidth;
       cells[i].classList.add('blocked');
+      SG.sound.play('error');
       return;
     }
     history = { grid: grid.slice(), next: next.slice(), score };
@@ -182,6 +185,7 @@
     busy = true;
     undoBtn.disabled = true;
     const color = grid[path[0]];
+    SG.sound.play('slide');
     cells[path[0]].classList.remove('selected');
     selected = -1;
     let k = 0;
@@ -213,6 +217,7 @@
   }
 
   function showGameOver() {
+    SG.sound.play('lose');
     const record = score > 0 && score >= best;
     $('overlay-text').textContent = 'Поле заполнено. Счёт: ' + score + '.' + (record ? ' Новый рекорд! 🏆' : '');
     overlay.hidden = false;

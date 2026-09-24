@@ -94,6 +94,7 @@
   function place(i) {
     board[i] = turn;
     cells[i].innerHTML = turn === 'X' ? X_SVG : O_SVG;
+    SG.sound.play('place', turn === 'X' ? 0 : -5);
     cells[i].disabled = true;
     cells[i].setAttribute('aria-label', turn === 'X' ? 'Крестик' : 'Нолик');
     const res = evaluate(board);
@@ -135,6 +136,7 @@
       SG.store.set('ttt-wins', SG.store.get('ttt-wins', 0) + 1);
     }
     renderScores();
+    SG.sound.play(res.winner === 'D' ? 'draw' : mode === 'ai' && res.winner === 'O' ? 'lose' : 'win');
     if (res.winner === 'D') statusEl.textContent = 'Ничья 🤝';
     else if (mode === 'ai') statusEl.textContent = res.winner === 'X' ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
     else statusEl.textContent = 'Победили ' + (res.winner === 'X' ? 'крестики ✕' : 'нолики ◯') + '!';

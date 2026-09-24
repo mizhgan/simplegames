@@ -188,10 +188,12 @@
       if (game.values[i]) return;
       pushHistory();
       game.notes[i] ^= 1 << d;
+      SG.sound.play('key');
     } else {
       if (game.values[i] === d) return;
       pushHistory();
       game.values[i] = d;
+      SG.sound.play(PEERS[i].some((p) => game.values[p] === d) ? 'error' : 'place', 3);
       game.notes[i] = 0;
       // убираем цифру из заметок соседей
       for (const p of PEERS[i]) game.notes[p] &= ~(1 << d);
@@ -204,6 +206,7 @@
     if (!game.values[selected] && !game.notes[selected]) return;
     pushHistory();
     game.values[selected] = 0;
+    SG.sound.play('slide');
     game.notes[selected] = 0;
     afterChange();
   }
@@ -211,6 +214,7 @@
   function undo() {
     if (!history.length || game.done) return;
     const h = history.pop();
+    SG.sound.play('click');
     game.values = h.values;
     game.notes = h.notes;
     game.fixed = h.fixed;
@@ -233,6 +237,7 @@
     game.notes[i] = 0;
     game.fixed[i] = true;
     game.hints++;
+    SG.sound.play('hint');
     selected = i;
     afterChange();
   }
@@ -245,6 +250,7 @@
 
   function win() {
     game.done = true;
+    SG.sound.play('win');
     clearInterval(timer);
     const key = 'sudoku-best-' + game.level;
     const best = SG.store.get(key, null);

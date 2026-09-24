@@ -111,6 +111,7 @@
     if (state !== 'running') return;
     if (!collide(piece.m, piece.x + dx, piece.y)) {
       piece.x += dx;
+      SG.sound.play('tick');
       touched();
     }
   }
@@ -121,6 +122,7 @@
     for (const [kx, ky] of KICKS) {
       if (!collide(m, piece.x + kx, piece.y + ky)) {
         piece.m = m;
+        SG.sound.play('rotate');
         piece.x += kx;
         piece.y += ky;
         touched();
@@ -147,6 +149,7 @@
       n++;
     }
     score += n * 2;
+    SG.sound.play('drop');
     lock();
   }
 
@@ -157,6 +160,7 @@
     else spawn();
     hold = type;
     canHold = false;
+    SG.sound.play('click');
     drawSide();
   }
 
@@ -176,6 +180,7 @@
     }
     const full = [];
     for (let y = 0; y < ROWS; y++) if (board[y].every(Boolean)) full.push(y);
+    SG.sound.play(full.length ? 'line' : 'place', full.length || -12);
     if (full.length) {
       flash = { rows: full, t: 120 };
       full.forEach((y) => {
@@ -257,6 +262,7 @@
   }
 
   function gameOver() {
+    SG.sound.play('lose');
     state = 'over';
     cancelAnimationFrame(rafId);
     draw();

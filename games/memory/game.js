@@ -88,6 +88,7 @@
       timer = setInterval(() => (timeEl.textContent = SG.formatTime(elapsed())), 250);
     }
     card.el.classList.add('flipped');
+    SG.sound.play('flip');
     card.el.setAttribute('aria-label', card.symbol);
     open.push(card);
     if (open.length < 2) return;
@@ -102,10 +103,12 @@
       a.el.disabled = b.el.disabled = true;
       open = [];
       matchedPairs++;
+      SG.sound.play('match');
       if (matchedPairs === totalPairs) win();
     } else {
       locked = true;
       setTimeout(() => {
+        SG.sound.play('flip');
         a.el.classList.remove('flipped');
         b.el.classList.remove('flipped');
         a.el.setAttribute('aria-label', 'Закрытая карточка');
@@ -117,6 +120,7 @@
   }
 
   function win() {
+    SG.sound.play('win');
     stopTimer();
     const seconds = elapsed();
     timeEl.textContent = SG.formatTime(seconds);
