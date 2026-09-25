@@ -107,7 +107,7 @@
         s.shell = { x: m.x, y: m.y, vx: Math.cos(m.a) * t.pow, vy: -Math.sin(m.a) * t.pow, trail: [] };
         s.phase = 'fly';
         s.shots++;
-        fx('shoot');
+        fx('hit');
       }
       prevF = [inputs[0].f, inputs[1].f];
       return;
