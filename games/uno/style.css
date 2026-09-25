@@ -1,0 +1,115 @@
+.un-table {
+  --uw: clamp(42px, 10vw, 60px);
+}
+
+.un-card {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--uw);
+  height: calc(var(--uw) * 1.45);
+  padding: 0;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  color: #fff;
+  font-size: calc(var(--uw) * 0.38);
+  font-weight: 900;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  cursor: default;
+}
+
+.un-card span {
+  display: grid;
+  place-items: center;
+  width: 78%;
+  height: 62%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+  transform: rotate(-20deg);
+}
+
+.un-card.c0,
+.un-dot.c0 {
+  background: #dc2626;
+}
+
+.un-card.c1,
+.un-dot.c1 {
+  background: #eab308;
+}
+
+.un-card.c2,
+.un-dot.c2 {
+  background: #16a34a;
+}
+
+.un-card.c3,
+.un-dot.c3 {
+  background: #2563eb;
+}
+
+.un-card.c-1 {
+  background: conic-gradient(#dc2626 0 25%, #eab308 0 50%, #16a34a 0 75%, #2563eb 0);
+}
+
+.un-card.back {
+  background: #111;
+}
+
+.un-card.back span {
+  background: #dc2626;
+  color: #fde047;
+  font-size: 0.7em;
+}
+
+.un-hand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.un-hand .un-card.playable {
+  cursor: pointer;
+  transform: translateY(-6px);
+}
+
+.un-hand .un-card.playable:hover {
+  transform: translateY(-12px);
+}
+
+.un-hand .un-card.dim {
+  filter: brightness(0.55);
+}
+
+.un-dot {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+}
+
+.un-dot.big {
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+}
+
+.un-pick {
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.un-pick p {
+  margin: 0 0 8px;
+}
+
+.mm-log {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  text-align: center;
+}

@@ -1,0 +1,97 @@
+.bk-cat {
+  padding: 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--warning) 14%, var(--bg));
+}
+
+.bk-cat p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+}
+
+.bk-status {
+  margin: 0;
+  font-weight: 700;
+}
+
+.bk-mine {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+
+.bk-mine h4 {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.bk-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.bk-card small {
+  color: var(--muted);
+}
+
+.bk-card.open {
+  border-style: solid;
+  border-color: var(--success);
+}
+
+.bk-card.can {
+  border-color: var(--accent);
+  cursor: pointer;
+}
+
+.bk-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.bk-p {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.bk-p small {
+  color: var(--muted);
+}
+
+.bk-p.out {
+  opacity: 0.5;
+}
+
+.bk-p.me {
+  border-color: var(--accent);
+}
+
+.bk-p .btn {
+  margin-top: 4px;
+  padding: 4px 10px;
+}
+
+.mm-log {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  text-align: center;
+}

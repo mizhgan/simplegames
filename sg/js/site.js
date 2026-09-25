@@ -30,6 +30,13 @@
     artillery: 'Артиллерия', pingpong: 'Настольный теннис',
     mafia: 'Мафия', spy: 'Шпион', dixit: 'Ассоциации', crocoparty: 'Крокодил для компании', pokerparty: 'Покер на компанию',
     durakparty: 'Дурак на компанию', maumau: 'Мау-мау', quiz: 'Викторина', codenames: 'Кодовые слова',
+    uno: 'Уно', magnat: 'Магнат', eruditparty: 'Эрудит на компанию', whoami: 'Кто я?', resistance: 'Сопротивление',
+    conspiracy: 'Заговор', twotruths: 'Правда или ложь', hat: 'Шляпа', bunker: 'Бункер', bingo: 'Бинго',
+    dice1000: 'Тысяча на костях', tournament: 'Турнир',
+    pig: 'Свинья', ur: 'Королевская игра Ура', hasami: 'Хасами-сёги', abalone: 'Абалон', blindmaze: 'Лабиринт вслепую',
+    backgammon: 'Короткие нарды', crossduel: 'Кросс-ворд батл',
+    dogfight: 'Воздушный бой', curling: 'Кёрлинг', sumo: 'Сумо', minigolf: 'Мини-гольф', worms: 'Червячки',
+    reaction: 'Реакция', pinball: 'Пинбол-дуэль',
   };
   const TOTAL = Object.keys(GAMES).length;
   const gameUrl = (id) => ROOT + 'games/' + id + '/index.html';
@@ -123,6 +130,24 @@
     ['pokerparty', 'pokerparty-wins', 'win', 1, 'Выиграйте турнир'],
     ['quiz', 'quiz-wins', 'win', 1, 'Выиграйте викторину'],
     ['dixit', 'dixit-wins', 'win', 1, 'Наберите больше всех очков'],
+    ['uno', 'uno-wins', 'win', 1, 'Первым сбросьте все карты'],
+    ['magnat', 'magnat-wins', 'win', 1, 'Станьте самым богатым'],
+    ['dice1000', 'dice1000-wins', 'win', 1, 'Первым наберите 1000'],
+    ['bingo', 'bingo-wins', 'win', 1, 'Первым соберите линию'],
+    ['pig', 'pig-wins', 'win', 1, 'Первым наберите 100 очков'],
+    ['ur', 'ur-wins', 'win', 1, 'Проведите все фишки раньше соперника'],
+    ['hasami', 'hasami-wins', 'win', 1, 'Выиграйте партию'],
+    ['abalone', 'abalone-wins', 'win', 1, 'Вытолкните шесть шаров соперника'],
+    ['blindmaze', 'blindmaze-wins', 'win', 1, 'Найдите выход раньше соперника'],
+    ['backgammon', 'backgammon-wins', 'win', 1, 'Выиграйте партию'],
+    ['crossduel', 'crossduel-wins', 'win', 1, 'Разгадайте больше слов'],
+    ['dogfight', 'dogfight-wins', 'win', 1, 'Выиграйте воздушный бой'],
+    ['curling', 'curling-wins', 'win', 1, 'Выиграйте матч'],
+    ['sumo', 'sumo-wins', 'win', 1, 'Вытолкните соперника с ринга'],
+    ['minigolf', 'minigolf-wins', 'win', 1, 'Пройдите поле за меньшее число ударов'],
+    ['worms', 'worms-wins', 'win', 1, 'Победите команду соперника'],
+    ['reaction', 'reaction-wins', 'win', 1, 'Будьте быстрее соперника'],
+    ['pinball', 'pinball-wins', 'win', 1, 'Выиграйте матч'],
     ['snake', 'snake-best', 'max'],
     ['2048', '2048-best', 'max'],
     ['tetris', 'tetris-best', 'max'],
@@ -271,6 +296,12 @@
     ['party', '👥', 'Душа компании', 'Победите в 5 играх на компанию', () => sum('mafia-wins', 'spy-wins', 'dixit-wins', 'crocoparty-wins', 'pokerparty-wins', 'durakparty-wins', 'maumau-wins', 'quiz-wins', 'codenames-wins'), 5],
     ['mafia', '🕴', 'Крёстный отец', 'Победите в «Мафии»', () => num('mafia-wins'), 1],
     ['online', '🌐', 'Сетевой игрок', 'Доиграйте 5 партий по сети', () => num('net-results'), 5],
+    ['company', '🎉', 'Вечеринка', 'Победите в 5 играх из Уно, Магната, Кто я, Сопротивления, Заговора, Шляпы, Бункера, Бинго и других', () => sum('uno-wins', 'magnat-wins', 'eruditparty-wins', 'whoami-wins', 'resistance-wins', 'conspiracy-wins', 'twotruths-wins', 'hat-wins', 'bunker-wins', 'bingo-wins', 'dice1000-wins'), 5],
+    ['classic', '🏺', 'Древние игры', 'Одержите 5 побед в Свинье, Уре, Хасами-сёги, Абалоне, коротких нардах, Лабиринте или Кросс-ворде', () => sum('pig-wins', 'ur-wins', 'hasami-wins', 'abalone-wins', 'backgammon-wins', 'blindmaze-wins', 'crossduel-wins'), 5],
+    ['arena3', '🛩️', 'Ас', 'Выиграйте 5 матчей в Воздушном бою, Кёрлинге, Сумо, Мини-гольфе, Червячках, Реакции или Пинболе', () => sum('dogfight-wins', 'curling-wins', 'sumo-wins', 'minigolf-wins', 'worms-wins', 'reaction-wins', 'pinball-wins'), 5],
+    ['champion', '🏆', 'Чемпион турнира', 'Выиграйте турнир в комнате', () => num('tournament-wins'), 1],
+    ['rating', '📈', 'Рейтинг 1300', 'Поднимите рейтинг в любой игре по сети до 1300', () => Math.max(0, ...Object.values(store.get('elo', {})).map((e) => (e && e.r) || 0)), 1300],
+    ['rivals', '🤜', 'Старые знакомые', 'Сыграйте по сети с 5 разными людьми', () => store.get('rivals', []).length, 5],
   ].map(([id, icon, title, desc, value, target]) => ({ id, icon, title, desc, value, target }));
 
   const progressOf = (a) => {
@@ -496,6 +527,33 @@
     if (streak) streak.textContent = store.get('daily-best-streak', 0);
     const total = document.getElementById('ach-daily');
     if (total) total.textContent = store.get('daily-total', 0);
+    initNetProfile();
+  }
+
+  // рейтинг по играм и недавние соперники (их записывает sg/js/net.js)
+  function initNetProfile() {
+    const box = document.getElementById('ach-net');
+    if (!box) return;
+    const elo = store.get('elo', {}) || {};
+    const rivals = (store.get('rivals', []) || []).filter((r) => r && r.id);
+    const games = Object.keys(elo).filter((g) => GAMES[g] && elo[g] && elo[g].n);
+    if (!games.length && !rivals.length) return;
+    box.hidden = false;
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    document.getElementById('ach-elo').innerHTML = games.length
+      ? games
+          .sort((a, b) => elo[b].r - elo[a].r)
+          .map((g) => `<li><a href="${gameUrl(g)}">${esc(GAMES[g])}</a><b>${elo[g].r}</b><small>${elo[g].n} ${plural(elo[g].n, 'партия', 'партии', 'партий')}</small></li>`)
+          .join('')
+      : '<li class="empty">Сыграйте партию по сети — появится рейтинг.</li>';
+    document.getElementById('ach-rivals').innerHTML = rivals.length
+      ? rivals
+          .map((r) => `<li><span>${esc(r.name)}${r.game && GAMES[r.game] ? ` <small>· <a href="${gameUrl(r.game)}">${esc(GAMES[r.game])}</a></small>` : ''}</span><b title="Ваши победы : поражения">${r.w || 0}:${r.l || 0}</b></li>`)
+          .join('')
+      : '<li class="empty">Пока никого.</li>';
+    const cb = document.getElementById('ach-inbox');
+    cb.checked = !store.get('inbox-off', false);
+    cb.addEventListener('change', () => store.set('inbox-off', !cb.checked));
   }
 
   SG.site = { GAMES, ACHIEVEMENTS, daily: dailyInfo, toast };

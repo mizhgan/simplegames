@@ -1,0 +1,53 @@
+.ab-board {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1.1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #8b5e34, #5b3a1e);
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+}
+
+.ab-cell {
+  position: absolute;
+  width: 9.4%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.ab-cell.w {
+  background: radial-gradient(circle at 35% 30%, #fff, #cbd5e1 60%, #94a3b8);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
+}
+
+.ab-cell.k {
+  background: radial-gradient(circle at 35% 30%, #6b7280, #1f2937 60%, #000);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
+}
+
+.ab-cell.sel {
+  outline: 4px solid var(--warning);
+}
+
+.ab-cell.can::after {
+  content: '';
+  position: absolute;
+  inset: 32%;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+.ab-cell.last {
+  outline: 2px solid rgba(253, 224, 71, 0.8);
+}
+
+.ab-out {
+  font-weight: 600;
+}

@@ -1,0 +1,61 @@
+.wa-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.wa-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  text-align: center;
+}
+
+.wa-card.turn {
+  border-color: var(--accent);
+}
+
+.wa-card.done {
+  opacity: 0.6;
+}
+
+.wa-card.me .wa-who {
+  color: var(--muted);
+}
+
+.wa-who {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.wa-card small {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.wa-form {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.wa-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+.mm-log {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.wa-give {
+  font-size: 0.8rem;
+}

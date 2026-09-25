@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Турнир — SimpleGames</title>
+  <meta name="description" content="Турнир для компании: выберите любую игру сайта на двоих и сыграйте олимпийскую сетку или круговой турнир — матчи по сети, итоги засчитываются сами. От 3 до 8 игроков.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/party.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Турнир</h1>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div id="party"></div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Хозяин комнаты выбирает игру (шахматы, морской бой, аэрохоккей, червячки — любая игра на двоих по сети) и формат турнира.</li>
+            <li><b>Олимпийская система</b>: проигравший выбывает, победитель проходит в следующий тур, пока не останется чемпион. Ничья — переигровка. <b>Круговой</b>: каждый играет с каждым, победа — 1 очко, ничья — ½.</li>
+            <li>Кнопка «▶ Играть» открывает матч в новой вкладке, соперник подключается к той же комнате сам. Когда партия закончится, итог автоматически попадёт в турнирную таблицу. Если не попал — отметьте его кнопками «Я выиграл» / «Я проиграл».</li>
+            <li>Хозяин — судья: он может засчитать победу, ничью или назначить переигровку. Ушедший из комнаты игрок проигрывает несыгранные матчи.</li>
+            <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/party.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

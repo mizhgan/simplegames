@@ -325,6 +325,264 @@
 
   // ---------- основной объект ----------
 
+  // ---------- профиль игрока: имя, рейтинг, недавние соперники ----------
+  // Всё хранится только в этом браузере. Рейтинг Эло считается отдельно для каждой игры:
+  // после партии по сети каждый пересчитывает свой, зная рейтинг соперника.
+
+  const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const ELO_START = 1200;
+  const MAX_RIVALS = 15;
+
+  const profile = {
+    id() {
+      let v = SG.store.get('player-id', '');
+      if (!/^[a-z0-9]{12}$/.test(v)) {
+        v = Array.from({ length: 12 }, () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)]).join('');
+        SG.store.set('player-id', v);
+      }
+      return v;
+    },
+    name: () => SG.store.get('party-name', '') || '',
+    setName(n) {
+      n = String(n || '').trim().slice(0, 16);
+      if (n) SG.store.set('party-name', n);
+    },
+    rating(game) {
+      const e = SG.store.get('elo', {})[game];
+      return e ? e.r : ELO_START;
+    },
+    ratings: () => SG.store.get('elo', {}),
+    card: (game) => ({ id: profile.id(), name: profile.name(), elo: profile.rating(game) }),
+    // карточка соперника из сети — проверяем, что это не мусор
+    clean(x) {
+      if (!x || typeof x !== 'object' || !/^[a-z0-9]{12}$/.test(String(x.id))) return null;
+      const elo = Math.round(+x.elo);
+      return { id: String(x.id), name: String(x.name || '').trim().slice(0, 16) || 'Соперник', elo: elo > 100 && elo < 4000 ? elo : ELO_START };
+    },
+    rivals: () => (SG.store.get('rivals', []) || []).filter((r) => r && r.id),
+    remember(rival, game, title) {
+      if (!rival || rival.id === profile.id()) return;
+      const list = profile.rivals().filter((r) => r.id !== rival.id);
+      const old = profile.rivals().find((r) => r.id === rival.id) || { w: 0, l: 0, d: 0 };
+      list.unshift({ id: rival.id, name: rival.name, at: Date.now(), game, title: title || old.title || '', w: old.w || 0, l: old.l || 0, d: old.d || 0 });
+      SG.store.set('rivals', list.slice(0, MAX_RIVALS));
+    },
+    // итог партии: пересчёт рейтинга и счёта личных встреч; возвращает { before, after }
+    record(rival, game, r) {
+      const all = SG.store.get('elo', {});
+      const me = all[game] || { r: ELO_START, n: 0 };
+      const score = r === 'win' ? 1 : r === 'lose' ? 0 : 0.5;
+      const exp = 1 / (1 + Math.pow(10, (rival.elo - me.r) / 400));
+      const k = me.n < 10 ? 40 : 24;
+      const delta = Math.round(k * (score - exp));
+      const before = me.r;
+      all[game] = { r: Math.max(100, me.r + delta), n: me.n + 1 };
+      SG.store.set('elo', all);
+      rival.elo -= delta;
+      const list = profile.rivals();
+      const x = list.find((q) => q.id === rival.id);
+      if (x) {
+        x[r === 'win' ? 'w' : r === 'lose' ? 'l' : 'd']++;
+        x.at = Date.now();
+        SG.store.set('rivals', list);
+      }
+      return { before, after: all[game].r };
+    },
+  };
+
+  // ---------- личный «почтовый ящик»: приглашения от недавних соперников ----------
+  // Пока открыта любая страница игры, браузер слушает приглашения на личном адресе у сервера знакомств.
+  // Адрес знают только те, с кем вы уже играли по сети.
+
+  const inboxPeerId = (pid) => PREFIX + 'u' + cyrb53('sgu:' + pid);
+  let inbox = null;
+  let inboxBusy = () => false;
+
+  function startInbox(isBusy) {
+    if (isBusy) inboxBusy = isBusy;
+    if (inbox || !profile.rivals().length || SG.store.get('inbox-off', false)) return;
+    inbox = 'starting';
+    setTimeout(async () => {
+      if (!(await loadPeer())) {
+        inbox = null;
+        return;
+      }
+      let p;
+      try {
+        p = new window.Peer(inboxPeerId(profile.id()), peerOptions(serverList()[0]));
+      } catch (e) {
+        inbox = null;
+        return;
+      }
+      inbox = p;
+      p.on('connection', (c) => {
+        c.on('data', (raw) => {
+          let msg;
+          try {
+            msg = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            return;
+          }
+          if (!msg || msg.t !== 'invite') return;
+          const reply = (t) => {
+            try {
+              c.send(JSON.stringify({ t }));
+            } catch (e) {
+              /* ignore */
+            }
+            setTimeout(() => c.close(), 1000);
+          };
+          const from = profile.clean(msg.from);
+          let url;
+          try {
+            url = new URL(String(msg.url), location.href);
+          } catch (e) {
+            return reply('no');
+          }
+          // принимаем только ссылки на этот же сайт с кодом комнаты
+          if (!from || url.origin !== location.origin || !/^#(join|party)=[a-z0-9]{6}(-p)?$/.test(url.hash)) return reply('no');
+          if (inboxBusy()) return reply('busy');
+          showInvite(from, String(msg.title || 'игру').slice(0, 40), url.href, reply);
+        });
+      });
+      p.on('error', (err) => {
+        // адрес занят другой вкладкой — она и примет приглашение
+        if (err.type === 'unavailable-id' && inbox === p) {
+          inbox = null;
+          p.destroy();
+        }
+      });
+      p.on('disconnected', () => {
+        setTimeout(() => {
+          try {
+            if (inbox === p && !p.destroyed && p.disconnected) p.reconnect();
+          } catch (e) {
+            /* ignore */
+          }
+        }, 5000);
+      });
+      window.addEventListener('pagehide', () => {
+        try {
+          p.destroy();
+        } catch (e) {
+          /* ignore */
+        }
+      });
+    }, 1500);
+  }
+
+  function showInvite(from, title, url, reply) {
+    const old = document.querySelector('.net-invite');
+    if (old) old.remove();
+    const el = document.createElement('div');
+    el.className = 'net-invite';
+    el.setAttribute('role', 'alertdialog');
+    el.innerHTML =
+      `<p>🎮 <b>${escH(from.name)}</b> зовёт вас сыграть: «${escH(title)}»</p>` +
+      '<div class="net-actions"><button class="btn btn-primary" type="button" data-yes>Играть</button><button class="btn btn-ghost" type="button" data-no>Не сейчас</button></div>';
+    document.body.appendChild(el);
+    SG.sound.play('match');
+    const done = setTimeout(() => {
+      el.remove();
+      reply('no');
+    }, 60000);
+    el.querySelector('[data-yes]').addEventListener('click', () => {
+      clearTimeout(done);
+      reply('ok');
+      setTimeout(() => {
+        location.href = url;
+        // та же страница: смена хэша не перезагружает её
+        if (url.split('#')[0] === location.href.split('#')[0]) location.reload();
+      }, 300);
+    });
+    el.querySelector('[data-no]').addEventListener('click', () => {
+      clearTimeout(done);
+      el.remove();
+      reply('no');
+    });
+  }
+
+  // список недавних соперников с кнопкой «Позвать» — в окне приглашения
+  function rivalsBlock(box, url, title, getPeer) {
+    const list = profile.rivals().slice(0, 6);
+    if (!list.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'net-rivals';
+    wrap.innerHTML =
+      '<p class="net-label">Позвать недавнего соперника</p><ul>' +
+      list
+        .map(
+          (r) =>
+            `<li><span>${escH(r.name)}` +
+            (r.w + r.l + r.d ? ` <small title="Ваши победы : поражения">${r.w}:${r.l}</small>` : '') +
+            (r.title ? ` <small>· ${escH(r.title)}</small>` : '') +
+            `</span><button class="btn btn-ghost" type="button" data-invite="${r.id}">Позвать</button></li>`
+        )
+        .join('') +
+      '</ul><p class="net-note">Приглашение придёт, если у друга открыта любая игра на этом сайте.</p>';
+    const actions = box.querySelector(':scope > .net-actions');
+    if (actions) box.insertBefore(wrap, actions);
+    else box.appendChild(wrap);
+    wrap.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-invite]');
+      if (!b || b.disabled) return;
+      const p = getPeer();
+      if (!p || p.destroyed) return;
+      b.disabled = true;
+      b.textContent = 'Зовём…';
+      let c;
+      try {
+        c = p.connect(inboxPeerId(b.dataset.invite), { reliable: true });
+      } catch (err) {
+        b.textContent = 'Не вышло';
+        return;
+      }
+      const set = (t, keep) => {
+        b.textContent = t;
+        if (!keep) setTimeout(() => ((b.disabled = false), (b.textContent = 'Позвать')), 8000);
+      };
+      const timer = setTimeout(() => {
+        set('Не в сети');
+        try {
+          c.close();
+        } catch (err) {
+          /* ignore */
+        }
+      }, 8000);
+      c.on('open', () => {
+        clearTimeout(timer);
+        b.textContent = 'Ждём ответа…';
+        c.send(JSON.stringify({ t: 'invite', from: profile.card(''), title, url }));
+      });
+      c.on('data', (raw) => {
+        let msg = raw;
+        try {
+          msg = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        } catch (err) {
+          return;
+        }
+        if (msg.t === 'ok') set('Идёт! ✓', true);
+        else if (msg.t === 'busy') set('Сейчас играет');
+        else set('Не сейчас');
+      });
+    });
+  }
+
+  // имя в окне приглашения (для рейтинга и списка соперников)
+  function nameField() {
+    return `<label class="net-name"><span>Ваше имя</span><input type="text" maxlength="16" autocomplete="nickname" placeholder="Для соперника" value="${escH(profile.name())}"></label>`;
+  }
+  function bindName(box, onChange) {
+    const input = box.querySelector('.net-name input');
+    if (!input) return;
+    input.addEventListener('change', () => {
+      profile.setName(input.value);
+      if (onChange) onChange();
+    });
+  }
+
+  const gameTitle = () => (document.querySelector('.game-head h1') || {}).textContent || document.title.split(' — ')[0];
+
   function setup(opts) {
     const api = {
       active: false,
@@ -359,6 +617,8 @@
     let mirrorObs = null;
     let mirrorTimer = 0;
     let lastMirror = '';
+    let rival = null; // карточка соперника: { id, name, elo }
+    let eloNote = '';
     const WHO = { host: 'Игрок 1', guest: 'Игрок 2', watcher: 'Зритель' };
 
     // кнопка «По сети» в переключателе режимов
@@ -398,7 +658,7 @@
       bar.dataset.state = state;
       if (state === 'on') {
         bar.innerHTML =
-          '<span class="net-dot"></span><span class="net-text"></span><span class="net-score" hidden></span>' +
+          '<span class="net-dot"></span><span class="net-text"></span><span class="net-rival" hidden></span><span class="net-score" hidden></span>' +
           '<button class="btn btn-ghost net-rematch" type="button" hidden>Реванш</button>' +
           '<button class="btn btn-ghost net-watch-btn" type="button" title="Ссылка для зрителей" hidden>👁 <span></span></button>' +
           '<button class="btn btn-ghost net-react-btn" type="button" aria-label="Реакция" title="Реакция">😊</button>' +
@@ -473,6 +733,12 @@
       sc.title = watching
         ? 'Игрок 1 — ' + series.me + ', игрок 2 — ' + series.them
         : 'Вы — ' + series.me + ', соперник — ' + series.them + (series.draw ? ', ничьих — ' + series.draw : '');
+      const rv = bar.querySelector('.net-rival');
+      rv.hidden = watching || !rival;
+      if (rival) {
+        rv.textContent = 'vs ' + rival.name + ' · ' + profile.rating(opts.game) + (eloNote ? ' ' + eloNote : '');
+        rv.title = 'Ваш рейтинг в этой игре — ' + profile.rating(opts.game) + ', у соперника — ' + rival.elo;
+      }
       const wb = bar.querySelector('.net-watch-btn');
       wb.hidden = !myToken;
       wb.querySelector('span').textContent = watcherCount ? watcherCount : 'Зрителям';
@@ -505,12 +771,19 @@
       if (r === 'win') series.me++;
       else if (r === 'lose') series.them++;
       else series.draw++;
+      if (rival) {
+        const e = profile.record(rival, opts.game, r);
+        const d = e.after - e.before;
+        eloNote = '(' + (d >= 0 ? '+' : '') + d + ')';
+      }
+      tourReport(r);
       updateBar();
       if (api.role === 'host') toWatchers({ t: '_wseries', s: series });
     }
 
     // началась новая партия — сбрасываем итог и предложения реванша
     function newGameSeen() {
+      eloNote = '';
       resultLocked = false;
       finishedGame = false;
       rematchMine = rematchTheirs = false;
@@ -570,6 +843,15 @@
           .querySelector('[data-close]').addEventListener('click', cancel);
         return;
       }
+      if (msg.t === '_me') {
+        const r = profile.clean(msg.me);
+        if (r && api.role !== 'watcher') {
+          rival = r;
+          if (api.active) profile.remember(rival, opts.game, gameTitle());
+          updateBar();
+        }
+        return;
+      }
       if (msg.t === '_hello') {
         // в комнату на сервере знакомств пускаем только знающих код (в ручном режиме код не нужен)
         if (!helloDone && api.role === 'host' && myRoom && msg.key !== myRoom) {
@@ -583,9 +865,10 @@
             .querySelector('[data-close]').addEventListener('click', closeDialog);
           return teardown();
         }
+        if (!msg.watch && api.role !== 'watcher') rival = profile.clean(msg.me);
         if (!helloDone) {
           helloDone = true;
-          rawSend({ t: '_hello', game: opts.game, key: joinKey });
+          rawSend({ t: '_hello', game: opts.game, key: joinKey, me: profile.card(opts.game) });
           connected();
         }
         return;
@@ -616,7 +899,7 @@
       conn = c;
       lastSeen = Date.now();
       // гость первым здоровается, хозяин отвечает
-      if (api.role === 'guest') rawSend({ t: '_hello', game: opts.game, key: joinKey });
+      if (api.role === 'guest') rawSend({ t: '_hello', game: opts.game, key: joinKey, me: profile.card(opts.game) });
       if (api.role === 'watcher') rawSend({ t: '_hello', game: opts.game, key: joinKey, watch: 1 });
       clearInterval(pingTimer);
       pingTimer = setInterval(() => {
@@ -635,6 +918,12 @@
       renderBar('on');
       SG.sound.play('match');
       history.replaceState(null, '', baseUrl());
+      if (rival && api.role !== 'watcher') {
+        profile.remember(rival, opts.game, gameTitle());
+        startInbox();
+      }
+      eloNote = '';
+      updateBar();
       if (opts.onConnect) opts.onConnect(api.role);
       // партия началась — зрители, пришедшие заранее, получают её с начала
       if (api.role === 'host') {
@@ -666,6 +955,7 @@
       const mirror = document.querySelector('.net-mirror');
       if (mirror) mirror.remove();
       watcherCount = 0;
+      rival = null;
       myRoom = '';
       myToken = '';
       api.active = false;
@@ -1091,15 +1381,16 @@
 
     // ---------- хозяин: комната через PeerJS ----------
 
-    async function host(srvIdx) {
+    async function host(srvIdx, fixedRoom, fixedTry) {
       teardown();
       api.role = 'host';
       const servers = serverList();
       const idx = srvIdx || 0;
       const which = servers[idx];
-      // свой сервер не ответил — пробуем следующий, и только потом ручной режим
-      const fallback = (reason) => (idx + 1 < servers.length ? host(idx + 1) : manualHost(reason));
-      const room = code();
+      // свой сервер не ответил — пробуем следующий, и только потом ручной режим;
+      // у матча турнира код комнаты задан заранее, поэтому сервер менять нельзя
+      const fallback = (reason) => (fixedRoom ? fail(reason + ' Откройте матч из турнира ещё раз.') : idx + 1 < servers.length ? host(idx + 1) : manualHost(reason));
+      const room = fixedRoom || code();
       const box = dialog(
         '<h2 id="net-title">Игра по сети</h2><p class="net-status">Создаём комнату…</p>' +
           '<div class="net-actions"><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
@@ -1125,6 +1416,7 @@
         const url = baseUrl() + '#join=' + token;
         const b = dialog(
           '<h2 id="net-title">Игра по сети</h2>' +
+            nameField() +
             linkBlock(url, 'Отправьте другу эту ссылку:') +
             `<p class="net-code">Или продиктуйте код комнаты: <b>${token}</b></p>` +
             '<p class="net-status"><span class="net-spinner"></span>Ждём соперника…</p>' +
@@ -1136,6 +1428,8 @@
             '<div class="net-actions"><button class="btn btn-ghost" type="button" data-manual>Ручной режим</button><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
         );
         bindLink(b, url);
+        bindName(b);
+        rivalsBlock(b, url, gameTitle(), () => peer);
         b.querySelector('[data-wcopy]').addEventListener('click', (e) => copy(baseUrl() + '#watch=' + token, e.currentTarget));
         b.querySelector('[data-cancel]').addEventListener('click', cancel);
         b.querySelector('[data-manual]').addEventListener('click', () => manualHost('Соединимся без сервера знакомств.'));
@@ -1209,7 +1503,11 @@
       });
       peer.on('error', (err) => {
         if (peer !== myPeer) return;
-        if (err.type === 'unavailable-id') return host(idx);
+        if (err.type === 'unavailable-id') {
+          // комната турнира ещё занята прежней вкладкой — немного ждём
+          if (fixedRoom) return (fixedTry || 0) < 5 ? setTimeout(() => host(idx, fixedRoom, (fixedTry || 0) + 1), 2500) : fail('Комната матча занята. Закройте другие вкладки с этой игрой.');
+          return host(idx);
+        }
         if (!opened || ['network', 'server-error', 'socket-error', 'socket-closed', 'browser-incompatible'].includes(err.type)) {
           clearTimeout(timer);
           if (!api.active && !opened) fallback('Сервер знакомств недоступен.');
@@ -1260,9 +1558,12 @@
       const box = dialog(
         '<h2 id="net-title">' + (asWatcher ? 'Просмотр игры' : 'Игра по сети') + '</h2><p class="net-status"><span class="net-spinner"></span>Подключаемся к комнате <b>' +
           room +
-          '</b>…</p><p class="net-note" hidden></p><div class="net-actions"><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
+          '</b>…</p><p class="net-note" hidden></p>' +
+          (asWatcher ? '' : nameField()) +
+          '<div class="net-actions"><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
       );
       box.querySelector('[data-cancel]').addEventListener('click', cancel);
+      bindName(box, () => api.active && rawSend({ t: '_me', me: profile.card(opts.game) }));
       const statusEl = box.querySelector('.net-status');
       const noteEl = box.querySelector('.net-note');
       const setStatus = (html) => (statusEl.innerHTML = '<span class="net-spinner"></span>' + html);
@@ -1573,6 +1874,37 @@
     // вход по ссылке-приглашению
     const m = location.hash.match(/^#(join|offer|watch)=(.+)$/);
     if (m) setTimeout(() => (m[1] === 'offer' ? manualGuest(m[2]) : join(decodeURIComponent(m[2]), m[1] === 'watch')), 50);
+    // матч турнира: комната с заранее известным кодом, итог уходит во вкладку турнира
+    const tm = location.hash.match(/^#t(host|join)=([a-z0-9]{6})$/);
+    if (tm) {
+      try {
+        sessionStorage.setItem('sg-tmatch', tm[2]);
+      } catch (e) {
+        /* ignore */
+      }
+      setTimeout(() => (tm[1] === 'host' ? host(0, tm[2]) : join(tm[2])), 50);
+    }
+
+    function tourReport(r) {
+      let room = '';
+      try {
+        room = sessionStorage.getItem('sg-tmatch') || '';
+      } catch (e) {
+        return;
+      }
+      if (!room) return;
+      const msg = { room, r, game: opts.game, at: Date.now() };
+      try {
+        const ch = new BroadcastChannel('sg-tour');
+        ch.postMessage(msg);
+        ch.close();
+      } catch (e) {
+        /* ignore */
+      }
+      SG.store.set('tour-report', msg);
+    }
+
+    startInbox(() => api.active);
 
     api.host = host;
     api.join = join;
@@ -1582,6 +1914,6 @@
   }
 
   // общие части для игр на компанию (sg/js/party.js)
-  const util = { loadPeer, peerOptions, serverList, roomToken, parseToken, roomPeerId, code, baseUrl, dialog, closeDialog, linkBlock, bindLink, copy, REACTIONS };
-  SG.net = { setup, ice: ICE, config: CONFIG, util };
+  const util = { profile, startInbox, rivalsBlock, nameField, bindName, inboxPeerId, loadPeer, peerOptions, serverList, roomToken, parseToken, roomPeerId, code, baseUrl, dialog, closeDialog, linkBlock, bindLink, copy, REACTIONS };
+  SG.net = { setup, ice: ICE, config: CONFIG, util, profile };
 })();

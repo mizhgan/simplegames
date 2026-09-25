@@ -1,0 +1,67 @@
+.pg-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  max-width: 520px;
+}
+
+.pg-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.pg-side {
+  position: relative;
+  overflow: hidden;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.pg-side.turn {
+  border-color: var(--accent);
+}
+
+.pg-side b {
+  display: block;
+  font-size: 2rem;
+}
+
+.pg-side i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 5px;
+  background: var(--success);
+  transition: width 0.3s;
+}
+
+.pg-die {
+  font-size: 7rem;
+  line-height: 1;
+}
+
+.pg-die.bust {
+  color: var(--danger);
+}
+
+.pg-die.roll {
+  animation: pg-roll 0.35s ease-out;
+}
+
+@keyframes pg-roll {
+  from {
+    transform: rotate(-200deg) scale(0.6);
+  }
+}
+
+.pg-pot {
+  min-height: 1.4em;
+  font-weight: 700;
+}

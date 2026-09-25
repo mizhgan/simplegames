@@ -1,0 +1,118 @@
+.cs-role {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #3b82f6 20%, var(--bg));
+  font-weight: 800;
+}
+
+.cs-role.bad,
+.cs-role.boss {
+  background: color-mix(in srgb, #ef4444 22%, var(--bg));
+}
+
+.cs-board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.cs-track {
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+.cs-track.blue {
+  background: color-mix(in srgb, #3b82f6 18%, var(--bg));
+}
+
+.cs-track.red {
+  background: color-mix(in srgb, #ef4444 18%, var(--bg));
+}
+
+.cs-track span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 54px;
+  border: 2px dashed color-mix(in srgb, var(--text) 30%, transparent);
+  border-radius: 6px;
+  font-size: 1.4rem;
+}
+
+.cs-track span small {
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+.cs-track span.on {
+  border-style: solid;
+  background: var(--surface);
+}
+
+.cs-hand {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.cs-law {
+  width: 70px;
+  height: 96px;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  font-size: 2rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.cs-law.blue {
+  background: #3b82f6;
+}
+
+.cs-law.red {
+  background: #dc2626;
+}
+
+.cs-law:disabled {
+  cursor: default;
+}
+
+.rs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.rs-p {
+  padding: 8px 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rs-p.pres,
+.rs-p.nom {
+  border-color: var(--accent);
+}
+
+.rs-p.dead {
+  opacity: 0.45;
+}
+
+.rs-p.me {
+  text-decoration: underline;
+}
+
+.mm-log {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  text-align: center;
+}

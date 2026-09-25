@@ -1,0 +1,62 @@
+.dk .pt-seat {
+  position: relative;
+  overflow: hidden;
+}
+
+.dk-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--success);
+}
+
+.dk-status {
+  margin: 0;
+  font-weight: 700;
+}
+
+.dk-dice {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  min-height: 72px;
+}
+
+.dk-die {
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 3px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  font-size: 4.2rem;
+  line-height: 0.8;
+  cursor: pointer;
+}
+
+.dk-die:disabled {
+  cursor: default;
+}
+
+.dk-die.sel {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.dk-kept {
+  font-size: 1.8rem;
+  opacity: 0.7;
+}
+
+.dk-rules {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.mm-log {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  text-align: center;
+}

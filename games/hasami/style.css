@@ -1,0 +1,58 @@
+.hs-board {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-rows: repeat(9, minmax(0, 1fr));
+  gap: 2px;
+  width: 100%;
+  max-width: 540px;
+  aspect-ratio: 1;
+  padding: 8px;
+  border-radius: 12px;
+  background: #b7864a;
+}
+
+.hs-cell {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: #e8c38c;
+  cursor: pointer;
+}
+
+.hs-cell.can {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.7) 20%, #e8c38c 22%);
+}
+
+.hs-cell.sel .hs-pc {
+  outline: 3px solid var(--warning);
+}
+
+.hs-cell.last {
+  background: #f3d9a9;
+}
+
+.hs-pc {
+  display: grid;
+  place-items: center;
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: #fff;
+  font-size: clamp(0.8rem, 3vw, 1.4rem);
+  font-style: normal;
+  font-weight: 800;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.hs-pc.s0 {
+  background: #dc2626;
+}
+
+.hs-pc.s1 {
+  background: #2563eb;
+}
+
+.hs-taken {
+  font-weight: 700;
+}

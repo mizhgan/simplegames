@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Короткие нарды — SimpleGames</title>
+  <meta name="description" content="Короткие нарды (бэкгаммон): бейте одиночные шашки соперника, стройте заборы и первыми выведите все 15 шашек. Против компьютера, вдвоём или по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../nardy/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Короткие нарды</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label" id="label-0">Вы · Белые</span><span class="stat-value" id="score-0">0</span></div>
+        <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
+        <div class="stat"><span class="stat-label" id="label-1">Компьютер · Чёрные</span><span class="stat-value" id="score-1">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+            <button type="button" data-value="pvp">Вдвоём</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+
+        <div class="nd-dice" id="dice" aria-live="polite"></div>
+        <div class="nd-wrap">
+          <div class="nd-frame">
+            <div class="nd-board" id="board" aria-label="Доска для нард"></div>
+            <div class="nd-side">
+              <div class="nd-ai-off">⚫<br><b id="off-1">0</b></div>
+              <button class="nd-tray" type="button" id="bg-off" aria-label="Выбросить шашку"><span>⇥</span><b id="off-0">0</b></button>
+            </div>
+          </div>
+        </div>
+        <div class="game-controls"><button class="btn btn-primary" type="button" id="bg-roll">🎲 Бросить кости</button></div>
+        <p class="bg-note" id="bg-note"></p>
+
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>У каждого 15 шашек в начальной расстановке. Белые идут против часовой стрелки к своему дому справа внизу, чёрные — навстречу, к дому справа вверху.</li>
+            <li>Бросьте кости и передвиньте шашки на выпавшие значения; дубль играется четыре раза. Нельзя вставать на пункт, где две или больше шашек соперника.</li>
+            <li>Встали на одиночную шашку соперника — она сбита и уходит на бар; пока шашка на баре, её хозяин должен сначала ввести её в игру.</li>
+            <li>Когда все шашки в доме, их выводят с доски (нажмите на лоток справа). Нужно использовать как можно больше очков; если можно сыграть только одну кость — обязательно большую.</li>
+            <li>Кто первым вывел все шашки — победил. Если соперник не вывел ни одной — «марс», а если у него шашки ещё на баре или в вашем доме — «кокс».</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/duel.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

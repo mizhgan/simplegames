@@ -13,6 +13,7 @@
        hud(state, view) { return 'строка состояния' },
        pointer: 'y' | 'xy',                   // указатель задаёт px/py (ракетка, бита)
        pad: true,                             // экранный джойстик на телефоне
+       keys: { KeyQ: 'w' }, buttons: [{ k: 'w', label: '🔄' }], // доп. действия: клавиши и кнопки на экране
        flipGuest: true,                       // у гостя поле повёрнуто на 180° (своя сторона снизу)
        shared: true,                          // пошаговая игра: вдвоём за одним экраном управление общее
        snapshot(state), restore(snap, prev),  // сжатие состояния для сети (по умолчанию — целиком)
@@ -89,7 +90,8 @@
       const maps = split ? [KEYS[side]] : KEYS;
       for (const m of maps) for (const code in m) if (pressed.has(code)) inp[m[code]] = true;
       const p = padState[split ? side : 0];
-      for (const k of ['u', 'd', 'l', 'r', 'f']) if (p[k]) inp[k] = true;
+      for (const k in p) if (p[k] && k !== 'px' && k !== 'py') inp[k] = true;
+      if (cfg.keys) for (const code in cfg.keys) if (pressed.has(code)) inp[cfg.keys[code]] = true;
       const pt = ptr[split ? side : 0];
       if (pt) {
         inp.px = pt.x;
@@ -102,7 +104,7 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.target.closest && e.target.closest('input, textarea')) return;
-      const known = KEYS[0][e.code] || KEYS[1][e.code];
+      const known = KEYS[0][e.code] || KEYS[1][e.code] || (cfg.keys && cfg.keys[e.code]);
       if (known) {
         pressed.add(e.code);
         if (phase === 'run' || phase === 'count' || e.code.startsWith('Arrow')) e.preventDefault();
@@ -174,6 +176,7 @@
           '<span class="rt-pad-name"></span><div class="rt-dpad">' +
           ['u:▲', 'l:◀', 'r:▶', 'd:▼'].map((x) => `<button type="button" data-k="${x[0]}" aria-label="${x.slice(2)}">${x.slice(2)}</button>`).join('') +
           '</div>' +
+          (cfg.buttons || []).map((b) => `<button type="button" class="rt-fire rt-extra" data-k="${b.k}">${b.label}</button>`).join('') +
           (cfg.fireLabel ? `<button type="button" class="rt-fire" data-k="f">${cfg.fireLabel}</button>` : '');
         pad.querySelectorAll('[data-k]').forEach((b) => {
           const k = b.dataset.k;

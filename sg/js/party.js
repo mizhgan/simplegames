@@ -65,6 +65,8 @@
       '<div class="pt-bar" hidden><span class="net-dot"></span><span class="pt-bar-text"></span>' +
       '<button class="btn btn-ghost" type="button" data-again hidden>Новая партия</button>' +
       '<button class="btn btn-ghost" type="button" data-watch hidden>👁 Зрителям</button>' +
+      '<button class="btn btn-ghost" type="button" data-voice hidden title="Голосовой чат">🎤 Голос</button>' +
+      '<button class="btn btn-ghost" type="button" data-mute hidden title="Выключить микрофон">🔊</button>' +
       '<button class="btn btn-ghost" type="button" data-leave>Выйти</button></div>' +
       '<div class="pt-watchbox" hidden></div>' +
       '<div class="pt-main" hidden><div class="pt-table" id="table"></div>' +
@@ -81,6 +83,20 @@
     const watchBox = $('.pt-watchbox');
 
     const myName = () => SG.store.get('party-name', '') || '';
+    const myPid = () => U().profile.id();
+    const cleanPid = (x) => (/^[a-z0-9]{12}$/.test(String(x)) ? String(x) : '');
+    const gameTitle = () => (document.querySelector('.game-head h1') || {}).textContent || document.title.split(' — ')[0];
+
+    // партия с живыми людьми началась — запоминаем их как недавних соперников
+    function noteRivals() {
+      if (role !== 'host' && role !== 'guest') return;
+      const mine = myPid();
+      players.forEach((p) => {
+        if (p.bot || !p.pid || p.pid === mine) return;
+        U().profile.remember({ id: p.pid, name: p.name, elo: 1200 }, cfg.game, gameTitle());
+      });
+      U().startInbox(() => mode !== 'idle');
+    }
 
     function showSetup() {
       mode = 'idle';
@@ -145,7 +161,7 @@
       let html = '';
       if (role === 'host') {
         const url = U().baseUrl() + '#party=' + token;
-        html += U().linkBlock(url, 'Отправьте друзьям ссылку:') + `<p class="net-code">Или продиктуйте код комнаты: <b>${token}</b></p>`;
+        html += U().linkBlock(url, 'Отправьте друзьям ссылку:') + `<p class="net-code">Или продиктуйте код комнаты: <b>${token}</b></p><div class="pt-rivals"></div>`;
       }
       if (role === 'solo') html += '<p class="pt-note">Игра с ботами на этом устройстве.</p>';
       html += `<h3 class="pt-h">Игроки · ${players.length} из ${cfg.max}</h3><ul class="pt-players">`;
@@ -164,9 +180,13 @@
         html += `<button class="btn btn-primary" type="button" data-start ${enough ? '' : 'disabled'}>Начать игру</button></div>`;
         html += enough ? '' : `<p class="pt-note">Нужно ещё игроков: ${cfg.min - players.length}${cfg.bots ? ' (можно добавить ботов)' : ''}.</p>`;
       } else html += `<p class="net-status"><span class="net-spinner"></span>Ждём, пока хозяин начнёт игру${humans < 2 ? '' : ''}…</p>`;
-      html += '<div class="pt-start"><button class="btn btn-ghost" type="button" data-leave>Выйти</button></div>';
+      html += '<div class="pt-start"><button class="btn btn-ghost" type="button" data-voice hidden>🎤 Голос</button><button class="btn btn-ghost" type="button" data-leave>Выйти</button></div>';
       lobbyEl.innerHTML = html;
-      if (role === 'host') U().bindLink(lobbyEl, U().baseUrl() + '#party=' + token);
+      renderVoice();
+      if (role === 'host') {
+        U().bindLink(lobbyEl, U().baseUrl() + '#party=' + token);
+        U().rivalsBlock(lobbyEl.querySelector('.pt-rivals'), U().baseUrl() + '#party=' + token, gameTitle(), () => peer);
+      }
       const optEl = lobbyEl.querySelector('.pt-options');
       if (optEl) {
         optEl.innerHTML = cfg.options.html;
@@ -223,7 +243,7 @@
 
     // настройки для гостей (без секретов вроде своего набора вопросов)
     const pubOpts = () => (cfg.options && cfg.options.public ? cfg.options.public(opts) : opts);
-    const publicPlayers = () => players.map((p) => ({ id: p.id, name: p.name, bot: !!p.bot, on: p.on !== false }));
+    const publicPlayers = () => players.map((p) => ({ id: p.id, name: p.name, bot: !!p.bot, on: p.on !== false, pid: p.pid || '' }));
 
     function broadcastLobby(keepForm) {
       if (mode === 'lobby' && !keepForm) renderLobby();
@@ -235,7 +255,7 @@
       role = 'host';
       myId = 0;
       nextId = 1;
-      players = [{ id: 0, name: myName(), on: true }];
+      players = [{ id: 0, name: myName(), on: true, pid: myPid() }];
       opts = cfg.options ? SG.store.get(key('opts'), null) : null;
       const servers = U().serverList();
       const idx = srvIdx || 0;
@@ -281,6 +301,7 @@
             renderLobby();
           });
           p.on('connection', (c) => acceptConn(c));
+          p.on('call', onCall);
           p.on('error', (err) => {
             if (peer !== p) return;
             if (err.type === 'unavailable-id') return hostRoom(idx);
@@ -366,6 +387,7 @@
             conns.set(id, w);
             back.on = true;
             back.name = String(msg.name || back.name).slice(0, 16);
+            back.pid = cleanPid(msg.pid);
           } else {
             if (mode === 'play') {
               // игра уже идёт — только смотреть
@@ -382,7 +404,7 @@
             id = nextId++;
             let name = String(msg.name || 'Игрок').trim().slice(0, 16) || 'Игрок';
             if (players.some((p) => p.name === name)) name = name.slice(0, 13) + ' ' + id;
-            players.push({ id, name, on: true, secret: String(msg.secret || '') });
+            players.push({ id, name, on: true, secret: String(msg.secret || ''), pid: cleanPid(msg.pid) });
             conns.set(id, w);
           }
           w.send({ t: '_welcome', id, players: publicPlayers(), opts: pubOpts(), started: mode === 'play' });
@@ -399,6 +421,7 @@
         if (msg.t === '_ping') return;
         if (id === null) return; // зрители только смотрят
         if (msg.t === '_bye') return dropPlayer(id, w);
+        if (msg.t === '_voice') return voiceFrom(id, msg);
         if (msg.t === 'act' && mode === 'play') {
           if (cfg.act(state, id, msg.a, Date.now())) afterChange();
         } else if (msg.t === 'chat') chatFrom(id, msg.text);
@@ -420,6 +443,7 @@
       if (conns.get(id) !== w) return;
       conns.delete(id);
       w.close();
+      voiceFrom(id, { on: false });
       const p = players.find((x) => x.id === id);
       if (!p) return;
       if (mode === 'lobby') {
@@ -472,6 +496,7 @@
       mode = 'play';
       Object.keys(botReady).forEach((k) => delete botReady[k]);
       conns.forEach((c) => c.send({ t: '_start', players: publicPlayers() }));
+      noteRivals();
       watchers.forEach((w) => w.send({ t: '_start', players: publicPlayers() }));
       showTable();
       afterChange();
@@ -540,7 +565,7 @@
       role = 'solo';
       myId = 0;
       nextId = 1;
-      players = [{ id: 0, name: myName(), on: true }];
+      players = [{ id: 0, name: myName(), on: true, pid: myPid() }];
       opts = cfg.options ? SG.store.get(key('opts'), null) : null;
       const want = Math.max(cfg.min, Math.min(cfg.max, cfg.soloBots ? cfg.soloBots + 1 : 4));
       while (players.length < want) addBot();
@@ -598,6 +623,7 @@
           if (!ok) return failJoin('Не удалось загрузить модуль связи.');
           const p = new window.Peer(U().peerOptions(parsed.which));
           peer = p;
+          p.on('call', onCall);
           let tries = 0;
           let retry = 0;
           let unavailable = 0;
@@ -614,7 +640,7 @@
               clearTimeout(giveUp);
               hostConn = wrap(c);
               lastSeen = Date.now();
-              hostConn.send({ t: '_hello', game: cfg.game, key: room, name: myName() || 'Гость', secret: secretFor(tok), watch: asWatcher ? 1 : 0 });
+              hostConn.send({ t: '_hello', game: cfg.game, key: room, name: myName() || 'Гость', secret: secretFor(tok), watch: asWatcher ? 1 : 0, pid: myPid() });
             });
             c.on('data', (raw) => mine && fromHost(raw));
             c.on('close', () => mine && lostHost());
@@ -690,6 +716,7 @@
           break;
         case '_start':
           players = msg.players || players;
+          noteRivals();
           mode = 'play';
           showTable();
           SG.sound.play('match');
@@ -708,6 +735,9 @@
           break;
         case 'chat':
           addChat(msg);
+          break;
+        case '_voicelist':
+          gotVoiceList(msg.list);
           break;
         case 'relay':
           if (cfg.onRelay) cfg.onRelay(msg.m, ui());
@@ -761,6 +791,7 @@
       if (watchers.length && role === 'host') text += ' · зрителей ' + watchers.length;
       barEl.querySelector('.pt-bar-text').textContent = text;
       barEl.querySelector('[data-watch]').hidden = role !== 'host';
+      renderVoice();
       barEl.querySelector('[data-again]').hidden = !((role === 'host' || role === 'solo') && view && view.over);
     }
 
@@ -889,9 +920,176 @@
       else sendHost({ t: 'chat', text });
     });
 
+    // ---------- голосовой чат ----------
+    // Звук идёт напрямую между участниками (каждый с каждым), хозяин лишь рассылает список,
+    // кто сейчас в голосовом чате. Микрофон включается только по кнопке.
+
+    const voice = { on: false, muted: false, stream: null, calls: new Map(), members: [] };
+    const hostVoice = new Map(); // у хозяина: id игрока → адрес его Peer
+    const audios = new Map();
+
+    const voiceAllowed = () => role === 'host' || role === 'guest';
+
+    function renderVoice() {
+      root.querySelectorAll('[data-voice]').forEach((b) => {
+        b.hidden = !voiceAllowed() || !window.RTCPeerConnection;
+        const n = voice.members.length;
+        b.textContent = voice.on ? '🎤 В голосе' + (n > 1 ? ' · ' + n : '') : '🎤 Голос' + (n ? ' · ' + n : '');
+        b.classList.toggle('on', voice.on);
+        b.title = voice.on ? 'Выйти из голосового чата' : 'Голосовой чат: говорить с игроками';
+      });
+      const m = barEl.querySelector('[data-mute]');
+      m.hidden = !voice.on;
+      m.textContent = voice.muted ? '🔇' : '🎙';
+      m.title = voice.muted ? 'Включить микрофон' : 'Выключить микрофон';
+    }
+
+    async function toggleVoice() {
+      if (voice.on) return voiceStop();
+      if (!voiceAllowed() || !peer) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        addChat({ sys: 1, text: 'Этот браузер не умеет передавать звук.' });
+        return;
+      }
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false });
+      } catch (e) {
+        addChat({ sys: 1, text: 'Нет доступа к микрофону — разрешите его в настройках браузера.' });
+        return;
+      }
+      if (!voiceAllowed() || !peer) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      voice.stream = stream;
+      voice.on = true;
+      voice.muted = false;
+      announce(true);
+      renderVoice();
+      SG.sound.play('hint');
+    }
+
+    function announce(on) {
+      const pid = on && peer ? peer.id : '';
+      if (role === 'host') voiceFrom(myId, { on, peer: pid });
+      else sendHost({ t: '_voice', on, peer: pid });
+    }
+
+    // у хозяина: кто-то вошёл в голосовой чат или вышел
+    function voiceFrom(id, msg) {
+      if (role !== 'host') return;
+      const pid = String((msg && msg.peer) || '');
+      if (msg && msg.on && pid && pid.length < 100) hostVoice.set(id, pid);
+      else if (!hostVoice.has(id)) return;
+      else hostVoice.delete(id);
+      const list = [...hostVoice].map(([pl, peerId]) => ({ id: pl, peer: peerId }));
+      conns.forEach((c) => c.send({ t: '_voicelist', list }));
+      gotVoiceList(list);
+    }
+
+    function gotVoiceList(list) {
+      voice.members = Array.isArray(list) ? list.filter((m) => m && typeof m.peer === 'string') : [];
+      if (voice.on && peer) {
+        const me = peer.id;
+        const want = new Set(voice.members.map((m) => m.peer).filter((x) => x !== me));
+        voice.calls.forEach((c, pid) => {
+          if (want.has(pid)) return;
+          closeCall(pid);
+        });
+        // звонит тот, у кого адрес «меньше», — чтобы двое не позвонили друг другу одновременно
+        want.forEach((pid) => {
+          if (voice.calls.has(pid) || me > pid) return;
+          try {
+            const c = peer.call(pid, voice.stream);
+            if (c) wireCall(c, pid);
+          } catch (e) {
+            /* ignore */
+          }
+        });
+      }
+      renderVoice();
+    }
+
+    function onCall(call) {
+      if (!voice.on || !voice.stream) {
+        try {
+          call.close();
+        } catch (e) {
+          /* ignore */
+        }
+        return;
+      }
+      if (voice.calls.has(call.peer)) closeCall(call.peer);
+      call.answer(voice.stream);
+      wireCall(call, call.peer);
+    }
+
+    function wireCall(call, pid) {
+      voice.calls.set(pid, call);
+      call.on('stream', (remote) => {
+        let a = audios.get(pid);
+        if (!a) {
+          a = document.createElement('audio');
+          a.autoplay = true;
+          a.hidden = true;
+          root.appendChild(a);
+          audios.set(pid, a);
+        }
+        a.srcObject = remote;
+        a.play().catch(() => {});
+      });
+      const gone = () => voice.calls.get(pid) === call && closeCall(pid);
+      call.on('close', gone);
+      call.on('error', gone);
+    }
+
+    function closeCall(pid) {
+      const c = voice.calls.get(pid);
+      voice.calls.delete(pid);
+      if (c) {
+        try {
+          c.close();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+      const a = audios.get(pid);
+      if (a) {
+        a.srcObject = null;
+        a.remove();
+        audios.delete(pid);
+      }
+    }
+
+    function voiceStop(silent) {
+      const was = voice.on;
+      voice.on = false;
+      voice.muted = false;
+      if (voice.stream) voice.stream.getTracks().forEach((t) => t.stop());
+      voice.stream = null;
+      [...voice.calls.keys()].forEach(closeCall);
+      if (was && !silent) announce(false);
+      if (silent) {
+        voice.members = [];
+        hostVoice.clear();
+      }
+      renderVoice();
+    }
+
+    root.addEventListener('click', (e) => {
+      if (e.target.closest('[data-voice]')) toggleVoice();
+      else if (e.target.closest('[data-mute]') && voice.stream) {
+        voice.muted = !voice.muted;
+        voice.stream.getAudioTracks().forEach((t) => (t.enabled = !voice.muted));
+        renderVoice();
+      }
+    });
+
     // ---------- выход ----------
 
     function teardown() {
+      voiceStop(true);
       clearInterval(timer);
       timer = 0;
       conns.forEach((c) => c.close());
