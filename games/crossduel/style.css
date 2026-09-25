@@ -1,0 +1,100 @@
+.cd-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  max-width: 560px;
+}
+
+.cd-side {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.cd-side p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.cd-time {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.cd-grid {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  gap: 2px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.cd-grid.shake {
+  animation: ws-shake 0.35s;
+}
+
+.cd-x {
+  aspect-ratio: 1;
+}
+
+.cd-c {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: clamp(0.6rem, 2.6vw, 1.05rem);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cd-c small {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  color: var(--muted);
+  font-size: 0.5em;
+}
+
+.cd-c.sel {
+  background: color-mix(in srgb, var(--accent) 30%, var(--surface));
+  border-color: var(--accent);
+}
+
+.cd-c.ok {
+  background: color-mix(in srgb, var(--success) 25%, var(--surface));
+}
+
+.cd-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  width: 100%;
+  max-width: 560px;
+}
+
+.cd-word {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cd-word.used {
+  opacity: 0.35;
+  text-decoration: line-through;
+}

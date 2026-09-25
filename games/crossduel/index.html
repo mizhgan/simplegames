@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кросс-ворд батл — SimpleGames</title>
+  <meta name="description" content="Кросс-ворд батл: один и тот же кроссворд-расстановка у обоих — кто быстрее расставит все слова по местам. Против компьютера или с другом по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Кросс-ворд батл</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Вы</span><span class="stat-value" id="score-me">0</span></div>
+        <div class="stat"><span class="stat-label" id="label-opp">Компьютер</span><span class="stat-value" id="score-opp">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+
+        <div class="cd-bar">
+          <div class="cd-side"><p>Вы</p><b id="mine">0</b></div>
+          <div class="cd-time" id="time">4:00</div>
+          <div class="cd-side"><p id="opp-name">Компьютер</p><b id="theirs">0</b></div>
+        </div>
+
+        <div class="cd-grid" id="grid" aria-label="Сетка"></div>
+        <div class="cd-bank" id="bank" aria-label="Слова"></div>
+
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новый кроссворд</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>У вас и соперника одна и та же сетка кроссворда и один список слов. Нужно расставить каждое слово на своё место.</li>
+            <li>Нажмите на клетку, чтобы выбрать место (повторный клик на пересечении меняет направление), затем слово из списка. Подходит — слово встаёт, не подходит — 2 секунды штрафа. Подсказка — пересечения с уже вписанными словами.</li>
+            <li>Кто первым заполнит всю сетку — победил. Если за 4 минуты не успел никто, выигрывает тот, у кого больше слов.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../crocodile/words.js"></script>
+  <script src="../../sg/data/nouns.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
