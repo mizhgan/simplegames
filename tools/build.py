@@ -10,6 +10,7 @@
 Скрипт генерирует:
     games/<id>/index.html   страница игры (шаблон tools/templates/game.html)
     index.html              главная с карточками (шаблон tools/templates/index.html)
+    sg/css/style.css        общие стили из sg/css/src/*.css (порядок — CSS_ORDER)
     sg/js/site.js           список игр и задания «Игры дня» (между метками @build)
     games/tournament/game.js  игры для турнира (между метками @build:duo)
     README.md               таблица игр (между метками games:start / games:end)
@@ -192,9 +193,27 @@ def replace_between(text, start, end, body, name):
     return text[: i + len(start)] + body + text[j:]
 
 
+# ---------- общие стили: sg/css/src/*.css → sg/css/style.css ----------
+
+CSS_ORDER = ['tokens', 'base', 'layout', 'buttons', 'home', 'game', 'toast', 'achievements', 'net', 'rt']
+
+
+def css_bundle():
+    src = os.path.join(ROOT, 'sg', 'css', 'src')
+    found = sorted(f[:-4] for f in os.listdir(src) if f.endswith('.css'))
+    extra = [f for f in found if f not in CSS_ORDER]
+    missing = [f for f in CSS_ORDER if f not in found]
+    if extra or missing:
+        sys.exit('sg/css/src: добавьте файлы в CSS_ORDER в tools/build.py (лишние: %s, нет: %s)' % (extra, missing))
+    head = ('/* ==========================================================================\n'
+            '   SimpleGames — общие стили. Файл собирается из sg/css/src/*.css: python3 tools/build.py\n'
+            '   ========================================================================== */\n')
+    return head + ''.join('\n/* ---------- %s.css ---------- */\n\n%s' % (name, read(os.path.join(src, name + '.css'))) for name in CSS_ORDER)
+
+
 # ---------- service worker ----------
 
-SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github'}
+SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src'}
 SW_SKIP_FILES = {'sw.js', 'README.md', '.htaccess', 'robots.txt', '.gitignore', '404.html', 'meta.json', 'stage.html', 'thumb.svg', 'catalog.json'}
 SW_EXTS = {'.html', '.css', '.js', '.svg', '.png', '.webmanifest', '.json'}
 
@@ -310,6 +329,7 @@ def main():
     for g in games:
         out['games/%s/index.html' % g['id']] = game_page(g)
     out['index.html'] = index_page(games)
+    out['sg/css/style.css'] = css_bundle()
     out['sg/js/site.js'] = site_js(games, read(os.path.join(ROOT, 'sg/js/site.js')))
     out['README.md'] = readme(games, read(os.path.join(ROOT, 'README.md')))
     out['games/tournament/game.js'] = tournament_js(games, read(os.path.join(GAMES, 'tournament', 'game.js')))

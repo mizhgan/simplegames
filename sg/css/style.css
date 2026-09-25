@@ -1,6 +1,8 @@
 /* ==========================================================================
-   SimpleGames — общие стили
+   SimpleGames — общие стили. Файл собирается из sg/css/src/*.css: python3 tools/build.py
    ========================================================================== */
+
+/* ---------- tokens.css ---------- */
 
 :root {
   --bg: #0d0e1a;
@@ -70,6 +72,8 @@
   color-scheme: light;
 }
 
+/* ---------- base.css ---------- */
+
 *,
 *::before,
 *::after {
@@ -120,6 +124,8 @@ button {
   margin: 0 auto;
   padding: 0 16px;
 }
+
+/* ---------- layout.css ---------- */
 
 /* ---------- Header ---------- */
 
@@ -191,6 +197,42 @@ button {
 .icon-btn:active {
   transform: scale(0.94);
 }
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 22px 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.site-footer a {
+  color: var(--muted);
+}
+
+/* ---------- 404 ---------- */
+
+.not-found {
+  text-align: center;
+  padding: 90px 16px;
+}
+
+.not-found .code {
+  font-size: clamp(5rem, 20vw, 9rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+/* ---------- buttons.css ---------- */
 
 /* ---------- Buttons ---------- */
 
@@ -277,6 +319,8 @@ button {
   background: var(--accent);
   color: #fff;
 }
+
+/* ---------- home.css ---------- */
 
 /* ---------- Home ---------- */
 
@@ -516,25 +560,212 @@ button {
   font-size: 1.6rem;
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Избранное, недавние, «Игра дня» ---------- */
 
-.site-footer {
-  border-top: 1px solid var(--border);
-  padding: 22px 0;
-  color: var(--muted);
-  font-size: 0.88rem;
+.game-card {
+  position: relative;
 }
 
-.footer-inner {
+.fav-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.28);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.15s, background 0.2s;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.game-card:hover .fav-btn,
+.fav-btn:focus-visible,
+.fav-btn.on {
+  opacity: 1;
+}
+
+.fav-btn.on {
+  color: #fde047;
+}
+
+.fav-btn:hover {
+  transform: scale(1.12);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+@media (hover: none) {
+  .fav-btn {
+    opacity: 0.85;
+  }
+}
+
+.home-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.home-top.single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 860px) {
+  .home-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.daily-card {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--g1, var(--accent)) 45%, var(--border));
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.daily-thumb {
+  display: grid;
+  flex: 0 0 38%;
+  place-items: center;
+  min-height: 170px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), transparent 55%),
+    linear-gradient(135deg, var(--g1, var(--accent)), var(--g2, var(--accent-2)));
+}
+
+.daily-thumb svg {
+  width: 82%;
+  height: auto;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
+}
+
+.daily-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 18px 20px;
+}
+
+.daily-label {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.daily-body h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.daily-goal {
+  margin: 0;
+  color: var(--muted);
+}
+
+.daily-card.done .daily-goal {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.daily-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 8px;
 }
 
-.site-footer a {
+.daily-streak {
   color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
+
+@media (max-width: 520px) {
+  .daily-card {
+    flex-direction: column;
+  }
+  .daily-thumb {
+    min-height: 0;
+    aspect-ratio: 16 / 7;
+  }
+  .daily-thumb svg {
+    width: 50%;
+  }
+}
+
+.recent-box {
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.recent-box h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.mini-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mini-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.mini-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--g1, var(--accent));
+}
+
+.mini-thumb {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, var(--g1, var(--accent)), var(--g2, var(--accent-2)));
+}
+
+.mini-thumb svg {
+  width: 70%;
+  height: auto;
+}
+
+.mini-title {
+  overflow: hidden;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- game.css ---------- */
 
 /* ---------- Game pages ---------- */
 
@@ -869,224 +1100,7 @@ kbd {
   }
 }
 
-/* ---------- 404 ---------- */
-
-.not-found {
-  text-align: center;
-  padding: 90px 16px;
-}
-
-.not-found .code {
-  font-size: clamp(5rem, 20vw, 9rem);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.05em;
-}
-
-/* ---------- Избранное, недавние, «Игра дня» ---------- */
-
-.game-card {
-  position: relative;
-}
-
-.fav-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.28);
-  color: #fff;
-  font-size: 1.2rem;
-  line-height: 1;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s, transform 0.15s, background 0.2s;
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-}
-
-.game-card:hover .fav-btn,
-.fav-btn:focus-visible,
-.fav-btn.on {
-  opacity: 1;
-}
-
-.fav-btn.on {
-  color: #fde047;
-}
-
-.fav-btn:hover {
-  transform: scale(1.12);
-  background: rgba(0, 0, 0, 0.45);
-}
-
-@media (hover: none) {
-  .fav-btn {
-    opacity: 0.85;
-  }
-}
-
-.home-top {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: 20px;
-  margin-bottom: 36px;
-}
-
-.home-top.single {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-@media (max-width: 860px) {
-  .home-top {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-.daily-card {
-  display: flex;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--g1, var(--accent)) 45%, var(--border));
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-.daily-thumb {
-  display: grid;
-  flex: 0 0 38%;
-  place-items: center;
-  min-height: 170px;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), transparent 55%),
-    linear-gradient(135deg, var(--g1, var(--accent)), var(--g2, var(--accent-2)));
-}
-
-.daily-thumb svg {
-  width: 82%;
-  height: auto;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
-}
-
-.daily-body {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-  padding: 18px 20px;
-}
-
-.daily-label {
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.daily-body h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.daily-goal {
-  margin: 0;
-  color: var(--muted);
-}
-
-.daily-card.done .daily-goal {
-  color: var(--success);
-  font-weight: 600;
-}
-
-.daily-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 8px;
-}
-
-.daily-streak {
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-@media (max-width: 520px) {
-  .daily-card {
-    flex-direction: column;
-  }
-  .daily-thumb {
-    min-height: 0;
-    aspect-ratio: 16 / 7;
-  }
-  .daily-thumb svg {
-    width: 50%;
-  }
-}
-
-.recent-box {
-  padding: 18px 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-.recent-box h2 {
-  margin: 0 0 12px;
-  font-size: 1.1rem;
-}
-
-.mini-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.mini-card {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--text);
-  text-decoration: none;
-  transition: transform 0.15s, border-color 0.15s;
-}
-
-.mini-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--g1, var(--accent));
-}
-
-.mini-thumb {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, var(--g1, var(--accent)), var(--g2, var(--accent-2)));
-}
-
-.mini-thumb svg {
-  width: 70%;
-  height: auto;
-}
-
-.mini-title {
-  overflow: hidden;
-  padding: 6px 8px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* ---------- toast.css ---------- */
 
 /* ---------- Уведомления ---------- */
 
@@ -1143,6 +1157,8 @@ kbd {
     transform: translateY(20px) scale(0.96);
   }
 }
+
+/* ---------- achievements.css ---------- */
 
 /* ---------- Страница достижений ---------- */
 
@@ -1246,6 +1262,73 @@ kbd {
 .ach.ok .ach-bar i {
   background: var(--warning);
 }
+
+.ach-net {
+  margin-top: 28px;
+}
+
+.ach-net[hidden] {
+  display: none;
+}
+
+.ach-net h2 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+}
+
+.ach-net h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.ach-net-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.ach-net ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ach-net li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.ach-net li > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.ach-net li small,
+.ach-net li.empty {
+  color: var(--muted);
+}
+
+.ach-net a {
+  color: inherit;
+}
+
+.ach-inbox {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- net.css ---------- */
 
 /* ---------- Игра по сети ---------- */
 
@@ -1596,100 +1679,6 @@ kbd {
   font-size: 0.85rem;
 }
 
-/* ---------- Экранный джойстик для игр в реальном времени ---------- */
-
-.rt-pads {
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 720px;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rt-pads {
-    display: none;
-  }
-}
-
-.rt-pad {
-  display: flex;
-  flex: 1;
-  gap: 14px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.rt-pad[hidden] {
-  display: none;
-}
-
-.rt-pad.side-1 {
-  flex-direction: row-reverse;
-}
-
-.rt-pad-name {
-  position: absolute;
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-
-.rt-dpad {
-  display: grid;
-  grid-template-areas: ". u ." "l . r" ". d .";
-  grid-template-columns: repeat(3, 48px);
-  grid-template-rows: repeat(3, 48px);
-  gap: 4px;
-}
-
-.rt-dpad button,
-.rt-fire {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: 1.1rem;
-  touch-action: none;
-}
-
-.rt-dpad [data-k="u"] {
-  grid-area: u;
-}
-
-.rt-dpad [data-k="d"] {
-  grid-area: d;
-}
-
-.rt-dpad [data-k="l"] {
-  grid-area: l;
-}
-
-.rt-dpad [data-k="r"] {
-  grid-area: r;
-}
-
-.rt-fire {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  font-size: 0.85rem;
-  font-weight: 800;
-}
-
-.rt-fire.rt-extra {
-  width: 52px;
-  height: 52px;
-  font-size: 1.1rem;
-}
-
-.rt-dpad button.on,
-.rt-fire.on {
-  background: var(--accent);
-  color: #fff;
-}
-
 /* ---------- Зрители ---------- */
 
 .net-watch {
@@ -1842,72 +1831,98 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
   }
 }
 
-.pt [data-voice].on {
-  border-color: var(--success);
-  background: color-mix(in srgb, var(--success) 18%, var(--surface));
+/* ---------- rt.css ---------- */
+
+/* ---------- Экранный джойстик для игр в реальном времени ---------- */
+
+.rt-pads {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 720px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.ach-net {
-  margin-top: 28px;
+@media (hover: hover) and (pointer: fine) {
+  .rt-pads {
+    display: none;
+  }
 }
 
-.ach-net[hidden] {
+.rt-pad {
+  display: flex;
+  flex: 1;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rt-pad[hidden] {
   display: none;
 }
 
-.ach-net h2 {
-  margin: 0 0 12px;
-  font-size: 1.3rem;
+.rt-pad.side-1 {
+  flex-direction: row-reverse;
 }
 
-.ach-net h3 {
-  margin: 0 0 8px;
-  font-size: 1rem;
+.rt-pad-name {
+  position: absolute;
+  font-size: 0.75rem;
+  color: var(--muted);
 }
 
-.ach-net-cols {
+.rt-dpad {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-areas: ". u ." "l . r" ". d .";
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(3, 48px);
+  gap: 4px;
 }
 
-.ach-net ul {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ach-net li {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-  padding: 8px 12px;
+.rt-dpad button,
+.rt-fire {
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: var(--surface);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 1.1rem;
+  touch-action: none;
 }
 
-.ach-net li > :first-child {
-  flex: 1;
-  min-width: 0;
+.rt-dpad [data-k="u"] {
+  grid-area: u;
 }
 
-.ach-net li small,
-.ach-net li.empty {
-  color: var(--muted);
+.rt-dpad [data-k="d"] {
+  grid-area: d;
 }
 
-.ach-net a {
-  color: inherit;
+.rt-dpad [data-k="l"] {
+  grid-area: l;
 }
 
-.ach-inbox {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 0.9rem;
+.rt-dpad [data-k="r"] {
+  grid-area: r;
+}
+
+.rt-fire {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.rt-fire.rt-extra {
+  width: 52px;
+  height: 52px;
+  font-size: 1.1rem;
+}
+
+.rt-dpad button.on,
+.rt-fire.on {
+  background: var(--accent);
+  color: #fff;
 }
