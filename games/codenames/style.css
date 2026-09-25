@@ -1,0 +1,140 @@
+.cn-teams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.cn-team {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.cn-team b {
+  width: 100%;
+}
+
+.cn-team span.me {
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.cn-team.red,
+.cn-card.red.open {
+  background: color-mix(in srgb, #ef4444 22%, var(--bg));
+}
+
+.cn-team.blue,
+.cn-card.blue.open {
+  background: color-mix(in srgb, #3b82f6 22%, var(--bg));
+}
+
+.cn-red {
+  color: #dc2626;
+}
+
+.cn-blue {
+  color: #2563eb;
+}
+
+.cn-status {
+  margin: 0;
+  font-weight: 600;
+}
+
+.cn-status.cn-red b {
+  color: #dc2626;
+}
+
+.cn-status.cn-blue b {
+  color: #2563eb;
+}
+
+.cn-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+
+.cn-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  padding: 4px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: clamp(0.7rem, 2.4vw, 0.95rem);
+  font-weight: 700;
+  hyphens: auto;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.cn-card:disabled {
+  cursor: default;
+}
+
+.cn-card small {
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+
+/* капитан видит ключ: цветная рамка у закрытых карт */
+.cn-card.red:not(.open) {
+  border-color: #ef4444;
+}
+
+.cn-card.blue:not(.open) {
+  border-color: #3b82f6;
+}
+
+.cn-card.killer:not(.open) {
+  border-color: #111;
+  border-style: dashed;
+}
+
+.cn-card.open {
+  opacity: 0.85;
+}
+
+.cn-card.neutral.open {
+  background: color-mix(in srgb, #d6b27c 35%, var(--bg));
+}
+
+.cn-card.killer.open {
+  background: #111;
+  color: #fff;
+}
+
+.cn-card.sel {
+  box-shadow: 0 0 0 3px var(--warning);
+}
+
+.cn-clue {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.cn-clue input {
+  flex: 1;
+  min-width: 0;
+}
+
+.mm-log {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  text-align: center;
+}
