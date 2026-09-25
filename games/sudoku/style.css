@@ -4,7 +4,8 @@
 
 .sd-board {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-rows: repeat(9, minmax(0, 1fr));
   aspect-ratio: 1;
   border: 2px solid var(--muted);
   border-radius: 12px;
@@ -82,8 +83,8 @@
   position: absolute;
   inset: 2px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   place-items: center;
 }
 
@@ -96,7 +97,7 @@
 
 .sd-pad {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(9, minmax(0, 1fr));
   gap: 6px;
   width: 100%;
   max-width: 500px;

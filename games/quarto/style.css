@@ -13,8 +13,8 @@
 
 .q-board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
   gap: 8px;
   width: min(100%, 380px);
   aspect-ratio: 1;
@@ -92,7 +92,7 @@
 
 .q-pool {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   width: 100%;
   padding: 10px;

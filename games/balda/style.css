@@ -19,7 +19,8 @@
 
 .bd-board {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
   gap: 5px;
   padding: 8px;
   aspect-ratio: 1;
@@ -99,7 +100,7 @@
 
 .bd-keyboard {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 4px;
   width: 100%;
   max-width: 360px;

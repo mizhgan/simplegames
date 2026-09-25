@@ -7,13 +7,13 @@
 
 .wd-board {
   display: grid;
-  grid-template-rows: repeat(6, 1fr);
+  grid-template-rows: repeat(6, minmax(0, 1fr));
   gap: 6px;
 }
 
 .wd-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
 }
 
@@ -179,7 +179,7 @@
 
 .wd-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 18px;
 }

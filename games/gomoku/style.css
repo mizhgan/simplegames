@@ -1,6 +1,7 @@
 .gm-board {
   display: grid;
-  grid-template-columns: repeat(15, 1fr);
+  grid-template-columns: repeat(15, minmax(0, 1fr));
+  grid-template-rows: repeat(15, minmax(0, 1fr));
   width: min(560px, 92vw);
   aspect-ratio: 1;
   padding: clamp(6px, 2vw, 14px);

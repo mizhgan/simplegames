@@ -15,7 +15,7 @@
 
 .nd-board {
   display: grid;
-  grid-template-columns: repeat(6, 1fr) 0.6fr repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr)) 0.6fr repeat(6, minmax(0, 1fr));
   grid-template-rows: minmax(0, 1fr) minmax(0, 0.35fr) minmax(0, 1fr);
   aspect-ratio: 13 / 11;
   border-radius: 6px;

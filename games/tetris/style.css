@@ -38,7 +38,7 @@
 
 .touch-pad {
   display: none;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   width: 100%;
   max-width: 420px;
