@@ -177,7 +177,7 @@
           const upd = () => {
             opts = cfg.options.read(optEl);
             SG.store.set(key('opts'), opts);
-            broadcastLobby();
+            broadcastLobby(true);
           };
           optEl.addEventListener('change', upd);
           optEl.addEventListener('input', upd);
@@ -221,11 +221,13 @@
 
     // ---------- хозяин ----------
 
+    // настройки для гостей (без секретов вроде своего набора вопросов)
+    const pubOpts = () => (cfg.options && cfg.options.public ? cfg.options.public(opts) : opts);
     const publicPlayers = () => players.map((p) => ({ id: p.id, name: p.name, bot: !!p.bot, on: p.on !== false }));
 
-    function broadcastLobby() {
-      if (mode === 'lobby') renderLobby();
-      conns.forEach((c) => c.send({ t: '_lobby', players: publicPlayers(), opts, started: mode === 'play' }));
+    function broadcastLobby(keepForm) {
+      if (mode === 'lobby' && !keepForm) renderLobby();
+      conns.forEach((c) => c.send({ t: '_lobby', players: publicPlayers(), opts: pubOpts(), started: mode === 'play' }));
     }
 
     function hostRoom(srvIdx) {
@@ -350,7 +352,7 @@
               return setTimeout(() => w.close(), 500);
             }
             watchers.push(w);
-            w.send({ t: '_welcome', id: -1, watcher: true, players: publicPlayers(), opts, started: mode === 'play' });
+            w.send({ t: '_welcome', id: -1, watcher: true, players: publicPlayers(), opts: pubOpts(), started: mode === 'play' });
             chatLog.slice(-30).forEach((m) => w.send(m));
             if (mode === 'play') sendView(w, -1);
             return;
@@ -368,7 +370,7 @@
             if (mode === 'play') {
               // игра уже идёт — только смотреть
               watchers.push(w);
-              w.send({ t: '_welcome', id: -1, watcher: true, late: true, players: publicPlayers(), opts, started: true });
+              w.send({ t: '_welcome', id: -1, watcher: true, late: true, players: publicPlayers(), opts: pubOpts(), started: true });
               chatLog.slice(-30).forEach((m) => w.send(m));
               sendView(w, -1);
               return;
@@ -383,7 +385,7 @@
             players.push({ id, name, on: true, secret: String(msg.secret || '') });
             conns.set(id, w);
           }
-          w.send({ t: '_welcome', id, players: publicPlayers(), opts, started: mode === 'play' });
+          w.send({ t: '_welcome', id, players: publicPlayers(), opts: pubOpts(), started: mode === 'play' });
           chatLog.slice(-30).forEach((m) => w.send(m));
           SG.sound.play('hint');
           broadcastLobby();

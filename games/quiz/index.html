@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Викторина — SimpleGames</title>
+  <meta name="description" content="Викторина в духе «Своей игры»: табло тем и цен, отвечают все сразу — кто быстрее и точнее. Встроенные вопросы или свой набор. Компанией по сети или с ботами.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/party.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Викторина</h1>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div id="party"></div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>На табло 5 тем по 4 вопроса ценой от 100 до 400: чем дороже, тем сложнее. Вопрос выбирает тот, кто быстрее всех верно ответил на предыдущий.</li>
+            <li>Отвечают все одновременно, выбрав один из вариантов. У каждого 20 секунд.</li>
+            <li>Верный ответ — плюс цена вопроса, неверный — минус половина цены, без ответа — ноль. Так что угадывать наобум невыгодно.</li>
+            <li>Когда все вопросы сыграны, побеждает набравший больше всех.</li>
+            <li>Свой набор вопросов: в лобби выберите «Свой набор» и вставьте текст или загрузите файл — по вопросу в строке: <code>Тема | Вопрос | Верный ответ | Неверный | Неверный | Неверный | цена</code>. Гости не видят вопросы заранее.</li>
+            <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/party.js"></script>
+  <script src="questions.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
