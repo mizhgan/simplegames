@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Лото — SimpleGames</title>
+  <meta name="description" content="Русское лото вдвоём: доставайте бочонки из мешка — кто первым закроет ряд? Против компьютера, вдвоём или по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Лото</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label" id="label-0">Вы · Первый</span><span class="stat-value" id="score-0">0</span></div>
+        <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
+        <div class="stat"><span class="stat-label" id="label-1">Компьютер · Второй</span><span class="stat-value" id="score-1">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+            <button type="button" data-value="pvp">Вдвоём</button>
+          </div>
+        </div>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+
+        <div class="stage-wrap lt-wrap">
+          <div class="lt-side"><h3><span id="opp-name">Компьютер</span><small id="opp-left"></small></h3><div class="lt-cards" id="opp-cards"></div></div>
+          <div class="lt-mid">
+            <div class="lt-barrel" id="barrel" aria-live="polite"></div>
+            <div class="lt-info">
+              <button class="btn btn-primary" type="button" id="draw-btn">Достать бочонок</button>
+              <button class="btn btn-ghost" type="button" id="auto-btn">Авто</button>
+              <span class="lt-history" id="count"></span>
+              <span class="lt-history" id="history"></span>
+            </div>
+          </div>
+          <div class="lt-side"><h3><span id="my-name">Вы</span><small id="my-left"></small></h3><div class="lt-cards" id="my-cards"></div></div>
+        </div>
+
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>У каждого по две карточки: в трёх рядах по пять чисел от 1 до 90.</li>
+            <li>Игроки по очереди достают из мешка бочонки. Выпавшее число само закрывается на всех карточках, где оно есть.</li>
+            <li>Побеждает тот, кто первым закроет целый ряд (все пять чисел) на любой своей карточке. «Авто» достаёт бочонки само, <kbd>Пробел</kbd> — достать вручную.</li>
+            <li>У многих бочонков есть народные прозвища: 11 — «барабанные палочки», 77 — «топорики», 90 — «дедушка».</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/duel.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

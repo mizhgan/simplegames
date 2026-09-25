@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ассоциации — SimpleGames</title>
+  <meta name="description" content="Ассоциации: карточки из эмодзи, ведущий загадывает ассоциацию, остальные подкладывают похожие карты и угадывают карту ведущего. От 3 до 8 игроков по сети или с ботами.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/party.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Ассоциации</h1>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div id="party"></div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>У каждого 6 карточек — на каждой три эмодзи. Ведущий (по очереди) выбирает карту и придумывает к ней ассоциацию: слово, фразу, строчку песни.</li>
+            <li>Остальные подкладывают из своих карт ту, что тоже подходит к ассоциации (втроём — по две карты). Все карты перемешиваются и выкладываются на стол.</li>
+            <li>Игроки голосуют, какая карта ведущего (за свою голосовать нельзя). Если угадали все или никто — ведущий получает 0, остальные по 2. Иначе ведущий и угадавшие получают по 3.</li>
+            <li>За каждый голос, отданный за вашу подложенную карту, — ещё 1 очко. Игра идёт до 15, 25 или 30 очков.</li>
+            <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/party.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

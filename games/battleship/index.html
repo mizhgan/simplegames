@@ -50,6 +50,10 @@
         </div>
         <div class="status-line" id="status" aria-live="polite"></div>
         <div class="game-controls" id="setup">
+          <div class="seg" id="rules" role="group" aria-label="Правила">
+            <button type="button" data-value="classic">Классика</button>
+            <button type="button" data-value="salvo">Салво</button>
+          </div>
           <button class="btn btn-ghost" type="button" id="shuffle-btn">🔀 Перемешать флот</button>
           <button class="btn btn-primary" type="button" id="start-btn">В бой!</button>
         </div>
@@ -64,6 +68,7 @@
           </div>
         </div>
         <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="salvo-btn" hidden>Огонь!</button>
           <button class="btn btn-ghost" type="button" id="surrender-btn" hidden>🏳 Сдаться</button>
           <div id="restart-row" hidden><button class="btn btn-primary" type="button" id="again-btn">Новая игра</button></div>
         </div>
@@ -76,6 +81,7 @@
             <li>У каждого флот из 10 кораблей: один четырёхпалубный, два трёхпалубных, три двухпалубных и четыре однопалубных. Корабли не касаются друг друга даже углами.</li>
             <li>Нажмите «Перемешать флот», чтобы выбрать расстановку, и «В бой!».</li>
             <li>Стреляйте по полю противника. Попали — стреляете ещё раз, промахнулись — ход переходит к противнику.</li>
+            <li><b>Салво</b> — за ход вы даёте залп: столько выстрелов, сколько у вас осталось кораблей. Отметьте клетки и нажмите «Огонь!», затем ход переходит к противнику при любом результате.</li>
             <li>Клетки вокруг потопленного корабля отмечаются автоматически — там кораблей быть не может.</li>
             <li>На уровне «Сложно» компьютер стреляет по карте вероятностей и добивает раненые корабли.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>

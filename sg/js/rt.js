@@ -14,6 +14,7 @@
        pointer: 'y' | 'xy',                   // указатель задаёт px/py (ракетка, бита)
        pad: true,                             // экранный джойстик на телефоне
        flipGuest: true,                       // у гостя поле повёрнуто на 180° (своя сторона снизу)
+       shared: true,                          // пошаговая игра: вдвоём за одним экраном управление общее
        snapshot(state), restore(snap, prev),  // сжатие состояния для сети (по умолчанию — целиком)
      });
    Разметка: canvas#board, #overlay (#overlay-title, #overlay-text, #start-btn), #mode, #difficulty, #status.
@@ -84,11 +85,12 @@
 
     function localInput(side) {
       const inp = blank();
-      const maps = mode === 'pvp' ? [KEYS[side]] : KEYS;
+      const split = mode === 'pvp' && !cfg.shared;
+      const maps = split ? [KEYS[side]] : KEYS;
       for (const m of maps) for (const code in m) if (pressed.has(code)) inp[m[code]] = true;
-      const p = padState[mode === 'pvp' ? side : 0];
+      const p = padState[split ? side : 0];
       for (const k of ['u', 'd', 'l', 'r', 'f']) if (p[k]) inp[k] = true;
-      const pt = ptr[mode === 'pvp' ? side : 0];
+      const pt = ptr[split ? side : 0];
       if (pt) {
         inp.px = pt.x;
         inp.py = pt.y;
@@ -125,7 +127,7 @@
       return { x, y };
     }
     function sideOfPoint(pt) {
-      if (mode !== 'pvp') return 0;
+      if (mode !== 'pvp' || cfg.shared) return 0;
       // вдвоём: у каждого своя половина поля
       return cfg.pointer === 'y' ? (pt.x > W / 2 ? 1 : 0) : pt.y < H / 2 ? 1 : 0;
     }
@@ -142,7 +144,7 @@
         applyPointers();
       });
       canvas.addEventListener('pointermove', (e) => {
-        if (e.pointerType === 'mouse' && mode !== 'pvp' && !pointers.has(e.pointerId)) {
+        if (e.pointerType === 'mouse' && (mode !== 'pvp' || cfg.shared) && !pointers.has(e.pointerId)) {
           // мышью можно водить и без нажатия
           ptr[0] = toField(e);
           return;
@@ -197,8 +199,9 @@
     }
     function renderPads() {
       pads.forEach((p, side) => {
-        p.hidden = mode === 'watch' || (side === 1 && mode !== 'pvp');
-        p.querySelector('.rt-pad-name').textContent = mode === 'pvp' ? (side ? 'Игрок 2' : 'Игрок 1') : '';
+        const split = mode === 'pvp' && !cfg.shared;
+        p.hidden = mode === 'watch' || (side === 1 && !split);
+        p.querySelector('.rt-pad-name').textContent = split ? (side ? 'Игрок 2' : 'Игрок 1') : '';
       });
     }
 

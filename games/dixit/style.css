@@ -1,0 +1,89 @@
+.dx h3 {
+  font-size: 1.1rem;
+}
+
+.dx-card {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  place-items: center;
+  width: 92px;
+  height: 128px;
+  padding: 8px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 14%, var(--bg)), var(--bg));
+  font-size: 2rem;
+  line-height: 1;
+  cursor: default;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s;
+}
+
+.dx-card span:first-child {
+  grid-column: span 2;
+}
+
+.dx-card.can,
+.dx-card[data-vote] {
+  cursor: pointer;
+}
+
+.dx-card.can:hover,
+.dx-card[data-vote]:hover {
+  transform: translateY(-4px);
+}
+
+.dx-card.sel {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 3px var(--warning);
+}
+
+.dx-card.own {
+  border-style: dashed;
+}
+
+.dx-card.teller {
+  border-color: var(--success);
+  box-shadow: 0 0 0 3px var(--success);
+}
+
+.dx-hand,
+.dx-table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.dx-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  max-width: 120px;
+  font-size: 0.75rem;
+}
+
+.dx-hand-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.dx-clue {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.dx-clue input {
+  flex: 1;
+  min-width: 0;
+}
+
+.qz-plus {
+  color: var(--success);
+  font-style: normal;
+  font-weight: 800;
+}

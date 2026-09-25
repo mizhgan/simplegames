@@ -29,6 +29,9 @@
   let meReady = false;
   let oppReady = false;
   let iStart = true; // кто стреляет первым в сетевой партии
+  // «Салво»: залп из стольких выстрелов, сколько у стреляющего осталось кораблей
+  let rules = SG.store.get('battleship-rules', 'classic');
+  let aim = [];
 
   const idx = (r, c) => r * N + c;
   const inside = (r, c) => r >= 0 && r < N && c >= 0 && c < N;
@@ -117,8 +120,9 @@
     return me.ships.filter((s) => s.hits < s.cells.length).map((s) => s.cells.length);
   }
 
-  function aiChoose() {
+  function aiChoose(exclude = []) {
     const k = aiKnowledge();
+    exclude.forEach((i) => (k[i] = MISS));
     const unknown = [];
     k.forEach((v, i) => v === UNKNOWN && unknown.push(i));
     const hitsOpen = [];
@@ -219,6 +223,7 @@
       if (s === MISS) el.classList.add('miss');
       if (s === HIT) el.classList.add('hit');
       if (s === SUNK) el.classList.add('sunk');
+      if (side === enemy && aim.includes(i)) el.classList.add('aim');
       el.disabled = !(side === enemy && phase === 'player' && s === UNKNOWN && !pending);
     });
   }
@@ -234,6 +239,17 @@
     myEl.classList.toggle('active', phase === 'enemy');
     setupEl.hidden = phase !== 'setup';
     $('surrender-btn').hidden = phase !== 'player' && phase !== 'enemy';
+    const salvoOn = rules === 'salvo' && phase === 'player' && !pending;
+    $('salvo-btn').hidden = !salvoOn;
+    if (salvoOn) {
+      $('salvo-btn').textContent = 'Огонь! (' + aim.length + '/' + salvoSize() + ')';
+      $('salvo-btn').disabled = !aim.length;
+    }
+  }
+
+  // сколько выстрелов в нашем залпе: по числу своих уцелевших кораблей, но не больше свободных клеток
+  function salvoSize() {
+    return Math.min(fleetLeft(me), enemy.shots.filter((v) => v === UNKNOWN).length);
   }
 
   function flash(cellsArr, i, cls) {
@@ -245,6 +261,18 @@
 
   function playerShoot(i) {
     if (phase !== 'player' || enemy.shots[i] !== UNKNOWN || pending) return;
+    if (rules === 'salvo') {
+      const k = aim.indexOf(i);
+      if (k >= 0) aim.splice(k, 1);
+      else if (aim.length < salvoSize()) aim.push(i);
+      else {
+        aim.shift();
+        aim.push(i);
+      }
+      SG.sound.play('click');
+      render();
+      return;
+    }
     if (mode === 'net') {
       if (!net.active) return;
       pending = true;
@@ -279,7 +307,69 @@
 
   function aiShoot() {
     if (phase !== 'enemy' || mode !== 'ai') return;
+    if (rules === 'salvo') {
+      const n = Math.min(fleetLeft(enemy), me.shots.filter((v) => v === UNKNOWN).length);
+      const list = [];
+      for (let t = 0; t < n; t++) list.push(aiChoose(list));
+      return incomingSalvo(list);
+    }
     incoming(aiChoose());
+  }
+
+  // ---------- залпы («Салво») ----------
+
+  function fireSalvo() {
+    if (phase !== 'player' || pending || !aim.length) return;
+    const list = aim.slice();
+    aim = [];
+    if (mode === 'net') {
+      if (!net.active) return;
+      pending = true;
+      net.send({ t: 'salvo', cells: list });
+      render();
+      return;
+    }
+    salvoResult(list.map((i) => ({ i, res: fire(enemy, i) })));
+  }
+
+  function salvoResult(results) {
+    shots += results.length;
+    hits += results.filter((r) => r.res !== 'miss').length;
+    const sunk = results.filter((r) => r.res === 'sunk').length;
+    const hit = results.filter((r) => r.res === 'hit').length;
+    render();
+    results.forEach((r) => flash(enemyCells, r.i, 'boom'));
+    SG.sound.play(sunk ? 'explode' : hit ? 'hit' : 'drop');
+    if (mode === 'net' ? enemy.sunk >= FLEET.length : allSunk(enemy)) return finish(true);
+    phase = 'enemy';
+    statusEl.textContent = salvoText(results.length, hit, sunk, 'Ваш залп') + ' Залп противника…';
+    render();
+    if (mode === 'ai') aiTimer = setTimeout(aiShoot, 900);
+  }
+
+  function salvoText(n, hit, sunk, who) {
+    const parts = [];
+    if (hit) parts.push('попаданий: ' + hit);
+    if (sunk) parts.push('потоплено: ' + sunk);
+    return who + ' (' + n + '): ' + (parts.length ? parts.join(', ') : 'все мимо') + '.';
+  }
+
+  function incomingSalvo(list) {
+    const results = list.map((i) => {
+      const res = fire(me, i);
+      return { i, res, cells: res === 'sunk' ? me.at.get(i).cells : null };
+    });
+    if (mode === 'net') net.send({ t: 'sresult', results });
+    render();
+    results.forEach((r) => flash(myCells, r.i, 'boom'));
+    const sunk = results.filter((r) => r.res === 'sunk').length;
+    const hit = results.filter((r) => r.res === 'hit').length;
+    SG.sound.play(sunk ? 'explode' : hit ? 'hit' : 'drop');
+    if (allSunk(me)) return finish(false);
+    phase = 'player';
+    aim = [];
+    statusEl.textContent = salvoText(results.length, hit, sunk, 'Залп противника') + ' Ваш залп: отметьте ' + salvoSize() + ' кл.';
+    render();
   }
 
   // выстрел по нашему флоту (компьютера или соперника по сети)
@@ -334,6 +424,7 @@
     pending = false;
     meReady = false;
     oppReady = false;
+    aim = [];
     phase = 'setup';
     $('start-btn').disabled = false;
     $('shuffle-btn').disabled = false;
@@ -360,8 +451,12 @@
       return tryStart();
     }
     phase = 'player';
-    statusEl.textContent = 'Ваш выстрел — кликните по полю противника.';
+    statusEl.textContent = rules === 'salvo' ? 'Ваш залп: отметьте ' + salvoSize() + ' клеток и нажмите «Огонь!».' : 'Ваш выстрел — кликните по полю противника.';
     render();
+  });
+  $('salvo-btn').addEventListener('click', (e) => {
+    e.currentTarget.blur();
+    fireSalvo();
   });
   $('surrender-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
@@ -389,7 +484,7 @@
       return;
     }
     phase = iStart ? 'player' : 'enemy';
-    statusEl.textContent = iStart ? 'Бой! Ваш выстрел первый.' : 'Бой! Первым стреляет соперник…';
+    statusEl.textContent = iStart ? 'Бой! Ваш ' + (rules === 'salvo' ? 'залп' : 'выстрел') + ' первый.' : 'Бой! Первым стреляет соперник…';
     render();
   }
 
@@ -404,12 +499,35 @@
       iStart = role === 'host';
       $('difficulty').style.display = 'none';
       net.info('флот соперника скрыт, пока идёт бой');
+      // правила выбирает хозяин комнаты
+      rulesEl.style.display = role === 'host' ? '' : 'none';
+      if (role === 'host') net.send({ t: 'rules', v: rules });
       newGame();
     },
     onMessage(msg) {
       if (msg.t === 'new') {
         iStart = !iStart;
         newGame();
+      } else if (msg.t === 'rules' && (msg.v === 'classic' || msg.v === 'salvo')) {
+        rules = msg.v;
+        rulesSeg.set(rules);
+        render();
+      } else if (msg.t === 'salvo' && rules === 'salvo' && phase === 'enemy' && Array.isArray(msg.cells)) {
+        const list = [...new Set(msg.cells)].filter((i) => Number.isInteger(i) && me.shots[i] === UNKNOWN);
+        if (list.length && list.length <= FLEET.length - enemy.sunk) incomingSalvo(list);
+      } else if (msg.t === 'sresult' && pending && Array.isArray(msg.results)) {
+        pending = false;
+        const results = msg.results.filter((r) => r && Number.isInteger(r.i));
+        results.forEach(({ i, res, cells }) => {
+          if (res === 'miss') enemy.shots[i] = MISS;
+          else if (res === 'hit') enemy.shots[i] = HIT;
+          else if (res === 'sunk' && Array.isArray(cells)) {
+            enemy.sunk++;
+            cells.forEach((c) => (enemy.shots[c] = SUNK));
+          }
+        });
+        results.forEach(({ res, cells }) => res === 'sunk' && Array.isArray(cells) && cells.forEach((c) => around(c).forEach((n) => enemy.shots[n] === UNKNOWN && (enemy.shots[n] = MISS))));
+        salvoResult(results);
       } else if (msg.t === 'ready' && phase === 'setup') {
         oppReady = true;
         tryStart();
@@ -444,6 +562,7 @@
         mode = 'ai';
         modeSeg.set('ai');
         $('difficulty').style.display = '';
+        rulesEl.style.display = '';
         newGame();
       } else {
         pending = false;
@@ -458,7 +577,19 @@
     if (mode !== 'ai') {
       mode = 'ai';
       $('difficulty').style.display = '';
+      rulesEl.style.display = '';
       newGame();
+    }
+  });
+
+  const rulesEl = $('rules');
+  const rulesSeg = SG.segmented(rulesEl, rules, (v) => {
+    rules = v;
+    SG.store.set('battleship-rules', v);
+    if (mode === 'net' && net.active) net.send({ t: 'rules', v });
+    if (phase === 'setup') {
+      aim = [];
+      render();
     }
   });
 

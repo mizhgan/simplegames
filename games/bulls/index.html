@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Быки и коровы — SimpleGames</title>
+  <meta name="description" content="Быки и коровы — логическая игра: отгадайте четырёхзначное число соперника раньше, чем он ваше. Против компьютера или с другом по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Быки и коровы</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Вы</span><span class="stat-value" id="score-me">0</span></div>
+        <div class="stat"><span class="stat-label" id="label-opp">Компьютер</span><span class="stat-value" id="score-opp">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="bc-wrap">
+          <div class="bc-setup" id="setup">
+            <input type="text" id="secret" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="????" aria-label="Ваше число">
+            <button class="btn btn-primary" type="button" id="secret-btn">Загадать</button>
+            <button class="btn btn-ghost" type="button" id="random-btn">Случайное</button>
+            <p class="bc-err" id="secret-err"></p>
+          </div>
+          <div class="bc-play" id="play">
+            <p class="bc-secret">Ваше число: <b id="my-secret">????</b></p>
+            <div class="bc-row"><input type="text" id="guess" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="????" aria-label="Ваша попытка"><button class="btn btn-primary" type="button" id="go">Проверить</button></div>
+            <div class="bc-cols">
+              <div class="bc-col"><h3>Ваши попытки</h3><ol id="mine"></ol></div>
+              <div class="bc-col"><h3 id="opp-title">Компьютер угадывает ваше число</h3><ol id="theirs"></ol></div>
+            </div>
+          </div>
+          <div class="bc-pad" id="pad"><button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" data-k="0">0</button><button type="button" data-k="del">⌫</button><button type="button" data-k="ok">OK</button></div>
+        </div>
+        <div class="game-controls"><button class="btn btn-primary" type="button" id="new-btn">Новая партия</button></div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Каждый загадывает число из четырёх <b>разных</b> цифр (может начинаться с нуля) и по очереди пытается отгадать число соперника.</li>
+            <li>В ответ на попытку сообщается: <b>быки</b> — сколько цифр угадано на своих местах, <b>коровы</b> — сколько цифр есть в числе, но стоят не там.</li>
+            <li>Например, загадано 1234, попытка 1325: 1 бык (единица) и 2 коровы (тройка и двойка).</li>
+            <li>Побеждает тот, кто первым угадает число (4 быка). Если угадал начинавший, у второго есть ещё одна попытка — тогда ничья.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Ваше число остаётся только у вас: соперник видит лишь ответы. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

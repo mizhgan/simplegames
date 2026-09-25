@@ -1,0 +1,57 @@
+.pk-seat {
+  min-width: 108px;
+}
+
+.pk-cards {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  min-height: 42px;
+}
+
+.pk-cards .sol-card.mini {
+  --cw: 30px;
+  width: 30px;
+  height: 42px;
+  font-size: 0.6rem;
+}
+
+.pk-cards .sol-card.mini .mid {
+  display: none;
+}
+
+.pk-d {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  color: #111;
+  font-size: 0.7rem;
+  line-height: 18px;
+  text-align: center;
+}
+
+.pk-bet {
+  color: #fde047;
+  font-size: 0.78rem;
+}
+
+.mm-log {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.hd-raise {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.tb .sol-card.ph {
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  background: transparent;
+}

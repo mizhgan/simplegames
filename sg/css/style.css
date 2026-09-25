@@ -477,6 +477,11 @@ button {
   color: color-mix(in srgb, var(--success) 70%, var(--text));
 }
 
+.tag-party {
+  background: color-mix(in srgb, var(--accent-2) 18%, var(--surface-2));
+  color: color-mix(in srgb, var(--accent-2) 70%, var(--text));
+}
+
 .best {
   color: color-mix(in srgb, var(--warning) 75%, var(--text));
   font-weight: 700;

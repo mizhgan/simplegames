@@ -1,0 +1,110 @@
+.lt-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: min(100%, 640px);
+}
+
+.lt-side {
+  width: 100%;
+}
+
+.lt-side h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+}
+
+.lt-side h3 small {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.lt-cards {
+  display: grid;
+  gap: 8px;
+}
+
+.lt-card {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 2px;
+  padding: 4px;
+  border-radius: 8px;
+  background: #b91c1c;
+}
+
+.lt-card span {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.2;
+  border-radius: 3px;
+  background: #fffbeb;
+  color: #1f2233;
+  font: 800 clamp(0.75rem, 3vw, 1.05rem) / 1 var(--font);
+}
+
+.lt-card span.blank {
+  background: #fde68a;
+}
+
+.lt-card span.hit {
+  background: radial-gradient(circle, #1f2233 55%, #fffbeb 60%);
+  color: #fde047;
+}
+
+.lt-card span.fresh {
+  animation: lt-pop 0.5s ease-out;
+}
+
+@keyframes lt-pop {
+  from {
+    transform: scale(1.6);
+  }
+}
+
+.lt-mid {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.lt-barrel {
+  display: grid;
+  place-items: center;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff7ed, #f59e0b 70%, #b45309);
+  box-shadow: var(--shadow);
+  color: #7c2d12;
+  text-align: center;
+}
+
+.lt-barrel b {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.lt-barrel small {
+  max-width: 90px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.lt-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lt-history {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.lt-card span.row-win {
+  box-shadow: inset 0 0 0 2px #22c55e;
+}

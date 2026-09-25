@@ -1,0 +1,99 @@
+.dm-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.dm-empty {
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+.dm-tile {
+  display: flex;
+  width: 58px;
+  height: 30px;
+  padding: 2px;
+  border-radius: 6px;
+  background: #fbfaf5;
+  box-shadow: 0 2px 0 #b9b5a6, 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.dm-tile.dbl {
+  flex-direction: column;
+  width: 30px;
+  height: 58px;
+}
+
+.dm-half {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  padding: 2px;
+}
+
+.dm-half + .dm-half {
+  border-left: 1px solid #bbb;
+}
+
+.dm-tile.dbl .dm-half + .dm-half {
+  border-top: 1px solid #bbb;
+  border-left: 0;
+}
+
+.dm-half i {
+  margin: 1px;
+  border-radius: 50%;
+}
+
+.dm-half i.on {
+  background: #1f2233;
+}
+
+.dm-tile.back {
+  background: linear-gradient(135deg, #7c3aed, #4338ca);
+  box-shadow: 0 2px 0 #312e81;
+}
+
+.dm-hand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  min-height: 34px;
+}
+
+.dm-hand .dm-tile.playable {
+  cursor: pointer;
+  transform: translateY(-6px);
+  outline: 2px solid #fde047;
+}
+
+.dm-hand .dm-tile.dim {
+  filter: brightness(0.7);
+}
+
+.dm-hand .dm-tile.sel {
+  outline: 3px solid #22d3ee;
+}
+
+.dm-tile.last {
+  outline: 2px solid #fde047;
+}
+
+.dm-end {
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: #22d3ee;
+  color: #0f172a;
+  font-weight: 800;
+  cursor: pointer;
+}

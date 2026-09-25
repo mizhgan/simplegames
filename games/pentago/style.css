@@ -1,0 +1,108 @@
+.pg-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 460px);
+  aspect-ratio: 1;
+  padding: 26px;
+  border-radius: var(--radius);
+  background: var(--board-line);
+  box-shadow: var(--shadow);
+}
+
+.pg-quad {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #b91c1c;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.25);
+}
+
+.pg-quad.turned {
+  animation: pg-turn 0.35s ease-out;
+}
+
+.pg-quad[data-dir="-1"].turned {
+  animation-name: pg-turn-back;
+}
+
+@keyframes pg-turn {
+  from {
+    transform: rotate(-90deg);
+  }
+}
+
+@keyframes pg-turn-back {
+  from {
+    transform: rotate(90deg);
+  }
+}
+
+.pg-cell {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.pg-cell:disabled {
+  cursor: default;
+}
+
+.pg-cell.w {
+  background: radial-gradient(circle at 35% 30%, #fff, #d9d9e2);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.pg-cell.b {
+  background: radial-gradient(circle at 35% 30%, #555566, #111118);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.pg-cell.ghost {
+  opacity: 0.7;
+  outline: 3px dashed #fde047;
+}
+
+.pg-cell.win {
+  outline: 3px solid #fde047;
+}
+
+.pg-rot {
+  position: absolute;
+  display: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pg-quad.can-rotate .pg-rot {
+  display: block;
+}
+
+.pg-quad:nth-child(1) .pg-rot.ccw { left: -22px; top: 30%; }
+.pg-quad:nth-child(1) .pg-rot.cw { top: -22px; left: 30%; }
+.pg-quad:nth-child(2) .pg-rot.ccw { top: -22px; right: 30%; }
+.pg-quad:nth-child(2) .pg-rot.cw { right: -22px; top: 30%; }
+.pg-quad:nth-child(3) .pg-rot.ccw { bottom: -22px; left: 30%; }
+.pg-quad:nth-child(3) .pg-rot.cw { left: -22px; bottom: 30%; }
+.pg-quad:nth-child(4) .pg-rot.ccw { right: -22px; bottom: 30%; }
+.pg-quad:nth-child(4) .pg-rot.cw { bottom: -22px; right: 30%; }

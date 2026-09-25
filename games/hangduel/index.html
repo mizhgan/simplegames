@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Виселица вдвоём — SimpleGames</title>
+  <meta name="description" content="Виселица вдвоём: загадайте слово сопернику и отгадайте его слово — кто меньше ошибётся. Против компьютера или с другом по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../hangman/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Виселица вдвоём</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Вы</span><span class="stat-value" id="score-me">0</span></div>
+        <div class="stat"><span class="stat-label" id="label-opp">Компьютер</span><span class="stat-value" id="score-opp">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="hd-wrap">
+          <div class="hd-setup" id="setup">
+            <input type="text" id="word-in" maxlength="12" autocomplete="off" placeholder="Слово для соперника" aria-label="Слово для соперника">
+            <button class="btn btn-primary" type="button" id="word-btn">Загадать</button>
+            <button class="btn btn-ghost" type="button" id="word-random">Случайное</button>
+            <p class="hd-err" id="word-err"></p>
+          </div>
+          <div class="hd-cols">
+            <div class="hd-main"><h3 id="my-title"></h3><svg class="hg-gallows" id="gallows" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" aria-hidden="true">
+          <path d="M20 190 H120"/><path class="part" d="M50 190 V20"/><path class="part" d="M50 20 H140 M50 55 L85 20"/><path class="part" d="M140 20 V45"/>
+          <circle class="part" cx="140" cy="62" r="17"/><path class="part" d="M140 79 V130"/><path class="part" d="M140 92 L115 115 M140 92 L165 115"/><path class="part" d="M140 130 L118 165 M140 130 L162 165"/>
+        </svg><div class="hg-word" id="word" aria-live="polite"></div></div>
+            <div class="hd-opp"><h3 id="opp-title"></h3><svg class="hg-gallows" id="opp-gallows" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" aria-hidden="true">
+          <path d="M20 190 H120"/><path class="part" d="M50 190 V20"/><path class="part" d="M50 20 H140 M50 55 L85 20"/><path class="part" d="M140 20 V45"/>
+          <circle class="part" cx="140" cy="62" r="17"/><path class="part" d="M140 79 V130"/><path class="part" d="M140 92 L115 115 M140 92 L165 115"/><path class="part" d="M140 130 L118 165 M140 130 L162 165"/>
+        </svg><div class="hd-oppword" id="opp-word"></div></div>
+          </div>
+          <div class="hg-keyboard" id="keyboard" aria-label="Буквы"></div>
+        </div>
+        <div class="game-controls"><button class="btn btn-primary" type="button" id="new-btn">Новая партия</button></div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Каждый загадывает существительное (4–12 букв) для соперника, а потом оба одновременно отгадывают слова друг друга по буквам.</li>
+            <li>Каждая неверная буква дорисовывает виселицу; на седьмой ошибке вы повешены.</li>
+            <li>Побеждает тот, кто отгадал слово с меньшим числом ошибок; если ошибок поровну — кто быстрее.</li>
+            <li>Справа видно, какие буквы вашего слова уже открыл соперник.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Ваше слово остаётся только у вас: соперник узнаёт лишь, есть ли в нём названная буква. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/data/nouns.js"></script>
+  <script src="../../sg/data/balda-dict.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

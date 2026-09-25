@@ -114,3 +114,13 @@
     z-index: 2;
   }
 }
+
+.bs-cell.aim {
+  background: color-mix(in srgb, var(--accent) 45%, var(--surface));
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.bs-cell.aim::after {
+  content: '◎';
+  color: #fff;
+}

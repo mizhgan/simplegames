@@ -1,0 +1,43 @@
+.mm-suit {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.mm-suit.red,
+.mm-s.red {
+  color: #dc2626;
+}
+
+.mm-s {
+  min-width: 56px;
+  font-size: 1.4rem;
+}
+
+.mm-log {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.mm-deck {
+  cursor: default;
+}
+
+.mm-pick {
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.mm-pick p {
+  margin: 0 0 8px;
+}
+
+.mm-reveal {
+  font-size: 0.85rem;
+}
