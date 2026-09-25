@@ -1,0 +1,46 @@
+.hd-board {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.hd-board .sol-card.ph {
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  background: transparent;
+}
+
+.hd-bet {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(253, 224, 71, 0.2);
+  color: #fde047;
+}
+
+.hd-bet:empty,
+.hd-combo:empty {
+  display: none;
+}
+
+.hd-combo {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.hd-raise {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.hd-raise input {
+  flex: 1 1 160px;
+  accent-color: #fde047;
+}
+
+.hd-raise .btn {
+  padding: 6px 10px;
+}

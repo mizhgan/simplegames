@@ -142,18 +142,20 @@
     if (over || rollsLeft === 0) return;
     dice = dice.map((v, i) => (held[i] && rollsLeft < 3 ? v : rnd()));
     rollsLeft--;
+    if (mode === 'net' && turn === 0) net.send({ t: 'roll', dice, held });
     SG.sound.play('drop');
     render(true);
   }
 
   function humanRoll() {
-    if (busy || turn !== 0) return;
+    if (busy || turn !== 0 || (mode === 'net' && !net.active)) return;
     roll();
   }
 
   function toggleHold(i) {
     if (busy || turn !== 0 || over || rollsLeft === 3 || rollsLeft === 0) return;
     held[i] = !held[i];
+    if (mode === 'net') net.send({ t: 'hold', held });
     SG.sound.play('click');
     render();
   }
@@ -161,6 +163,7 @@
   function record(cat) {
     const sheet = sheets[turn];
     if (sheet[cat] != null || rollsLeft === 3) return;
+    if (mode === 'net' && turn === 0) net.send({ t: 'rec', cat });
     sheet[cat] = scoreFor(cat, dice);
     SG.sound.play(sheet[cat] ? (cat === 11 ? 'win' : 'coin') : 'error');
     nextTurn();
@@ -169,11 +172,11 @@
   function nextTurn() {
     const done = (s) => s.every((v) => v != null);
     if (sheets.every(done)) return finish();
-    if (mode === 'ai') turn = 1 - turn;
+    if (mode === 'ai' || mode === 'net') turn = 1 - turn;
     rollsLeft = 3;
     held = [false, false, false, false, false];
     render();
-    if (turn === 1) aiTurn();
+    if (turn === 1 && mode === 'ai') aiTurn();
   }
 
   function aiTurn() {
@@ -210,14 +213,15 @@
     over = true;
     const me = totals(sheets[0]).total;
     if (me > SG.store.get('yahtzee-best', 0)) SG.store.set('yahtzee-best', me);
-    if (mode === 'ai') {
+    if (mode === 'ai' || mode === 'net') {
       const ai = totals(sheets[1]).total;
+      if (mode === 'net') net.result(me > ai ? 'win' : me < ai ? 'lose' : 'draw');
       if (me > ai) {
         statusEl.textContent = 'Победа ' + me + ':' + ai + '! 🎉';
         SG.store.set('yahtzee-wins', SG.store.get('yahtzee-wins', 0) + 1);
         SG.sound.play('win');
       } else if (me < ai) {
-        statusEl.textContent = 'Компьютер выиграл ' + ai + ':' + me + '.';
+        statusEl.textContent = (mode === 'net' ? 'Соперник' : 'Компьютер') + ' выиграл ' + ai + ':' + me + '.';
         SG.sound.play('lose');
       } else {
         statusEl.textContent = 'Ничья — ' + me + ' очков.';
@@ -249,9 +253,9 @@
     rollBtn.disabled = busy || turn !== 0 || over || rollsLeft === 0;
     rollBtn.textContent = rollsLeft === 3 ? 'Бросить кости' : 'Перебросить (' + rollsLeft + ')';
 
-    const cols = mode === 'ai' ? [0, 1] : [0];
+    const cols = mode === 'ai' || mode === 'net' ? [0, 1] : [0];
     const t = sheets.map(totals);
-    let h = '<thead><tr><th></th>' + cols.map((p) => `<th>${p === 0 ? 'Вы' : 'Комп.'}</th>`).join('') + '</tr></thead><tbody>';
+    let h = '<thead><tr><th></th>' + cols.map((p) => `<th>${p === 0 ? 'Вы' : mode === 'net' ? 'Соперн.' : 'Комп.'}</th>`).join('') + '</tr></thead><tbody>';
     const row = (k) => {
       const c = CATS[k];
       let tr = `<tr><th>${c.name}${c.hint ? `<small>${c.hint}</small>` : ''}</th>`;
@@ -276,7 +280,8 @@
     $('wins').textContent = SG.store.get('yahtzee-wins', 0);
     $('best').textContent = SG.store.get('yahtzee-best', 0);
     if (!over) {
-      if (turn === 1) statusEl.textContent = 'Ходит компьютер…';
+      if (mode === 'net' && !net.active) statusEl.textContent = 'Нет соединения с соперником';
+      else if (turn === 1) statusEl.textContent = mode === 'net' ? 'Ходит соперник…' : 'Ходит компьютер…';
       else if (rollsLeft === 3) statusEl.textContent = 'Бросайте кости.';
       else if (rollsLeft > 0) statusEl.textContent = 'Отметьте кости, которые оставить, и перебросьте остальные — или запишите результат.';
       else statusEl.textContent = 'Выберите, куда записать результат.';
@@ -304,14 +309,14 @@
     } else if (/^[1-5]$/.test(e.key)) toggleHold(Number(e.key) - 1);
   });
 
-  function newGame() {
+  function newGame(first) {
     clearTimeout(timer);
     dice = [1, 2, 3, 4, 5];
     held = [false, false, false, false, false];
     rollsLeft = 3;
-    turn = 0;
+    turn = first || 0;
     sheets = [new Array(13).fill(null), new Array(13).fill(null)];
-    if (mode !== 'ai') sheets[1] = sheets[1].map(() => 0);
+    if (mode === 'solo') sheets[1] = sheets[1].map(() => 0);
     over = false;
     busy = false;
     lastAi = -1;
@@ -327,14 +332,59 @@
     diceEl.appendChild(b);
   }
 
-  SG.segmented($('mode'), mode, (v) => {
+  // ---------- игра по сети: бросает тот, чей ход, и присылает результат ----------
+
+  let netFirst = 0; // кто начинал прошлую партию (0 — мы)
+  const net = SG.net.setup({
+    game: 'yahtzee',
+    modeEl: $('mode'),
+    onRematch: () => $('new-btn').click(),
+    onConnect(role) {
+      mode = 'net';
+      net.info('по очереди, у каждого своя таблица');
+      netFirst = role === 'host' ? 0 : 1;
+      newGame(netFirst);
+    },
+    onMessage(msg) {
+      if (msg.t === 'new') {
+        netFirst = msg.first === 'you' ? 0 : 1;
+        newGame(netFirst);
+      } else if (turn !== 1 || over) return;
+      else if (msg.t === 'roll' && Array.isArray(msg.dice) && msg.dice.length === 5 && rollsLeft > 0) {
+        dice = msg.dice.map((v) => Math.min(6, Math.max(1, v | 0)));
+        held = (msg.held || []).map(Boolean).slice(0, 5);
+        rollsLeft--;
+        SG.sound.play('drop');
+        render(true);
+      } else if (msg.t === 'hold' && Array.isArray(msg.held)) {
+        held = msg.held.map(Boolean).slice(0, 5);
+        render();
+      } else if (msg.t === 'rec' && Number.isInteger(msg.cat) && msg.cat >= 0 && msg.cat < 13) record(msg.cat);
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        mode = 'ai';
+        modeSeg.set('ai');
+        newGame();
+      } else render();
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;
     SG.store.set('yahtzee-mode', v);
     newGame();
   });
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
-    newGame();
+    if (mode === 'net') {
+      if (!net.active) return;
+      // в новой партии начинает другой
+      netFirst = 1 - netFirst;
+      net.send({ t: 'new', first: netFirst === 0 ? 'me' : 'you' });
+      newGame(netFirst);
+    } else newGame();
   });
 
   newGame();
