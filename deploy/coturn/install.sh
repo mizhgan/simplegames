@@ -37,6 +37,15 @@ if [ -z "$PUBLIC_IP" ]; then
 fi
 echo "    внешний IP: $PUBLIC_IP"
 
+# Многие облака дают VPS внутренний адрес, а внешний висит на шлюзе (NAT).
+# Тогда coturn должен знать оба: external-ip=ВНЕШНИЙ/ВНУТРЕННИЙ.
+LOCAL_IP="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") print $(i + 1)}' | head -n1)"
+EXTERNAL="$PUBLIC_IP"
+if [ -n "$LOCAL_IP" ] && [ "$LOCAL_IP" != "$PUBLIC_IP" ]; then
+  EXTERNAL="$PUBLIC_IP/$LOCAL_IP"
+  echo "    VPS за NAT хостера: внутренний адрес $LOCAL_IP — пропишем external-ip=$EXTERNAL"
+fi
+
 # пароль сохраняем, чтобы повторный запуск скрипта не ломал уже настроенный сайт
 PASS_FILE=/etc/coturn/simplegames.pass
 install -d -m 755 /etc/coturn
@@ -92,7 +101,7 @@ cat > /etc/turnserver.conf <<EOF
 # TURN-сервер для игры по сети SimpleGames (создан deploy/coturn/install.sh)
 listening-port=3478
 $TLS_CONF
-external-ip=$PUBLIC_IP
+external-ip=$EXTERNAL
 min-port=$MIN_PORT
 max-port=$MAX_PORT
 
@@ -170,7 +179,7 @@ cat <<EOF
 
   { urls: [$URLS], username: '$USER_NAME', credential: '$PASS' },
 
-Проверка: https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/
-— укажите turn:$HOST:3478, логин и пароль выше; должен появиться кандидат типа relay.
+Проверка: откройте на сайте страницу turn-test.html — она соединит два браузерных
+канала только через этот TURN и покажет, на каком шаге сбой, если он есть.
 ============================================================
 EOF

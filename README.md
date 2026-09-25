@@ -162,6 +162,8 @@ bash install.sh turn.example.com you@example.com
 
 Вручную: `apt install coturn`, конфиг-образец — `deploy/coturn/turnserver.conf`.
 
+**Проверка ретранслятора.** Откройте на сайте страницу `turn-test.html`: она соединит два канала в одном браузере только через ваш TURN (как у игроков, которым не удалось связаться напрямую) и покажет, на каком шаге сбой. Если адреса выдаются, а соединение не устанавливается — не открыт диапазон `49160–49250/udp` в файрволе хостера или VPS стоит за NAT (свежий `install.sh` это определяет и прописывает `external-ip=ВНЕШНИЙ/ВНУТРЕННИЙ`).
+
 **Проверка до публикации.** Откройте игру, в консоли браузера выполните
 `localStorage['sg:ice-servers'] = JSON.stringify([{urls: 'turn:turn.example.com:3478', username: 'simplegames', credential: 'пароль'}]); localStorage['sg:ice-policy'] = '"relay"'`
 и обновите страницу (у друга — то же самое): соединение пойдёт только через ваш TURN. Отменить: `localStorage.removeItem('sg:ice-servers'); localStorage.removeItem('sg:ice-policy')`. Ещё один способ — страница [Trickle ICE](https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/): должен появиться кандидат типа `relay`.
