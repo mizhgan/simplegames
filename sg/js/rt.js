@@ -144,7 +144,7 @@
         applyPointers();
       });
       canvas.addEventListener('pointermove', (e) => {
-        if (e.pointerType === 'mouse' && mode !== 'pvp' && !pointers.has(e.pointerId)) {
+        if (e.pointerType === 'mouse' && (mode !== 'pvp' || cfg.shared) && !pointers.has(e.pointerId)) {
           // мышью можно водить и без нажатия
           ptr[0] = toField(e);
           return;
