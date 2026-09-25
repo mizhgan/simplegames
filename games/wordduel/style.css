@@ -47,3 +47,26 @@
   font-variant-numeric: tabular-nums;
   font-weight: 700;
 }
+
+@media (max-width: 480px) {
+  .wq-wrap {
+    gap: 8px;
+  }
+
+  .wq-wrap .wd-wrap {
+    min-width: 0;
+  }
+
+  .wq-opp {
+    padding: 6px;
+  }
+
+  .wq-opp .wd-board {
+    width: 78px;
+    gap: 3px;
+  }
+
+  .wq-opp .wd-row {
+    gap: 3px;
+  }
+}

@@ -236,3 +236,9 @@
 .er-log:empty {
   display: none;
 }
+
+@media (max-width: 520px) {
+  .er-cell span {
+    display: none;
+  }
+}

@@ -330,6 +330,7 @@
     let bar = null;
     let infoText = '';
     let helloDone = false;
+    let pendingClose = null; // закрыть подключение хозяина, которое ещё не поздоровалось
     let myRoom = ''; // код комнаты хозяина (гость должен его назвать)
     let joinKey = ''; // код комнаты, куда входит гость
     let lobbyPeer = null;
@@ -446,6 +447,7 @@
       if (!api.active || resultLocked) return;
       resultLocked = true;
       finishedGame = true;
+      SG.store.set('net-results', SG.store.get('net-results', 0) + 1);
       if (r === 'win') series.me++;
       else if (r === 'lose') series.them++;
       else series.draw++;
@@ -769,6 +771,8 @@
         lobbyBlock(b, room, which === 'own');
       });
       peer.on('connection', (c) => {
+        // прежняя попытка так и не поздоровалась (друг закрыл вкладку посреди соединения) — уступаем место новой
+        if (conn && !helloDone && pendingClose) pendingClose();
         if (conn) {
           // комната уже занята — прямо говорим об этом опоздавшему, а не молча закрываем
           c.on('open', () => {
@@ -798,6 +802,17 @@
         c.on('open', () => {
           mine = true;
           attach(wrapPeerConn(c));
+          pendingClose = () => {
+            pendingClose = null;
+            try {
+              c.close();
+            } catch (e) {
+              /* ignore */
+            }
+            dropped();
+          };
+          // гость здоровается сразу; молчание — значит, попытка оборвалась
+          setTimeout(() => mine && !helloDone && pendingClose && pendingClose(), 6000);
         });
         c.on('data', (x) => mine && handle(x));
         // оборвавшаяся попытка до начала игры не должна закрывать комнату — ждём следующую
