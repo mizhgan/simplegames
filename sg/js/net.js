@@ -1581,5 +1581,7 @@
     return api;
   }
 
-  SG.net = { setup, ice: ICE, config: CONFIG };
+  // общие части для игр на компанию (sg/js/party.js)
+  const util = { loadPeer, peerOptions, serverList, roomToken, parseToken, roomPeerId, code, baseUrl, dialog, closeDialog, linkBlock, bindLink, copy, REACTIONS };
+  SG.net = { setup, ice: ICE, config: CONFIG, util };
 })();
