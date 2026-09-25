@@ -1,0 +1,164 @@
+.tr {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.tr-head {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.tr-champ {
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--warning, #f59e0b) 18%, var(--surface));
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.tr-mine {
+  padding: 12px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.tr-mine h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.tr-match {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.tr-match > span:first-child {
+  flex: 1 1 180px;
+}
+
+.tr-rep {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.tr-rep .btn {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
+
+.tr-bad {
+  color: var(--danger);
+}
+
+.tr-note {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.tr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tr-table th,
+.tr-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.tr-table th:first-child,
+.tr-table td:first-child {
+  text-align: left;
+}
+
+.tr-table tr.me td {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.tr-bracket {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.tr-col {
+  display: flex;
+  flex: 0 0 180px;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.tr-col h4 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.tr-card {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+
+.tr-card.mine {
+  border-color: var(--accent);
+}
+
+.tr-card > div {
+  padding: 2px 0;
+}
+
+.tr-card .win {
+  font-weight: 800;
+}
+
+.tr-card .win::after {
+  content: " ✓";
+  color: var(--success);
+}
+
+.tr-card .lose {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.tr-card small {
+  display: block;
+  color: var(--muted);
+}
+
+.tr-judge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.tr-judge button {
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
