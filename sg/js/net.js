@@ -38,7 +38,15 @@
 
   const PREFIX = 'simplegames-';
   const ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
-  const ICE = { iceServers: CONFIG.iceServers };
+  // для проверки своего TURN без правки файла: localStorage['sg:ice-servers'] = '[{"urls":"turn:…","username":"…","credential":"…"}]',
+  // а localStorage['sg:ice-policy'] = '"relay"' заставит ходить только через TURN
+  const ICE = (() => {
+    const cfg = { iceServers: CONFIG.iceServers };
+    const custom = SG.store.get('ice-servers', null);
+    if (Array.isArray(custom) && custom.length) cfg.iceServers = custom;
+    if (SG.store.get('ice-policy', null) === 'relay') cfg.iceTransportPolicy = 'relay';
+    return cfg;
+  })();
   const SERVER_TIMEOUT = 9000;
   const JOIN_TIMEOUT = 75000; // гость ждёт, пока хозяин вернётся на страницу
   const RETRY_EVERY = 15000;
@@ -557,6 +565,7 @@
       const started = Date.now();
       let retryTimer = 0;
       let hintTimer = 0;
+      let attempts = [];
       const stop = () => {
         clearTimeout(retryTimer);
         clearTimeout(hintTimer);
@@ -583,7 +592,21 @@
             /* ignore */
           }
         }
+        // зависшие без ответа попытки закрываем, чтобы не держать ретранслятор
+        attempts = attempts.filter((a) => {
+          const pc = a.peerConnection;
+          const stuck = !pc || !pc.remoteDescription || pc.iceConnectionState === 'failed';
+          if (stuck) {
+            try {
+              a.close();
+            } catch (e) {
+              /* ignore */
+            }
+          }
+          return !stuck;
+        });
         const c = myPeer.connect(PREFIX + room, { reliable: true });
+        attempts.push(c);
         let mine = false;
         watchPc(c.peerConnection, diag, (d, st) => {
           if (conn) return;
@@ -594,6 +617,9 @@
           if (conn) return c.close();
           mine = true;
           clearTimeout(retryTimer);
+          // остальные попытки больше не нужны
+          attempts.forEach((a) => a !== c && a.close());
+          attempts = [c];
           attach(wrapPeerConn(c));
         });
         c.on('data', (x) => mine && handle(x));
