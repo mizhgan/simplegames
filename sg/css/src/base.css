@@ -1,0 +1,50 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font);
+  line-height: 1.55;
+  color: var(--text);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(900px 500px at 10% -10%, var(--glow-1), transparent 60%),
+    radial-gradient(700px 500px at 100% 0%, var(--glow-2), transparent 60%);
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}

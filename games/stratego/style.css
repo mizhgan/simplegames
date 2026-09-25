@@ -44,11 +44,11 @@
 }
 
 .st-cell.o0 {
-  background: linear-gradient(160deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(160deg, var(--p1), #1d4ed8);
 }
 
 .st-cell.o1 {
-  background: linear-gradient(160deg, #ef4444, #b91c1c);
+  background: linear-gradient(160deg, var(--p2), #b91c1c);
 }
 
 .st-cell.hidden::after {

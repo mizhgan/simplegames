@@ -5,8 +5,6 @@
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
-  --p1: #3b82f6;
-  --p2: #ef4444;
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
@@ -79,5 +77,5 @@
   pointer-events: none;
 }
 
-.stat.p1 .stat-value { color: #3b82f6; }
-.stat.p2 .stat-value { color: #ef4444; }
+.stat.p1 .stat-value { color: var(--p1); }
+.stat.p2 .stat-value { color: var(--p2); }

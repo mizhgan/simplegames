@@ -1,0 +1,122 @@
+/* Дизайн-токены. Тёмная тема — по умолчанию; светлая задаётся одним блоком
+   :root[data-theme="light"], а сборка (tools/build.py) повторяет его для системной светлой темы. */
+
+:root {
+  /* поверхности и текст */
+  --bg: #0d0e1a;
+  --bg-2: #141528;
+  --surface: #1a1c33;
+  --surface-2: #23264a;
+  --border: #2c2f55;
+  --text: #ecedf7;
+  --muted: #9a9cc0;
+  --on-accent: #fff;
+
+  /* акценты и состояния */
+  --accent: #7c5cff;
+  --accent-2: #22d3ee;
+  --accent-3: #ff5c93;
+  --success: #34d399;
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --gold: #facc15;
+
+  /* цвета игроков: 1 — синий, 2 — красный, дальше — для игр на компанию */
+  --p1: #3b82f6;
+  --p2: #ef4444;
+  --p3: #22c55e;
+  --p4: #f59e0b;
+  --p5: #a855f7;
+  --p6: #ec4899;
+  --p7: #14b8a6;
+  --p8: #f97316;
+
+  /* игровые поля */
+  --board-bg: #12132a;
+  --board-cell: #1b1d3a;
+  --board-line: #2a2d57;
+
+  /* фон страницы */
+  --glow-1: rgba(124, 92, 255, 0.18);
+  --glow-2: rgba(34, 211, 238, 0.12);
+
+  /* тени */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  /* скругления */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* отступы */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* шрифт и размеры текста */
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.6rem;
+  --fs-2xl: 2.2rem;
+
+  /* движение */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.25s;
+  --dur-slow: 0.4s;
+
+  /* слои */
+  --z-raised: 2;
+  --z-overlay: 5;
+  --z-header: 20;
+  --z-pop: 50;
+  --z-float: 200;
+  --z-modal: 900;
+  --z-toast: 1000;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f5fb;
+  --bg-2: #eceefa;
+  --surface: #ffffff;
+  --surface-2: #f0f1fa;
+  --border: #dfe1f0;
+  --text: #191a2e;
+  --muted: #62648a;
+  --accent: #6a48f5;
+  --accent-2: #0ea5c6;
+  --accent-3: #e0407a;
+  --shadow-sm: 0 2px 8px rgba(40, 40, 90, 0.08);
+  --shadow: 0 10px 30px rgba(40, 40, 90, 0.12);
+  --shadow-pop: 0 16px 40px rgba(40, 40, 90, 0.18);
+  --shadow-lg: 0 24px 60px rgba(40, 40, 90, 0.22);
+  --glow-1: rgba(106, 72, 245, 0.12);
+  --glow-2: rgba(14, 165, 198, 0.1);
+  --board-bg: #dfe2f3;
+  --board-cell: #eef0fa;
+  --board-line: #cdd1ea;
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0s;
+    --dur: 0s;
+    --dur-slow: 0s;
+  }
+}

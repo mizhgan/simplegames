@@ -1,8 +1,14 @@
 /* ==========================================================================
-   SimpleGames — общие стили
+   SimpleGames — общие стили. Файл собирается из sg/css/src/*.css: python3 tools/build.py
    ========================================================================== */
 
+/* ---------- tokens.css ---------- */
+
+/* Дизайн-токены. Тёмная тема — по умолчанию; светлая задаётся одним блоком
+   :root[data-theme="light"], а сборка (tools/build.py) повторяет его для системной светлой темы. */
+
 :root {
+  /* поверхности и текст */
   --bg: #0d0e1a;
   --bg-2: #141528;
   --surface: #1a1c33;
@@ -10,21 +16,83 @@
   --border: #2c2f55;
   --text: #ecedf7;
   --muted: #9a9cc0;
+  --on-accent: #fff;
+
+  /* акценты и состояния */
   --accent: #7c5cff;
   --accent-2: #22d3ee;
   --accent-3: #ff5c93;
   --success: #34d399;
   --danger: #f87171;
   --warning: #fbbf24;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  --glow-1: rgba(124, 92, 255, 0.18);
-  --glow-2: rgba(34, 211, 238, 0.12);
+  --gold: #facc15;
+
+  /* цвета игроков: 1 — синий, 2 — красный, дальше — для игр на компанию */
+  --p1: #3b82f6;
+  --p2: #ef4444;
+  --p3: #22c55e;
+  --p4: #f59e0b;
+  --p5: #a855f7;
+  --p6: #ec4899;
+  --p7: #14b8a6;
+  --p8: #f97316;
+
+  /* игровые поля */
   --board-bg: #12132a;
   --board-cell: #1b1d3a;
   --board-line: #2a2d57;
-  --radius: 16px;
+
+  /* фон страницы */
+  --glow-1: rgba(124, 92, 255, 0.18);
+  --glow-2: rgba(34, 211, 238, 0.12);
+
+  /* тени */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  /* скругления */
+  --radius-xs: 6px;
   --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* отступы */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* шрифт и размеры текста */
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.6rem;
+  --fs-2xl: 2.2rem;
+
+  /* движение */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.25s;
+  --dur-slow: 0.4s;
+
+  /* слои */
+  --z-raised: 2;
+  --z-overlay: 5;
+  --z-header: 20;
+  --z-pop: 50;
+  --z-float: 200;
+  --z-modal: 900;
+  --z-toast: 1000;
+
   color-scheme: dark;
 }
 
@@ -40,7 +108,10 @@
     --accent: #6a48f5;
     --accent-2: #0ea5c6;
     --accent-3: #e0407a;
+    --shadow-sm: 0 2px 8px rgba(40, 40, 90, 0.08);
     --shadow: 0 10px 30px rgba(40, 40, 90, 0.12);
+    --shadow-pop: 0 16px 40px rgba(40, 40, 90, 0.18);
+    --shadow-lg: 0 24px 60px rgba(40, 40, 90, 0.22);
     --glow-1: rgba(106, 72, 245, 0.12);
     --glow-2: rgba(14, 165, 198, 0.1);
     --board-bg: #dfe2f3;
@@ -61,7 +132,10 @@
   --accent: #6a48f5;
   --accent-2: #0ea5c6;
   --accent-3: #e0407a;
+  --shadow-sm: 0 2px 8px rgba(40, 40, 90, 0.08);
   --shadow: 0 10px 30px rgba(40, 40, 90, 0.12);
+  --shadow-pop: 0 16px 40px rgba(40, 40, 90, 0.18);
+  --shadow-lg: 0 24px 60px rgba(40, 40, 90, 0.22);
   --glow-1: rgba(106, 72, 245, 0.12);
   --glow-2: rgba(14, 165, 198, 0.1);
   --board-bg: #dfe2f3;
@@ -69,6 +143,16 @@
   --board-line: #cdd1ea;
   color-scheme: light;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0s;
+    --dur: 0s;
+    --dur-slow: 0s;
+  }
+}
+
+/* ---------- base.css ---------- */
 
 *,
 *::before,
@@ -121,12 +205,14 @@ button {
   padding: 0 16px;
 }
 
+/* ---------- layout.css ---------- */
+
 /* ---------- Header ---------- */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: var(--z-header);
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -176,12 +262,12 @@ button {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
-  transition: transform 0.15s, background 0.15s;
+  transition: transform var(--dur-fast), background var(--dur-fast);
 }
 
 .icon-btn:hover {
@@ -192,6 +278,42 @@ button {
   transform: scale(0.94);
 }
 
+/* ---------- Footer ---------- */
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 22px 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.site-footer a {
+  color: var(--muted);
+}
+
+/* ---------- 404 ---------- */
+
+.not-found {
+  text-align: center;
+  padding: 90px 16px;
+}
+
+.not-found .code {
+  font-size: clamp(5rem, 20vw, 9rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+/* ---------- buttons.css ---------- */
+
 /* ---------- Buttons ---------- */
 
 .btn {
@@ -201,14 +323,14 @@ button {
   gap: 8px;
   min-height: 42px;
   padding: 0 18px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
+  transition: transform var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast), opacity var(--dur-fast);
 }
 
 .btn:active {
@@ -222,7 +344,7 @@ button {
 }
 
 .btn-primary {
-  color: #fff;
+  color: var(--on-accent);
   background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--accent-2)));
   box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent);
 }
@@ -251,7 +373,7 @@ button {
   display: inline-flex;
   padding: 4px;
   gap: 4px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   border: 1px solid var(--border);
   flex-wrap: wrap;
@@ -261,12 +383,12 @@ button {
   border: 0;
   background: transparent;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background var(--dur-fast), color var(--dur-fast);
 }
 
 .seg button:hover {
@@ -275,8 +397,10 @@ button {
 
 .seg button.active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
+
+/* ---------- home.css ---------- */
 
 /* ---------- Home ---------- */
 
@@ -290,7 +414,7 @@ button {
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--muted);
@@ -343,7 +467,7 @@ button {
   max-width: 320px;
   min-height: 42px;
   padding: 0 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
@@ -395,7 +519,7 @@ button {
   color: var(--text);
   text-decoration: none;
   box-shadow: var(--shadow);
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: transform var(--dur), border-color var(--dur), box-shadow var(--dur);
 }
 
 .game-card[hidden] {
@@ -423,7 +547,7 @@ button {
   width: 72%;
   height: auto;
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
-  transition: transform 0.3s;
+  transition: transform var(--dur-slow);
 }
 
 .game-card:hover .thumb svg {
@@ -462,7 +586,7 @@ button {
 
 .tag {
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--muted);
   font-weight: 600;
@@ -516,373 +640,6 @@ button {
   font-size: 1.6rem;
 }
 
-/* ---------- Footer ---------- */
-
-.site-footer {
-  border-top: 1px solid var(--border);
-  padding: 22px 0;
-  color: var(--muted);
-  font-size: 0.88rem;
-}
-
-.footer-inner {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.site-footer a {
-  color: var(--muted);
-}
-
-/* ---------- Game pages ---------- */
-
-main {
-  flex: 1;
-}
-
-.game-page {
-  padding-top: 20px;
-  padding-bottom: 48px;
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.92rem;
-  margin-bottom: 12px;
-}
-
-.back-link:hover {
-  color: var(--text);
-}
-
-.game-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.game-head h1 {
-  margin: 0;
-  font-size: clamp(1.7rem, 5vw, 2.4rem);
-  letter-spacing: -0.03em;
-}
-
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 78px;
-  padding: 6px 14px;
-  border-radius: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-
-.stat-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  font-weight: 700;
-}
-
-.stat-value {
-  font-size: 1.25rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-
-.game-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 24px;
-  align-items: start;
-}
-
-@media (max-width: 860px) {
-  .game-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-.game-stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  min-width: 0;
-}
-
-.stage-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 520px;
-}
-
-.board-canvas {
-  display: block;
-  width: 100%;
-  border-radius: var(--radius);
-  background: var(--board-bg);
-  box-shadow: var(--shadow);
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.game-controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 520px;
-}
-
-.status-line {
-  min-height: 1.6em;
-  font-weight: 700;
-  text-align: center;
-  font-size: 1.05rem;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 24px;
-  text-align: center;
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  animation: fade-in 0.2s ease;
-}
-
-.overlay[hidden] {
-  display: none;
-}
-
-/* Оверлей поверх тёмного холста — светлый текст в любой теме */
-.overlay.on-dark {
-  background: rgba(8, 10, 24, 0.55);
-  color: #fff;
-}
-
-.overlay.on-dark p {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.overlay h2 {
-  margin: 0;
-  font-size: clamp(1.5rem, 5vw, 2.1rem);
-  letter-spacing: -0.02em;
-}
-
-.overlay p {
-  margin: 0 0 8px;
-  color: var(--muted);
-  max-width: 340px;
-}
-
-.overlay-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.info-card {
-  padding: 20px;
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-
-.info-card h2 {
-  margin: 0 0 10px;
-  font-size: 1.05rem;
-}
-
-.info-card ul {
-  margin: 0;
-  padding-left: 18px;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
-.info-card li + li {
-  margin-top: 6px;
-}
-
-.info-card + .info-card {
-  margin-top: 16px;
-}
-
-kbd {
-  display: inline-block;
-  min-width: 22px;
-  padding: 1px 6px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  border-bottom-width: 2px;
-  background: var(--surface-2);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-/* Экранный крестик управления — только для сенсорных устройств */
-.dpad {
-  display: none;
-  grid-template-columns: repeat(3, 60px);
-  grid-template-rows: repeat(3, 60px);
-  gap: 6px;
-}
-
-.dpad button {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface);
-  font-size: 1.4rem;
-  cursor: pointer;
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.dpad button:active {
-  background: var(--accent);
-  color: #fff;
-}
-
-.dpad [data-dir="up"] {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.dpad [data-dir="left"] {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.dpad [data-dir="right"] {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-.dpad [data-dir="down"] {
-  grid-column: 2;
-  grid-row: 3;
-}
-
-/* Экранные кнопки для аркад — только для сенсорных устройств */
-.touch-keys {
-  display: none;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 600px;
-}
-
-.touch-keys button {
-  flex: 1 1 0;
-  max-width: 110px;
-  height: 64px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--surface);
-  font-size: 1.5rem;
-  cursor: pointer;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.touch-keys button.down {
-  background: var(--accent);
-  color: #fff;
-}
-
-.touch-keys .wide {
-  flex-grow: 1.6;
-  max-width: 160px;
-}
-
-@media (pointer: coarse) {
-  .dpad {
-    display: grid;
-  }
-  .touch-keys {
-    display: flex;
-  }
-  .hide-touch {
-    display: none;
-  }
-}
-
-@media (pointer: fine) {
-  .hide-desktop {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ---------- 404 ---------- */
-
-.not-found {
-  text-align: center;
-  padding: 90px 16px;
-}
-
-.not-found .code {
-  font-size: clamp(5rem, 20vw, 9rem);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.05em;
-}
-
 /* ---------- Избранное, недавние, «Игра дня» ---------- */
 
 .game-card {
@@ -893,7 +650,7 @@ kbd {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 2;
+  z-index: var(--z-raised);
   display: grid;
   place-items: center;
   width: 36px;
@@ -905,7 +662,7 @@ kbd {
   line-height: 1;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.2s, transform 0.15s, background 0.2s;
+  transition: opacity var(--dur), transform var(--dur-fast), background var(--dur);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
@@ -1056,10 +813,10 @@ kbd {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--text);
   text-decoration: none;
-  transition: transform 0.15s, border-color 0.15s;
+  transition: transform var(--dur-fast), border-color var(--dur-fast);
 }
 
 .mini-card:hover {
@@ -1088,45 +845,408 @@ kbd {
   white-space: nowrap;
 }
 
-/* ---------- Уведомления ---------- */
+/* ---------- game.css ---------- */
+
+/* ---------- Game pages ---------- */
+
+main {
+  flex: 1;
+}
+
+.game-page {
+  padding-top: 20px;
+  padding-bottom: 48px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 12px;
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.game-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.game-head h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  letter-spacing: -0.03em;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 78px;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .game-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.game-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.stage-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+}
+
+.board-canvas {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.game-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.status-line {
+  min-height: 1.6em;
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  animation: fade-in 0.2s ease;
+}
+
+.overlay[hidden] {
+  display: none;
+}
+
+/* Оверлей поверх тёмного холста — светлый текст в любой теме */
+.overlay.on-dark {
+  background: rgba(8, 10, 24, 0.55);
+  color: #fff;
+}
+
+.overlay.on-dark p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.overlay h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+
+.overlay p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  max-width: 340px;
+}
+
+.overlay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.info-card {
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.info-card h2 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.info-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.info-card li + li {
+  margin-top: 6px;
+}
+
+.info-card + .info-card {
+  margin-top: 16px;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Экранный крестик управления — только для сенсорных устройств */
+.dpad {
+  display: none;
+  grid-template-columns: repeat(3, 60px);
+  grid-template-rows: repeat(3, 60px);
+  gap: 6px;
+}
+
+.dpad button {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: 1.4rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dpad button:active {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.dpad [data-dir="up"] {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.dpad [data-dir="left"] {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.dpad [data-dir="right"] {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.dpad [data-dir="down"] {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+/* Экранные кнопки для аркад — только для сенсорных устройств */
+.touch-keys {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.touch-keys button {
+  flex: 1 1 0;
+  max-width: 110px;
+  height: 64px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 1.5rem;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touch-keys button.down {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.touch-keys .wide {
+  flex-grow: 1.6;
+  max-width: 160px;
+}
+
+@media (pointer: coarse) {
+  .dpad {
+    display: grid;
+  }
+  .touch-keys {
+    display: flex;
+  }
+  .hide-touch {
+    display: none;
+  }
+}
+
+@media (pointer: fine) {
+  .hide-desktop {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- components.css ---------- */
+
+/* ---------- Уведомления (SG.toast) ---------- */
 
 .sg-toasts {
   position: fixed;
-  left: 50%;
-  bottom: 20px;
-  z-index: 1000;
+  top: 76px;
+  right: 16px;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: min(380px, calc(100vw - 32px));
-  transform: translateX(-50%);
+  gap: var(--sp-2);
+  width: min(360px, calc(100vw - 32px));
   pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .sg-toasts {
+    top: 72px;
+    right: 50%;
+    transform: translateX(50%);
+  }
 }
 
 .sg-toast {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 1px solid color-mix(in srgb, var(--warning) 60%, var(--border));
-  border-radius: 14px;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--tone, var(--accent));
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-pop);
   color: var(--text);
   text-decoration: none;
   pointer-events: auto;
-  animation: sg-toast-in 0.35s ease-out;
-  transition: opacity 0.4s, transform 0.4s;
+  animation: sg-toast-in var(--dur) var(--ease);
+  transition: opacity var(--dur-slow), transform var(--dur-slow);
+}
+
+.sg-toast[data-tone="success"] {
+  --tone: var(--success);
+}
+
+.sg-toast[data-tone="warning"] {
+  --tone: var(--warning);
+}
+
+.sg-toast[data-tone="danger"] {
+  --tone: var(--danger);
 }
 
 .sg-toast.out {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(-8px);
 }
 
 .sg-toast-icon {
-  font-size: 1.8rem;
+  flex: none;
+  font-size: 1.7rem;
   line-height: 1;
+}
+
+.sg-toast-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .sg-toast b {
@@ -1134,15 +1254,80 @@ kbd {
 }
 
 .sg-toast small {
+  display: block;
   color: var(--muted);
+}
+
+.sg-toast-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.sg-toast-actions .btn {
+  min-height: 34px;
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-sm);
 }
 
 @keyframes sg-toast-in {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.96);
+    transform: translateY(-12px) scale(0.97);
   }
 }
+
+/* ---------- Модальное окно (SG.modal) ---------- */
+
+.sg-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(5, 6, 15, 0.6);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  animation: sg-fade-in var(--dur) var(--ease);
+}
+
+.sg-modal[hidden] {
+  display: none;
+}
+
+.sg-modal-box {
+  width: min(480px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  animation: sg-pop-in var(--dur) var(--ease);
+}
+
+.sg-modal-box h2 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+}
+
+@keyframes sg-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sg-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* ---------- achievements.css ---------- */
 
 /* ---------- Страница достижений ---------- */
 
@@ -1190,7 +1375,7 @@ kbd {
   place-items: center;
   width: 52px;
   height: 52px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface-2);
   font-size: 1.7rem;
   filter: grayscale(1);
@@ -1232,7 +1417,7 @@ kbd {
   overflow: hidden;
   height: 6px;
   margin-bottom: 4px;
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
 }
 
@@ -1247,46 +1432,81 @@ kbd {
   background: var(--warning);
 }
 
-/* ---------- Игра по сети ---------- */
-
-.net-mode-btn.active {
-  background: linear-gradient(135deg, #10b981, #0ea5e9);
-  color: #fff;
+.ach-net {
+  margin-top: 28px;
 }
 
-.net-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 900;
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  background: rgba(5, 6, 15, 0.6);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-}
-
-.net-modal[hidden] {
+.ach-net[hidden] {
   display: none;
 }
 
-.net-box {
-  width: min(480px, 100%);
-  max-height: calc(100vh - 32px);
-  overflow: auto;
-  padding: 22px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-}
-
-.net-box h2 {
+.ach-net h2 {
   margin: 0 0 12px;
   font-size: 1.3rem;
 }
 
-.net-box p {
+.ach-net h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.ach-net-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.ach-net ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ach-net li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.ach-net li > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.ach-net li small,
+.ach-net li.empty {
+  color: var(--muted);
+}
+
+.ach-net a {
+  color: inherit;
+}
+
+.ach-inbox {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- net.css ---------- */
+
+/* ---------- Игра по сети ---------- */
+
+.net-mode-btn.active {
+  background: linear-gradient(135deg, #10b981, #0ea5e9);
+  color: var(--on-accent);
+}
+
+.sg-modal-box p {
   margin: 0 0 12px;
 }
 
@@ -1309,7 +1529,7 @@ kbd {
   min-width: 0;
   padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--text);
   font: inherit;
@@ -1327,7 +1547,7 @@ kbd {
 
 .net-code b {
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: var(--surface-2);
   font-family: ui-monospace, monospace;
   font-size: 1.1rem;
@@ -1394,7 +1614,7 @@ kbd {
   max-width: 620px;
   padding: 6px 6px 6px 14px;
   border: 1px solid color-mix(in srgb, var(--success) 50%, var(--border));
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--success) 10%, var(--surface));
   font-size: 0.9rem;
   font-weight: 600;
@@ -1447,7 +1667,7 @@ kbd {
 .net-score {
   flex: none;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   font-variant-numeric: tabular-nums;
 }
@@ -1472,16 +1692,16 @@ kbd {
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  z-index: 50;
+  z-index: var(--z-pop);
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   width: min(300px, 90vw);
   padding: 8px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-pop);
 }
 
 .net-react[hidden] {
@@ -1491,7 +1711,7 @@ kbd {
 .net-react button {
   padding: 4px 8px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--text);
   font: inherit;
@@ -1511,18 +1731,18 @@ kbd {
   position: absolute;
   top: calc(100% + 8px);
   left: 50%;
-  z-index: 40;
+  z-index: var(--z-pop);
   max-width: 90%;
   padding: 8px 14px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 1rem;
   white-space: nowrap;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-pop);
   transform: translateX(-50%);
   animation: net-pop 0.25s ease-out;
-  transition: opacity 0.4s, transform 0.4s;
+  transition: opacity var(--dur-slow), transform var(--dur-slow);
   pointer-events: none;
 }
 
@@ -1577,7 +1797,7 @@ kbd {
   align-items: center;
   justify-content: space-between;
   padding: 6px 6px 6px 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
 }
 
@@ -1595,6 +1815,132 @@ kbd {
   padding: 5px 12px;
   font-size: 0.85rem;
 }
+
+/* ---------- Зрители ---------- */
+
+.net-watch {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: var(--z-pop);
+  width: min(380px, 92vw);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-pop);
+  font-weight: 400;
+}
+
+.net-watch[hidden] {
+  display: none;
+}
+
+.net-watch p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.net-bar.watching {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.net-bar.watching .net-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.net-bubble.watcher {
+  background: var(--accent-2);
+}
+
+.net-watch-note {
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-note) {
+  display: none !important;
+}
+
+.net-mirror {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  align-items: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* ---------- Профиль: соперник и рейтинг, приглашения ---------- */
+
+.net-rival {
+  flex: none;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.net-rival[hidden] {
+  display: none;
+}
+
+.net-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.net-name input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.net-rivals ul {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.net-rivals li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.net-rivals small {
+  color: var(--muted);
+}
+
+.net-rivals .btn {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+}
+
+
+/* ---------- rt.css ---------- */
 
 /* ---------- Экранный джойстик для игр в реальном времени ---------- */
 
@@ -1647,7 +1993,7 @@ kbd {
 .rt-dpad button,
 .rt-fire {
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface-2);
   color: var(--text);
   font-size: 1.1rem;
@@ -1687,227 +2033,5 @@ kbd {
 .rt-dpad button.on,
 .rt-fire.on {
   background: var(--accent);
-  color: #fff;
-}
-
-/* ---------- Зрители ---------- */
-
-.net-watch {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  z-index: 50;
-  width: min(380px, 92vw);
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-  font-weight: 400;
-}
-
-.net-watch[hidden] {
-  display: none;
-}
-
-.net-watch p {
-  margin: 0 0 8px;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.net-bar.watching {
-  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
-}
-
-.net-bar.watching .net-dot {
-  background: var(--accent);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
-}
-
-.net-bubble.watcher {
-  background: var(--accent-2);
-}
-
-.net-watch-note {
-  margin: 0;
-  color: var(--muted);
-  text-align: center;
-}
-
-body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-note) {
-  display: none !important;
-}
-
-.net-mirror {
-  display: flex;
-  flex-direction: column;
-  gap: inherit;
-  align-items: center;
-  width: 100%;
-  pointer-events: none;
-}
-
-/* ---------- Профиль: соперник и рейтинг, приглашения ---------- */
-
-.net-rival {
-  flex: none;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  font-size: 0.8rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.net-rival[hidden] {
-  display: none;
-}
-
-.net-name {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.net-name input {
-  flex: 1;
-  min-width: 0;
-  padding: 7px 10px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface-2);
-  color: var(--text);
-  font: inherit;
-  font-weight: 400;
-}
-
-.net-rivals ul {
-  display: grid;
-  gap: 6px;
-  margin: 6px 0;
-  padding: 0;
-  list-style: none;
-}
-
-.net-rivals li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 4px 4px 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface-2);
-}
-
-.net-rivals small {
-  color: var(--muted);
-}
-
-.net-rivals .btn {
-  padding: 5px 12px;
-  font-size: 0.85rem;
-}
-
-.net-invite {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  z-index: 200;
-  width: min(360px, calc(100vw - 32px));
-  padding: 14px 16px;
-  border: 1px solid var(--accent);
-  border-radius: 16px;
-  background: var(--surface);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-  animation: net-invite-in 0.25s ease-out;
-}
-
-.net-invite p {
-  margin: 0 0 10px;
-}
-
-.net-invite .net-actions {
-  margin-top: 0;
-}
-
-@keyframes net-invite-in {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-}
-
-.pt [data-voice].on {
-  border-color: var(--success);
-  background: color-mix(in srgb, var(--success) 18%, var(--surface));
-}
-
-.ach-net {
-  margin-top: 28px;
-}
-
-.ach-net[hidden] {
-  display: none;
-}
-
-.ach-net h2 {
-  margin: 0 0 12px;
-  font-size: 1.3rem;
-}
-
-.ach-net h3 {
-  margin: 0 0 8px;
-  font-size: 1rem;
-}
-
-.ach-net-cols {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.ach-net ul {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ach-net li {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
-}
-
-.ach-net li > :first-child {
-  flex: 1;
-  min-width: 0;
-}
-
-.ach-net li small,
-.ach-net li.empty {
-  color: var(--muted);
-}
-
-.ach-net a {
-  color: inherit;
-}
-
-.ach-inbox {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: var(--on-accent);
 }

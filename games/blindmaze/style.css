@@ -61,11 +61,11 @@
 }
 
 .bm-me.s0 {
-  background: #3b82f6;
+  background: var(--p1);
 }
 
 .bm-me.s1 {
-  background: #ef4444;
+  background: var(--p2);
 }
 
 .bm-play {

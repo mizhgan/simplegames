@@ -1,0 +1,85 @@
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast), opacity var(--dur-fast);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--accent-2)));
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.btn-ghost {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.btn.is-active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Сегментированный переключатель */
+.seg {
+  display: inline-flex;
+  padding: 4px;
+  gap: 4px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.seg button {
+  border: 0;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.seg button:hover {
+  color: var(--text);
+}
+
+.seg button.active {
+  background: var(--accent);
+  color: var(--on-accent);
+}

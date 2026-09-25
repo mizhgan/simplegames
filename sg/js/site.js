@@ -446,25 +446,9 @@
 
   // ---------- уведомления ----------
 
-  let toastBox = null;
+  // уведомление о достижении ведёт на страницу достижений
   function toast(icon, title, text) {
-    if (!toastBox) {
-      toastBox = document.createElement('div');
-      toastBox.className = 'sg-toasts';
-      toastBox.setAttribute('aria-live', 'polite');
-      document.body.appendChild(toastBox);
-    }
-    const el = document.createElement('a');
-    el.className = 'sg-toast';
-    el.href = ROOT + 'achievements.html';
-    el.innerHTML = '<span class="sg-toast-icon"></span><span><b></b><small></small></span>';
-    el.querySelector('.sg-toast-icon').textContent = icon;
-    el.querySelector('b').textContent = title;
-    el.querySelector('small').textContent = text || '';
-    toastBox.appendChild(el);
-    SG.sound.play('hint');
-    setTimeout(() => el.classList.add('out'), 4200);
-    setTimeout(() => el.remove(), 4700);
+    SG.toast({ icon, title, text, href: ROOT + 'achievements.html', tone: 'warning' });
   }
 
   // ---------- ссылка на достижения в шапке ----------

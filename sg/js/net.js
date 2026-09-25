@@ -206,19 +206,9 @@
 
   // ---------- интерфейс ----------
 
-  let modal = null;
-  function dialog(html) {
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.className = 'net-modal';
-      modal.innerHTML = '<div class="net-box" role="dialog" aria-modal="true" aria-labelledby="net-title"></div>';
-      document.body.appendChild(modal);
-    }
-    modal.firstChild.innerHTML = html;
-    modal.hidden = false;
-    return modal.firstChild;
-  }
-  const closeDialog = () => modal && (modal.hidden = true);
+  // окна игры по сети — общее модальное окно сайта (SG.modal)
+  const dialog = (html) => SG.modal(html);
+  const closeDialog = () => SG.modal.close();
 
   async function copy(text, btn) {
     try {
@@ -472,35 +462,39 @@
   }
 
   function showInvite(from, title, url, reply) {
-    const old = document.querySelector('.net-invite');
-    if (old) old.remove();
-    const el = document.createElement('div');
-    el.className = 'net-invite';
-    el.setAttribute('role', 'alertdialog');
-    el.innerHTML =
-      `<p>🎮 <b>${escH(from.name)}</b> зовёт вас сыграть: «${escH(title)}»</p>` +
-      '<div class="net-actions"><button class="btn btn-primary" type="button" data-yes>Играть</button><button class="btn btn-ghost" type="button" data-no>Не сейчас</button></div>';
-    document.body.appendChild(el);
-    SG.sound.play('match');
-    const done = setTimeout(() => {
-      el.remove();
-      reply('no');
-    }, 60000);
-    el.querySelector('[data-yes]').addEventListener('click', () => {
-      clearTimeout(done);
-      reply('ok');
-      setTimeout(() => {
-        location.href = url;
-        // та же страница: смена хэша не перезагружает её
-        if (url.split('#')[0] === location.href.split('#')[0]) location.reload();
-      }, 300);
-    });
-    el.querySelector('[data-no]').addEventListener('click', () => {
-      clearTimeout(done);
-      el.remove();
-      reply('no');
+    if (currentInvite) currentInvite.close();
+    let answered = false;
+    const answer = (t) => {
+      if (answered) return;
+      answered = true;
+      reply(t);
+    };
+    currentInvite = SG.toast({
+      icon: '🎮',
+      title: from.name + ' зовёт вас сыграть',
+      text: '«' + title + '»',
+      tone: 'success',
+      sound: 'match',
+      timeout: 60000,
+      onTimeout: () => answer('no'),
+      actions: [
+        {
+          label: 'Играть',
+          primary: true,
+          onClick() {
+            answer('ok');
+            setTimeout(() => {
+              location.href = url;
+              // та же страница: смена хэша не перезагружает её
+              if (url.split('#')[0] === location.href.split('#')[0]) location.reload();
+            }, 300);
+          },
+        },
+        { label: 'Не сейчас', onClick: () => answer('no') },
+      ],
     });
   }
+  let currentInvite = null;
 
   // список недавних соперников с кнопкой «Позвать» — в окне приглашения
   function rivalsBlock(box, url, title, getPeer) {
@@ -1058,7 +1052,7 @@
       } else wrap.querySelector('.net-public').hidden = true;
       const poll = async () => {
         clearTimeout(lobbyTimer);
-        if (api.active || !modal || modal.hidden || !box.isConnected || !box.contains(listEl)) return;
+        if (api.active || !SG.modal.isOpen() || !box.isConnected || !box.contains(listEl)) return;
         const rooms = await lobbyList(opts.game);
         if (api.active || !box.contains(listEl)) return;
         if (!rooms) {
@@ -1397,7 +1391,7 @@
       );
       box.querySelector('[data-cancel]').addEventListener('click', cancel);
       if (!(await loadPeer())) return manualHost('Не удалось загрузить модуль связи.');
-      if (api.role !== 'host' || (modal && modal.hidden)) return;
+      if (api.role !== 'host' || !SG.modal.isOpen()) return;
       let opened = false;
       const timer = setTimeout(() => !opened && fallback('Сервер знакомств не отвечает.'), SERVER_TIMEOUT);
       try {
@@ -1460,7 +1454,7 @@
           return;
         }
         let mine = false;
-        const status = modal && modal.querySelector('.net-status');
+        const status = SG.modal.isOpen() && document.querySelector('.sg-modal .net-status');
         if (status) status.innerHTML = '<span class="net-spinner"></span>Друг подключается…';
         const diag = newDiag();
         diag.server = true;
@@ -1568,7 +1562,7 @@
       const noteEl = box.querySelector('.net-note');
       const setStatus = (html) => (statusEl.innerHTML = '<span class="net-spinner"></span>' + html);
       if (!(await loadPeer())) return fail('Не удалось загрузить модуль связи.', token);
-      if (modal && modal.hidden) return;
+      if (!SG.modal.isOpen()) return;
 
       const diag = newDiag();
       const myPeer = new window.Peer(peerOptions(parsed.which));

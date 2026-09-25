@@ -295,7 +295,7 @@
 
   // ---------- отрисовка ----------
 
-  const PAL = ['#3b82f6', '#ef4444'];
+  const PAL = SG.colors.players; // [0] — синий, [1] — красный
   function draw(g, s) {
     const h = HOLES[s.hole];
     g.fillStyle = '#166534';

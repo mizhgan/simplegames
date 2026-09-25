@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Дизайн-система — SimpleGames</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <style>
+    .sgd section { margin: var(--sp-6) 0; }
+    .sgd h2 { margin: 0 0 var(--sp-3); font-size: var(--fs-lg); }
+    .sgd .note { color: var(--muted); font-size: var(--fs-sm); margin: 0 0 var(--sp-4); }
+    .sgd .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--sp-3); }
+    .sgd .sw { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; background: var(--surface); font-size: var(--fs-xs); }
+    .sgd .sw i { display: block; height: 56px; }
+    .sgd .sw span { display: block; padding: var(--sp-2); }
+    .sgd .sw code { color: var(--muted); }
+    .sgd .row { display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; }
+    .sgd .box { padding: var(--sp-4); border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .sgd .scale div { display: flex; align-items: center; gap: var(--sp-3); margin: var(--sp-1) 0; font-size: var(--fs-sm); }
+    .sgd .scale b { display: inline-block; height: 14px; background: var(--accent); border-radius: 3px; }
+    .sgd .radii div { width: 64px; height: 64px; background: var(--surface-2); border: 1px solid var(--border); display: grid; place-items: center; font-size: var(--fs-xs); }
+    .sgd .shadows div { width: 120px; height: 72px; background: var(--surface); border-radius: var(--radius); display: grid; place-items: center; font-size: var(--fs-xs); }
+    .sgd .demo-stage { position: relative; height: 180px; border-radius: var(--radius); background: var(--board-bg); overflow: hidden; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <img class="logo-mark" src="sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page sgd">
+    <a class="back-link" href="index.html">← Все игры</a>
+    <div class="game-head"><h1>Дизайн-система</h1></div>
+    <p class="note">Токены живут в <code>sg/css/src/tokens.css</code>, компоненты — в <code>sg/css/src/*.css</code>, общий файл <code>sg/css/style.css</code> собирает <code>python3 tools/build.py</code>. На холсте цвета берутся из <code>SG.colors</code> (обновляются при смене темы). Переключите тему кнопкой в шапке.</p>
+
+    <section><h2>Цвета</h2><div class="swatches" id="sw-base"></div></section>
+    <section><h2>Цвета игроков</h2><p class="note"><code>--p1</code>…<code>--p8</code>, в JS — <code>SG.colors.players</code>. Первые два — стороны в играх на двоих (синие и красные).</p><div class="swatches" id="sw-players"></div></section>
+
+    <section><h2>Кнопки</h2>
+      <div class="row">
+        <button class="btn btn-primary" type="button">Основная</button>
+        <button class="btn btn-ghost" type="button">Второстепенная</button>
+        <button class="btn btn-ghost is-active" type="button">Выбрана</button>
+        <button class="btn btn-primary" type="button" disabled>Недоступна</button>
+        <button class="icon-btn" type="button" aria-label="Иконка">★</button>
+      </div>
+    </section>
+
+    <section><h2>Переключатель</h2>
+      <div class="row">
+        <div class="seg" id="sg-seg"><button type="button" data-value="a">Против компьютера</button><button type="button" data-value="b">Вдвоём</button><button type="button" data-value="c">🌐 По сети</button></div>
+      </div>
+    </section>
+
+    <section><h2>Табло и метки</h2>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value">128</span></div>
+        <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value">2048</span></div>
+      </div>
+      <div class="row" style="margin-top:var(--sp-3)">
+        <span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="tag tag-party">👥 Компанией</span>
+      </div>
+    </section>
+
+    <section><h2>Оверлей поверх поля</h2>
+      <div class="demo-stage">
+        <div class="overlay"><h2>Победа!</h2><p>Счёт 7 : 5</p><div class="overlay-actions"><button class="btn btn-primary" type="button">Ещё раз</button></div></div>
+      </div>
+    </section>
+
+    <section><h2>Уведомления и окно</h2>
+      <div class="row">
+        <button class="btn btn-ghost" type="button" data-toast="info">Уведомление</button>
+        <button class="btn btn-ghost" type="button" data-toast="warning">Достижение</button>
+        <button class="btn btn-ghost" type="button" data-toast="actions">С действиями</button>
+        <button class="btn btn-ghost" type="button" data-modal>Модальное окно</button>
+      </div>
+    </section>
+
+    <section><h2>Карточка с правилами</h2>
+      <div class="info-card"><h2>Как играть</h2><ul><li>Первое правило с <kbd>Space</kbd>.</li><li>Второе правило.</li></ul></div>
+    </section>
+
+    <section><h2>Отступы</h2><div class="scale" id="sc-space"></div></section>
+    <section><h2>Скругления</h2><div class="row radii" id="sc-radius"></div></section>
+    <section><h2>Тени</h2><div class="row shadows" id="sc-shadow"></div></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="sg/js/common.js"></script>
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const sw = (name) => `<div class="sw"><i style="background:var(${name})"></i><span>${name}<br><code class="v" data-v="${name}"></code></span></div>`;
+      $('sw-base').innerHTML = ['--bg', '--bg-2', '--surface', '--surface-2', '--border', '--text', '--muted', '--accent', '--accent-2', '--accent-3', '--success', '--danger', '--warning', '--gold', '--board-bg', '--board-cell', '--board-line'].map(sw).join('');
+      $('sw-players').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map((i) => sw('--p' + i)).join('');
+      const vals = () => document.querySelectorAll('[data-v]').forEach((el) => (el.textContent = SG.cssVar(el.dataset.v)));
+      vals();
+      document.addEventListener('sg:themechange', vals);
+      $('sc-space').innerHTML = [1, 2, 3, 4, 5, 6, 7].map((i) => `<div><code>--sp-${i}</code><b style="width:var(--sp-${i})"></b></div>`).join('');
+      $('sc-radius').innerHTML = ['xs', 'sm', 'md', '', 'lg', 'pill'].map((r) => { const n = '--radius' + (r ? '-' + r : ''); return `<div style="border-radius:var(${n})">${n.slice(9) || 'base'}</div>`; }).join('');
+      $('sc-shadow').innerHTML = ['sm', '', 'pop', 'lg'].map((r) => `<div style="box-shadow:var(--shadow${r ? '-' + r : ''})">shadow${r ? '-' + r : ''}</div>`).join('');
+      SG.segmented($('sg-seg'), 'a', () => {});
+      document.querySelectorAll('[data-toast]').forEach((b) => b.addEventListener('click', () => {
+        const k = b.dataset.toast;
+        if (k === 'info') SG.toast({ icon: '💬', title: 'Соперник подключился', text: 'Можно начинать' });
+        if (k === 'warning') SG.toast({ icon: '🏆', title: 'Достижение: Первая игра', text: 'Сыграйте в любую игру', tone: 'warning' });
+        if (k === 'actions') SG.toast({ icon: '🎮', title: 'Аня зовёт вас сыграть', text: '«Шахматы»', tone: 'success', timeout: 0, actions: [{ label: 'Играть', primary: true }, { label: 'Не сейчас' }] });
+      }));
+      document.querySelector('[data-modal]').addEventListener('click', () => {
+        const box = SG.modal('<h2>Игра по сети</h2><p>Пример окна: Esc или «Закрыть» закрывают его.</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Закрыть</button></div>');
+        box.querySelector('[data-close]').addEventListener('click', SG.modal.close);
+      });
+    })();
+  </script>
+</body>
+</html>

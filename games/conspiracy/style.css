@@ -1,13 +1,13 @@
 .cs-role {
   padding: 8px 16px;
   border-radius: 999px;
-  background: color-mix(in srgb, #3b82f6 20%, var(--bg));
+  background: color-mix(in srgb, var(--p1) 20%, var(--bg));
   font-weight: 800;
 }
 
 .cs-role.bad,
 .cs-role.boss {
-  background: color-mix(in srgb, #ef4444 22%, var(--bg));
+  background: color-mix(in srgb, var(--p2) 22%, var(--bg));
 }
 
 .cs-board {
@@ -25,11 +25,11 @@
 }
 
 .cs-track.blue {
-  background: color-mix(in srgb, #3b82f6 18%, var(--bg));
+  background: color-mix(in srgb, var(--p1) 18%, var(--bg));
 }
 
 .cs-track.red {
-  background: color-mix(in srgb, #ef4444 18%, var(--bg));
+  background: color-mix(in srgb, var(--p2) 18%, var(--bg));
 }
 
 .cs-track span {
@@ -69,7 +69,7 @@
 }
 
 .cs-law.blue {
-  background: #3b82f6;
+  background: var(--p1);
 }
 
 .cs-law.red {

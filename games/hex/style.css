@@ -3,8 +3,8 @@
   border-radius: var(--radius);
   background: var(--board-bg);
   box-shadow: var(--shadow);
-  --hx-red: #ef4444;
-  --hx-blue: #3b82f6;
+  --hx-red: var(--p2);
+  --hx-blue: var(--p1);
 }
 
 .hx {

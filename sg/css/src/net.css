@@ -1,0 +1,440 @@
+/* ---------- Игра по сети ---------- */
+
+.net-mode-btn.active {
+  background: linear-gradient(135deg, #10b981, #0ea5e9);
+  color: var(--on-accent);
+}
+
+.sg-modal-box p {
+  margin: 0 0 12px;
+}
+
+.net-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.net-link {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.net-link input,
+.net-textarea {
+  flex: 1 1 180px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.net-textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.net-code b {
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-2);
+  font-family: ui-monospace, monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+}
+
+.net-code,
+.net-note,
+.net-status {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.net-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px !important;
+}
+
+.net-error {
+  color: var(--warning);
+  font-size: 0.85rem;
+}
+
+.net-spinner {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: net-spin 0.8s linear infinite;
+}
+
+.net-join {
+  margin: 4px 0 8px;
+  font-size: 0.9rem;
+}
+
+.net-join summary {
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.net-join .net-link {
+  margin-top: 8px;
+}
+
+.net-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.net-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 620px;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid color-mix(in srgb, var(--success) 50%, var(--border));
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.net-bar[hidden] {
+  display: none;
+}
+
+.net-bar[data-state="off"] {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+}
+
+.net-bar .net-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.net-bar .btn {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.net-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 25%, transparent);
+}
+
+.net-bar[data-state="off"] .net-dot {
+  background: var(--danger);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 25%, transparent);
+}
+
+@keyframes net-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.net-bar {
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.net-score {
+  flex: none;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.net-score[hidden],
+.net-bar .btn[hidden] {
+  display: none;
+}
+
+.net-rematch.pulse {
+  border-color: var(--success);
+  animation: net-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes net-pulse {
+  to {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 35%, transparent);
+  }
+}
+
+.net-react {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: var(--z-pop);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: min(300px, 90vw);
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-pop);
+}
+
+.net-react[hidden] {
+  display: none;
+}
+
+.net-react button {
+  padding: 4px 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.net-react button.phrase {
+  font-size: 0.85rem;
+}
+
+.net-react button:hover {
+  background: color-mix(in srgb, var(--accent) 25%, var(--surface-2));
+}
+
+.net-bubble {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: var(--z-pop);
+  max-width: 90%;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 1rem;
+  white-space: nowrap;
+  box-shadow: var(--shadow-pop);
+  transform: translateX(-50%);
+  animation: net-pop 0.25s ease-out;
+  transition: opacity var(--dur-slow), transform var(--dur-slow);
+  pointer-events: none;
+}
+
+.net-bubble.mine {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.net-bubble.out {
+  opacity: 0;
+  transform: translate(-50%, -10px);
+}
+
+@keyframes net-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.8);
+  }
+}
+
+.net-lobby {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.net-lobby[hidden],
+.net-public[hidden] {
+  display: none;
+}
+
+.net-public {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.net-rooms {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.net-rooms li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 6px 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.net-rooms li.empty {
+  padding: 8px 12px;
+  color: var(--muted);
+}
+
+.net-rooms small {
+  margin-left: 8px;
+  color: var(--muted);
+}
+
+.net-rooms .btn {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+}
+
+/* ---------- Зрители ---------- */
+
+.net-watch {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: var(--z-pop);
+  width: min(380px, 92vw);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-pop);
+  font-weight: 400;
+}
+
+.net-watch[hidden] {
+  display: none;
+}
+
+.net-watch p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.net-bar.watching {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.net-bar.watching .net-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.net-bubble.watcher {
+  background: var(--accent-2);
+}
+
+.net-watch-note {
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-note) {
+  display: none !important;
+}
+
+.net-mirror {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  align-items: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* ---------- Профиль: соперник и рейтинг, приглашения ---------- */
+
+.net-rival {
+  flex: none;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.net-rival[hidden] {
+  display: none;
+}
+
+.net-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.net-name input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.net-rivals ul {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.net-rivals li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.net-rivals small {
+  color: var(--muted);
+}
+
+.net-rivals .btn {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+}
+
