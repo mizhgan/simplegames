@@ -209,7 +209,7 @@
 
   // ---------- отрисовка ----------
 
-  const PAL = ['#22d3ee', '#ff5c93'];
+  const PAL = ['#3b82f6', '#ef4444'];
   function draw(g, s, v) {
     const c = v.colors;
     const sky = g.createLinearGradient(0, 0, 0, H);
@@ -287,14 +287,14 @@
     void c;
   }
 
-  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['голубой', 'розовый']);
+  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['синий', 'красный']);
 
   let sentTv = { id: null, tv: 0 };
   SG.rt({
     game: 'artillery',
     W,
     H,
-    sides: ['Голубой танк', 'Розовый танк'],
+    sides: ['Синий танк', 'Красный танк'],
     intro: 'Стреляйте по очереди: ← → — угол, ↑ ↓ — сила, пробел — выстрел. Учитывайте ветер!',
     create,
     step,
@@ -311,7 +311,7 @@
     hud(s, v) {
       const n = names(v);
       const who = s.phase === 'aim' ? ' · стреляет ' + n[s.turn] : '';
-      return 'Голубой (' + n[0] + ') ' + s.tanks[0].hp + ' ❤ · розовый (' + n[1] + ') ' + s.tanks[1].hp + ' ❤' + who;
+      return 'Синий (' + n[0] + ') ' + s.tanks[0].hp + ' ❤ · красный (' + n[1] + ') ' + s.tanks[1].hp + ' ❤' + who;
     },
     // рельеф передаём, только когда он изменился
     snapshot(s, full) {

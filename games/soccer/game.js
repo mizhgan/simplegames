@@ -247,7 +247,7 @@
 
   // ---------- отрисовка ----------
 
-  const TEAM = ['#22d3ee', '#ff5c93'];
+  const TEAM = ['#3b82f6', '#ef4444'];
   function draw(g, s, v) {
     const c = v.colors;
     g.fillStyle = '#15803d';
@@ -334,13 +334,13 @@
     void c;
   }
 
-  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['голубые', 'розовые']);
+  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['синие', 'красные']);
 
   SG.rt({
     game: 'soccer',
     W,
     H,
-    sides: ['Голубые', 'Розовые'],
+    sides: ['Синие', 'Красные'],
     intro: 'Две минуты, один на один плюс вратари. Пробел — удар.',
     create,
     step,
@@ -352,7 +352,7 @@
     over: (s) => (s.time <= 0 && s.wait <= 0 ? { winner: s.score[0] === s.score[1] ? null : s.score[0] > s.score[1] ? 0 : 1, text: 'Счёт ' + s.score[0] + ' : ' + s.score[1] + '.' } : null),
     hud(s, v) {
       const n = names(v);
-      return 'Голубые (' + n[0] + ') ' + s.score[0] + ' : ' + s.score[1] + ' розовые (' + n[1] + ') · ' + SG.formatTime(Math.ceil(s.time));
+      return 'Синие (' + n[0] + ') ' + s.score[0] + ' : ' + s.score[1] + ' красные (' + n[1] + ') · ' + SG.formatTime(Math.ceil(s.time));
     },
   });
 })();

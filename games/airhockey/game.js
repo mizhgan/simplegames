@@ -192,9 +192,9 @@
     g.arc(W / 2, H / 2, 60, 0, Math.PI * 2);
     g.stroke();
     // ворота
-    g.fillStyle = c.accent3;
+    g.fillStyle = '#ef4444';
     g.fillRect(W / 2 - GOAL / 2, 0, GOAL, 6);
-    g.fillStyle = c.accent2;
+    g.fillStyle = '#3b82f6';
     g.fillRect(W / 2 - GOAL / 2, H - 6, GOAL, 6);
     for (const [y, a0, a1] of [[0, 0, Math.PI], [H, Math.PI, Math.PI * 2]]) {
       g.beginPath();
@@ -228,15 +228,15 @@
       g.arc(m.x, m.y, MAL_R * 0.45, 0, Math.PI * 2);
       g.fill();
     };
-    mallet(s.mal[0], c.accent2);
-    mallet(s.mal[1], c.accent3);
+    mallet(s.mal[0], '#3b82f6');
+    mallet(s.mal[1], '#ef4444');
     g.fillStyle = c.text;
     g.beginPath();
     g.arc(s.puck.x, s.puck.y, PUCK_R, 0, Math.PI * 2);
     g.fill();
     if (s.flash > 0) {
       g.globalAlpha = s.flash * 0.5;
-      g.fillStyle = s.lastGoal === 0 ? c.accent2 : c.accent3;
+      g.fillStyle = s.lastGoal === 0 ? '#3b82f6' : '#ef4444';
       g.fillRect(0, 0, W, H);
       g.globalAlpha = 1;
     }
@@ -248,7 +248,7 @@
     game: 'airhockey',
     W,
     H,
-    sides: ['Голубая бита', 'Розовая бита'],
+    sides: ['Синяя бита', 'Красная бита'],
     intro: 'Водите битой мышью или пальцем. До ' + WIN + ' голов.',
     create,
     step,
