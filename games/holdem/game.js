@@ -293,25 +293,25 @@
     aiDelay: 700,
     sound: (s, m) => (m.a === 'next' ? 'card' : m.a === 'fold' ? 'flip' : m.a === 'raise' ? 'coin' : s.result ? 'coin' : 'click'),
     render(s, v) {
-      const me = v.me === null || v.me === undefined ? 0 : v.me;
+      const me = v.watch ? v.hostSide : v.me === null || v.me === undefined ? 0 : v.me;
       const op = 1 - me;
-      const oppName = v.mode === 'ai' ? 'Компьютер' : 'Соперник';
+      const oppName = v.mode === 'ai' ? 'Компьютер' : v.watch ? 'Игрок 2' : 'Соперник';
       const reveal = s.phase === 'done' && s.result && s.result.how === 'show';
       const [sb, bb] = blinds(s);
       $('opp-name').textContent = oppName + (s.dealer === op ? ' · дилер' : '');
-      $('my-name').textContent = 'Вы' + (s.dealer === me ? ' · дилер' : '');
+      $('my-name').textContent = (v.watch ? 'Игрок 1' : 'Вы') + (s.dealer === me ? ' · дилер' : '');
       $('opp-chips').textContent = s.chips[op];
       $('my-chips').textContent = s.chips[me];
       $('opp-bet').textContent = s.bets[op] && s.phase === 'bet' ? 'ставка ' + s.bets[op] : '';
       $('my-bet').textContent = s.bets[me] && s.phase === 'bet' ? 'ставка ' + s.bets[me] : '';
       $('opp-hand').innerHTML = s.holes[op].map((id) => (reveal ? C.html(C.byId(id)) : C.back())).join('');
-      $('my-hand').innerHTML = s.holes[me].map((id) => C.html(C.byId(id))).join('');
+      $('my-hand').innerHTML = s.holes[me].map((id) => (v.watch && !reveal ? C.back() : C.html(C.byId(id)))).join('');
       const brd = board(s);
       $('board').innerHTML = brd.map((id) => C.html(C.byId(id))).join('') + '<div class="sol-card ph"></div>'.repeat(5 - brd.length);
       $('pot').textContent = 'Банк: ' + (s.phase === 'done' ? s.result.pot : s.pot) + ' · блайнды ' + sb + '/' + bb + ' · раздача ' + s.hand;
       $('label-opp').classList.toggle('turn', s.turn === op && s.phase === 'bet');
       $('label-me').classList.toggle('turn', s.turn === me && s.phase === 'bet');
-      $('my-combo').textContent = brd.length >= 3 ? HAND_NAMES[category(bestOf(s.holes[me], brd))] : '';
+      $('my-combo').textContent = brd.length >= 3 && !(v.watch && !reveal) ? HAND_NAMES[category(bestOf(s.holes[me], brd))] : '';
       let msg = '';
       if (s.result) {
         const w = s.result.winner;
@@ -321,7 +321,7 @@
           msg = who + ' ' + s.result.pot + (s.result.how === 'fold' ? ' — ' + (w === me ? 'соперник сбросил карты' : 'вы сбросили карты') : ' — ' + HAND_NAMES[category(s.result.vals[w])].toLowerCase());
         }
       } else if (s.last && s.last.side === op) msg = oppName + ': ' + said[s.last.a] + (s.last.a === 'raise' ? s.last.v : '');
-      $('msg').textContent = msg;
+      $('msg').textContent = v.watch ? C.neutral(msg) : msg;
       renderActions(s, v);
     },
   });

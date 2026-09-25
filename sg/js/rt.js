@@ -197,7 +197,7 @@
     }
     function renderPads() {
       pads.forEach((p, side) => {
-        p.hidden = side === 1 && mode !== 'pvp';
+        p.hidden = mode === 'watch' || (side === 1 && mode !== 'pvp');
         p.querySelector('.rt-pad-name').textContent = mode === 'pvp' ? (side ? 'Игрок 2' : 'Игрок 1') : '';
       });
     }
@@ -224,7 +224,7 @@
     function loop(t) {
       const dt = Math.min(0.1, (t - last) / 1000);
       last = t;
-      if (!isGuest() && !document.hidden) {
+      if (!isGuest() && mode !== 'watch' && !document.hidden) {
         if (phase === 'count') {
           countdown -= dt;
           if (countdown <= 0) phase = 'run';
@@ -295,6 +295,7 @@
     }
 
     function startClick() {
+      if (mode === 'watch') return;
       if (mode === 'net') {
         if (!net.active) return;
         if (net.role === 'guest') {
@@ -313,17 +314,18 @@
       const mine = me();
       let title;
       if (w === null || w === undefined) title = 'Ничья 🤝';
-      else if (mode === 'pvp') title = 'Победил игрок ' + (w + 1) + '! 🎉';
+      else if (mode === 'pvp' || mode === 'watch') title = 'Победил игрок ' + (w + 1) + '! 🎉';
       else if (w === mine) title = 'Вы победили! 🎉';
       else title = mode === 'ai' ? 'Компьютер победил 🤖' : 'Соперник победил';
       if (w !== null && w !== undefined) wins[w]++;
-      if (mode !== 'pvp' && w === mine) SG.store.set(key('wins'), SG.store.get(key('wins'), 0) + 1);
+      if ((mode === 'ai' || mode === 'net') && w === mine) SG.store.set(key('wins'), SG.store.get(key('wins'), 0) + 1);
       if (mode === 'net') net.result(w === null || w === undefined ? 'draw' : w === mine ? 'win' : 'lose');
-      SG.sound.play(w === null || w === undefined ? 'draw' : mode !== 'pvp' && w !== mine ? 'lose' : 'win');
+      SG.sound.play(w === null || w === undefined ? 'draw' : (mode === 'ai' || mode === 'net') && w !== mine ? 'lose' : 'win');
       if (overlay) {
         $('overlay-title').textContent = title;
         $('overlay-text').textContent = res.text || '';
         $('start-btn').textContent = 'Ещё раз';
+        $('start-btn').hidden = mode === 'watch';
         overlay.hidden = false;
       }
       if (mode === 'net' && net.role === 'host') sendState(true);
@@ -334,13 +336,30 @@
       state = cfg.create(level);
       if (overlay) {
         $('overlay-title').textContent = cfg.title || document.querySelector('h1').textContent;
-        $('overlay-text').textContent = mode === 'net' && net.role === 'guest' ? 'Нажмите «Играть» — хозяин игры начнёт партию.' : cfg.intro || '';
+        $('overlay-text').textContent =
+          mode === 'watch' ? 'Вы зритель. Ждём, пока игроки начнут партию.' : mode === 'net' && net.role === 'guest' ? 'Нажмите «Играть» — хозяин игры начнёт партию.' : cfg.intro || '';
         $('start-btn').textContent = 'Играть';
+        $('start-btn').hidden = mode === 'watch';
         overlay.hidden = false;
       }
     }
 
     // ---------- сеть ----------
+
+    // у гостя и зрителя: картина от хозяина
+    function applySnapshot(msg) {
+      state = cfg.restore ? cfg.restore(msg.s, state) : msg.s;
+      (msg.fx || []).forEach((n) => SG.sound.play(n));
+      if (msg.p === 'over' && phase !== 'over' && msg.r) finish(msg.r);
+      else if (msg.p !== 'over') {
+        if (phase === 'over' || phase === 'idle') {
+          result = null;
+          if (overlay) overlay.hidden = true;
+        }
+        phase = msg.p;
+        countdown = msg.c;
+      }
+    }
 
     function sendState(force) {
       if (!net.active) return;
@@ -354,7 +373,22 @@
       game: cfg.game,
       modeEl: $('mode'),
       onRematch: () => start(),
+      // зрители получают те же снимки, что и гость
+      watch: {
+        forward: (m, from) => from === 'host' && m.t === 'st',
+        snapshot: () => ({ t: 'st', s: cfg.snapshot ? cfg.snapshot(state, true) : state, p: phase, c: +countdown.toFixed(2), fx: [], r: result }),
+        onSync: (d) => applySnapshot(d),
+        onForward: (m) => applySnapshot(m),
+      },
       onConnect(role) {
+        if (role === 'watcher') {
+          mode = 'watch';
+          if (diffEl) diffEl.style.display = 'none';
+          renderPads();
+          showIdle();
+          resize();
+          return;
+        }
         mode = 'net';
         if (diffEl) diffEl.style.display = 'none';
         net.info(role === 'host' ? 'вы — ' + cfg.sides[0].toLowerCase() : 'вы — ' + cfg.sides[1].toLowerCase());
@@ -369,22 +403,10 @@
           else if (msg.t === 'startreq' && (phase === 'idle' || phase === 'over')) start();
           return;
         }
-        if (msg.t === 'st') {
-          state = cfg.restore ? cfg.restore(msg.s, state) : msg.s;
-          (msg.fx || []).forEach((n) => SG.sound.play(n));
-          if (msg.p === 'over' && phase !== 'over' && msg.r) finish(msg.r);
-          else if (msg.p !== 'over') {
-            if (phase === 'over' || phase === 'idle') {
-              result = null;
-              if (overlay) overlay.hidden = true;
-            }
-            phase = msg.p;
-            countdown = msg.c;
-          }
-        }
+        if (msg.t === 'st') applySnapshot(msg);
       },
       onDisconnect(voluntary) {
-        if (mode !== 'net') return;
+        if (mode !== 'net' && mode !== 'watch') return;
         if (voluntary) {
           mode = modes.includes('pvp') ? 'pvp' : modes[0];
           modeSeg.set(mode);

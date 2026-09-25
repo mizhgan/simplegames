@@ -321,7 +321,7 @@
   let cursorDir = 1;
   let revealed = -1; // в игре вдвоём: чья подставка открыта
 
-  const myRackSide = (v) => (v.mode === 'pvp' ? duel.state.turn : v.me);
+  const myRackSide = (v) => (v.mode === 'pvp' ? duel.state.turn : v.watch ? v.hostSide : v.me);
 
   function resetDraft() {
     pending = new Map();
@@ -497,7 +497,8 @@
         cursor = -1;
       }
       const side = myRackSide(v);
-      const hidden = v.mode === 'pvp' && revealed !== s.turn && !v.over;
+      // зритель не видит фишек; вдвоём за одним экраном — шторка между ходами
+      const hidden = v.watch || (v.mode === 'pvp' && revealed !== s.turn && !v.over);
       const rack = s.racks[side];
       const draft = new Map([...pending].map(([cell, k]) => [cell, rack[k]]));
       for (let i = 0; i < N * N; i++) {
@@ -526,7 +527,7 @@
         b.addEventListener('click', () => clickRack(k));
         rackEl.appendChild(b);
       });
-      curtainEl.hidden = !hidden;
+      curtainEl.hidden = !hidden || v.watch;
       if (hidden) curtainEl.querySelector('span').textContent = 'Ход: ' + (s.turn ? 'игрок 2' : 'игрок 1') + '. Соперник, отвернитесь!';
       // предпросмотр хода
       const tiles = [...draft];
@@ -548,7 +549,7 @@
       swapBtn.classList.toggle('active', swapMode);
       passBtn.disabled = !v.canMove || hidden;
       bagEl.textContent = s.bag.length;
-      const name = (x) => (v.mode === 'pvp' ? (x ? 'Игрок 2' : 'Игрок 1') : x === v.me ? 'Вы' : v.mode === 'ai' ? 'Компьютер' : 'Соперник');
+      const name = (x) => (v.mode === 'pvp' ? (x ? 'Игрок 2' : 'Игрок 1') : v.watch ? (x === v.hostSide ? 'Игрок 1' : 'Игрок 2') : x === v.me ? 'Вы' : v.mode === 'ai' ? 'Компьютер' : 'Соперник');
       $('pts-0').textContent = s.scores[0];
       $('pts-1').textContent = s.scores[1];
       $('pts-label-0').textContent = name(0);

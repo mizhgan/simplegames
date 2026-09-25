@@ -299,20 +299,20 @@
     aiDelay: 650,
     sound: (s, m) => (m.a === 'play' ? (m.mar ? 'win' : 'card') : m.a === 'next' ? 'flip' : 'click'),
     render(s, v) {
-      const me = v.me === null || v.me === undefined ? 0 : v.me;
+      const me = v.watch ? v.hostSide : v.me === null || v.me === undefined ? 0 : v.me;
       const op = 1 - me;
-      const oppName = v.mode === 'ai' ? 'Компьютер' : 'Соперник';
+      const oppName = v.mode === 'ai' ? 'Компьютер' : v.watch ? 'Игрок 2' : 'Соперник';
       if (s.phase !== lastPhase || !v.canMove) sel = new Set();
       lastPhase = s.phase;
       const playable = new Set(v.canMove && s.phase === 'play' ? moves(s).map((m) => m.c) : []);
       const marCards = new Set(v.canMove && s.phase === 'play' ? moves(s).filter((m) => m.mar).map((m) => m.c) : []);
       $('opp-name').textContent = oppName + (s.declarer === op ? ' · заказ ' + s.bid : '');
-      $('my-name').textContent = 'Вы' + (s.declarer === me ? ' · заказ ' + s.bid : '');
+      $('my-name').textContent = (v.watch ? 'Игрок 1' : 'Вы') + (s.declarer === me ? ' · заказ ' + s.bid : '');
       $('opp-score').textContent = s.score[op];
       $('my-score').textContent = s.score[me];
       $('opp-hand').innerHTML = s.hands[op].map(() => C.back()).join('');
       $('my-hand').innerHTML = s.hands[me]
-        .map((id) => C.html(card(id), (playable.has(id) || (v.canMove && s.phase === 'discard') ? 'playable' : v.canMove && s.phase === 'play' ? 'dim' : '') + (sel.has(id) ? ' sel' : '') + (marCards.has(id) ? ' mar' : '')))
+        .map((id) => v.watch ? C.back() : C.html(card(id), (playable.has(id) || (v.canMove && s.phase === 'discard') ? 'playable' : v.canMove && s.phase === 'play' ? 'dim' : '') + (sel.has(id) ? ' sel' : '') + (marCards.has(id) ? ' mar' : '')))
         .join('');
       // центр стола: прикуп во время торговли и сноса, иначе текущая взятка
       let center = '';
@@ -326,7 +326,7 @@
       else bits.push('Заказ ' + s.bid);
       if (s.trump >= 0) bits.push('козырь ' + SUIT_TXT[s.trump]);
       if (s.phase === 'play' || s.phase === 'done') bits.push('очки: вы ' + (s.taken[me] + s.mars[me]) + ', ' + oppName.toLowerCase() + ' ' + (s.taken[op] + s.mars[op]));
-      $('info').textContent = bits.join(' · ');
+      $('info').textContent = v.watch ? C.neutral(bits.join(' · ')) : bits.join(' · ');
       let msg = '';
       if (s.result) {
         const d = s.declarer;
@@ -339,7 +339,7 @@
         const l = s.bidLog[s.bidLog.length - 1];
         if (l.side === op) msg = oppName + ': ' + (l.v ? l.v : 'пас');
       } else if (s.phase === 'play' && s.lastTrick && !s.trick.length) msg = 'Взятку забрал' + (s.lastTrick.winner === me ? 'и вы' : ' ' + oppName.toLowerCase());
-      $('msg').textContent = msg;
+      $('msg').textContent = v.watch ? C.neutral(msg) : msg;
       renderActions(s, v, me);
     },
   });

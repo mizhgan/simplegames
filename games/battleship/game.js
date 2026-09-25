@@ -395,6 +395,8 @@
 
   const net = SG.net.setup({
     game: 'battleship',
+    // зрителям не показываем расстановку хозяина (попадания видны)
+    mirrorMask: (el) => el.querySelectorAll('#my-board .ship').forEach((c) => c.classList.remove('ship')),
     onRematch: () => $('again-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {

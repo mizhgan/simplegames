@@ -116,7 +116,8 @@
     apply,
     over(s) {
       if (s.loser === null) return null;
-      const who = s.loser === duel.view().me ? 'Вы' : duel.mode === 'pvp' ? (s.loser ? 'Игрок 2' : 'Игрок 1') : duel.mode === 'ai' ? 'Компьютер' : 'Соперник';
+      const v = duel.view();
+      const who = s.loser === v.me ? 'Вы' : duel.mode === 'pvp' ? (s.loser ? 'Игрок 2' : 'Игрок 1') : v.watch ? (s.loser === v.hostSide ? 'Игрок 1' : 'Игрок 2') : duel.mode === 'ai' ? 'Компьютер' : 'Соперник';
       const verb = s.why === 'time' ? 'не успел' + (who === 'Вы' ? 'и' : '') + ' за ' + TURN_SEC + ' секунд' : who === 'Вы' ? 'сдались' : 'сдался';
       return { winner: 1 - s.loser, text: who + ' ' + verb + '. Цепочка: ' + s.used.length + '.' };
     },

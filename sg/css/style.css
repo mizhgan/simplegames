@@ -1678,3 +1678,62 @@ kbd {
   background: var(--accent);
   color: #fff;
 }
+
+/* ---------- Зрители ---------- */
+
+.net-watch {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  width: min(380px, 92vw);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  font-weight: 400;
+}
+
+.net-watch[hidden] {
+  display: none;
+}
+
+.net-watch p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.net-bar.watching {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.net-bar.watching .net-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.net-bubble.watcher {
+  background: var(--accent-2);
+}
+
+.net-watch-note {
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-note) {
+  display: none !important;
+}
+
+.net-mirror {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  align-items: center;
+  width: 100%;
+  pointer-events: none;
+}

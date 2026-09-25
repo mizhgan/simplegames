@@ -21,6 +21,17 @@
      opts.onRematch() — оба согласились на реванш; вызывается только у хозяина (обычно — «Новая партия»)
 
    Полоска сетевой игры сама показывает счёт серии и даёт отправить сопернику реакцию (эмодзи или фразу).
+
+   Зрители: по ссылке «#watch=код» можно смотреть партию (кнопка «👁 Зрителям» в полоске и окне приглашения).
+   Хозяин пересылает зрителям всё, что происходит. Игра может описать просмотр сама:
+     opts.watch = {
+       snapshot() { return данные },        // у хозяина: текущая партия для нового зрителя
+       onSync(данные) {},                   // у зрителя: показать партию с начала
+       onForward(msg, from) {},             // у зрителя: сообщение игры от 'host' или 'guest'
+       forward(msg, from) { return true },  // у хозяина: пересылать ли это сообщение зрителям
+     }
+   Иначе зритель видит «зеркало» экрана хозяина; opts.mirrorMask(клон) прячет в нём секреты хозяина
+   (его карты, расстановку и т. п.). Зрителю вызывается opts.onConnect('watcher') только при opts.watch.
    Хозяин может показать комнату в списке открытых игр («Ищу соперника») — список виден в окне
    приглашения у всех, кто открыл ту же игру (нужен свой сервер знакомств с --allow_discovery).
 */
@@ -152,6 +163,7 @@
     }
   }
 
+  const MAX_WATCHERS = 10;
   const REACTIONS = ['👍', '😂', '😮', '😢', '🤝', '🔥', 'Хороший ход!', 'Ой!', 'Ещё партию?', 'Спасибо за игру!'];
 
   // ---------- сжатие SDP для ручного режима ----------
@@ -340,6 +352,14 @@
     let finishedGame = false;
     let rematchMine = false;
     let rematchTheirs = false;
+    let myToken = ''; // код комнаты для ссылок (у хозяина и гостя)
+    const watchers = []; // у хозяина: подключённые зрители { c, send }
+    let watcherCount = 0; // сколько зрителей (видят и игроки, и зрители)
+    let watchPing = 0;
+    let mirrorObs = null;
+    let mirrorTimer = 0;
+    let lastMirror = '';
+    const WHO = { host: 'Игрок 1', guest: 'Игрок 2', watcher: 'Зритель' };
 
     // кнопка «По сети» в переключателе режимов
     let netBtn = null;
@@ -380,12 +400,29 @@
         bar.innerHTML =
           '<span class="net-dot"></span><span class="net-text"></span><span class="net-score" hidden></span>' +
           '<button class="btn btn-ghost net-rematch" type="button" hidden>Реванш</button>' +
+          '<button class="btn btn-ghost net-watch-btn" type="button" title="Ссылка для зрителей" hidden>👁 <span></span></button>' +
           '<button class="btn btn-ghost net-react-btn" type="button" aria-label="Реакция" title="Реакция">😊</button>' +
           '<button class="btn btn-ghost" type="button" data-leave>Выйти</button>' +
           '<div class="net-react" hidden>' +
           REACTIONS.map((r, i) => `<button type="button" data-r="${i}"${r.length > 2 ? ' class="phrase"' : ''}>${r}</button>`).join('') +
-          '</div>';
+          '</div>' +
+          '<div class="net-watch" hidden><p>Пусть смотрят, как вы играете: отправьте эту ссылку — зрители увидят партию, но ходить не смогут.</p>' +
+          '<div class="net-link"><input type="text" readonly aria-label="Ссылка для зрителей"><button class="btn btn-primary" type="button" data-copy>Скопировать</button>' +
+          (navigator.share ? '<button class="btn btn-ghost" type="button" data-share>Поделиться</button>' : '') +
+          '</div></div>';
         bar.querySelector('[data-leave]').addEventListener('click', () => leave());
+        const wbox = bar.querySelector('.net-watch');
+        bar.querySelector('.net-watch-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          wbox.hidden = !wbox.hidden;
+          const url = watchUrl();
+          const input = wbox.querySelector('input');
+          input.value = url;
+          if (!wbox.hidden) input.select();
+        });
+        wbox.querySelector('[data-copy]').addEventListener('click', (e) => copy(watchUrl(), e.currentTarget));
+        const sh = wbox.querySelector('[data-share]');
+        if (sh) sh.addEventListener('click', () => navigator.share({ title: document.title, text: 'Смотри, как мы играем!', url: watchUrl() }).catch(() => {}));
         const picker = bar.querySelector('.net-react');
         bar.querySelector('.net-react-btn').addEventListener('click', (e) => {
           e.stopPropagation();
@@ -395,8 +432,10 @@
           const b = e.target.closest('[data-r]');
           if (!b) return;
           picker.hidden = true;
-          rawSend({ t: '_react', v: +b.dataset.r });
-          bubble(REACTIONS[+b.dataset.r], true);
+          const v = +b.dataset.r;
+          rawSend({ t: '_react', v });
+          if (api.role === 'host') toWatchers({ t: '_react', v, who: 'host' });
+          bubble(REACTIONS[v], true);
         });
         bar.querySelector('.net-rematch').addEventListener('click', () => {
           if (rematchMine) return;
@@ -414,29 +453,44 @@
     document.addEventListener('click', (e) => {
       const picker = bar && bar.querySelector('.net-react');
       if (picker && !picker.hidden && !e.target.closest('.net-react')) picker.hidden = true;
+      const wbox = bar && bar.querySelector('.net-watch');
+      if (wbox && !wbox.hidden && !e.target.closest('.net-watch')) wbox.hidden = true;
     });
+
+    const watchUrl = () => baseUrl() + '#watch=' + myToken;
 
     function updateBar() {
       if (!bar || bar.dataset.state !== 'on') return;
-      bar.querySelector('.net-text').textContent = 'Игра по сети' + (infoText ? ' · ' + infoText : '');
+      const watching = api.role === 'watcher';
+      bar.classList.toggle('watching', watching);
+      bar.querySelector('.net-text').textContent = watching
+        ? '👁 Вы зритель' + (opts.watch ? '' : ' · видите экран игрока 1')
+        : 'Игра по сети' + (infoText ? ' · ' + infoText : '');
       const sc = bar.querySelector('.net-score');
       const played = series.me + series.them + series.draw;
       sc.hidden = !played;
       sc.textContent = 'Счёт ' + series.me + ':' + series.them;
-      sc.title = 'Вы — ' + series.me + ', соперник — ' + series.them + (series.draw ? ', ничьих — ' + series.draw : '');
+      sc.title = watching
+        ? 'Игрок 1 — ' + series.me + ', игрок 2 — ' + series.them
+        : 'Вы — ' + series.me + ', соперник — ' + series.them + (series.draw ? ', ничьих — ' + series.draw : '');
+      const wb = bar.querySelector('.net-watch-btn');
+      wb.hidden = !myToken;
+      wb.querySelector('span').textContent = watcherCount ? watcherCount : 'Зрителям';
+      wb.title = watcherCount ? 'Зрителей: ' + watcherCount + '. Ссылка для зрителей' : 'Ссылка для зрителей';
       const rb = bar.querySelector('.net-rematch');
-      rb.hidden = !(finishedGame && opts.onRematch);
+      rb.hidden = watching || !(finishedGame && opts.onRematch);
       rb.disabled = rematchMine;
       rb.classList.toggle('pulse', rematchTheirs && !rematchMine);
       rb.textContent = rematchMine ? 'Ждём ответа…' : rematchTheirs ? 'Реванш? Да!' : 'Реванш';
     }
 
     // всплывающая реакция над полем
-    function bubble(text, mine) {
+    function bubble(text, mine, who) {
       if (!bar) return;
       const el = document.createElement('div');
-      el.className = 'net-bubble' + (mine ? ' mine' : '');
-      el.textContent = (mine ? 'Вы: ' : 'Соперник: ') + text;
+      el.className = 'net-bubble' + (mine ? ' mine' : '') + (who === 'watcher' ? ' watcher' : '');
+      const from = mine ? 'Вы' : api.role === 'watcher' || who === 'watcher' ? WHO[who] || 'Соперник' : 'Соперник';
+      el.textContent = from + ': ' + text;
       bar.appendChild(el);
       if (!mine) SG.sound.play('hint');
       setTimeout(() => el.classList.add('out'), 2600);
@@ -444,7 +498,7 @@
     }
 
     function result(r) {
-      if (!api.active || resultLocked) return;
+      if (!api.active || resultLocked || api.role === 'watcher') return;
       resultLocked = true;
       finishedGame = true;
       SG.store.set('net-results', SG.store.get('net-results', 0) + 1);
@@ -452,6 +506,7 @@
       else if (r === 'lose') series.them++;
       else series.draw++;
       updateBar();
+      if (api.role === 'host') toWatchers({ t: '_wseries', s: series });
     }
 
     // началась новая партия — сбрасываем итог и предложения реванша
@@ -491,9 +546,18 @@
       if (msg.t === '_ping') return;
       if (msg.t === '_bye') return lost(true);
       if (msg.t === '_react') {
-        if (api.active && REACTIONS[msg.v]) bubble(REACTIONS[msg.v], false);
+        if (!api.active || !REACTIONS[msg.v]) return;
+        const who = api.role === 'host' ? 'guest' : msg.who || 'host';
+        bubble(REACTIONS[msg.v], false, who);
+        if (api.role === 'host') toWatchers({ t: '_react', v: msg.v, who: 'guest' });
         return;
       }
+      if (msg.t === '_watchers') {
+        watcherCount = msg.n | 0;
+        updateBar();
+        return;
+      }
+      if (api.role === 'watcher' && handleAsWatcher(msg)) return;
       if (msg.t === '_rematch') {
         if (!api.active) return;
         rematchTheirs = true;
@@ -527,6 +591,7 @@
         return;
       }
       if (msg.t === 'new') newGameSeen();
+      if (api.role === 'host' && api.active) forwardToWatchers(msg, 'guest');
       if (api.active && opts.onMessage) opts.onMessage(msg);
     }
 
@@ -541,9 +606,10 @@
     }
 
     function send(obj) {
-      if (!api.active) return;
+      if (!api.active || api.role === 'watcher') return;
       if (obj && obj.t === 'new') newGameSeen();
       rawSend(obj);
+      if (api.role === 'host') forwardToWatchers(obj, 'host');
     }
 
     function attach(c) {
@@ -551,6 +617,7 @@
       lastSeen = Date.now();
       // гость первым здоровается, хозяин отвечает
       if (api.role === 'guest') rawSend({ t: '_hello', game: opts.game, key: joinKey });
+      if (api.role === 'watcher') rawSend({ t: '_hello', game: opts.game, key: joinKey, watch: 1 });
       clearInterval(pingTimer);
       pingTimer = setInterval(() => {
         rawSend({ t: '_ping' });
@@ -569,14 +636,22 @@
       SG.sound.play('match');
       history.replaceState(null, '', baseUrl());
       if (opts.onConnect) opts.onConnect(api.role);
+      // партия началась — зрители, пришедшие заранее, получают её с начала
+      if (api.role === 'host') {
+        watchers.forEach(syncWatcher);
+        sendCount();
+        if (!opts.watch && watchers.length) startMirror();
+      }
     }
 
     function lost(byPeer) {
       const was = api.active;
+      const watcher = api.role === 'watcher';
       teardown();
       if (was) {
         renderBar('off');
-        if (bar && byPeer) bar.querySelector('.net-text').textContent = 'Соперник вышел из игры';
+        if (bar && watcher) bar.querySelector('.net-text').textContent = 'Трансляция закончилась: игроки вышли';
+        else if (bar && byPeer) bar.querySelector('.net-text').textContent = 'Соперник вышел из игры';
         SG.sound.play('error');
         if (opts.onDisconnect) opts.onDisconnect();
       }
@@ -585,7 +660,14 @@
     function teardown() {
       clearInterval(pingTimer);
       stopLobby();
+      closeWatchers();
+      stopMirror();
+      document.body.classList.remove('sg-watching');
+      const mirror = document.querySelector('.net-mirror');
+      if (mirror) mirror.remove();
+      watcherCount = 0;
       myRoom = '';
+      myToken = '';
       api.active = false;
       helloDone = false;
       const c = conn;
@@ -713,6 +795,300 @@
       poll();
     }
 
+    // ---------- зрители ----------
+
+    function toWatchers(obj) {
+      if (!watchers.length) return;
+      const s = JSON.stringify(obj);
+      watchers.forEach((w) => {
+        try {
+          w.c.send(s);
+        } catch (e) {
+          /* канал закрыт */
+        }
+      });
+    }
+
+    function forwardToWatchers(msg, from) {
+      if (!watchers.length || !opts.watch) return;
+      if (opts.watch.forward && !opts.watch.forward(msg, from)) return;
+      toWatchers({ t: '_fw', from, m: msg });
+    }
+
+    function sendCount() {
+      watcherCount = watchers.length;
+      rawSend({ t: '_watchers', n: watcherCount });
+      toWatchers({ t: '_watchers', n: watcherCount });
+      updateBar();
+    }
+
+    // новому зрителю — текущая партия
+    function syncWatcher(w) {
+      const one = (obj) => {
+        try {
+          w.c.send(JSON.stringify(obj));
+        } catch (e) {
+          /* ignore */
+        }
+      };
+      one({ t: '_wseries', s: series });
+      one({ t: '_watchers', n: watchers.length });
+      if (!api.active) return one({ t: '_wwait' });
+      if (opts.watch) one({ t: '_sync', d: opts.watch.snapshot() });
+      else {
+        const m = mirrorPayload();
+        if (m) one(m);
+      }
+    }
+
+    // у хозяина: зритель подключился по ссылке #watch=
+    function acceptWatcher(c) {
+      let joined = false;
+      const w = { c };
+      c.on('data', (raw) => {
+        let msg;
+        try {
+          msg = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        } catch (e) {
+          return;
+        }
+        if (!msg) return;
+        if (!joined) {
+          if (msg.t !== '_hello' || !msg.watch) return;
+          if ((myRoom && msg.key !== myRoom) || msg.game !== opts.game) {
+            c.send(JSON.stringify({ t: '_denied' }));
+            return setTimeout(() => c.close(), 800);
+          }
+          if (watchers.length >= MAX_WATCHERS) {
+            c.send(JSON.stringify({ t: '_wfull' }));
+            return setTimeout(() => c.close(), 1500);
+          }
+          joined = true;
+          watchers.push(w);
+          c.send(JSON.stringify({ t: '_whello', game: opts.game, mode: opts.watch ? 'watch' : 'mirror' }));
+          syncWatcher(w);
+          sendCount();
+          if (!opts.watch && api.active) startMirror();
+          if (!watchPing) {
+            watchPing = setInterval(() => toWatchers({ t: '_ping' }), 4000);
+          }
+          return;
+        }
+        if (msg.t === '_react' && REACTIONS[msg.v]) {
+          bubble(REACTIONS[msg.v], false, 'watcher');
+          rawSend({ t: '_react', v: msg.v, who: 'watcher' });
+          watchers.forEach((o) => o !== w && o.c.send(JSON.stringify({ t: '_react', v: msg.v, who: 'watcher' })));
+        }
+      });
+      const gone = () => {
+        const i = watchers.indexOf(w);
+        if (i < 0) return;
+        watchers.splice(i, 1);
+        sendCount();
+        if (!watchers.length) stopMirror();
+      };
+      c.on('close', gone);
+      c.on('error', gone);
+    }
+
+    function closeWatchers() {
+      clearInterval(watchPing);
+      watchPing = 0;
+      const list = watchers.splice(0);
+      list.forEach((w) => {
+        try {
+          w.c.send(JSON.stringify({ t: '_bye' }));
+        } catch (e) {
+          /* ignore */
+        }
+        setTimeout(() => {
+          try {
+            w.c.close();
+          } catch (e) {
+            /* ignore */
+          }
+        }, 100);
+      });
+    }
+
+    // ---------- «зеркало» экрана хозяина для игр без своего режима просмотра ----------
+
+    function mirrorPayload() {
+      const stage = document.querySelector('.game-stage');
+      if (!stage) return null;
+      const clone = stage.cloneNode(true);
+      clone.querySelectorAll('.net-bar, .net-mirror, #mode, #difficulty, .rt-pads').forEach((el) => el.remove());
+      clone.querySelectorAll('.game-controls').forEach((el) => !el.textContent.trim() && el.remove());
+      // холсты передаём картинками
+      const src = stage.querySelectorAll('canvas');
+      clone.querySelectorAll('canvas').forEach((cv, i) => {
+        const img = document.createElement('img');
+        img.className = cv.className;
+        img.setAttribute('style', cv.getAttribute('style') || '');
+        img.alt = '';
+        try {
+          img.src = src[i].toDataURL('image/jpeg', 0.7);
+        } catch (e) {
+          /* ignore */
+        }
+        cv.replaceWith(img);
+      });
+      if (opts.mirrorMask) opts.mirrorMask(clone);
+      neutralize(clone);
+      const stats = document.querySelector('.game-head .stats');
+      let statsHtml = '';
+      if (stats) {
+        const sc = stats.cloneNode(true);
+        neutralize(sc);
+        statsHtml = sc.innerHTML;
+      }
+      return { t: '_mirror', h: clone.innerHTML, s: statsHtml };
+    }
+
+    // подписи с точки зрения хозяина («Ваш ход», «Соперник») зрителю переводим в «игрок 1 / игрок 2»
+    const W = '(^|[^А-Яа-яЁё])';
+    const MIRROR_WORDS = [
+      [/Ваш ход/g, 'Ходит игрок 1'], [/Ход соперника…?/g, 'Ходит игрок 2'], [/Соперник думает…?/g, 'Думает игрок 2'],
+      [/Вы победили/g, 'Игрок 1 победил'], [/Вы проиграли/g, 'Игрок 1 проиграл'], [/Вы остались/g, 'Игрок 1 остался'],
+      [/Ваш флот/g, 'Флот игрока 1'], [/Ваши карты/g, 'Карты игрока 1'], [/Противник/g, 'Игрок 2'],
+      [new RegExp(W + 'Вы(?![А-Яа-яЁё])', 'g'), '$1Игрок 1'], [new RegExp(W + 'вы(?![А-Яа-яЁё])', 'g'), '$1игрок 1'],
+      [/у вас/g, 'у игрока 1'], [/Вам(?![А-Яа-яЁё])/g, 'Игроку 1'], [/Соперн\./g, 'Игр. 2'],
+      [/Соперника/g, 'Игрока 2'], [/соперника/g, 'игрока 2'], [/Соперник/g, 'Игрок 2'], [/соперник/g, 'игрок 2'],
+    ];
+    function neutralize(root) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach((n) => {
+        const t = MIRROR_WORDS.reduce((x, [re, to]) => x.replace(re, to), n.nodeValue);
+        if (t !== n.nodeValue) n.nodeValue = t;
+      });
+    }
+
+    function pushMirror() {
+      mirrorTimer = 0;
+      if (!watchers.length || !api.active) return;
+      const m = mirrorPayload();
+      if (!m) return;
+      const key = m.h + m.s;
+      if (key === lastMirror) return;
+      lastMirror = key;
+      toWatchers(m);
+    }
+
+    function startMirror() {
+      if (mirrorObs || opts.watch) return;
+      const stage = document.querySelector('.game-stage');
+      if (!stage) return;
+      const schedule = () => {
+        if (!mirrorTimer) mirrorTimer = setTimeout(pushMirror, 200);
+      };
+      mirrorObs = new MutationObserver(schedule);
+      mirrorObs.observe(stage, { subtree: true, childList: true, attributes: true, characterData: true });
+      const stats = document.querySelector('.game-head .stats');
+      if (stats) mirrorObs.observe(stats, { subtree: true, childList: true, characterData: true });
+      // холсты меняются без событий DOM — обновляем их раз в полсекунды
+      if (stage.querySelector('canvas')) mirrorObs.canvasTimer = setInterval(schedule, 500);
+      lastMirror = '';
+      schedule();
+    }
+
+    function stopMirror() {
+      if (mirrorObs) {
+        clearInterval(mirrorObs.canvasTimer);
+        mirrorObs.disconnect();
+      }
+      mirrorObs = null;
+      clearTimeout(mirrorTimer);
+      mirrorTimer = 0;
+    }
+
+    // у зрителя: служебные сообщения трансляции
+    function handleAsWatcher(msg) {
+      if (msg.t === '_whello') {
+        if (msg.game !== opts.game) return true;
+        if (!helloDone) {
+          helloDone = true;
+          api.active = true;
+          closeDialog();
+          markMode(true);
+          renderBar('on');
+          SG.sound.play('match');
+          history.replaceState(null, '', baseUrl());
+          if (msg.mode === 'watch' && opts.watch && opts.onConnect) opts.onConnect('watcher');
+          if (msg.mode === 'mirror') document.body.classList.add('sg-watching');
+        }
+        return true;
+      }
+      if (msg.t === '_wfull') {
+        teardown();
+        dialog('<h2 id="net-title">Зрительный зал полон</h2><p>У этой партии уже ' + MAX_WATCHERS + ' зрителей. Попробуйте зайти чуть позже.</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Понятно</button></div>')
+          .querySelector('[data-close]').addEventListener('click', cancel);
+        return true;
+      }
+      if (msg.t === '_wseries') {
+        const x = msg.s || {};
+        series.me = x.me | 0;
+        series.them = x.them | 0;
+        series.draw = x.draw | 0;
+        updateBar();
+        return true;
+      }
+      if (msg.t === '_wwait') {
+        showMirrorNote('Игроки ещё не начали — трансляция начнётся, как только соперник подключится.');
+        return true;
+      }
+      if (msg.t === '_mirror') {
+        renderMirror(msg);
+        return true;
+      }
+      if (msg.t === '_sync') {
+        showMirrorNote('');
+        if (opts.watch) opts.watch.onSync(msg.d);
+        return true;
+      }
+      if (msg.t === '_fw') {
+        if (msg.m && msg.m.t === 'new') newGameSeen();
+        if (opts.watch && msg.m) opts.watch.onForward(msg.m, msg.from);
+        return true;
+      }
+      return false;
+    }
+
+    function mirrorBox() {
+      let box = document.querySelector('.net-mirror');
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'net-mirror';
+        // в конец сцены: элементы с теми же id у самой игры остаются первыми в документе
+        const stage = document.querySelector('.game-stage');
+        if (stage) stage.appendChild(box);
+      }
+      return box;
+    }
+
+    function showMirrorNote(text) {
+      let note = document.querySelector('.net-watch-note');
+      if (!text) {
+        if (note) note.remove();
+        return;
+      }
+      if (!note) {
+        note = document.createElement('p');
+        note.className = 'net-watch-note';
+        if (bar) bar.after(note);
+      }
+      note.textContent = text;
+    }
+
+    function renderMirror(msg) {
+      showMirrorNote('');
+      document.body.classList.add('sg-watching');
+      mirrorBox().innerHTML = msg.h;
+      const stats = document.querySelector('.game-head .stats');
+      if (stats && msg.s) stats.innerHTML = msg.s;
+    }
+
     // ---------- хозяин: комната через PeerJS ----------
 
     async function host(srvIdx) {
@@ -742,6 +1118,7 @@
       const myPeer = peer;
       const token = roomToken(room, which);
       myRoom = room;
+      myToken = token;
       peer.on('open', () => {
         opened = true;
         clearTimeout(timer);
@@ -752,12 +1129,14 @@
             `<p class="net-code">Или продиктуйте код комнаты: <b>${token}</b></p>` +
             '<p class="net-status"><span class="net-spinner"></span>Ждём соперника…</p>' +
             '<p class="net-note">Отправив ссылку, вернитесь на эту страницу: пока она свёрнута, браузер может её «усыпить».</p>' +
+            `<details class="net-join"><summary>Ссылка для зрителей</summary><p class="net-note">По ней можно смотреть партию, не играя.</p><div class="net-link"><input type="text" readonly value="${baseUrl()}#watch=${token}" aria-label="Ссылка для зрителей"><button class="btn btn-ghost" type="button" data-wcopy>Скопировать</button></div></details>` +
             '<details class="net-join"><summary>У меня есть код от друга</summary><div class="net-link"><input type="text" maxlength="8" autocomplete="off" placeholder="Код комнаты" aria-label="Код комнаты"><button class="btn btn-primary" type="button" data-join>Войти</button></div></details>' +
             '<div class="net-lobby" hidden><label class="net-public"><input type="checkbox"> Ищу соперника — показать мою комнату всем</label>' +
             '<p class="net-label">Открытые игры</p><ul class="net-rooms"></ul></div>' +
             '<div class="net-actions"><button class="btn btn-ghost" type="button" data-manual>Ручной режим</button><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
         );
         bindLink(b, url);
+        b.querySelector('[data-wcopy]').addEventListener('click', (e) => copy(baseUrl() + '#watch=' + token, e.currentTarget));
         b.querySelector('[data-cancel]').addEventListener('click', cancel);
         b.querySelector('[data-manual]').addEventListener('click', () => manualHost('Соединимся без сервера знакомств.'));
         const joinInput = b.querySelector('.net-join input');
@@ -771,6 +1150,7 @@
         lobbyBlock(b, room, which === 'own');
       });
       peer.on('connection', (c) => {
+        if (c.metadata && c.metadata.watch) return acceptWatcher(c);
         // прежняя попытка так и не поздоровалась (друг закрыл вкладку посреди соединения) — уступаем место новой
         if (conn && !helloDone && pendingClose) pendingClose();
         if (conn) {
@@ -836,14 +1216,22 @@
         }
       });
       peer.on('disconnected', () => {
-        // связь с сервером знакомств не нужна после соединения
-        if (!api.active && peer === myPeer && !myPeer.destroyed) myPeer.reconnect();
+        // связь с сервером знакомств держим и во время игры — через неё приходят зрители
+        if (peer === myPeer && !myPeer.destroyed) {
+          setTimeout(() => {
+            try {
+              if (peer === myPeer && !myPeer.destroyed && myPeer.disconnected) myPeer.reconnect();
+            } catch (e) {
+              /* ignore */
+            }
+          }, api.active ? 3000 : 0);
+        }
       });
     }
 
     // вкладку свернули (например, чтобы отправить ссылку) и вернулись — восстанавливаем связь с сервером
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && peer && !peer.destroyed && peer.disconnected && !api.active) {
+      if (document.visibilityState === 'visible' && peer && !peer.destroyed && peer.disconnected && (!api.active || api.role === 'host')) {
         try {
           peer.reconnect();
         } catch (e) {
@@ -860,16 +1248,17 @@
 
     // ---------- гость: вход по коду комнаты ----------
 
-    async function join(token) {
+    async function join(token, asWatcher) {
       const parsed = parseToken(token);
       if (!parsed) return fail('Неверный код комнаты.');
       const room = parsed.room;
       token = String(token).toLowerCase();
       teardown();
-      api.role = 'guest';
+      api.role = asWatcher ? 'watcher' : 'guest';
       joinKey = room;
+      myToken = token;
       const box = dialog(
-        '<h2 id="net-title">Игра по сети</h2><p class="net-status"><span class="net-spinner"></span>Подключаемся к комнате <b>' +
+        '<h2 id="net-title">' + (asWatcher ? 'Просмотр игры' : 'Игра по сети') + '</h2><p class="net-status"><span class="net-spinner"></span>Подключаемся к комнате <b>' +
           room +
           '</b>…</p><p class="net-note" hidden></p><div class="net-actions"><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
       );
@@ -926,7 +1315,7 @@
           }
           return !stuck;
         });
-        const c = myPeer.connect(roomPeerId(room), { reliable: true });
+        const c = myPeer.connect(roomPeerId(room), asWatcher ? { reliable: true, metadata: { watch: 1 } } : { reliable: true });
         attempts.push(c);
         let mine = false;
         watchPc(c.peerConnection, diag, (d, st) => {
@@ -1031,6 +1420,7 @@
     }
 
     function fail(text, room) {
+      lastJoinWatch = api.role === 'watcher';
       teardown();
       const b = dialog(
         '<h2 id="net-title">Не получилось подключиться</h2><p>' +
@@ -1041,8 +1431,9 @@
       );
       b.querySelector('[data-close]').addEventListener('click', cancel);
       const r = b.querySelector('[data-retry]');
-      if (r) r.addEventListener('click', () => join(room));
+      if (r) r.addEventListener('click', () => join(room, api.role === 'watcher' || lastJoinWatch));
     }
+    let lastJoinWatch = false;
 
     // ---------- ручной режим: обмен кодами ----------
 
@@ -1180,12 +1571,13 @@
     });
 
     // вход по ссылке-приглашению
-    const m = location.hash.match(/^#(join|offer)=(.+)$/);
-    if (m) setTimeout(() => (m[1] === 'join' ? join(decodeURIComponent(m[2])) : manualGuest(m[2])), 50);
+    const m = location.hash.match(/^#(join|offer|watch)=(.+)$/);
+    if (m) setTimeout(() => (m[1] === 'offer' ? manualGuest(m[2]) : join(decodeURIComponent(m[2]), m[1] === 'watch')), 50);
 
     api.host = host;
     api.join = join;
     api.series = series;
+    api.watchUrl = () => (myToken ? watchUrl() : '');
     return api;
   }
 
