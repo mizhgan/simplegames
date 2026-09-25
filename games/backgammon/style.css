@@ -1,0 +1,35 @@
+.bg-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+}
+
+.bg-bar .nd-chk {
+  width: 70%;
+}
+
+.bg-bar.from {
+  box-shadow: inset 0 0 0 3px #facc15;
+}
+
+.bg-bar.selected {
+  box-shadow: inset 0 0 0 3px #22c55e;
+}
+
+.nd-point.last::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.bg-note {
+  min-height: 1.3em;
+  font-weight: 700;
+}
