@@ -1,0 +1,58 @@
+.wr-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.wr-side {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.wr-side p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.wr-side b {
+  font-size: 1.1rem;
+}
+
+.wr-time {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.wr-time.low {
+  color: var(--danger);
+}
+
+.ws-tile:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ws-found h3 {
+  margin: 8px 0 0;
+  font-size: 1rem;
+}
+
+.ws-group span.both {
+  text-decoration: underline;
+  opacity: 0.7;
+}
+
+.wr-note,
+.wr-none {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
