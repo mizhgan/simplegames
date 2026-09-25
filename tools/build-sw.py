@@ -12,7 +12,7 @@ import json
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {'.git', 'tools', 'node_modules', '.github'}
+SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github'}
 SKIP_FILES = {'sw.js', 'README.md', '.htaccess', 'robots.txt', '.gitignore', '404.html'}
 EXTS = {'.html', '.css', '.js', '.svg', '.png', '.webmanifest', '.json'}
 

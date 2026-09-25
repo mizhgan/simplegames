@@ -26,8 +26,9 @@
     // null — бесплатный публичный 0.peerjs.com
     peerServer: null,
     // STUN помогает узнать внешний адрес, TURN пересылает трафик, когда напрямую соединиться нельзя
-    // (частый случай в мобильном интернете). Для надёжной игры добавьте сюда свой TURN-сервер (coturn):
-    // { urls: 'turn:turn.example.com:3478', username: '…', credential: '…' }
+    // (частый случай в мобильном интернете). Для надёжной игры добавьте сюда свой TURN-сервер
+    // (готовый конфиг coturn — deploy/coturn/turnserver.conf):
+    // { urls: ['turn:turn.example.com:3478', 'turn:turn.example.com:3478?transport=tcp'], username: 'simplegames', credential: '…' }
     iceServers: [
       { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
       { urls: 'stun:stun.cloudflare.com:3478' },
@@ -167,37 +168,68 @@
 
   // ---------- диагностика соединения ----------
 
-  // следит за RTCPeerConnection попытки и запоминает, до какого этапа дошли
+  // следит за RTCPeerConnection попыток и запоминает, до какого этапа дошли
+  const newDiag = () => ({ server: false, answered: false, states: [], local: new Set(), remote: new Set(), pcs: [] });
+
   function watchPc(pc, diag, onChange) {
     if (!pc || pc.__sgWatched) return;
     pc.__sgWatched = true;
+    diag.pcs.push(pc);
     const upd = () => {
-      diag.ice = pc.iceConnectionState;
+      const st = pc.iceConnectionState;
+      if (st !== 'new' && diag.states[diag.states.length - 1] !== st) diag.states.push(st);
       if (pc.remoteDescription) diag.answered = true;
-      if (onChange) onChange(diag);
+      if (onChange) onChange(diag, st);
     };
     pc.addEventListener('iceconnectionstatechange', upd);
     pc.addEventListener('signalingstatechange', upd);
     pc.addEventListener('icecandidate', (e) => {
-      const c = e.candidate && e.candidate.candidate;
-      if (!c) return;
-      const m = c.match(/ typ (host|srflx|prflx|relay)/);
-      if (m) diag.cands.add(m[1]);
+      const m = e.candidate && e.candidate.candidate.match(/ typ (host|srflx|prflx|relay)/);
+      if (m) diag.local.add(m[1]);
     });
   }
+
+  // типы адресов из SDP (в ручном режиме все кандидаты лежат прямо в описании)
+  function sdpTypes(sdp, set) {
+    (sdp || '').replace(/a=candidate:.* typ (host|srflx|prflx|relay)/g, (_, t) => set.add(t));
+  }
+
+  // досчитываем адреса друга по статистике соединений
+  async function collectStats(diag) {
+    for (const pc of diag.pcs) {
+      try {
+        const stats = await pc.getStats();
+        stats.forEach((r) => {
+          if (r.type === 'remote-candidate' && r.candidateType) diag.remote.add(r.candidateType);
+          if (r.type === 'local-candidate' && r.candidateType) diag.local.add(r.candidateType);
+        });
+      } catch (e) {
+        /* соединение уже закрыто */
+      }
+      if (pc.remoteDescription) sdpTypes(pc.remoteDescription.sdp, diag.remote);
+      if (pc.localDescription) sdpTypes(pc.localDescription.sdp, diag.local);
+    }
+  }
+
+  const TYPE_NAMES = { host: 'локальный', srflx: 'внешний', prflx: 'внешний', relay: 'TURN' };
+  const typeList = (set) => [...new Set([...set].map((t) => TYPE_NAMES[t]))].join(', ') || 'нет';
 
   function diagText(diag) {
     const yes = '✓';
     const no = '✗';
-    const types = [...diag.cands];
+    const relay = diag.local.has('relay') || diag.remote.has('relay');
     return (
       'Сервер знакомств ' + (diag.server ? yes : no) +
       ' · друг ответил ' + (diag.answered ? yes : no) +
-      ' · прямая связь: ' + (diag.ice || 'нет') +
-      ' · адреса: ' + (types.length ? types.join(', ') : 'нет') +
-      (types.includes('relay') ? '' : ' (TURN недоступен)')
+      ' · проверка связи: ' + (diag.states.length ? diag.states.join(' → ') : 'не началась') +
+      ' · ваши адреса: ' + typeList(diag.local) +
+      ' · адреса друга: ' + typeList(diag.remote) +
+      ' · ретранслятор TURN: ' + (relay ? 'есть' : 'недоступен')
     );
   }
+
+  const NO_DIRECT =
+    'Браузеры обменялись адресами, но не смогли достучаться друг до друга. Так бывает, когда кто-то из игроков в мобильном интернете или за «строгим» роутером, а ретранслятор (TURN) недоступен. Попробуйте обоим подключиться к Wi-Fi (лучше к одной сети) — надёжно проблему решает свой TURN-сервер у владельца сайта.';
 
   // ---------- основной объект ----------
 
@@ -444,11 +476,15 @@
         let mine = false;
         const status = modal && modal.querySelector('.net-status');
         if (status) status.innerHTML = '<span class="net-spinner"></span>Друг подключается…';
-        const diag = { server: true, answered: true, ice: '', cands: new Set() };
-        watchPc(c.peerConnection, diag, (d) => {
+        const diag = newDiag();
+        diag.server = true;
+        diag.answered = true;
+        watchPc(c.peerConnection, diag, async (d, st) => {
           if (conn || !status) return;
-          if (d.ice === 'failed') {
-            status.innerHTML = 'Не удалось соединиться с другом напрямую — так бывает в мобильном интернете. Попробуйте обоим подключиться к Wi-Fi или нажмите «Ручной режим».<br><small>' + diagText(d) + '</small>';
+          if (st === 'checking') status.innerHTML = '<span class="net-spinner"></span>Друг подключается, проверяем прямую связь…';
+          if (st === 'failed') {
+            await collectStats(d);
+            status.innerHTML = NO_DIRECT + '<br><small class="net-diag">' + diagText(d) + '</small>';
           }
         });
         c.on('open', () => {
@@ -515,7 +551,7 @@
       if (!(await loadPeer())) return fail('Не удалось загрузить модуль связи.', room);
       if (modal && modal.hidden) return;
 
-      const diag = { server: false, answered: false, ice: '', cands: new Set() };
+      const diag = newDiag();
       const myPeer = new window.Peer(peerOptions());
       peer = myPeer;
       const started = Date.now();
@@ -526,13 +562,14 @@
         clearTimeout(hintTimer);
         clearTimeout(giveUp);
       };
-      const giveUp = setTimeout(() => {
+      const giveUp = setTimeout(async () => {
         if (api.active || peer !== myPeer) return;
         stop();
+        await collectStats(diag);
         let why;
         if (!diag.server) why = 'Не удалось связаться с сервером знакомств. Проверьте интернет или попросите друга включить «Ручной режим» в окне приглашения.';
         else if (!diag.answered) why = 'Друг не отвечает. Скорее всего, страница игры у него свёрнута или закрыта: пусть он откроет её, а вы нажмите «Повторить».';
-        else why = 'Браузеры нашли друг друга, но не смогли соединиться напрямую — так бывает в мобильном интернете и за некоторыми роутерами. Попробуйте обоим подключиться к Wi-Fi или используйте «Ручной режим» (его включает друг в окне приглашения).';
+        else why = NO_DIRECT;
         fail(why + '<br><small class="net-diag">' + diagText(diag) + '</small>', room);
       }, JOIN_TIMEOUT);
 
@@ -548,9 +585,10 @@
         }
         const c = myPeer.connect(PREFIX + room, { reliable: true });
         let mine = false;
-        watchPc(c.peerConnection, diag, (d) => {
+        watchPc(c.peerConnection, diag, (d, st) => {
           if (conn) return;
-          if (d.answered && d.ice !== 'failed') setStatus('Друг найден, устанавливаем соединение…');
+          if (st === 'checking') setStatus('Друг найден, проверяем прямую связь…');
+          else if (d.answered && st !== 'failed') setStatus('Друг найден, устанавливаем соединение…');
         });
         c.on('open', () => {
           if (conn) return c.close();
@@ -630,6 +668,28 @@
       ch.onclose = () => lost(false);
     }
 
+    // ручной режим: следим за соединением и честно сообщаем, если оно не удалось
+    function watchManual(p, diag) {
+      watchPc(p, diag, (d, st) => {
+        if (api.active || pc !== p) return;
+        if (st === 'failed') manualFailed(p, diag);
+        else if (st === 'checking' && modal) {
+          const el = modal.querySelector('.net-error, .net-status');
+          if (el) el.innerHTML = (el.classList.contains('net-status') ? '<span class="net-spinner"></span>' : '') + 'Друг ввёл код, проверяем прямую связь…';
+        }
+      });
+      p.addEventListener('connectionstatechange', () => {
+        if (p.connectionState === 'failed' && api.active) lost(false);
+      });
+    }
+
+    async function manualFailed(p, diag) {
+      if (api.active || pc !== p) return;
+      await collectStats(diag);
+      if (api.active || pc !== p) return;
+      fail(NO_DIRECT + '<br><small class="net-diag">' + diagText(diag).replace('Сервер знакомств ✗ · ', 'Ручной режим · ') + '</small>');
+    }
+
     async function manualHost(reason) {
       if (peer) {
         try {
@@ -643,7 +703,10 @@
       dialog('<h2 id="net-title">Игра по сети</h2><p class="net-status"><span class="net-spinner"></span>Готовим приглашение…</p>');
       try {
         pc = new RTCPeerConnection(ICE);
-        pc.onconnectionstatechange = () => pc && pc.connectionState === 'failed' && lost(false);
+        const myPc = pc;
+        const diag = newDiag();
+        diag.answered = false;
+        watchManual(myPc, diag);
         setupChannel(pc.createDataChannel('sg'));
         await pc.setLocalDescription(await pc.createOffer());
         await waitIce(pc);
@@ -668,6 +731,8 @@
             b.querySelector('[data-go]').disabled = true;
             err.hidden = false;
             err.textContent = 'Соединяемся…';
+            // без ответа за 30 секунд считаем, что напрямую не достучаться
+            setTimeout(() => pc === myPc && !api.active && manualFailed(myPc, diag), 30000);
           } catch (e) {
             err.hidden = false;
             err.textContent = 'Код не подходит. Скопируйте его целиком.';
@@ -687,7 +752,9 @@
         if (offer.g !== opts.game) return fail('Ссылка ведёт в другую игру.');
         pc = new RTCPeerConnection(ICE);
         pc.ondatachannel = (e) => setupChannel(e.channel);
-        pc.onconnectionstatechange = () => pc && pc.connectionState === 'failed' && lost(false);
+        const diag = newDiag();
+        diag.answered = true;
+        watchManual(pc, diag);
         await pc.setRemoteDescription({ type: 'offer', sdp: offer.s });
         await pc.setLocalDescription(await pc.createAnswer());
         await waitIce(pc);

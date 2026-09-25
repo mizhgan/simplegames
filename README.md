@@ -147,6 +147,17 @@ python3 tools/build-sw.py
 - Для надёжной игры поднимите на своём сервере TURN ([coturn](https://github.com/coturn/coturn)) и, при желании, свой сервер знакомств ([peerjs-server](https://github.com/peers/peerjs-server)) и пропишите их в блоке `CONFIG` в начале `sg/js/net.js` (`iceServers` и `peerServer`). Для проверки без правки файлов сервер знакомств можно задать в браузере: `localStorage['sg:peer-server'] = '{"host":"peer.example.com","port":443,"path":"/","secure":true}'`.
 - Чтобы добавить сеть в игру: `SG.net.setup({ game, modeEl, onConnect(role), onMessage(msg), onDisconnect(voluntary) })`, затем `net.send({...})` на каждый ход. Хозяин (`host`) задаёт параметры партии, гость (`guest`) их принимает.
 
+### Свой TURN-сервер (coturn)
+
+Без ретранслятора браузеры часто не могут соединиться, если кто-то из игроков в мобильном интернете: в окне ошибки это видно по строке «ретранслятор TURN: недоступен». Бесплатный TURN от PeerJS работает с перебоями, поэтому лучше поставить свой — нагрузка от пошаговых игр мизерная.
+
+1. На сервере с публичным IP: `apt install coturn`.
+2. Скопируйте `deploy/coturn/turnserver.conf` в `/etc/turnserver.conf`, впишите внешний IP, домен и пароль.
+3. Откройте в файрволе `3478/udp`, `3478/tcp` и диапазон `49160–49250/udp`, затем `systemctl enable --now coturn`.
+4. Добавьте сервер в `CONFIG.iceServers` в начале `sg/js/net.js`:
+   `{ urls: ['turn:ваш-домен:3478', 'turn:ваш-домен:3478?transport=tcp'], username: 'simplegames', credential: 'пароль' }`.
+5. Проверить можно на странице [Trickle ICE](https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/): должен появиться кандидат типа `relay`.
+
 ## Как добавить новую игру
 
 1. Скопируйте папку любой игры, например `games/snake/`, в `games/<новая>/`.
