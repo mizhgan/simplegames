@@ -453,9 +453,9 @@ button {
 
 .card-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 6px 8px;
   margin-top: 8px;
   font-size: 0.8rem;
 }
@@ -466,6 +466,15 @@ button {
   background: var(--surface-2);
   color: var(--muted);
   font-weight: 600;
+}
+
+.card-meta .best {
+  margin-left: auto;
+}
+
+.tag-online {
+  background: color-mix(in srgb, var(--success) 18%, var(--surface-2));
+  color: color-mix(in srgb, var(--success) 70%, var(--text));
 }
 
 .best {
