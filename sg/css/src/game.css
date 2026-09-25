@@ -51,7 +51,7 @@ main {
   align-items: center;
   min-width: 78px;
   padding: 6px 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   border: 1px solid var(--border);
 }
@@ -128,7 +128,7 @@ main {
 .overlay {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: var(--z-overlay);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -216,7 +216,7 @@ kbd {
   display: inline-block;
   min-width: 22px;
   padding: 1px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   border: 1px solid var(--border);
   border-bottom-width: 2px;
   background: var(--surface-2);
@@ -237,7 +237,7 @@ kbd {
 
 .dpad button {
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   font-size: 1.4rem;
   cursor: pointer;
@@ -248,7 +248,7 @@ kbd {
 
 .dpad button:active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .dpad [data-dir="up"] {
@@ -285,7 +285,7 @@ kbd {
   max-width: 110px;
   height: 64px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: var(--surface);
   font-size: 1.5rem;
   cursor: pointer;
@@ -296,7 +296,7 @@ kbd {
 
 .touch-keys button.down {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .touch-keys .wide {

@@ -7,14 +7,14 @@
   gap: 8px;
   min-height: 42px;
   padding: 0 18px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
+  transition: transform var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast), opacity var(--dur-fast);
 }
 
 .btn:active {
@@ -28,7 +28,7 @@
 }
 
 .btn-primary {
-  color: #fff;
+  color: var(--on-accent);
   background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--accent-2)));
   box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent);
 }
@@ -57,7 +57,7 @@
   display: inline-flex;
   padding: 4px;
   gap: 4px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   border: 1px solid var(--border);
   flex-wrap: wrap;
@@ -67,12 +67,12 @@
   border: 0;
   background: transparent;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background var(--dur-fast), color var(--dur-fast);
 }
 
 .seg button:hover {
@@ -81,5 +81,5 @@
 
 .seg button.active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }

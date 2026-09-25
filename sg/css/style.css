@@ -4,7 +4,11 @@
 
 /* ---------- tokens.css ---------- */
 
+/* Дизайн-токены. Тёмная тема — по умолчанию; светлая задаётся одним блоком
+   :root[data-theme="light"], а сборка (tools/build.py) повторяет его для системной светлой темы. */
+
 :root {
+  /* поверхности и текст */
   --bg: #0d0e1a;
   --bg-2: #141528;
   --surface: #1a1c33;
@@ -12,21 +16,83 @@
   --border: #2c2f55;
   --text: #ecedf7;
   --muted: #9a9cc0;
+  --on-accent: #fff;
+
+  /* акценты и состояния */
   --accent: #7c5cff;
   --accent-2: #22d3ee;
   --accent-3: #ff5c93;
   --success: #34d399;
   --danger: #f87171;
   --warning: #fbbf24;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  --glow-1: rgba(124, 92, 255, 0.18);
-  --glow-2: rgba(34, 211, 238, 0.12);
+  --gold: #facc15;
+
+  /* цвета игроков: 1 — синий, 2 — красный, дальше — для игр на компанию */
+  --p1: #3b82f6;
+  --p2: #ef4444;
+  --p3: #22c55e;
+  --p4: #f59e0b;
+  --p5: #a855f7;
+  --p6: #ec4899;
+  --p7: #14b8a6;
+  --p8: #f97316;
+
+  /* игровые поля */
   --board-bg: #12132a;
   --board-cell: #1b1d3a;
   --board-line: #2a2d57;
-  --radius: 16px;
+
+  /* фон страницы */
+  --glow-1: rgba(124, 92, 255, 0.18);
+  --glow-2: rgba(34, 211, 238, 0.12);
+
+  /* тени */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  /* скругления */
+  --radius-xs: 6px;
   --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* отступы */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* шрифт и размеры текста */
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.6rem;
+  --fs-2xl: 2.2rem;
+
+  /* движение */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.25s;
+  --dur-slow: 0.4s;
+
+  /* слои */
+  --z-raised: 2;
+  --z-overlay: 5;
+  --z-header: 20;
+  --z-pop: 50;
+  --z-float: 200;
+  --z-modal: 900;
+  --z-toast: 1000;
+
   color-scheme: dark;
 }
 
@@ -42,7 +108,10 @@
     --accent: #6a48f5;
     --accent-2: #0ea5c6;
     --accent-3: #e0407a;
+    --shadow-sm: 0 2px 8px rgba(40, 40, 90, 0.08);
     --shadow: 0 10px 30px rgba(40, 40, 90, 0.12);
+    --shadow-pop: 0 16px 40px rgba(40, 40, 90, 0.18);
+    --shadow-lg: 0 24px 60px rgba(40, 40, 90, 0.22);
     --glow-1: rgba(106, 72, 245, 0.12);
     --glow-2: rgba(14, 165, 198, 0.1);
     --board-bg: #dfe2f3;
@@ -63,13 +132,24 @@
   --accent: #6a48f5;
   --accent-2: #0ea5c6;
   --accent-3: #e0407a;
+  --shadow-sm: 0 2px 8px rgba(40, 40, 90, 0.08);
   --shadow: 0 10px 30px rgba(40, 40, 90, 0.12);
+  --shadow-pop: 0 16px 40px rgba(40, 40, 90, 0.18);
+  --shadow-lg: 0 24px 60px rgba(40, 40, 90, 0.22);
   --glow-1: rgba(106, 72, 245, 0.12);
   --glow-2: rgba(14, 165, 198, 0.1);
   --board-bg: #dfe2f3;
   --board-cell: #eef0fa;
   --board-line: #cdd1ea;
   color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0s;
+    --dur: 0s;
+    --dur-slow: 0s;
+  }
 }
 
 /* ---------- base.css ---------- */
@@ -132,7 +212,7 @@ button {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: var(--z-header);
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -182,12 +262,12 @@ button {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
-  transition: transform 0.15s, background 0.15s;
+  transition: transform var(--dur-fast), background var(--dur-fast);
 }
 
 .icon-btn:hover {
@@ -243,14 +323,14 @@ button {
   gap: 8px;
   min-height: 42px;
   padding: 0 18px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
+  transition: transform var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast), opacity var(--dur-fast);
 }
 
 .btn:active {
@@ -264,7 +344,7 @@ button {
 }
 
 .btn-primary {
-  color: #fff;
+  color: var(--on-accent);
   background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--accent-2)));
   box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent);
 }
@@ -293,7 +373,7 @@ button {
   display: inline-flex;
   padding: 4px;
   gap: 4px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   border: 1px solid var(--border);
   flex-wrap: wrap;
@@ -303,12 +383,12 @@ button {
   border: 0;
   background: transparent;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background var(--dur-fast), color var(--dur-fast);
 }
 
 .seg button:hover {
@@ -317,7 +397,7 @@ button {
 
 .seg button.active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 /* ---------- home.css ---------- */
@@ -334,7 +414,7 @@ button {
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--muted);
@@ -387,7 +467,7 @@ button {
   max-width: 320px;
   min-height: 42px;
   padding: 0 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
@@ -439,7 +519,7 @@ button {
   color: var(--text);
   text-decoration: none;
   box-shadow: var(--shadow);
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: transform var(--dur), border-color var(--dur), box-shadow var(--dur);
 }
 
 .game-card[hidden] {
@@ -467,7 +547,7 @@ button {
   width: 72%;
   height: auto;
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
-  transition: transform 0.3s;
+  transition: transform var(--dur-slow);
 }
 
 .game-card:hover .thumb svg {
@@ -506,7 +586,7 @@ button {
 
 .tag {
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--muted);
   font-weight: 600;
@@ -570,7 +650,7 @@ button {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 2;
+  z-index: var(--z-raised);
   display: grid;
   place-items: center;
   width: 36px;
@@ -582,7 +662,7 @@ button {
   line-height: 1;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.2s, transform 0.15s, background 0.2s;
+  transition: opacity var(--dur), transform var(--dur-fast), background var(--dur);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
@@ -733,10 +813,10 @@ button {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--text);
   text-decoration: none;
-  transition: transform 0.15s, border-color 0.15s;
+  transition: transform var(--dur-fast), border-color var(--dur-fast);
 }
 
 .mini-card:hover {
@@ -820,7 +900,7 @@ main {
   align-items: center;
   min-width: 78px;
   padding: 6px 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   border: 1px solid var(--border);
 }
@@ -897,7 +977,7 @@ main {
 .overlay {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: var(--z-overlay);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -985,7 +1065,7 @@ kbd {
   display: inline-block;
   min-width: 22px;
   padding: 1px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   border: 1px solid var(--border);
   border-bottom-width: 2px;
   background: var(--surface-2);
@@ -1006,7 +1086,7 @@ kbd {
 
 .dpad button {
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   font-size: 1.4rem;
   cursor: pointer;
@@ -1017,7 +1097,7 @@ kbd {
 
 .dpad button:active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .dpad [data-dir="up"] {
@@ -1054,7 +1134,7 @@ kbd {
   max-width: 110px;
   height: 64px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: var(--surface);
   font-size: 1.5rem;
   cursor: pointer;
@@ -1065,7 +1145,7 @@ kbd {
 
 .touch-keys button.down {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .touch-keys .wide {
@@ -1108,7 +1188,7 @@ kbd {
   position: fixed;
   left: 50%;
   bottom: 20px;
-  z-index: 1000;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1123,14 +1203,14 @@ kbd {
   gap: 12px;
   padding: 12px 16px;
   border: 1px solid color-mix(in srgb, var(--warning) 60%, var(--border));
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-pop);
   color: var(--text);
   text-decoration: none;
   pointer-events: auto;
   animation: sg-toast-in 0.35s ease-out;
-  transition: opacity 0.4s, transform 0.4s;
+  transition: opacity var(--dur-slow), transform var(--dur-slow);
 }
 
 .sg-toast.out {
@@ -1206,7 +1286,7 @@ kbd {
   place-items: center;
   width: 52px;
   height: 52px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface-2);
   font-size: 1.7rem;
   filter: grayscale(1);
@@ -1248,7 +1328,7 @@ kbd {
   overflow: hidden;
   height: 6px;
   margin-bottom: 4px;
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
 }
 
@@ -1301,7 +1381,7 @@ kbd {
   align-items: baseline;
   padding: 8px 12px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface);
 }
 
@@ -1334,13 +1414,13 @@ kbd {
 
 .net-mode-btn.active {
   background: linear-gradient(135deg, #10b981, #0ea5e9);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .net-modal {
   position: fixed;
   inset: 0;
-  z-index: 900;
+  z-index: var(--z-modal);
   display: grid;
   place-items: center;
   padding: 16px;
@@ -1361,7 +1441,7 @@ kbd {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 .net-box h2 {
@@ -1392,7 +1472,7 @@ kbd {
   min-width: 0;
   padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--text);
   font: inherit;
@@ -1410,7 +1490,7 @@ kbd {
 
 .net-code b {
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: var(--surface-2);
   font-family: ui-monospace, monospace;
   font-size: 1.1rem;
@@ -1477,7 +1557,7 @@ kbd {
   max-width: 620px;
   padding: 6px 6px 6px 14px;
   border: 1px solid color-mix(in srgb, var(--success) 50%, var(--border));
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--success) 10%, var(--surface));
   font-size: 0.9rem;
   font-weight: 600;
@@ -1530,7 +1610,7 @@ kbd {
 .net-score {
   flex: none;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   font-variant-numeric: tabular-nums;
 }
@@ -1555,16 +1635,16 @@ kbd {
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  z-index: 50;
+  z-index: var(--z-pop);
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   width: min(300px, 90vw);
   padding: 8px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-pop);
 }
 
 .net-react[hidden] {
@@ -1574,7 +1654,7 @@ kbd {
 .net-react button {
   padding: 4px 8px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--text);
   font: inherit;
@@ -1594,18 +1674,18 @@ kbd {
   position: absolute;
   top: calc(100% + 8px);
   left: 50%;
-  z-index: 40;
+  z-index: var(--z-pop);
   max-width: 90%;
   padding: 8px 14px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 1rem;
   white-space: nowrap;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-pop);
   transform: translateX(-50%);
   animation: net-pop 0.25s ease-out;
-  transition: opacity 0.4s, transform 0.4s;
+  transition: opacity var(--dur-slow), transform var(--dur-slow);
   pointer-events: none;
 }
 
@@ -1660,7 +1740,7 @@ kbd {
   align-items: center;
   justify-content: space-between;
   padding: 6px 6px 6px 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
 }
 
@@ -1685,13 +1765,13 @@ kbd {
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  z-index: 50;
+  z-index: var(--z-pop);
   width: min(380px, 92vw);
   padding: 12px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-pop);
   font-weight: 400;
 }
 
@@ -1743,7 +1823,7 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
 .net-rival {
   flex: none;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
@@ -1767,7 +1847,7 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
   min-width: 0;
   padding: 7px 10px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--text);
   font: inherit;
@@ -1789,7 +1869,7 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
   gap: 8px;
   padding: 4px 4px 4px 12px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface-2);
 }
 
@@ -1806,13 +1886,13 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
   position: fixed;
   right: 16px;
   bottom: 16px;
-  z-index: 200;
+  z-index: var(--z-float);
   width: min(360px, calc(100vw - 32px));
   padding: 14px 16px;
   border: 1px solid var(--accent);
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-pop);
   animation: net-invite-in 0.25s ease-out;
 }
 
@@ -1884,7 +1964,7 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
 .rt-dpad button,
 .rt-fire {
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface-2);
   color: var(--text);
   font-size: 1.1rem;
@@ -1924,5 +2004,5 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
 .rt-dpad button.on,
 .rt-fire.on {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }

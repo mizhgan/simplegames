@@ -208,7 +208,19 @@ def css_bundle():
     head = ('/* ==========================================================================\n'
             '   SimpleGames — общие стили. Файл собирается из sg/css/src/*.css: python3 tools/build.py\n'
             '   ========================================================================== */\n')
-    return head + ''.join('\n/* ---------- %s.css ---------- */\n\n%s' % (name, read(os.path.join(src, name + '.css'))) for name in CSS_ORDER)
+    parts = []
+    for name in CSS_ORDER:
+        text = read(os.path.join(src, name + '.css'))
+        if name == 'tokens':
+            # светлая тема описана один раз; для системной светлой темы повторяем её в @media
+            m = re.search(r'^:root\[data-theme="light"\] \{\n(.*?)^\}\n', text, re.S | re.M)
+            if not m:
+                sys.exit('sg/css/src/tokens.css: нет блока :root[data-theme="light"]')
+            body = ''.join('  ' + line + '\n' if line.strip() else '\n' for line in m.group(1).rstrip('\n').split('\n'))
+            media = '@media (prefers-color-scheme: light) {\n  :root:not([data-theme="dark"]) {\n' + body + '  }\n}\n\n'
+            text = text[: m.start()] + media + text[m.start():]
+        parts.append('\n/* ---------- %s.css ---------- */\n\n%s' % (name, text))
+    return head + ''.join(parts)
 
 
 # ---------- service worker ----------

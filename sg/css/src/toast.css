@@ -4,7 +4,7 @@
   position: fixed;
   left: 50%;
   bottom: 20px;
-  z-index: 1000;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -19,14 +19,14 @@
   gap: 12px;
   padding: 12px 16px;
   border: 1px solid color-mix(in srgb, var(--warning) 60%, var(--border));
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-pop);
   color: var(--text);
   text-decoration: none;
   pointer-events: auto;
   animation: sg-toast-in 0.35s ease-out;
-  transition: opacity 0.4s, transform 0.4s;
+  transition: opacity var(--dur-slow), transform var(--dur-slow);
 }
 
 .sg-toast.out {
