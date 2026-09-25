@@ -1,0 +1,30 @@
+.dp-table {
+  gap: 14px;
+}
+
+.dp-pair {
+  position: relative;
+  display: flex;
+}
+
+.dp-pair .dp-beat {
+  position: absolute;
+  top: 18px;
+  left: 16px;
+  transform: rotate(8deg);
+}
+
+.dp-pair .sol-card.target {
+  outline: 3px solid var(--warning);
+  cursor: pointer;
+}
+
+.dp-trump {
+  transform: rotate(90deg);
+}
+
+.mm-log {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  text-align: center;
+}
