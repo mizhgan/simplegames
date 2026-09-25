@@ -149,14 +149,22 @@ python3 tools/build-sw.py
 
 ### Свой TURN-сервер (coturn)
 
-Без ретранслятора браузеры часто не могут соединиться, если кто-то из игроков в мобильном интернете: в окне ошибки это видно по строке «ретранслятор TURN: недоступен». Бесплатный TURN от PeerJS работает с перебоями, поэтому лучше поставить свой — нагрузка от пошаговых игр мизерная.
+Без ретранслятора браузеры часто не могут соединиться, если кто-то из игроков в мобильном интернете: в окне ошибки это видно по строке «ретранслятор TURN: недоступен». Бесплатный TURN от PeerJS работает с перебоями, поэтому лучше поставить свой — нагрузка от пошаговых игр мизерная, хватит самой маленькой VPS.
 
-1. На сервере с публичным IP: `apt install coturn`.
-2. Скопируйте `deploy/coturn/turnserver.conf` в `/etc/turnserver.conf`, впишите внешний IP, домен и пароль.
-3. Откройте в файрволе `3478/udp`, `3478/tcp` и диапазон `49160–49250/udp`, затем `systemctl enable --now coturn`.
-4. Добавьте сервер в `CONFIG.iceServers` в начале `sg/js/net.js`:
-   `{ urls: ['turn:ваш-домен:3478', 'turn:ваш-домен:3478?transport=tcp'], username: 'simplegames', credential: 'пароль' }`.
-5. Проверить можно на странице [Trickle ICE](https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/): должен появиться кандидат типа `relay`.
+**Установка одной командой** (чистая VPS с Ubuntu 22.04+/Debian 12+, от root). Заранее создайте DNS-запись A для поддомена (например, `turn.example.com`) на IP этой VPS:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/mizhgan/simplegames/main/deploy/coturn/install.sh
+bash install.sh turn.example.com you@example.com
+```
+
+Скрипт поставит coturn, получит сертификат Let's Encrypt (TURN по TLS на порту 443 проходит даже через строгие файрволы), настроит ограничения и запрет пересылки во внутренние сети, откроет порты в ufw и напечатает строку для `CONFIG.iceServers` в `sg/js/net.js`. Если у провайдера VPS есть свой файрвол, откройте в нём `80/tcp`, `443/tcp`, `3478/tcp+udp` и `49160–49250/udp`.
+
+Вручную: `apt install coturn`, конфиг-образец — `deploy/coturn/turnserver.conf`.
+
+**Проверка до публикации.** Откройте игру, в консоли браузера выполните
+`localStorage['sg:ice-servers'] = JSON.stringify([{urls: 'turn:turn.example.com:3478', username: 'simplegames', credential: 'пароль'}]); localStorage['sg:ice-policy'] = '"relay"'`
+и обновите страницу (у друга — то же самое): соединение пойдёт только через ваш TURN. Отменить: `localStorage.removeItem('sg:ice-servers'); localStorage.removeItem('sg:ice-policy')`. Ещё один способ — страница [Trickle ICE](https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/): должен появиться кандидат типа `relay`.
 
 ## Как добавить новую игру
 
