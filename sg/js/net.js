@@ -20,15 +20,27 @@
 (() => {
   'use strict';
 
-  const PREFIX = 'simplegames-';
-  const ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
-  const ICE = {
+  // ---------- настройки (владелец сайта может поменять) ----------
+  const CONFIG = {
+    // свой сервер знакомств PeerJS, например { host: 'peer.example.com', port: 443, path: '/', secure: true };
+    // null — бесплатный публичный 0.peerjs.com
+    peerServer: null,
+    // STUN помогает узнать внешний адрес, TURN пересылает трафик, когда напрямую соединиться нельзя
+    // (частый случай в мобильном интернете). Для надёжной игры добавьте сюда свой TURN-сервер (coturn):
+    // { urls: 'turn:turn.example.com:3478', username: '…', credential: '…' }
     iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
+      { urls: 'stun:stun.cloudflare.com:3478' },
       { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' },
     ],
   };
+
+  const PREFIX = 'simplegames-';
+  const ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
+  const ICE = { iceServers: CONFIG.iceServers };
   const SERVER_TIMEOUT = 9000;
+  const JOIN_TIMEOUT = 75000; // гость ждёт, пока хозяин вернётся на страницу
+  const RETRY_EVERY = 15000;
   const SCRIPT_URL = document.currentScript ? document.currentScript.src : location.href;
 
   // библиотеку PeerJS грузим, только когда игрок выбрал игру по сети
@@ -55,7 +67,7 @@
 
   // свой сервер PeerJS можно указать в localStorage: sg:peer-server = {"host":"…","port":443,"path":"/","secure":true}
   function peerOptions() {
-    const custom = SG.store.get('peer-server', null);
+    const custom = SG.store.get('peer-server', null) || CONFIG.peerServer;
     const opts = { config: ICE, debug: 0 };
     if (custom && custom.host) Object.assign(opts, custom);
     return opts;
@@ -151,6 +163,40 @@
     box.querySelector('[data-copy]').addEventListener('click', (e) => copy(url, e.currentTarget));
     const sh = box.querySelector('[data-share]');
     if (sh) sh.addEventListener('click', () => navigator.share({ title: document.title, text: 'Сыграем по сети?', url }).catch(() => {}));
+  }
+
+  // ---------- диагностика соединения ----------
+
+  // следит за RTCPeerConnection попытки и запоминает, до какого этапа дошли
+  function watchPc(pc, diag, onChange) {
+    if (!pc || pc.__sgWatched) return;
+    pc.__sgWatched = true;
+    const upd = () => {
+      diag.ice = pc.iceConnectionState;
+      if (pc.remoteDescription) diag.answered = true;
+      if (onChange) onChange(diag);
+    };
+    pc.addEventListener('iceconnectionstatechange', upd);
+    pc.addEventListener('signalingstatechange', upd);
+    pc.addEventListener('icecandidate', (e) => {
+      const c = e.candidate && e.candidate.candidate;
+      if (!c) return;
+      const m = c.match(/ typ (host|srflx|prflx|relay)/);
+      if (m) diag.cands.add(m[1]);
+    });
+  }
+
+  function diagText(diag) {
+    const yes = '✓';
+    const no = '✗';
+    const types = [...diag.cands];
+    return (
+      'Сервер знакомств ' + (diag.server ? yes : no) +
+      ' · друг ответил ' + (diag.answered ? yes : no) +
+      ' · прямая связь: ' + (diag.ice || 'нет') +
+      ' · адреса: ' + (types.length ? types.join(', ') : 'нет') +
+      (types.includes('relay') ? '' : ' (TURN недоступен)')
+    );
   }
 
   // ---------- основной объект ----------
@@ -374,11 +420,13 @@
             linkBlock(url, 'Отправьте другу эту ссылку:') +
             `<p class="net-code">Или продиктуйте код комнаты: <b>${room}</b></p>` +
             '<p class="net-status"><span class="net-spinner"></span>Ждём соперника…</p>' +
+            '<p class="net-note">Отправив ссылку, вернитесь на эту страницу: пока она свёрнута, браузер может её «усыпить».</p>' +
             '<details class="net-join"><summary>У меня есть код от друга</summary><div class="net-link"><input type="text" maxlength="6" autocomplete="off" placeholder="Код комнаты" aria-label="Код комнаты"><button class="btn btn-primary" type="button" data-join>Войти</button></div></details>' +
-            '<div class="net-actions"><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
+            '<div class="net-actions"><button class="btn btn-ghost" type="button" data-manual>Ручной режим</button><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
         );
         bindLink(b, url);
         b.querySelector('[data-cancel]').addEventListener('click', cancel);
+        b.querySelector('[data-manual]').addEventListener('click', () => manualHost('Соединимся без сервера знакомств.'));
         const joinInput = b.querySelector('.net-join input');
         const go = () => {
           const v = joinInput.value.trim().toLowerCase();
@@ -393,10 +441,32 @@
           c.on('open', () => c.close());
           return;
         }
-        c.on('open', () => attach(wrapPeerConn(c)));
-        c.on('data', handle);
-        c.on('close', () => lost(false));
-        c.on('error', () => lost(false));
+        let mine = false;
+        const status = modal && modal.querySelector('.net-status');
+        if (status) status.innerHTML = '<span class="net-spinner"></span>Друг подключается…';
+        const diag = { server: true, answered: true, ice: '', cands: new Set() };
+        watchPc(c.peerConnection, diag, (d) => {
+          if (conn || !status) return;
+          if (d.ice === 'failed') {
+            status.innerHTML = 'Не удалось соединиться с другом напрямую — так бывает в мобильном интернете. Попробуйте обоим подключиться к Wi-Fi или нажмите «Ручной режим».<br><small>' + diagText(d) + '</small>';
+          }
+        });
+        c.on('open', () => {
+          mine = true;
+          attach(wrapPeerConn(c));
+        });
+        c.on('data', (x) => mine && handle(x));
+        // оборвавшаяся попытка до начала игры не должна закрывать комнату — ждём следующую
+        const dropped = () => {
+          if (!mine) return;
+          mine = false;
+          if (api.active) return lost(false);
+          conn = null;
+          clearInterval(pingTimer);
+          if (status) status.innerHTML = '<span class="net-spinner"></span>Ждём соперника…';
+        };
+        c.on('close', dropped);
+        c.on('error', dropped);
       });
       peer.on('error', (err) => {
         if (err.type === 'unavailable-id') return host();
@@ -410,6 +480,17 @@
         if (!api.active && peer && !peer.destroyed) peer.reconnect();
       });
     }
+
+    // вкладку свернули (например, чтобы отправить ссылку) и вернулись — восстанавливаем связь с сервером
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && peer && !peer.destroyed && peer.disconnected && !api.active) {
+        try {
+          peer.reconnect();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+    });
 
     function cancel() {
       teardown();
@@ -425,41 +506,120 @@
       const box = dialog(
         '<h2 id="net-title">Игра по сети</h2><p class="net-status"><span class="net-spinner"></span>Подключаемся к комнате <b>' +
           room +
-          '</b>…</p><div class="net-actions"><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
+          '</b>…</p><p class="net-note" hidden></p><div class="net-actions"><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
       );
       box.querySelector('[data-cancel]').addEventListener('click', cancel);
-      if (!(await loadPeer())) return fail('Не удалось загрузить модуль связи.');
+      const statusEl = box.querySelector('.net-status');
+      const noteEl = box.querySelector('.net-note');
+      const setStatus = (html) => (statusEl.innerHTML = '<span class="net-spinner"></span>' + html);
+      if (!(await loadPeer())) return fail('Не удалось загрузить модуль связи.', room);
       if (modal && modal.hidden) return;
-      const timer = setTimeout(() => !api.active && fail('Не удалось подключиться. Проверьте ссылку или попробуйте ручной режим.'), SERVER_TIMEOUT + 6000);
-      try {
-        peer = new window.Peer(peerOptions());
-      } catch (e) {
-        return fail('Сервер знакомств недоступен.');
-      }
-      peer.on('open', () => {
-        const c = peer.connect(PREFIX + room, { reliable: true });
+
+      const diag = { server: false, answered: false, ice: '', cands: new Set() };
+      const myPeer = new window.Peer(peerOptions());
+      peer = myPeer;
+      const started = Date.now();
+      let retryTimer = 0;
+      let hintTimer = 0;
+      const stop = () => {
+        clearTimeout(retryTimer);
+        clearTimeout(hintTimer);
+        clearTimeout(giveUp);
+      };
+      const giveUp = setTimeout(() => {
+        if (api.active || peer !== myPeer) return;
+        stop();
+        let why;
+        if (!diag.server) why = 'Не удалось связаться с сервером знакомств. Проверьте интернет или попросите друга включить «Ручной режим» в окне приглашения.';
+        else if (!diag.answered) why = 'Друг не отвечает. Скорее всего, страница игры у него свёрнута или закрыта: пусть он откроет её, а вы нажмите «Повторить».';
+        else why = 'Браузеры нашли друг друга, но не смогли соединиться напрямую — так бывает в мобильном интернете и за некоторыми роутерами. Попробуйте обоим подключиться к Wi-Fi или используйте «Ручной режим» (его включает друг в окне приглашения).';
+        fail(why + '<br><small class="net-diag">' + diagText(diag) + '</small>', room);
+      }, JOIN_TIMEOUT);
+
+      // попытка соединения; если долго нет ответа — пробуем ещё раз (хозяин мог вернуться на страницу)
+      const attempt = () => {
+        if (api.active || peer !== myPeer || myPeer.destroyed) return;
+        if (myPeer.disconnected) {
+          try {
+            myPeer.reconnect();
+          } catch (e) {
+            /* ignore */
+          }
+        }
+        const c = myPeer.connect(PREFIX + room, { reliable: true });
+        let mine = false;
+        watchPc(c.peerConnection, diag, (d) => {
+          if (conn) return;
+          if (d.answered && d.ice !== 'failed') setStatus('Друг найден, устанавливаем соединение…');
+        });
         c.on('open', () => {
-          clearTimeout(timer);
+          if (conn) return c.close();
+          mine = true;
+          clearTimeout(retryTimer);
           attach(wrapPeerConn(c));
         });
-        c.on('data', handle);
-        c.on('close', () => lost(false));
+        c.on('data', (x) => mine && handle(x));
+        c.on('close', () => {
+          if (!mine) return;
+          mine = false;
+          if (api.active) return lost(false);
+          // канал закрылся до начала игры — пробуем снова
+          conn = null;
+          clearInterval(pingTimer);
+          clearTimeout(retryTimer);
+          retryTimer = setTimeout(attempt, 1000);
+        });
+        retryTimer = setTimeout(attempt, RETRY_EVERY);
+      };
+
+      myPeer.on('open', () => {
+        diag.server = true;
+        setStatus('Ищем друга в комнате <b>' + room + '</b>…');
+        attempt();
+        hintTimer = setTimeout(() => {
+          if (api.active) return;
+          noteEl.hidden = false;
+          noteEl.textContent = 'Друг пока не ответил. Если он отправлял ссылку с телефона, попросите его вернуться на страницу игры — мы подождём.';
+        }, 8000);
       });
-      peer.on('error', (err) => {
-        clearTimeout(timer);
-        if (err.type === 'peer-unavailable') fail('Комната <b>' + room + '</b> не найдена. Возможно, друг закрыл страницу — попросите новую ссылку.');
-        else if (!api.active) fail('Сервер знакомств недоступен. Попросите друга создать игру ещё раз — откроется ручной режим.');
+      myPeer.on('error', (err) => {
+        if (api.active || peer !== myPeer) return;
+        if (err.type === 'peer-unavailable') {
+          // комнаты нет прямо сейчас — возможно, хозяин переподключается к серверу; пробуем дальше, пока не выйдет время
+          if (Date.now() - started > 30000) {
+            stop();
+            fail('Комната <b>' + room + '</b> не найдена. Возможно, друг закрыл страницу — попросите новую ссылку.', room);
+          } else setStatus('Комната пока не отвечает, пробуем ещё раз…');
+          return;
+        }
+        if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(err.type) && !diag.server) {
+          stop();
+          fail('Сервер знакомств недоступен. Попросите друга нажать «Ручной режим» в окне приглашения и прислать новую ссылку.', room);
+        }
+      });
+      myPeer.on('disconnected', () => {
+        if (!api.active && !myPeer.destroyed) {
+          try {
+            myPeer.reconnect();
+          } catch (e) {
+            /* ignore */
+          }
+        }
       });
     }
 
-    function fail(text) {
+    function fail(text, room) {
       teardown();
       const b = dialog(
         '<h2 id="net-title">Не получилось подключиться</h2><p>' +
           text +
-          '</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Закрыть</button></div>'
+          '</p><div class="net-actions">' +
+          (room ? '<button class="btn btn-primary" type="button" data-retry>Повторить</button>' : '') +
+          '<button class="btn btn-ghost" type="button" data-close>Закрыть</button></div>'
       );
       b.querySelector('[data-close]').addEventListener('click', cancel);
+      const r = b.querySelector('[data-retry]');
+      if (r) r.addEventListener('click', () => join(room));
     }
 
     // ---------- ручной режим: обмен кодами ----------
