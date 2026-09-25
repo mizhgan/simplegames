@@ -1,0 +1,20 @@
+.ep .er-board {
+  width: 100%;
+  max-width: 620px;
+}
+
+.ep-status {
+  margin: 0;
+  font-weight: 700;
+}
+
+.ep .er-rack {
+  width: min(100%, 420px);
+}
+
+.ep .er-log {
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+  text-align: left;
+}
