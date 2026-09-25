@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Стратего — SimpleGames</title>
+  <meta name="description" content="Стратего на малом поле: звания фигур соперника скрыты, пока они не встретятся в бою. Захватите флаг противника! Против компьютера, вдвоём или по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Стратего</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label" id="label-0">Вы · Синие</span><span class="stat-value" id="score-0">0</span></div>
+        <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
+        <div class="stat"><span class="stat-label" id="label-1">Компьютер · Красные</span><span class="stat-value" id="score-1">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+            <button type="button" data-value="pvp">Вдвоём</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+
+        <div class="stage-wrap st-wrap">
+          <div class="st-curtain" id="curtain" hidden><span>Передайте ход — соперник, отвернитесь!</span><button class="btn btn-primary" type="button">Показать мою армию</button></div>
+          <div class="st-board" id="board" role="grid" aria-label="Поле 8 на 8"></div>
+          <div class="st-bar" id="setup-bar" hidden><button class="btn btn-ghost" type="button" id="shuffle-btn">🔀 Перемешать</button><button class="btn btn-primary" type="button" id="ready-btn">Готово</button></div>
+          <p class="st-battle" id="battle" aria-live="polite"></p>
+          <div class="st-dead" id="dead"></div>
+        </div>
+
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>У каждого 16 фигур: флаг 🚩, две бомбы 💣, шпион 🕵, разведчики (2), сапёры (3) и офицеры от 4 до маршала (10). Звания соперника видны, только когда фигура побывала в бою.</li>
+            <li>Сначала расставьте армию в своих двух рядах: нажмите две фигуры, чтобы поменять их местами, и «Готово». Прячьте флаг за бомбами!</li>
+            <li>Фигуры ходят на одну клетку по прямой (в озёра нельзя), разведчик — на любое расстояние. Флаг и бомбы не двигаются.</li>
+            <li>Бой: старшее звание побеждает, равные гибнут обе. Бомба уничтожает любого, кроме сапёра. Шпион, напав первым, побеждает маршала.</li>
+            <li>Побеждает тот, кто захватит флаг соперника или оставит его без ходов.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/duel.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

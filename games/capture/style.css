@@ -1,0 +1,71 @@
+.cp-board {
+  width: min(100%, 600px);
+  border-radius: var(--radius);
+  background: #fdfdf8;
+  box-shadow: var(--shadow);
+}
+
+.cp-grid line {
+  stroke: #b9d3ee;
+  stroke-width: 1;
+}
+
+.cp-area .own-0 {
+  fill: rgba(37, 99, 235, 0.18);
+}
+
+.cp-area .own-1 {
+  fill: rgba(220, 38, 38, 0.16);
+}
+
+.cp-links line {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.cp-links .l-0 {
+  stroke: #2563eb;
+}
+
+.cp-links .l-1 {
+  stroke: #dc2626;
+}
+
+.cp-dots .d-0 {
+  fill: #2563eb;
+}
+
+.cp-dots .d-1 {
+  fill: #dc2626;
+}
+
+.cp-dots .dead {
+  opacity: 0.35;
+}
+
+.cp-dots .last {
+  stroke: #facc15;
+  stroke-width: 3;
+}
+
+.cp-hits circle {
+  fill: transparent;
+}
+
+.cp-board.can .cp-hits circle {
+  cursor: pointer;
+}
+
+.cp-board.can .cp-hits circle:hover {
+  fill: rgba(37, 99, 235, 0.25);
+}
+
+.cp-board.can.turn-1 .cp-hits circle:hover {
+  fill: rgba(220, 38, 38, 0.25);
+}
+
+.cp-info {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
