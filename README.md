@@ -168,6 +168,19 @@ bash install.sh turn.example.com you@example.com
 `localStorage['sg:ice-servers'] = JSON.stringify([{urls: 'turn:turn.example.com:3478', username: 'simplegames', credential: 'пароль'}]); localStorage['sg:ice-policy'] = '"relay"'`
 и обновите страницу (у друга — то же самое): соединение пойдёт только через ваш TURN. Отменить: `localStorage.removeItem('sg:ice-servers'); localStorage.removeItem('sg:ice-policy')`. Ещё один способ — страница [Trickle ICE](https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/): должен появиться кандидат типа `relay`.
 
+### Свой сервер знакомств (peerjs-server)
+
+По умолчанию игроки находят друг друга через бесплатный публичный `0.peerjs.com`. Чтобы не зависеть от него, поставьте свой сервер — можно на ту же VPS, что и coturn:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/mizhgan/simplegames/main/deploy/peerjs/install.sh
+bash install.sh            # домен возьмётся из сертификата coturn, порт 8443
+```
+
+Скрипт поставит Node.js (если нужно) и `peer`, запустит службу `peerjs` с TLS-сертификатом Let's Encrypt (продлевается автоматически) и напечатает строку для `CONFIG.peerServer` в `sg/js/net.js`. Порт 443 на этой VPS занят TURN, поэтому сервер слушает 8443 — откройте его и в файрволе хостера. Проверка: `https://домен:8443/peerjs/id` возвращает случайную строку.
+
+Если свой сервер недоступен, сайт сам создаст комнату на публичном — к коду в ссылке добавится `-p`, чтобы гость пришёл туда же.
+
 ## Как добавить новую игру
 
 1. Скопируйте папку любой игры, например `games/snake/`, в `games/<новая>/`.
