@@ -355,6 +355,7 @@
     undoBtn.disabled = true;
     const lost = (mode === 'ai' && winner === -1) || (mode === 'net' && winner !== mySide);
     SG.sound.play(winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
+    if (mode === 'net') net.result(winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
     if (winner === 'D') statusEl.textContent = 'Ничья: 15 ходов дамками без взятий 🤝';
     else if (mode === 'net') statusEl.textContent = winner === mySide ? 'Вы победили! 🎉' : 'Соперник победил';
     else if (mode === 'ai') statusEl.textContent = winner === 1 ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
@@ -426,6 +427,7 @@
 
   const net = SG.net.setup({
     game: 'checkers',
+    onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

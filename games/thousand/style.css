@@ -1,0 +1,34 @@
+.th-center {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  min-height: var(--ch);
+}
+
+.th-center .sol-card.old {
+  opacity: 0.55;
+}
+
+.th-center .sol-card.opp {
+  transform: translateY(-8px);
+}
+
+.tb .sol-card.mar .sol-face {
+  box-shadow: inset 0 0 0 3px #fde047;
+}
+
+.th-info {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.th-note {
+  width: 100%;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.tb-hand.mine .sol-card + .sol-card {
+  --ov: -0.45;
+}

@@ -282,6 +282,7 @@
     render();
     const me = scores.me;
     const ai = scores.ai;
+    if (mode === 'net') net.result(me > ai ? 'win' : me < ai ? 'lose' : 'draw');
     $('label-ai').textContent = OPP();
     if (me > ai) {
       statusEl.textContent = 'Вы победили ' + me + ':' + ai + '! 🎉';
@@ -340,6 +341,7 @@
 
   const net = SG.net.setup({
     game: 'balda',
+    onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

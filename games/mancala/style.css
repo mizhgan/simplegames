@@ -1,0 +1,104 @@
+.mc-board {
+  display: grid;
+  grid-template-columns: 1fr 6fr 1fr;
+  gap: 10px;
+  width: min(100%, 720px);
+  padding: 14px;
+  border-radius: 40px;
+  background: linear-gradient(160deg, #9a6537, #6e421f);
+  box-shadow: var(--shadow), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.mc-mid {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+.mc-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.mc-pit,
+.mc-store {
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #4a2a12, #5c3517 70%);
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font: inherit;
+}
+
+.mc-pit {
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+
+.mc-store {
+  border-radius: 999px;
+  cursor: default;
+}
+
+.mc-pit:disabled {
+  cursor: default;
+}
+
+.mc-row.mine .mc-pit:not(:disabled) {
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.55), 0 0 0 3px var(--accent-2);
+}
+
+.mc-row.mine .mc-pit:not(:disabled):hover {
+  background: radial-gradient(circle at 50% 40%, #5a3a1f, #6c4527 70%);
+}
+
+.mc-pit.sown,
+.mc-store.sown {
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.55), 0 0 0 2px rgba(255, 214, 10, 0.55);
+}
+
+.mc-pit.last,
+.mc-store.last {
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.55), 0 0 0 3px var(--warning);
+}
+
+.mc-seeds {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mc-seeds i {
+  position: absolute;
+  width: 16%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff9, hsl(var(--h) 70% 55%) 45%, hsl(var(--h) 70% 35%));
+  transform: translate(-50%, -50%);
+}
+
+.mc-store .mc-seeds i {
+  width: 30%;
+}
+
+.mc-pit b,
+.mc-store b {
+  position: absolute;
+  right: 4px;
+  bottom: -2px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  font-size: 0.8rem;
+}
+
+.mc-store b {
+  right: 50%;
+  bottom: 8px;
+  transform: translateX(50%);
+  font-size: 1.05rem;
+}

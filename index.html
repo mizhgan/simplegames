@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SimpleGames — простые браузерные игры</title>
-  <meta name="description" content="Коллекция простых браузерных игр: танчики, яйцелов «Ну, погоди!», пакман, дурак, нарды, балда, сокобан, тетрис, вордли, косынка, шашки, судоку, какуро и другие. Без регистрации и установки.">
+  <meta name="description" content="Коллекция простых браузерных игр: шахматы, эрудит, тысяча, покер, танчики, бомбермен, дурак, нарды, го, сокобан, тетрис, вордли, косынка и другие. Играйте с компьютером или с другом по сети. Без регистрации и установки.">
   <meta name="theme-color" content="#0d0e1a">
   <meta property="og:title" content="SimpleGames — простые браузерные игры">
-  <meta property="og:description" content="Танчики, яйцелов, пакман, дурак, нарды, сокобан, тетрис, вордли, косынка, шашки, судоку и ещё 38 игр прямо в браузере.">
+  <meta property="og:description" content="Шахматы, эрудит, тысяча, покер, танчики, бомбермен, дурак, нарды, тетрис, вордли и ещё 59 игр прямо в браузере — в том числе с другом по сети.">
   <meta property="og:type" content="website">
   <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
@@ -31,7 +31,7 @@
 
   <main>
     <section class="hero container">
-      <div class="hero-badge"><span class="dot"></span>49 игр · бесплатно · без регистрации · работает офлайн</div>
+      <div class="hero-badge"><span class="dot"></span>69 игр · бесплатно · без регистрации · работает офлайн</div>
       <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
       <p>Классика, в которую приятно сыграть пару минут: на компьютере, планшете или телефоне. Ничего не нужно устанавливать, а рекорды сохраняются у вас в браузере.</p>
     </section>
@@ -724,7 +724,7 @@
           </div>
         </a>
 
-        <a class="game-card" href="games/pong/index.html" data-cat="arcade" style="--g1:#0ea5e9;--g2:#1e3a8a">
+        <a class="game-card" href="games/pong/index.html" data-online="1" data-cat="arcade" style="--g1:#0ea5e9;--g2:#1e3a8a">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true">
               <path d="M80 12 V88" stroke="rgba(255,255,255,.35)" stroke-width="3" stroke-dasharray="6 6"/>
@@ -737,7 +737,7 @@
           <div class="card-body">
             <h3>Понг</h3>
             <p>Легендарный теннис для двоих: против компьютера или вдвоём на одной клавиатуре.</p>
-            <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="pong-wins" data-best-label="Побед"></span></div>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="pong-wins" data-best-label="Побед"></span></div>
           </div>
         </a>
 
@@ -845,7 +845,7 @@
           </div>
         </a>
 
-        <a class="game-card" href="games/yahtzee/index.html" data-cat="board" style="--g1:#ef4444;--g2:#7f1d1d">
+        <a class="game-card" href="games/yahtzee/index.html" data-online="1" data-cat="board" style="--g1:#ef4444;--g2:#7f1d1d">
           <div class="thumb">
             <svg viewBox="0 0 160 100" aria-hidden="true">
               <g transform="rotate(-12 42 54)"><rect x="22" y="34" width="40" height="40" rx="9" fill="#fff"/><g fill="#111"><circle cx="32" cy="44" r="4"/><circle cx="42" cy="54" r="4"/><circle cx="52" cy="64" r="4"/></g></g>
@@ -856,7 +856,7 @@
           <div class="card-body">
             <h3>Покер на костях</h3>
             <p>Пять кубиков, три броска и тринадцать комбинаций. Против компьютера.</p>
-            <div class="card-meta"><span class="tag">Кости</span><span class="best" data-best="yahtzee-best"></span></div>
+            <div class="card-meta"><span class="tag">Кости</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="yahtzee-best"></span></div>
           </div>
         </a>
 
@@ -1033,6 +1033,246 @@
             <h3>Танчики</h3>
             <p>По мотивам Battle City: защищайте штаб и уничтожайте вражеские танки.</p>
             <div class="card-meta"><span class="tag">Аркада</span><span class="best" data-best="tanks-best"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/chess/index.html" data-online="1" data-cat="board" style="--g1:#475569;--g2:#0f172a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="40" y="10" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="50" y="10" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="60" y="10" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="70" y="10" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="80" y="10" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="90" y="10" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="100" y="10" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="110" y="10" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="40" y="20" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="50" y="20" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="60" y="20" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="70" y="20" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="80" y="20" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="90" y="20" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="100" y="20" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="110" y="20" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="40" y="30" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="50" y="30" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="60" y="30" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="70" y="30" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="80" y="30" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="90" y="30" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="100" y="30" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="110" y="30" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="40" y="40" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="50" y="40" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="60" y="40" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="70" y="40" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="80" y="40" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="90" y="40" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="100" y="40" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="110" y="40" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="40" y="50" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="50" y="50" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="60" y="50" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="70" y="50" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="80" y="50" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="90" y="50" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="100" y="50" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="110" y="50" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="40" y="60" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="50" y="60" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="60" y="60" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="70" y="60" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="80" y="60" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="90" y="60" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="100" y="60" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="110" y="60" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="40" y="70" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="50" y="70" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="60" y="70" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="70" y="70" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="80" y="70" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="90" y="70" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="100" y="70" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="110" y="70" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="40" y="80" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="50" y="80" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="60" y="80" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="70" y="80" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="80" y="80" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="90" y="80" width="10" height="10" fill="rgba(255,255,255,.55)"/><rect x="100" y="80" width="10" height="10" fill="rgba(0,0,0,.18)"/><rect x="110" y="80" width="10" height="10" fill="rgba(255,255,255,.55)"/><text x="80" y="72" font-size="56" text-anchor="middle" fill="#fff" stroke="#1e1b4b" stroke-width="2" font-family="DejaVu Sans, Segoe UI Symbol, serif">♞</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Шахматы</h3>
+            <p>Все правила, компьютер трёх уровней, игра вдвоём и с другом по сети.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="chess-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/uttt/index.html" data-online="1" data-cat="board" style="--g1:#8b5cf6;--g2:#1e1b4b">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g stroke="rgba(255,255,255,.45)" stroke-width="3"><path d="M72 8 V92 M96 8 V92 M48 36 H120 M48 64 H120"/></g><path d="M52 14 l14 14 M66 14 l-14 14" stroke="#fde68a" stroke-width="4"/><g stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M57 39 V59 M63 39 V59 M50 46 H69 M50 52 H69"/></g><circle cx="59" cy="77" r="7" stroke="#fff" stroke-width="4"/><circle cx="83" cy="21" r="7" stroke="#fff" stroke-width="4"/><g stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M81 39 V59 M87 39 V59 M74 46 H93 M74 52 H93"/></g><path d="M76 70 l14 14 M90 70 l-14 14" stroke="#fde68a" stroke-width="4"/><g stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M105 11 V31 M111 11 V31 M98 18 H117 M98 24 H117"/></g><path d="M100 42 l14 14 M114 42 l-14 14" stroke="#fde68a" stroke-width="4"/><g stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M105 67 V87 M111 67 V87 M98 74 H117 M98 80 H117"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Ultimate крестики-нолики</h3>
+            <p>Девять полей в одном: ваш ход решает, где будет ходить соперник.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="uttt-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/quarto/index.html" data-online="1" data-cat="board" style="--g1:#d97706;--g2:#7c2d12">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <circle cx="80" cy="50" r="44" fill="rgba(255,255,255,.18)"/><circle cx="58" cy="32" r="12" fill="#7c3a1d" stroke="#67e8f9" stroke-width="3"/><rect x="88" y="20" width="22" height="22" rx="4" fill="#f3c98b"/><rect x="48" y="58" width="20" height="20" rx="4" fill="#7c3a1d"/><circle cx="58" cy="68" r="5" fill="rgba(0,0,0,.45)"/><circle cx="100" cy="68" r="13" fill="#f3c98b" stroke="#67e8f9" stroke-width="3"/><circle cx="100" cy="68" r="5" fill="rgba(0,0,0,.45)"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Кватро</h3>
+            <p>Четыре фигуры с общим признаком — но фигуру для хода выбирает соперник.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="quarto-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/ugolki/index.html" data-online="1" data-cat="board" style="--g1:#a16207;--g2:#422006">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="40" y="10" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="50" y="10" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="60" y="10" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="70" y="10" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="80" y="10" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="90" y="10" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="100" y="10" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="110" y="10" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="40" y="20" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="50" y="20" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="60" y="20" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="70" y="20" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="80" y="20" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="90" y="20" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="100" y="20" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="110" y="20" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="40" y="30" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="50" y="30" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="60" y="30" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="70" y="30" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="80" y="30" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="90" y="30" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="100" y="30" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="110" y="30" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="40" y="40" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="50" y="40" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="60" y="40" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="70" y="40" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="80" y="40" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="90" y="40" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="100" y="40" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="110" y="40" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="40" y="50" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="50" y="50" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="60" y="50" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="70" y="50" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="80" y="50" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="90" y="50" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="100" y="50" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="110" y="50" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="40" y="60" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="50" y="60" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="60" y="60" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="70" y="60" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="80" y="60" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="90" y="60" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="100" y="60" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="110" y="60" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="40" y="70" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="50" y="70" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="60" y="70" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="70" y="70" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="80" y="70" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="90" y="70" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="100" y="70" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="110" y="70" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="40" y="80" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="50" y="80" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="60" y="80" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="70" y="80" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="80" y="80" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="90" y="80" width="10" height="10" fill="rgba(255,255,255,.4)"/><rect x="100" y="80" width="10" height="10" fill="rgba(0,0,0,.15)"/><rect x="110" y="80" width="10" height="10" fill="rgba(255,255,255,.4)"/><circle cx="45" cy="85" r="4" fill="#fff"/><circle cx="55" cy="85" r="4" fill="#fff"/><circle cx="65" cy="85" r="4" fill="#fff"/><circle cx="45" cy="75" r="4" fill="#fff"/><circle cx="55" cy="75" r="4" fill="#fff"/><circle cx="65" cy="75" r="4" fill="#fff"/><circle cx="45" cy="65" r="4" fill="#fff"/><circle cx="55" cy="65" r="4" fill="#fff"/><circle cx="65" cy="65" r="4" fill="#fff"/><circle cx="115" cy="15" r="4" fill="#1e1b4b"/><circle cx="105" cy="15" r="4" fill="#1e1b4b"/><circle cx="95" cy="15" r="4" fill="#1e1b4b"/><circle cx="115" cy="25" r="4" fill="#1e1b4b"/><circle cx="105" cy="25" r="4" fill="#1e1b4b"/><circle cx="95" cy="25" r="4" fill="#1e1b4b"/><circle cx="115" cy="35" r="4" fill="#1e1b4b"/><circle cx="105" cy="35" r="4" fill="#1e1b4b"/><circle cx="95" cy="35" r="4" fill="#1e1b4b"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Уголки</h3>
+            <p>Переведите шашки в чужой угол быстрее соперника — шагами и прыжками.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="ugolki-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/mill/index.html" data-online="1" data-cat="board" style="--g1:#b45309;--g2:#451a03">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g stroke="rgba(255,255,255,.45)" stroke-width="3"><rect x="38" y="8" width="84" height="84"/><rect x="52" y="22" width="56" height="56"/><rect x="66" y="36" width="28" height="28"/><path d="M80 8 V36 M80 64 V92 M38 50 H66 M94 50 H122"/></g><g fill="#fff"><circle cx="38" cy="8" r="6"/><circle cx="80" cy="8" r="6"/><circle cx="122" cy="8" r="6"/></g><g fill="#1e1b4b"><circle cx="52" cy="78" r="6"/><circle cx="94" cy="64" r="6"/><circle cx="108" cy="50" r="6"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Мельница</h3>
+            <p>Стройте три фишки в ряд и снимайте фишки соперника.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="mill-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/mancala/index.html" data-online="1" data-cat="board" style="--g1:#92400e;--g2:#3f1d0a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="12" y="22" width="136" height="56" rx="28" fill="rgba(0,0,0,.25)"/><rect x="18" y="30" width="16" height="40" rx="8" fill="rgba(0,0,0,.3)"/><rect x="126" y="30" width="16" height="40" rx="8" fill="rgba(0,0,0,.3)"/><circle cx="44" cy="38" r="7" fill="rgba(0,0,0,.3)"/><circle cx="41" cy="37" r="2.2" fill="#fde68a"/><circle cx="44" cy="62" r="7" fill="rgba(0,0,0,.3)"/><circle cx="41" cy="61" r="2.2" fill="#fb7185"/><circle cx="44" cy="63" r="2.2" fill="#67e8f9"/><circle cx="59" cy="38" r="7" fill="rgba(0,0,0,.3)"/><circle cx="56" cy="37" r="2.2" fill="#fb7185"/><circle cx="59" cy="39" r="2.2" fill="#67e8f9"/><circle cx="59" cy="62" r="7" fill="rgba(0,0,0,.3)"/><circle cx="56" cy="61" r="2.2" fill="#67e8f9"/><circle cx="59" cy="63" r="2.2" fill="#a7f3d0"/><circle cx="62" cy="61" r="2.2" fill="#fde68a"/><circle cx="74" cy="38" r="7" fill="rgba(0,0,0,.3)"/><circle cx="71" cy="37" r="2.2" fill="#67e8f9"/><circle cx="74" cy="39" r="2.2" fill="#a7f3d0"/><circle cx="77" cy="37" r="2.2" fill="#fde68a"/><circle cx="74" cy="62" r="7" fill="rgba(0,0,0,.3)"/><circle cx="71" cy="61" r="2.2" fill="#a7f3d0"/><circle cx="89" cy="38" r="7" fill="rgba(0,0,0,.3)"/><circle cx="86" cy="37" r="2.2" fill="#a7f3d0"/><circle cx="89" cy="62" r="7" fill="rgba(0,0,0,.3)"/><circle cx="86" cy="61" r="2.2" fill="#fde68a"/><circle cx="89" cy="63" r="2.2" fill="#fb7185"/><circle cx="104" cy="38" r="7" fill="rgba(0,0,0,.3)"/><circle cx="101" cy="37" r="2.2" fill="#fde68a"/><circle cx="104" cy="39" r="2.2" fill="#fb7185"/><circle cx="104" cy="62" r="7" fill="rgba(0,0,0,.3)"/><circle cx="101" cy="61" r="2.2" fill="#fb7185"/><circle cx="104" cy="63" r="2.2" fill="#67e8f9"/><circle cx="107" cy="61" r="2.2" fill="#a7f3d0"/><circle cx="119" cy="38" r="7" fill="rgba(0,0,0,.3)"/><circle cx="116" cy="37" r="2.2" fill="#fb7185"/><circle cx="119" cy="39" r="2.2" fill="#67e8f9"/><circle cx="122" cy="37" r="2.2" fill="#a7f3d0"/><circle cx="119" cy="62" r="7" fill="rgba(0,0,0,.3)"/><circle cx="116" cy="61" r="2.2" fill="#67e8f9"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Манкала</h3>
+            <p>Древняя игра с камнями и лунками: соберите в амбар больше камней.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="mancala-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/hex/index.html" data-online="1" data-cat="board" style="--g1:#1d4ed8;--g2:#7f1d1d">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <polygon points="45.4,13.8 45.4,22.2 38.0,26.5 30.6,22.2 30.6,13.8 38.0,9.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="61.4,13.8 61.4,22.2 54.0,26.5 46.6,22.2 46.6,13.8 54.0,9.5" fill="#ef4444" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="77.4,13.8 77.4,22.2 70.0,26.5 62.6,22.2 62.6,13.8 70.0,9.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="93.4,13.8 93.4,22.2 86.0,26.5 78.6,22.2 78.6,13.8 86.0,9.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="109.4,13.8 109.4,22.2 102.0,26.5 94.6,22.2 94.6,13.8 102.0,9.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="53.4,27.8 53.4,36.2 46.0,40.5 38.6,36.2 38.6,27.8 46.0,23.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="69.4,27.8 69.4,36.2 62.0,40.5 54.6,36.2 54.6,27.8 62.0,23.5" fill="#ef4444" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="85.4,27.8 85.4,36.2 78.0,40.5 70.6,36.2 70.6,27.8 78.0,23.5" fill="#3b82f6" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="101.4,27.8 101.4,36.2 94.0,40.5 86.6,36.2 86.6,27.8 94.0,23.5" fill="#3b82f6" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="117.4,27.8 117.4,36.2 110.0,40.5 102.6,36.2 102.6,27.8 110.0,23.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="61.4,41.8 61.4,50.2 54.0,54.5 46.6,50.2 46.6,41.8 54.0,37.5" fill="#ef4444" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="77.4,41.8 77.4,50.2 70.0,54.5 62.6,50.2 62.6,41.8 70.0,37.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="93.4,41.8 93.4,50.2 86.0,54.5 78.6,50.2 78.6,41.8 86.0,37.5" fill="#3b82f6" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="109.4,41.8 109.4,50.2 102.0,54.5 94.6,50.2 94.6,41.8 102.0,37.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="125.4,41.8 125.4,50.2 118.0,54.5 110.6,50.2 110.6,41.8 118.0,37.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="69.4,55.8 69.4,64.2 62.0,68.5 54.6,64.2 54.6,55.8 62.0,51.5" fill="#ef4444" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="85.4,55.8 85.4,64.2 78.0,68.5 70.6,64.2 70.6,55.8 78.0,51.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="101.4,55.8 101.4,64.2 94.0,68.5 86.6,64.2 86.6,55.8 94.0,51.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="117.4,55.8 117.4,64.2 110.0,68.5 102.6,64.2 102.6,55.8 110.0,51.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/><polygon points="133.4,55.8 133.4,64.2 126.0,68.5 118.6,64.2 118.6,55.8 126.0,51.5" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Гекс</h3>
+            <p>Соедините свои края поля непрерывной цепочкой шестиугольников.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="hex-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/go/index.html" data-online="1" data-cat="board" style="--g1:#ca8a04;--g2:#713f12">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="36" y="6" width="88" height="88" rx="6" fill="rgba(255,255,255,.2)"/><g stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M44 14 V86 M44 14 H116"/><path d="M53 14 V86 M44 23 H116"/><path d="M62 14 V86 M44 32 H116"/><path d="M71 14 V86 M44 41 H116"/><path d="M80 14 V86 M44 50 H116"/><path d="M89 14 V86 M44 59 H116"/><path d="M98 14 V86 M44 68 H116"/><path d="M107 14 V86 M44 77 H116"/><path d="M116 14 V86 M44 86 H116"/></g><circle cx="71" cy="41" r="4.3" fill="#111"/><circle cx="80" cy="41" r="4.3" fill="#fff"/><circle cx="80" cy="50" r="4.3" fill="#111"/><circle cx="89" cy="50" r="4.3" fill="#fff"/><circle cx="71" cy="59" r="4.3" fill="#111"/><circle cx="89" cy="59" r="4.3" fill="#fff"/><circle cx="80" cy="59" r="4.3" fill="#111"/><circle cx="98" cy="41" r="4.3" fill="#fff"/><circle cx="62" cy="50" r="4.3" fill="#111"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Го 9×9</h3>
+            <p>Окружайте территорию и захватывайте камни на малой доске.</p>
+            <div class="card-meta"><span class="tag">Настольная</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="go-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/erudit/index.html" data-online="1" data-cat="board" style="--g1:#15803d;--g2:#14532d">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="18" y="34" width="19" height="22" rx="3" fill="#fff4d6"/><text x="27.5" y="51" font-size="14" font-weight="800" text-anchor="middle" fill="#2b2012" font-family="system-ui,sans-serif">Э</text><rect x="39" y="34" width="19" height="22" rx="3" fill="#fff4d6"/><text x="48.5" y="51" font-size="14" font-weight="800" text-anchor="middle" fill="#2b2012" font-family="system-ui,sans-serif">Р</text><rect x="60" y="34" width="19" height="22" rx="3" fill="#fff4d6"/><text x="69.5" y="51" font-size="14" font-weight="800" text-anchor="middle" fill="#2b2012" font-family="system-ui,sans-serif">У</text><rect x="81" y="34" width="19" height="22" rx="3" fill="#fff4d6"/><text x="90.5" y="51" font-size="14" font-weight="800" text-anchor="middle" fill="#2b2012" font-family="system-ui,sans-serif">Д</text><rect x="102" y="34" width="19" height="22" rx="3" fill="#fff4d6"/><text x="111.5" y="51" font-size="14" font-weight="800" text-anchor="middle" fill="#2b2012" font-family="system-ui,sans-serif">И</text><rect x="123" y="34" width="19" height="22" rx="3" fill="#fff4d6"/><text x="132.5" y="51" font-size="14" font-weight="800" text-anchor="middle" fill="#2b2012" font-family="system-ui,sans-serif">Т</text><rect x="18" y="62" width="19" height="22" rx="3" fill="#e4574a"/><rect x="60" y="12" width="19" height="19" rx="3" fill="#3b82c4"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Эрудит</h3>
+            <p>Скрэббл для двоих на поле 15×15: слова, премиальные клетки и обмен фишек.</p>
+            <div class="card-meta"><span class="tag">Слова</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="erudit-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/wordduel/index.html" data-online="1" data-cat="puzzle" style="--g1:#16a34a;--g2:#1e3a8a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="24" y="14" width="8" height="16" rx="2" fill="#16a34a"/><rect x="33" y="14" width="8" height="16" rx="2" fill="#64748b"/><rect x="42" y="14" width="8" height="16" rx="2" fill="#d9a406"/><rect x="51" y="14" width="8" height="16" rx="2" fill="#16a34a"/><rect x="60" y="14" width="8" height="16" rx="2" fill="#64748b"/><rect x="24" y="32" width="8" height="16" rx="2" fill="#16a34a"/><rect x="33" y="32" width="8" height="16" rx="2" fill="#64748b"/><rect x="42" y="32" width="8" height="16" rx="2" fill="#d9a406"/><rect x="51" y="32" width="8" height="16" rx="2" fill="#16a34a"/><rect x="60" y="32" width="8" height="16" rx="2" fill="#64748b"/><rect x="24" y="50" width="8" height="16" rx="2" fill="#16a34a"/><rect x="33" y="50" width="8" height="16" rx="2" fill="#64748b"/><rect x="42" y="50" width="8" height="16" rx="2" fill="#d9a406"/><rect x="51" y="50" width="8" height="16" rx="2" fill="#16a34a"/><rect x="60" y="50" width="8" height="16" rx="2" fill="#64748b"/><rect x="24" y="68" width="8" height="16" rx="2" fill="#16a34a"/><rect x="33" y="68" width="8" height="16" rx="2" fill="#16a34a"/><rect x="42" y="68" width="8" height="16" rx="2" fill="#16a34a"/><rect x="51" y="68" width="8" height="16" rx="2" fill="#16a34a"/><rect x="60" y="68" width="8" height="16" rx="2" fill="#16a34a"/><rect x="92" y="14" width="8" height="16" rx="2" fill="#d9a406"/><rect x="101" y="14" width="8" height="16" rx="2" fill="#16a34a"/><rect x="110" y="14" width="8" height="16" rx="2" fill="#64748b"/><rect x="119" y="14" width="8" height="16" rx="2" fill="#d9a406"/><rect x="128" y="14" width="8" height="16" rx="2" fill="#16a34a"/><rect x="92" y="32" width="8" height="16" rx="2" fill="#d9a406"/><rect x="101" y="32" width="8" height="16" rx="2" fill="#16a34a"/><rect x="110" y="32" width="8" height="16" rx="2" fill="#64748b"/><rect x="119" y="32" width="8" height="16" rx="2" fill="#d9a406"/><rect x="128" y="32" width="8" height="16" rx="2" fill="#16a34a"/><rect x="92" y="50" width="8" height="16" rx="2" fill="#d9a406"/><rect x="101" y="50" width="8" height="16" rx="2" fill="#16a34a"/><rect x="110" y="50" width="8" height="16" rx="2" fill="#64748b"/><rect x="119" y="50" width="8" height="16" rx="2" fill="#d9a406"/><rect x="128" y="50" width="8" height="16" rx="2" fill="#16a34a"/><rect x="92" y="68" width="8" height="16" rx="2" fill="rgba(255,255,255,.25)"/><rect x="101" y="68" width="8" height="16" rx="2" fill="rgba(255,255,255,.25)"/><rect x="110" y="68" width="8" height="16" rx="2" fill="rgba(255,255,255,.25)"/><rect x="119" y="68" width="8" height="16" rx="2" fill="rgba(255,255,255,.25)"/><rect x="128" y="68" width="8" height="16" rx="2" fill="rgba(255,255,255,.25)"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Дуэль в Вордли</h3>
+            <p>Вы и соперник угадываете одно и то же слово — кто быстрее?</p>
+            <div class="card-meta"><span class="tag">Слова</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="wordduel-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/cities/index.html" data-online="1" data-cat="board" style="--g1:#2563eb;--g2:#312e81">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <path d="M30 72 C 50 20, 80 90, 100 40 S 130 30, 136 22" stroke="rgba(255,255,255,.6)" stroke-width="3" stroke-dasharray="6 5"/><circle cx="30" cy="72" r="11" fill="#fff"/><text x="30" y="77" font-size="13" font-weight="800" text-anchor="middle" fill="#1e3a8a" font-family="system-ui,sans-serif">М</text><circle cx="100" cy="40" r="11" fill="#fff"/><text x="100" y="45" font-size="13" font-weight="800" text-anchor="middle" fill="#1e3a8a" font-family="system-ui,sans-serif">К</text><circle cx="136" cy="22" r="11" fill="#fff"/><text x="136" y="27" font-size="13" font-weight="800" text-anchor="middle" fill="#1e3a8a" font-family="system-ui,sans-serif">А</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Города</h3>
+            <p>Назовите город на последнюю букву предыдущего — 1900 городов в словаре.</p>
+            <div class="card-meta"><span class="tag">Слова</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="cities-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/crocodile/index.html" data-online="1" data-cat="board" style="--g1:#10b981;--g2:#065f46">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="28" y="12" width="104" height="76" rx="8" fill="#fff"/><path d="M44 66 C 52 40, 70 40, 76 58 S 100 72, 112 36" stroke="#22c55e" stroke-width="5"/><circle cx="104" cy="50" r="3" fill="#111"/><path d="M110 76 l14 -14 l6 6 l-14 14 z" fill="#f59e0b"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Крокодил-рисовалка</h3>
+            <p>Один рисует слово, другой угадывает — компанией или по сети.</p>
+            <div class="card-meta"><span class="tag">Для компании</span><span class="tag tag-online">🌐 По сети</span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/thousand/index.html" data-online="1" data-cat="board" style="--g1:#b91c1c;--g2:#450a0a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g transform="rotate(-18 60 70)"><rect x="46" y="30" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="60" y="56" font-size="14" font-weight="800" text-anchor="middle" fill="#dc2626" font-family="system-ui,sans-serif">К♥</text></g><g transform="rotate(0 80 66)"><rect x="66" y="26" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="80" y="52" font-size="14" font-weight="800" text-anchor="middle" fill="#dc2626" font-family="system-ui,sans-serif">Д♥</text></g><g transform="rotate(18 100 70)"><rect x="86" y="30" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="100" y="56" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">Т♠</text></g><text x="80" y="92" font-size="14" font-weight="900" text-anchor="middle" fill="#fde68a" font-family="system-ui,sans-serif">1000</text>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Тысяча</h3>
+            <p>Торговля, прикуп и марьяжи: наберите 1000 очков первым.</p>
+            <div class="card-meta"><span class="tag">Карты</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="thousand-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/seka/index.html" data-online="1" data-cat="board" style="--g1:#166534;--g2:#052e16">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g transform="rotate(-10 54 62)"><rect x="40" y="22" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="54" y="48" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">7♣</text></g><g transform="rotate(0 78 60)"><rect x="64" y="20" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="78" y="46" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">Т♣</text></g><g transform="rotate(10 102 62)"><rect x="88" y="22" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="102" y="48" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">К♣</text></g><ellipse cx="126" cy="80" rx="12" ry="4" fill="#f97316"/><ellipse cx="126" cy="75" rx="12" ry="4" fill="#fde047"/><ellipse cx="126" cy="70" rx="12" ry="4" fill="#f97316"/><ellipse cx="126" cy="65" rx="12" ry="4" fill="#fde047"/><ellipse cx="126" cy="60" rx="12" ry="4" fill="#f97316"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Сека</h3>
+            <p>Три карты, очки по масти и блеф: торгуйтесь фишками.</p>
+            <div class="card-meta"><span class="tag">Карты</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="seka-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/war/index.html" data-online="1" data-cat="board" style="--g1:#0f766e;--g2:#134e4a">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g transform="rotate(-6 44 50)"><rect x="30" y="30" width="28" height="40" rx="4" fill="#6d5dfc" stroke="#fff" stroke-width="2"/></g><g transform="rotate(-2 48 48)"><rect x="34" y="28" width="28" height="40" rx="4" fill="#6d5dfc" stroke="#fff" stroke-width="2"/></g><g transform="rotate(0 74 66)"><rect x="60" y="26" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="74" y="52" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">6♠</text></g><g transform="rotate(0 106 66)"><rect x="92" y="26" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="106" y="52" font-size="14" font-weight="800" text-anchor="middle" fill="#dc2626" font-family="system-ui,sans-serif">Т♥</text></g><g transform="rotate(4 132 48)"><rect x="118" y="28" width="28" height="40" rx="4" fill="#6d5dfc" stroke="#fff" stroke-width="2"/></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Пьяница</h3>
+            <p>Простая карточная игра: старшая карта забирает обе.</p>
+            <div class="card-meta"><span class="tag">Карты</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="war-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/holdem/index.html" data-online="1" data-cat="board" style="--g1:#047857;--g2:#022c22">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g transform="rotate(0 36 70)"><rect x="22" y="30" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="36" y="56" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">Т♠</text></g><g transform="rotate(0 60 70)"><rect x="46" y="30" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="60" y="56" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">К♠</text></g><g transform="rotate(0 84 70)"><rect x="70" y="30" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="84" y="56" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">Д♠</text></g><g transform="rotate(0 108 70)"><rect x="94" y="30" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="108" y="56" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">В♠</text></g><g transform="rotate(0 132 70)"><rect x="118" y="30" width="28" height="40" rx="4" fill="#fff" stroke="rgba(0,0,0,.2)"/><text x="132" y="56" font-size="14" font-weight="800" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">10♠</text></g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Покер: холдем</h3>
+            <p>Техасский холдем один на один: блайнды, рейзы и ва-банк.</p>
+            <div class="card-meta"><span class="tag">Карты</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="holdem-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/tron/index.html" data-online="1" data-cat="arcade" style="--g1:#0e7490;--g2:#111827">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g stroke-width="4" fill="none"><path d="M20 80 H60 V30 H100 V60" stroke="#22d3ee"/><path d="M140 20 H120 V80 H90 V64" stroke="#ff5c93"/></g><rect x="96" y="56" width="8" height="8" fill="#fff"/><rect x="86" y="60" width="8" height="8" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Трон</h3>
+            <p>Световые мотоциклы: заприте соперника своим следом.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="tron-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/airhockey/index.html" data-online="1" data-cat="arcade" style="--g1:#0284c7;--g2:#831843">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <rect x="46" y="4" width="68" height="92" rx="10" fill="rgba(255,255,255,.2)" stroke="rgba(255,255,255,.5)" stroke-width="2"/><path d="M46 50 H114" stroke="rgba(255,255,255,.5)" stroke-width="2"/><circle cx="80" cy="50" r="12" stroke="rgba(255,255,255,.5)" stroke-width="2"/><rect x="66" y="4" width="28" height="3" fill="#ff5c93"/><rect x="66" y="93" width="28" height="3" fill="#22d3ee"/><circle cx="72" cy="78" r="9" fill="#22d3ee"/><circle cx="92" cy="22" r="9" fill="#ff5c93"/><circle cx="84" cy="40" r="5" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Аэрохоккей</h3>
+            <p>Отбивайте шайбу битой и забивайте в ворота соперника.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="airhockey-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/tankduel/index.html" data-online="1" data-cat="arcade" style="--g1:#4d7c0f;--g2:#1a2e05">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g fill="#d97745"><rect x="40" y="20" width="16" height="16"/><rect x="56" y="20" width="16" height="16"/><rect x="88" y="64" width="16" height="16"/><rect x="104" y="64" width="16" height="16"/><rect x="72" y="42" width="16" height="16"/></g><rect x="22" y="62" width="20" height="20" rx="3" fill="#22d3ee"/><rect x="30" y="50" width="4" height="14" fill="#fff"/><rect x="118" y="18" width="20" height="20" rx="3" fill="#ff5c93"/><rect x="126" y="36" width="4" height="14" fill="#fff"/><rect x="31" y="40" width="3" height="6" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Танчики вдвоём</h3>
+            <p>Танковая дуэль на поле с кирпичными и стальными стенами.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="tankduel-wins" data-best-label="Побед"></span></div>
+          </div>
+        </a>
+        <a class="game-card" href="games/bomber/index.html" data-online="1" data-cat="arcade" style="--g1:#15803d;--g2:#1e1b4b">
+          <div class="thumb">
+            <svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+              <g fill="rgba(255,255,255,.35)"><rect x="24" y="14" width="16" height="16" rx="2"/><rect x="48" y="14" width="16" height="16" rx="2"/><rect x="72" y="14" width="16" height="16" rx="2"/><rect x="96" y="14" width="16" height="16" rx="2"/><rect x="120" y="14" width="16" height="16" rx="2"/><rect x="24" y="38" width="16" height="16" rx="2"/><rect x="48" y="38" width="16" height="16" rx="2"/><rect x="72" y="38" width="16" height="16" rx="2"/><rect x="96" y="38" width="16" height="16" rx="2"/><rect x="120" y="38" width="16" height="16" rx="2"/><rect x="24" y="62" width="16" height="16" rx="2"/><rect x="48" y="62" width="16" height="16" rx="2"/><rect x="72" y="62" width="16" height="16" rx="2"/><rect x="96" y="62" width="16" height="16" rx="2"/><rect x="120" y="62" width="16" height="16" rx="2"/></g><circle cx="80" cy="52" r="12" fill="#1b1b24"/><rect x="86" y="36" width="4" height="8" fill="#f59e0b"/><g fill="#fbbf24"><rect x="96" y="46" width="24" height="12"/><rect x="40" y="46" width="24" height="12"/></g><circle cx="132" cy="80" r="8" fill="#ff5c93"/><circle cx="28" cy="80" r="8" fill="#22d3ee"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Бомбермен-дуэль</h3>
+            <p>Взрывайте кирпичи, собирайте усилители и подорвите соперника.</p>
+            <div class="card-meta"><span class="tag">Аркада</span><span class="tag tag-online">🌐 По сети</span><span class="best" data-best="bomber-wins" data-best-label="Побед"></span></div>
           </div>
         </a>
       </div>

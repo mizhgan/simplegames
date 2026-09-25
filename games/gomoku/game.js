@@ -163,6 +163,7 @@
   }
 
   function finish(winner) {
+    if (mode === 'net') net.result(!winner ? 'draw' : winner === mySide ? 'win' : 'lose');
     if (!winner) {
       statusEl.textContent = 'Ничья — доска заполнена.';
       SG.sound.play('draw');
@@ -250,6 +251,7 @@
 
   const net = SG.net.setup({
     game: 'gomoku',
+    onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

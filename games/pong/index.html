@@ -29,9 +29,6 @@
     <a class="back-link" href="../../index.html">← Все игры</a>
     <div class="game-head">
       <h1>Понг</h1>
-      <div class="stats">
-        <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0 : 0</span></div>
-      </div>
     </div>
 
     <div class="game-layout">
@@ -47,7 +44,7 @@
             <button type="button" data-value="hard">Сложно</button>
           </div>
         </div>
-        <div class="status-line" id="labels"></div>
+        <div class="status-line" id="status" aria-live="polite"></div>
         <div class="stage-wrap" style="max-width:720px">
           <canvas id="board" class="board-canvas" style="aspect-ratio:3/2" aria-label="Игровое поле"></canvas>
           <div class="overlay" id="overlay">
@@ -68,6 +65,7 @@
             <li>Угол отскока зависит от того, какой частью ракетки вы попали по мячу. После каждого удара мяч ускоряется.</li>
             <li>Против компьютера: ведите мышью или пальцем по полю, либо <kbd>W</kbd> <kbd>S</kbd> / <kbd>↑</kbd> <kbd>↓</kbd>.</li>
             <li>Вдвоём: левый игрок — <kbd>W</kbd> <kbd>S</kbd>, правый — <kbd>↑</kbd> <kbd>↓</kbd>. На планшете каждый водит пальцем по своей половине поля.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Хозяин игры — левая ракетка, гость — правая.</li>
           </ul>
         </div>
       </aside>
@@ -83,6 +81,8 @@
 
   <script src="../../sg/js/common.js"></script>
   <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/rt.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

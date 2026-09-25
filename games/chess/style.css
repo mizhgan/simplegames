@@ -1,0 +1,175 @@
+.ch-wrap {
+  position: relative;
+  width: min(100%, 560px);
+}
+
+.ch-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
+
+.ch-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.ch-cell.light {
+  background: #eedcb4;
+}
+
+.ch-cell.dark {
+  background: #b58863;
+}
+
+.ch-cell.last::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 214, 10, 0.38);
+}
+
+.ch-cell.sel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(99, 102, 241, 0.5);
+}
+
+.ch-cell.check::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.95) 20%, rgba(239, 68, 68, 0) 75%);
+}
+
+.ch-cell.target::after {
+  content: "";
+  position: absolute;
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background: rgba(30, 30, 60, 0.35);
+}
+
+.ch-cell.target-cap::after {
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border: 5px solid rgba(30, 30, 60, 0.35);
+  border-radius: 50%;
+}
+
+.ch-piece {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(1.6rem, 8.5vw, 3.2rem);
+  line-height: 1;
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols2", "DejaVu Sans", serif;
+}
+
+.ch-piece.white {
+  color: #fff;
+  text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 2px #000, 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.ch-piece.black {
+  color: #1b1b24;
+  text-shadow: 0 0 1px #fff8, 0 2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.ch-cell i {
+  position: absolute;
+  z-index: 1;
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.ch-cell.light i {
+  color: #b58863;
+}
+
+.ch-cell.dark i {
+  color: #eedcb4;
+}
+
+.ch-cell .rk {
+  top: 2px;
+  left: 3px;
+}
+
+.ch-cell .fl {
+  right: 3px;
+  bottom: 1px;
+}
+
+.ch-promo {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  transform: translate(-50%, -50%);
+}
+
+.ch-promo[hidden] {
+  display: none;
+}
+
+.ch-promo button {
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 10px;
+  background: #b58863;
+  cursor: pointer;
+}
+
+.ch-promo .ch-piece {
+  font-size: 2.4rem;
+}
+
+.ch-moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  width: min(100%, 560px);
+  max-height: 96px;
+  margin: 0;
+  padding: 10px 14px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 0.9rem;
+  list-style: none;
+}
+
+.ch-moves b {
+  color: var(--muted);
+}
+
+.ch-moves .empty {
+  color: var(--muted);
+}

@@ -1,0 +1,72 @@
+.wq-wrap {
+  position: relative;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.wq-wrap .wd-wrap {
+  flex: 0 1 330px;
+}
+
+.wq-opp {
+  flex: 0 0 auto;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.wq-opp p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.wq-opp .wd-board {
+  width: 120px;
+  gap: 4px;
+}
+
+.wq-opp .wd-row {
+  gap: 4px;
+}
+
+.wd-tile.mini {
+  border-width: 1px;
+  border-radius: 4px;
+  font-size: 0;
+}
+
+.wq-time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .wq-wrap {
+    gap: 8px;
+  }
+
+  .wq-wrap .wd-wrap {
+    min-width: 0;
+  }
+
+  .wq-opp {
+    padding: 6px;
+  }
+
+  .wq-opp .wd-board {
+    width: 78px;
+    gap: 3px;
+  }
+
+  .wq-opp .wd-row {
+    gap: 3px;
+  }
+}

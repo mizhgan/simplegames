@@ -211,6 +211,7 @@
     const b = count(board, BLACK);
     const w = count(board, WHITE);
     let text;
+    if (mode === 'net') net.result(b === w ? 'draw' : (b > w ? BLACK : WHITE) === mySide ? 'win' : 'lose');
     if (b === w) {
       text = 'Ничья ' + b + ':' + w + ' 🤝';
       SG.sound.play('draw');
@@ -277,6 +278,7 @@
 
   const net = SG.net.setup({
     game: 'reversi',
+    onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

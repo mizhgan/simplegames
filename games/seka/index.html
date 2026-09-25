@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Сека — SimpleGames</title>
+  <meta name="description" content="Сека — карточная игра на очки и блеф для двоих: три карты, торговля фишками, свара. Против компьютера или с другом по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/cards.css">
+  <link rel="stylesheet" href="../../sg/css/cardtable.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Сека</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label" id="label-0">Вы · Первый</span><span class="stat-value" id="score-0">0</span></div>
+        <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
+        <div class="stat"><span class="stat-label" id="label-1">Компьютер · Второй</span><span class="stat-value" id="score-1">0</span></div>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+
+        <div class="stage-wrap"><div class="tb">
+          <div class="tb-label" id="label-opp"><span id="opp-name">Компьютер</span><span class="sk-points" id="opp-points"></span><span class="chips" id="opp-chips"></span></div>
+          <div class="tb-hand" id="opp-hand"></div>
+          <div class="tb-center"><div class="tb-pot" id="pot"></div><div class="tb-msg" id="msg"></div></div>
+          <div class="tb-hand mine" id="my-hand"></div>
+          <div class="tb-label" id="label-me"><span>Вы</span><span class="sk-points" id="my-points"></span><span class="chips" id="my-chips"></span></div>
+          <div class="tb-actions" id="actions"></div>
+        </div></div>
+
+        <div class="game-controls">
+          <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Колода 36 карт. У каждого 100 фишек; в начале раздачи оба ставят по две фишки, каждому сдаётся три карты.</li>
+            <li>Очки: сумма карт одной масти (туз — 11, картинки и десятка — 10, остальные — по номиналу). Два туза — 22, три одинаковые карты — их сумма, три шестёрки — 34, три туза — 37.</li>
+            <li>Семёрка треф («шаха») заменяет любую карту: считается тузом нужной масти или дополняет пару до тройки.</li>
+            <li>Торговля: поднимайте ставку, «не повышайте» или спасуйте. Кто уравнял ставку, вскрывается — у кого больше очков, тот забирает банк.</li>
+            <li>Очков поровну — «свара»: банк переходит в следующую раздачу. Проигрывает тот, у кого кончились фишки.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/cards.js"></script>
+  <script src="../../sg/js/duel.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

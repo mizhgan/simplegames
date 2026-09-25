@@ -1,0 +1,37 @@
+.wr-side {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+}
+
+.wr-pile {
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: calc(var(--cw) * 0.1);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25), 6px 6px 0 rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.wr-table {
+  display: flex;
+  min-width: var(--cw);
+  min-height: var(--ch);
+}
+
+.wr-table .sol-card + .sol-card {
+  margin-left: calc(var(--cw) * -0.55);
+}
+
+.wr-table .sol-card.win .sol-face {
+  box-shadow: 0 0 0 3px #fde047;
+}
+
+.tb .sol-card.playable {
+  cursor: pointer;
+  filter: drop-shadow(0 0 6px #fde047);
+}
+
+.wr-auto.active {
+  border-color: var(--warning);
+}

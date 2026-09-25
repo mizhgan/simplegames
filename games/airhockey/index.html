@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Аэрохоккей — SimpleGames</title>
+  <meta name="description" content="Аэрохоккей онлайн: отбивайте шайбу битой и забивайте в ворота соперника. Против компьютера, вдвоём на одном экране или по сети.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Аэрохоккей</h1>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+            <button type="button" data-value="pvp">Вдвоём</button>
+          </div>
+          <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+            <button type="button" data-value="easy">Легко</button>
+            <button type="button" data-value="normal">Средне</button>
+            <button type="button" data-value="hard">Сложно</button>
+          </div>
+        </div>
+        <div class="status-line" id="status" aria-live="polite"></div>
+        <div class="stage-wrap" style="max-width:min(420px, 58vh)">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:2/3" aria-label="Игровое поле"></canvas>
+          <div class="overlay" id="overlay">
+            <h2 id="overlay-title">Аэрохоккей</h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Водите своей битой мышью или пальцем по своей половине поля и забивайте шайбу в ворота соперника. Игра до 7 голов.</li>
+            <li>Чем быстрее движется бита в момент удара, тем сильнее летит шайба. Шайба отскакивает от бортов.</li>
+            <li>Вдвоём на одном экране: нижний игрок — <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> или палец на нижней половине, верхний — стрелки или палец на верхней половине.</li>
+            <li>По сети у каждого своя бита внизу экрана.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Игру ведёт хозяин, гость управляет своим героем с любыми клавишами или джойстиком на экране.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/rt.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
