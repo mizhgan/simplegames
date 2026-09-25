@@ -1,0 +1,9 @@
+.rt-pads .rt-dpad {
+  display: none;
+}
+
+.rt-pads .rt-fire {
+  width: 120px;
+  height: 120px;
+  font-size: 1.2rem;
+}
