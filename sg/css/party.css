@@ -358,3 +358,15 @@
   justify-content: center;
   font-size: 0.9rem;
 }
+
+.pt-panel .pt-seat {
+  background: var(--bg);
+}
+
+.pt-panel .pt-seat.turn {
+  border-color: var(--accent);
+}
+
+.pt-panel .pt-seat.me {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
