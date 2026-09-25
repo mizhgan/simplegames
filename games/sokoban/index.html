@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Сокобан</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Уровень</span><span class="stat-value" id="level">1/32</span></div>
         <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
@@ -66,9 +67,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Вы — кладовщик. Задача — расставить все ящики на отмеченные кружками места.</li>
             <li>Ящики можно только <b>толкать</b>, и только по одному. Тянуть ящик нельзя — не загоняйте его в угол.</li>
@@ -76,7 +77,7 @@
             <li><kbd>Z</kbd> — отменить ход, <kbd>R</kbd> — начать уровень заново.</li>
             <li>Все 32 уровня проверены компьютером: у каждого есть решение. После прохождения видно минимально возможное число толчков.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

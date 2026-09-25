@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Змейка</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
@@ -65,16 +66,16 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Управляйте змейкой стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>.</li>
             <li>На телефоне — свайпами по полю или кнопками под ним.</li>
             <li>Каждое яблоко — +1 очко, а змейка становится длиннее и быстрее.</li>
             <li><kbd>Пробел</kbd> или <kbd>P</kbd> — пауза.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

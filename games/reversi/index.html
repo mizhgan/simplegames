@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Реверси</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat stat-b"><span class="stat-label" id="label-b">Вы · чёрные</span><span class="stat-value" id="score-b">2</span></div>
         <div class="stat stat-wh"><span class="stat-label" id="label-w">Компьютер</span><span class="stat-value" id="score-w">2</span></div>
@@ -59,9 +60,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Ставьте фишку так, чтобы между ней и другой вашей фишкой оказался непрерывный ряд фишек соперника — они перевернутся и станут вашими.</li>
             <li>Ряд может идти по горизонтали, вертикали или диагонали; переворачиваются все захваченные ряды сразу.</li>
@@ -70,7 +71,7 @@
             <li>Совет: углы нельзя перевернуть — это самые ценные клетки. Клетки рядом с углами отдавать опасно.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

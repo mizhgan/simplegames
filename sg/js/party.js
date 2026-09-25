@@ -83,6 +83,8 @@
     const watchBox = $('.pt-watchbox');
 
     const myName = () => SG.store.get('party-name', '') || '';
+    // первая буква имени для аватарки (эмодзи и символы вне алфавита — как есть)
+    const avatarLetter = (name) => (Array.from(String(name).trim())[0] || '?').toUpperCase();
     const myPid = () => U().profile.id();
     const cleanPid = (x) => (/^[a-z0-9]{12}$/.test(String(x)) ? String(x) : '');
     const gameTitle = () => (document.querySelector('.game-head h1') || {}).textContent || document.title.split(' — ')[0];
@@ -110,15 +112,15 @@
       const botsBtn = cfg.bots ? '<button class="btn btn-ghost" type="button" data-solo>🤖 Играть с ботами</button>' : '';
       const localBtn = cfg.local ? `<button class="btn btn-ghost" type="button" data-local>${esc(cfg.local.label)}</button>` : '';
       setupEl.innerHTML =
+        `<div class="pt-hero"><span class="pt-hero-ico" aria-hidden="true">👥</span><div><h2>Играть компанией</h2><p>${cfg.min === cfg.max ? cfg.min : 'От ' + cfg.min + ' до ' + cfg.max} игроков · каждый на своём устройстве</p></div></div>` +
         '<label class="pt-name"><span>Ваше имя</span><input type="text" maxlength="16" autocomplete="nickname" placeholder="Например, Аня"></label>' +
         '<div class="pt-start"><button class="btn btn-primary" type="button" data-host>🌐 Создать комнату</button>' +
         botsBtn +
         localBtn +
         '</div>' +
         '<details class="net-join"><summary>У меня есть код от друга</summary><div class="net-link"><input type="text" maxlength="8" autocomplete="off" placeholder="Код комнаты" aria-label="Код комнаты" data-code><button class="btn btn-primary" type="button" data-join>Войти</button></div></details>' +
-        `<p class="pt-note">Играют от ${cfg.min} до ${cfg.max} человек. Создайте комнату и отправьте друзьям ссылку — каждый играет на своём телефоне или компьютере.` +
-        (cfg.bots ? ' Не хватает людей — добавьте ботов.' : '') +
-        '</p>';
+        '<ol class="pt-steps"><li>Создайте комнату</li><li>Отправьте друзьям ссылку</li><li>Начните, когда все соберутся</li></ol>' +
+        (cfg.bots ? '<p class="pt-note">Не хватает людей — добавьте ботов.</p>' : '');
       const nameIn = setupEl.querySelector('.pt-name input');
       nameIn.value = myName();
       const takeName = () => {
@@ -166,7 +168,12 @@
       if (role === 'solo') html += '<p class="pt-note">Игра с ботами на этом устройстве.</p>';
       html += `<h3 class="pt-h">Игроки · ${players.length} из ${cfg.max}</h3><ul class="pt-players">`;
       html += players
-        .map((p) => `<li class="${p.id === myId ? 'me' : ''}${p.on === false ? ' off' : ''}"><span>${p.bot ? '🤖' : p.id === 0 ? '👑' : '🙂'} ${esc(p.name)}${p.id === myId ? ' (вы)' : ''}</span>` + (isHost && p.id !== myId ? `<button type="button" class="pt-kick" data-kick="${p.id}" aria-label="Убрать">✕</button>` : '') + '</li>')
+        .map(
+          (p, i) =>
+            `<li class="${p.id === myId ? 'me' : ''}${p.on === false ? ' off' : ''}"><span class="pt-ava" style="--c:var(--p${(i % 8) + 1})" aria-hidden="true">${p.bot ? '🤖' : esc(avatarLetter(p.name))}${p.id === 0 ? '<i title="Хозяин комнаты">👑</i>' : ''}</span><span class="pt-pname">${esc(p.name)}${p.id === myId ? ' <small>(вы)</small>' : ''}</span>` +
+            (isHost && p.id !== myId ? `<button type="button" class="pt-kick" data-kick="${p.id}" aria-label="Убрать">✕</button>` : '') +
+            '</li>'
+        )
         .join('');
       html += '</ul>';
       if (cfg.options) html += '<div class="pt-options"></div>';

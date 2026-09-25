@@ -19,8 +19,8 @@
   gap: 12px;
   align-items: stretch;
   width: 100%;
-  max-width: 520px;
-  padding: 18px;
+  max-width: 560px;
+  padding: var(--sp-5);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -76,9 +76,9 @@
 }
 
 .pt-players {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--sp-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -86,14 +86,119 @@
 
 .pt-players li {
   display: flex;
-  gap: 4px;
+  gap: var(--sp-2);
   align-items: center;
-  padding: 5px 6px 5px 12px;
+  min-width: 0;
+  padding: 6px 6px 6px 6px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   background: var(--bg);
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+.pt-pname {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pt-pname small {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* аватарка: первая буква имени на цвете игрока */
+.pt-ava {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--c, var(--accent));
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.pt-ava i {
+  position: absolute;
+  top: -9px;
+  right: -7px;
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+/* стартовый экран */
+.pt-hero {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+}
+
+.pt-hero-ico {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  font-size: 1.6rem;
+}
+
+.pt-hero h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+.pt-hero p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.pt-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+  margin: var(--sp-1) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.pt-steps li {
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+  counter-increment: step;
+}
+
+.pt-steps li::before {
+  content: counter(step);
+  display: block;
+  margin-bottom: 2px;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+@media (max-width: 480px) {
+  .pt-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .pt-steps li::before {
+    display: inline;
+    margin-right: var(--sp-2);
+  }
 }
 
 .pt-players li.me {

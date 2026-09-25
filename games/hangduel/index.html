@@ -28,9 +28,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Виселица вдвоём</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Вы</span><span class="stat-value" id="score-me">0</span></div>
         <div class="stat"><span class="stat-label" id="label-opp">Компьютер</span><span class="stat-value" id="score-opp">0</span></div>
@@ -72,9 +73,9 @@
         <div class="game-controls"><button class="btn btn-primary" type="button" id="new-btn">Новая партия</button></div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Каждый загадывает существительное (4–12 букв) для соперника, а потом оба одновременно отгадывают слова друг друга по буквам.</li>
             <li>Каждая неверная буква дорисовывает виселицу; на седьмой ошибке вы повешены.</li>
@@ -82,7 +83,7 @@
             <li>Справа видно, какие буквы вашего слова уже открыл соперник.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Ваше слово остаётся только у вас: соперник узнаёт лишь, есть ли в нём названная буква. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

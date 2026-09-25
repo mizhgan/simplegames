@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Тетрис-баттл</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -57,9 +58,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>У каждого свой стакан и свои фигуры. Собирайте полные линии — они сгорают.</li>
             <li>Сожгли 2 линии сразу — сопернику снизу прилетает 1 линия мусора, 3 линии — 2, тетрис (4) — 4. Свои сожжённые линии сначала гасят входящий мусор (красная полоска).</li>
@@ -67,7 +68,7 @@
             <li>Против компьютера: ← → — сдвиг, ↑ — поворот, ↓ — ускорить, пробел — сбросить (или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>). Вдвоём: левый — <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> и пробел, правый — стрелки и <kbd>Enter</kbd>.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Игру ведёт хозяин, гость управляет своим героем с любыми клавишами или джойстиком на экране. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

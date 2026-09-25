@@ -29,9 +29,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Тысяча</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label" id="label-0">Вы · Первый</span><span class="stat-value" id="score-0">0</span></div>
         <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
@@ -68,9 +69,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Колода 24 карты (от девятки до туза). Каждому сдаётся по 10 карт, 4 карты уходят в прикуп. Старшинство: 9, валет, дама, король, 10, туз. Очки: туз 11, десятка 10, король 4, дама 3, валет 2.</li>
             <li><b>Торговля:</b> игроки по очереди называют, сколько очков наберут (от 100, шагом 10). Больше 120 можно заказать, только имея марьяж. Кто назвал больше, забирает прикуп и сносит 4 любые карты.</li>
@@ -79,7 +80,7 @@
             <li>Заказавший набрал заказ — получает его, не набрал — теряет. Соперник записывает свои очки (округлённые до 5). Побеждает тот, кто первым наберёт 1000.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

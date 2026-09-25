@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Морской бой</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Выстрелы</span><span class="stat-value" id="shots">0</span></div>
         <div class="stat"><span class="stat-label">Точность</span><span class="stat-value" id="accuracy">—</span></div>
@@ -74,9 +75,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>У каждого флот из 10 кораблей: один четырёхпалубный, два трёхпалубных, три двухпалубных и четыре однопалубных. Корабли не касаются друг друга даже углами.</li>
             <li>Нажмите «Перемешать флот», чтобы выбрать расстановку, и «В бой!».</li>
@@ -86,7 +87,7 @@
             <li>На уровне «Сложно» компьютер стреляет по карте вероятностей и добивает раненые корабли.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

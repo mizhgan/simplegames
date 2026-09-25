@@ -30,9 +30,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Покер на компанию</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -40,9 +41,9 @@
         <div id="party"></div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>У каждого 1000 фишек. Каждому сдаётся по 2 карты, на стол по очереди выкладываются 5 общих: флоп (3), тёрн и ривер.</li>
             <li>Торговля: «Чек» — пропустить, «Колл» — уравнять ставку, «Рейз» — повысить, «Сбросить» — выйти из раздачи. На решение — 40 секунд, потом автоматически чек или пас.</li>
@@ -50,7 +51,7 @@
             <li>Блайнды растут каждые 10 раздач. Остался один с фишками — он выиграл турнир.</li>
             <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

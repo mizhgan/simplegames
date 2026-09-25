@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Маджонг</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Пар осталось</span><span class="stat-value" id="left">68</span></div>
         <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
@@ -58,9 +59,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Снимайте с поля пары одинаковых костей. Цель — убрать все 136 костей.</li>
             <li>Кость свободна, если на ней ничего не лежит и хотя бы один её край — левый или правый — открыт. Закрытые кости чуть темнее.</li>
@@ -68,7 +69,7 @@
             <li>Каждая раскладка решаема. Если зашли в тупик — отмените ходы или перемешайте оставшиеся кости.</li>
             <li>Масти: 萬 (символы), 筒 (круги), 條 (бамбук) от 1 до 9, ветры 東 南 西 北 и драконы 中 發 白.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

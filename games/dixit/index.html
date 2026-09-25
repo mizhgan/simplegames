@@ -28,9 +28,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Ассоциации</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -38,9 +39,9 @@
         <div id="party"></div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>У каждого 6 карточек — на каждой три эмодзи. Ведущий (по очереди) выбирает карту и придумывает к ней ассоциацию: слово, фразу, строчку песни.</li>
             <li>Остальные подкладывают из своих карт ту, что тоже подходит к ассоциации (втроём — по две карты). Все карты перемешиваются и выкладываются на стол.</li>
@@ -48,7 +49,7 @@
             <li>За каждый голос, отданный за вашу подложенную карту, — ещё 1 очко. Игра идёт до 15, 25 или 30 очков.</li>
             <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

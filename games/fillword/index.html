@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Филворд</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Найдено</span><span class="stat-value" id="found">0/0</span></div>
         <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
@@ -63,9 +64,9 @@
         <ul class="fw-words" id="words" aria-label="Слова"></ul>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Всё поле заполнено словами — существительными в начальной форме. Каждая буква принадлежит ровно одному слову.</li>
             <li>Слово может изгибаться под прямым углом, но буквы идут только по соседним клеткам — вверх, вниз, влево или вправо, без диагоналей.</li>
@@ -73,7 +74,7 @@
             <li>Внизу видно, сколько слов и какой они длины. Подсказка подсветит первые буквы одного из слов.</li>
             <li>Рекорд времени хранится для каждого размера поля.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

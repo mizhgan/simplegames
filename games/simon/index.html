@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Саймон</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Шагов</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
@@ -51,16 +52,16 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Кнопки загораются по очереди — запомните порядок и повторите его.</li>
             <li>Каждый раунд к последовательности добавляется ещё один шаг, а показ становится быстрее.</li>
             <li>Одна ошибка — и игра окончена. Рекорд — самая длинная повторённая цепочка.</li>
             <li>Клавиатура: <kbd>1</kbd>–<kbd>4</kbd> или <kbd>Q</kbd> <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd>. У каждой кнопки свой звук — включите звук в шапке, так запоминать легче.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

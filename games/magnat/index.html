@@ -28,9 +28,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Магнат</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -38,9 +39,9 @@
         <div id="party"></div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>У каждого 1500. Бросайте два кубика и ходите по кругу. За проход через Старт — +200.</li>
             <li>Свободную улицу, вокзал или аэропорт можно купить. Попали на чужую — платите аренду владельцу. Все три улицы одного цвета — аренда вдвое больше, и на них можно строить дома (до 4, равномерно): аренда растёт в разы.</li>
@@ -48,7 +49,7 @@
             <li>Не хватает денег — дома продаются за полцены, а если и этого мало — банкротство. Побеждает последний оставшийся или самый богатый, когда кончатся круги. На каждое действие — 40 секунд.</li>
             <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

@@ -28,9 +28,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Дурак</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Победы</span><span class="stat-value" id="wins">0</span></div>
         <div class="stat"><span class="stat-label">Поражения</span><span class="stat-value" id="losses">0</span></div>
@@ -61,9 +62,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Играют колодой 36 карт (от шестёрки до туза). Козырь — масть карты под колодой; козырь бьёт любую некозырную карту.</li>
             <li>Первым ходит тот, у кого младший козырь. Атакующий кладёт карту, защищающийся бьёт её старшей картой той же масти или козырем.</li>
@@ -73,7 +74,7 @@
             <li>Кликните по карте, чтобы сходить или отбиться. Подходящие карты приподняты. <kbd>Пробел</kbd> — «Бито»/«Беру».</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

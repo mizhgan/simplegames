@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Нарды</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Вы</span><span class="stat-value" id="score-me">0</span></div>
         <div class="stat"><span class="stat-label" id="label-ai">Компьютер</span><span class="stat-value" id="score-ai">0</span></div>
@@ -61,9 +62,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Вы играете белыми, компьютер (или соперник по сети) — чёрными. У каждого 15 шашек, в начале все стоят на «голове» (белые — справа внизу, чёрные — слева вверху).</li>
             <li>Обе стороны ходят против часовой стрелки: белые по нижнему ряду влево, затем по верхнему вправо. Цель — привести все шашки в свой «дом» (правая верхняя четверть) и выбросить их.</li>
@@ -73,7 +74,7 @@
             <li>Кликните по шашке, затем по подсвеченному пункту. Когда все шашки в доме, выбрасывайте их кликом по лотку справа от доски (⚪ ⇥). «Переходить» отменяет ходы в пределах броска. Победа с «марсом» (соперник ничего не выбросил) — 2 очка.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

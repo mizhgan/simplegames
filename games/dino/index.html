@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Динозаврик</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
@@ -54,9 +55,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Динозаврик бежит сам, скорость постепенно растёт.</li>
             <li><kbd>Пробел</kbd> или <kbd>↑</kbd> — прыжок. Чем дольше держите, тем выше прыжок.</li>
@@ -64,7 +65,7 @@
             <li>На телефоне: касание поля — прыжок, внизу есть кнопки прыжка и приседания.</li>
             <li>Птицы появляются после 250 очков: низких перепрыгивайте, от средних пригибайтесь.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Прыгун</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Высота</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
@@ -49,9 +50,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Прыгун сам отталкивается от платформ — вы управляете только движением влево и вправо.</li>
             <li>Клавиатура: <kbd>←</kbd> <kbd>→</kbd> (или <kbd>A</kbd> <kbd>D</kbd>). Телефон: касание левой или правой половины поля либо наклон устройства.</li>
@@ -59,7 +60,7 @@
             <li>Зелёные платформы обычные, синие ездят, коричневые ломаются. Пружина подбрасывает очень высоко.</li>
             <li>Упали вниз — игра окончена.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

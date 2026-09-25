@@ -28,9 +28,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Бункер</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -38,9 +39,9 @@
         <div id="party"></div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>В начале объявляется катастрофа и что есть в бункере. Мест в нём — половина от числа игроков.</li>
             <li>У каждого семь карт: биология, профессия, здоровье, хобби, фобия, багаж и особый факт. Сначала их видите только вы.</li>
@@ -48,7 +49,7 @@
             <li>Когда останется столько игроков, сколько мест, двери закрываются: попавшие внутрь победили.</li>
             <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Покер на костях</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Раунд</span><span class="stat-value" id="round">1/13</span></div>
         <div class="stat"><span class="stat-label">Побед</span><span class="stat-value" id="wins">0</span></div>
@@ -54,9 +55,9 @@
         <table class="yz-table" id="scores"></table>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>В каждом раунде можно бросить 5 костей до трёх раз. Нажмите на кость, чтобы оставить её, и перебросьте остальные.</li>
             <li>После бросков запишите результат в одну из свободных строк таблицы — в каждую строку можно записать только один раз, даже если выйдет 0.</li>
@@ -65,7 +66,7 @@
             <li>Игра длится 13 раундов. Клавиши: <kbd>Пробел</kbd> — бросок, <kbd>1</kbd>–<kbd>5</kbd> — оставить кость.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: ходите по очереди, соперник видит ваши броски. Нажмите «По сети» и отправьте ему ссылку. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

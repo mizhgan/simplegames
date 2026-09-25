@@ -637,6 +637,43 @@
     cb.addEventListener('change', () => store.set('inbox-off', !cb.checked));
   }
 
+
+  // ---------- страница игры: избранное и «Как играть» ----------
+
+  const STAR_OFF =
+    '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>';
+  const STAR_ON = STAR_OFF.replace('fill="none"', 'fill="currentColor"');
+
+  function initGamePage() {
+    const fav = document.querySelector('[data-fav-page]');
+    if (fav && pageGame) {
+      const render = () => {
+        const on = store.get('favorites', []).includes(pageGame);
+        fav.innerHTML = on ? STAR_ON : STAR_OFF;
+        fav.classList.toggle('on', on);
+        fav.setAttribute('aria-pressed', on ? 'true' : 'false');
+        fav.setAttribute('aria-label', on ? 'Убрать из избранного' : 'В избранное');
+        fav.title = on ? 'В избранном' : 'Добавить в избранное';
+      };
+      fav.hidden = false;
+      render();
+      fav.addEventListener('click', () => {
+        const favs = store.get('favorites', []);
+        store.set('favorites', favs.includes(pageGame) ? favs.filter((x) => x !== pageGame) : favs.concat(pageGame));
+        render();
+        SG.sound.play('click');
+      });
+    }
+    // правила: на телефоне свёрнуты, чтобы поле было на первом экране; выбор игрока запоминается
+    const rules = document.querySelector('[data-rules]');
+    if (rules) {
+      const saved = store.get('rules-open', null);
+      rules.open = saved === null ? window.matchMedia('(min-width: 861px)').matches : saved;
+      // запоминаем только выбор самого игрока (событие toggle приходит и от программного open)
+      rules.querySelector('summary').addEventListener('click', () => setTimeout(() => store.set('rules-open', rules.open)));
+    }
+  }
+
   SG.site = { GAMES, ACHIEVEMENTS, daily: dailyInfo, toast };
 
   const ready = () => {
@@ -646,6 +683,7 @@
     initHeaderLink();
     initHome();
     initAchievementsPage();
+    initGamePage();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
   else ready();
