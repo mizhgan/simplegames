@@ -1748,3 +1748,101 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
   width: 100%;
   pointer-events: none;
 }
+
+/* ---------- Профиль: соперник и рейтинг, приглашения ---------- */
+
+.net-rival {
+  flex: none;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.net-rival[hidden] {
+  display: none;
+}
+
+.net-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.net-name input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.net-rivals ul {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.net-rivals li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.net-rivals small {
+  color: var(--muted);
+}
+
+.net-rivals .btn {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+}
+
+.net-invite {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 200;
+  width: min(360px, calc(100vw - 32px));
+  padding: 14px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  animation: net-invite-in 0.25s ease-out;
+}
+
+.net-invite p {
+  margin: 0 0 10px;
+}
+
+.net-invite .net-actions {
+  margin-top: 0;
+}
+
+@keyframes net-invite-in {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+.pt [data-voice].on {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 18%, var(--surface));
+}
