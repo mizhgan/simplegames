@@ -1,0 +1,104 @@
+.mf-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  width: min(280px, 100%);
+  padding: 14px;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.mf-card.open {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.mf-card small {
+  color: var(--muted);
+}
+
+.sp-icon {
+  font-size: 2.4rem;
+}
+
+.sp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.sp-accuse summary {
+  list-style: none;
+}
+
+.sp-accuse summary::-webkit-details-marker {
+  display: none;
+}
+
+.sp-accuse[open] {
+  width: 100%;
+}
+
+.sp-accuse .pt-choices {
+  margin-top: 8px;
+}
+
+.sp-places {
+  width: 100%;
+  text-align: left;
+}
+
+.sp-places summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.sp-place {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sp-place.x {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.sp-guess {
+  width: 100%;
+}
+
+.sp-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.sp-row input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Шпион — SimpleGames</title>
+  <meta name="description" content="Шпион: все знают, где находятся, кроме шпиона. Задавайте хитрые вопросы и вычислите чужака. Компанией по сети или на одном телефоне.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/party.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="../../index.html">← Все игры</a>
+    <div class="game-head">
+      <h1>Шпион</h1>
+    </div>
+
+    <div class="game-layout">
+      <div class="game-stage">
+        <div id="party"></div>
+      </div>
+
+      <aside>
+        <div class="info-card">
+          <h2>Как играть</h2>
+          <ul>
+            <li>Все игроки получают карточку с одним и тем же местом (например, «Подводная лодка») и своей ролью. Один игрок — шпион: он места не знает.</li>
+            <li>Игроки по очереди задают друг другу вопросы о месте — голосом или в чате. Спрошенный отвечает и задаёт следующий вопрос. Отвечайте так, чтобы свои поняли, а шпион не догадался.</li>
+            <li>Шпион может в любой момент нажать «Я знаю, где мы!» и назвать место: угадал — победа шпиона, ошибся — победа города.</li>
+            <li>Каждый может один раз за партию обвинить кого-то: если все остальные согласны, обвиняемый раскрывается. Поймали шпиона — победа города, ошиблись — победа шпиона. Когда время выйдет, все называют подозреваемого.</li>
+            <li><b>📱 На одном телефоне</b> — передавайте устройство по кругу, каждый тайно смотрит свою карточку, дальше играете вживую с таймером.</li>
+            <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку: каждый играет на своём устройстве, у всех свои карты и роли. Хозяин комнаты может дать ссылку зрителям (👁), а в чате можно переговариваться.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/party.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
