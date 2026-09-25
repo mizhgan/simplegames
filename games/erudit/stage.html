@@ -1,0 +1,40 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="er-layout">
+  <div class="er-board" id="board" role="grid" aria-label="Поле 15 на 15"></div>
+  <div class="er-side">
+    <div class="er-points">
+      <div><span id="pts-label-0">Вы</span><b id="pts-0">0</b></div>
+      <div><span id="pts-label-1">Компьютер</span><b id="pts-1">0</b></div>
+      <div>В мешке<b id="bag-count">0</b></div>
+    </div>
+    <div class="er-rack-wrap">
+      <div class="er-rack" id="rack" aria-label="Ваши фишки"></div>
+      <div class="er-curtain" id="curtain" hidden><span></span><button class="btn btn-primary" type="button">Показать фишки</button></div>
+    </div>
+    <p class="er-preview" id="preview" aria-live="polite"></p>
+    <div class="er-actions">
+      <button class="btn btn-primary" type="button" id="play-btn">Сделать ход</button>
+      <button class="btn btn-ghost" type="button" id="recall-btn">Вернуть</button>
+      <button class="btn btn-ghost" type="button" id="swap-btn">Обмен</button>
+      <button class="btn btn-ghost" type="button" id="pass-btn">Пас</button>
+    </div>
+    <ol class="er-log" id="log" reversed></ol>
+  </div>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

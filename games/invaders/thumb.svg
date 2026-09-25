@@ -1,0 +1,6 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g fill="#22d3ee" transform="translate(28 14) scale(3)"><path d="M2 0h1v1H2zM8 0h1v1H8zM3 1h1v1H3zM7 1h1v1H7zM2 2h7v1H2zM1 3h2v1H1zM4 3h3v1H4zM8 3h2v1H8zM0 4h11v1H0zM0 5h1v2H0zM2 5h7v1H2zM10 5h1v2H10zM2 6h1v1H2zM8 6h1v1H8zM3 7h2v1H3zM6 7h2v1H6z"/></g>
+  <g fill="#f472b6" transform="translate(94 18) scale(2.4)"><path d="M3 0h2v1H3zM2 1h4v1H2zM1 2h6v1H1zM0 3h2v1H0zM3 3h2v1H3zM6 3h2v1H6zM0 4h8v1H0zM2 5h1v1H2zM5 5h1v1H5zM1 6h1v1H1zM3 6h2v1H3zM6 6h1v1H6z"/></g>
+  <rect x="94" y="56" width="3" height="10" fill="#fff"/>
+  <g fill="#60a5fa"><rect x="84" y="80" width="24" height="8" rx="1"/><rect x="92" y="74" width="8" height="6"/><rect x="95" y="70" width="2" height="4"/></g>
+</svg>

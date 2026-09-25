@@ -1,0 +1,26 @@
+{
+  "title": "Змейка",
+  "description": "Классическая змейка в браузере: собирайте яблоки и растите.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Собирайте яблоки, растите и не врежьтесь в стену. Чем длиннее змейка, тем быстрее игра.",
+    "colors": ["#10b981", "#0f766e"]
+  },
+  "best": { "key": "snake-best" },
+  "daily": [["snake-best", "max"]],
+  "readme": "стрелки / WASD, свайпы, экранные кнопки",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Счёт</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Управляйте змейкой стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>.",
+    "На телефоне — свайпами по полю или кнопками под ним.",
+    "Каждое яблоко — +1 очко, а змейка становится длиннее и быстрее.",
+    "<kbd>Пробел</kbd> или <kbd>P</kbd> — пауза."
+  ]
+}

@@ -1,0 +1,21 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="stage-wrap"><div class="tb">
+  <div class="tb-label" id="label-top"><span id="name-top">Компьютер</span><span class="chips" id="count-top"></span></div>
+  <div class="wr-side"><div class="wr-pile" id="pile-1"></div><div class="wr-table" id="table-top"></div></div>
+  <div class="tb-msg" id="msg"></div>
+  <div class="wr-side"><div class="wr-pile" id="pile-0"></div><div class="wr-table" id="table-bottom"></div></div>
+  <div class="tb-label" id="label-bottom"><span id="name-bottom">Вы</span><span class="chips" id="count-bottom"></span></div>
+  <div class="tb-actions"><button class="btn btn-primary" type="button" id="flip-btn">Открыть карту</button><button class="btn btn-ghost wr-auto" type="button" id="auto-btn">Автоигра</button></div>
+</div></div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

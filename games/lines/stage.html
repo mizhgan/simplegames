@@ -1,0 +1,15 @@
+<div class="game-controls">
+  <div class="ln-next" aria-label="Следующие шары"><span class="stat-label">Далее</span><span id="next" style="display:flex;gap:6px"></span></div>
+  <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+  <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить</button>
+</div>
+<div class="stage-wrap ln-wrap">
+  <div class="ln-board" id="board" aria-label="Поле 9 на 9"></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2>Игра окончена</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Новая игра</button>
+    </div>
+  </div>
+</div>

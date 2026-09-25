@@ -1,0 +1,8 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M80 50 H40 V24 M80 50 V80 H112 M80 50 H124 V22" stroke="#7dd3fc"/>
+    <path d="M40 80 H58" stroke="rgba(255,255,255,.45)"/>
+  </g>
+  <circle cx="80" cy="50" r="12" fill="#38bdf8" stroke="#e0f2fe" stroke-width="3"/>
+  <g fill="#e0f2fe"><rect x="31" y="14" width="18" height="16" rx="3"/><rect x="115" y="12" width="18" height="16" rx="3"/><rect x="104" y="72" width="18" height="16" rx="3"/></g>
+</svg>

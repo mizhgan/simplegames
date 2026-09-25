@@ -1,0 +1,29 @@
+{
+  "title": "Лягушка",
+  "description": "Игра «Лягушка» (Frogger) онлайн: переведите лягушку через оживлённую дорогу и бурную реку.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Переведите лягушку через оживлённую дорогу и бурную реку домой.",
+    "colors": ["#22c55e", "#1e3a8a"]
+  },
+  "best": { "key": "frogger-best" },
+  "daily": [["frogger-best", "max"]],
+  "readme": "стрелки / WASD, свайпы, экранные кнопки",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Очки</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Жизни</span><span class=\"stat-value\" id=\"lives\">🐸🐸🐸</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Уровень</span><span class=\"stat-value\" id=\"level\">1</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Прыгайте стрелками или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. На телефоне — свайпы по полю или кнопки.",
+    "На дороге уворачивайтесь от машин. В реке прыгайте только по брёвнам и черепахам — в воде лягушка тонет.",
+    "Некоторые черепахи ныряют: когда они бледнеют, скоро уйдут под воду.",
+    "Заведите лягушек во все пять домиков наверху — начнётся следующий уровень, быстрее прежнего.",
+    "На каждую лягушку — 30 секунд (жёлтая полоса внизу). Оставшееся время приносит бонус. <kbd>P</kbd> — пауза."
+  ]
+}

@@ -1,0 +1,17 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g>
+    <rect x="22" y="14" width="24" height="9" rx="3" fill="#fda4af"/>
+    <rect x="50" y="14" width="24" height="9" rx="3" fill="#fda4af"/>
+    <rect x="78" y="14" width="24" height="9" rx="3" fill="#fda4af"/>
+    <rect x="106" y="14" width="24" height="9" rx="3" fill="#fda4af"/>
+    <rect x="22" y="27" width="24" height="9" rx="3" fill="#fde68a"/>
+    <rect x="78" y="27" width="24" height="9" rx="3" fill="#fde68a"/>
+    <rect x="106" y="27" width="24" height="9" rx="3" fill="#fde68a"/>
+    <rect x="22" y="40" width="24" height="9" rx="3" fill="#a7f3d0"/>
+    <rect x="50" y="40" width="24" height="9" rx="3" fill="#a7f3d0"/>
+    <rect x="106" y="40" width="24" height="9" rx="3" fill="#a7f3d0"/>
+  </g>
+  <path d="M88 82 L64 58 L56 34" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-dasharray="3 4" fill="none"/>
+  <circle cx="88" cy="80" r="5" fill="#fff"/>
+  <rect x="64" y="87" width="46" height="7" rx="3.5" fill="#fff"/>
+</svg>

@@ -1,0 +1,29 @@
+{
+  "title": "Пятнашки",
+  "description": "Пятнашки в браузере: расставьте плитки по порядку за наименьшее число ходов.",
+  "category": "puzzle",
+  "tag": "Головоломка",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Двигайте плитки и расставьте числа по порядку. Поля 3×3, 4×4 и 5×5.",
+    "colors": ["#a855f7", "#6d28d9"]
+  },
+  "best": { "key": "fifteen-best-4", "label": "Лучший", "suffix": " ходов" },
+  "daily": [["fifteen-best-4", "min", 0, "пятнашки 4×4", "moves"]],
+  "readme": "клик по плитке, стрелки, свайпы; поля 3×3, 4×4, 5×5",
+  "styles": ["style.css"],
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Ходы</span><span class=\"stat-value\" id=\"moves\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Время</span><span class=\"stat-value\" id=\"time\">0:00</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">—</span></div>"
+  ],
+  "rules": [
+    "Расставьте плитки по порядку: слева направо, сверху вниз, пустая клетка — в правом нижнем углу.",
+    "Кликните по плитке рядом с пустой клеткой, чтобы сдвинуть её. Клик по плитке в том же ряду сдвигает сразу несколько.",
+    "Также можно стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> или свайпами.",
+    "Плитки на своих местах подсвечиваются зелёным.",
+    "Рекорд — наименьшее число ходов для каждого размера поля."
+  ]
+}

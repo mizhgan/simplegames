@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SimpleGames — простые браузерные игры</title>
+  <meta name="description" content="Коллекция простых браузерных игр: шахматы, мафия, уно, шпион, покер, дурак, эрудит, червячки, бильярд, танчики, кёрлинг, нарды, го, тетрис, вордли и другие. Играйте с компьютером, с другом по сети, всей компанией или устройте турнир. Без регистрации и установки.">
+  <meta name="theme-color" content="#0d0e1a">
+  <meta property="og:title" content="SimpleGames — простые браузерные игры">
+  <meta property="og:description" content="Шахматы, мафия, шпион, покер, дурак, эрудит, бильярд, танчики, тетрис, вордли и ещё {{count_more}} прямо в браузере — с другом по сети или всей компанией.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="sg/img/icon-180.png">
+  <link rel="stylesheet" href="sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <img class="logo-mark" src="sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="btn btn-ghost install-btn" type="button" data-install hidden>⬇ Установить</button>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div class="hero-badge"><span class="dot"></span>{{count}} · бесплатно · без регистрации · работает офлайн</div>
+      <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
+      <p>Классика, в которую приятно сыграть пару минут: на компьютере, планшете или телефоне. Ничего не нужно устанавливать, а рекорды сохраняются у вас в браузере.</p>
+    </section>
+
+    <section class="container home-top" id="home-top">
+      <div id="daily" hidden></div>
+      <div class="recent-box" id="recent" hidden>
+        <h2>Вы недавно играли</h2>
+        <div class="mini-list"></div>
+      </div>
+    </section>
+
+    <section class="container" aria-labelledby="games-title">
+      <div class="section-title">
+        <h2 id="games-title">Игры</h2>
+        <input class="search" type="search" id="search" placeholder="Поиск игры…" aria-label="Поиск игры" autocomplete="off">
+        <div class="seg" id="filter" role="group" aria-label="Категории">
+          <button type="button" data-value="all">Все</button>
+          <button type="button" data-value="arcade">Аркады</button>
+          <button type="button" data-value="puzzle">Головоломки</button>
+          <button type="button" data-value="board">Настольные</button>
+          <button type="button" data-value="online">🌐 По сети</button>
+          <button type="button" data-value="party">👥 Компанией</button>
+          <button type="button" data-value="fav">★ Избранное</button>
+        </div>
+      </div>
+
+      <div class="games-grid">
+{{cards}}      </div>
+      <p class="no-results" id="no-results" hidden>Ничего не нашлось. Попробуйте другое слово или категорию «Все».</p>
+    </section>
+
+    <section class="container features" aria-label="Особенности">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Работает без интернета</h3>
+        <p>Сайт можно установить как приложение: после первого визита игры открываются и офлайн.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <h3>На любом устройстве</h3>
+        <p>Клавиатура, мышь или свайпы — управление подстраивается под экран.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏆</div>
+        <h3>Рекорды сохраняются</h3>
+        <p>Лучшие результаты хранятся локально в вашем браузере.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔊</div>
+        <h3>Звук и тема</h3>
+        <p>Звуки и светлую или тёмную тему можно переключить кнопками в шапке — выбор запомнится.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <span>Сделано на чистом HTML, CSS и JavaScript</span>
+    </div>
+  </footer>
+
+  <script src="sg/js/common.js"></script>
+  <script src="sg/js/site.js"></script>
+  <script>
+    (function () {
+      var cards = document.querySelectorAll('.game-card');
+      var search = document.getElementById('search');
+      var empty = document.getElementById('no-results');
+      var category = SG.store.get('home-filter', 'all');
+      var norm = function (t) { return t.toLowerCase().replace(/ё/g, 'е'); };
+      cards.forEach(function (c) { c.dataset.text = norm(c.textContent); });
+      var apply = function () {
+        var q = norm(search.value.trim());
+        var shown = 0;
+        cards.forEach(function (c) {
+          var inCat = category === 'all' || (category === 'fav' ? c.dataset.fav === '1' : category === 'online' ? c.dataset.online === '1' : category === 'party' ? c.dataset.party === '1' : c.dataset.cat === category);
+          var ok = inCat && (!q || c.dataset.text.indexOf(q) !== -1);
+          c.hidden = !ok;
+          if (ok) shown++;
+        });
+        empty.hidden = shown > 0;
+        empty.textContent = category === 'fav' && !q
+          ? 'В избранном пока пусто. Нажмите ☆ на карточке игры, чтобы добавить её сюда.'
+          : 'Ничего не нашлось. Попробуйте другое слово или категорию «Все».';
+      };
+      SG.segmented(document.getElementById('filter'), category, function (v) {
+        category = v;
+        SG.store.set('home-filter', v);
+        apply();
+      });
+      search.addEventListener('input', apply);
+      document.addEventListener('sg:favchange', apply);
+      // «/» — быстрый переход к поиску
+      document.addEventListener('keydown', function (e) {
+        if (e.key === '/' && document.activeElement !== search) {
+          e.preventDefault();
+          search.focus();
+        } else if (e.key === 'Escape' && document.activeElement === search) {
+          search.value = '';
+          apply();
+          search.blur();
+        }
+      });
+      apply();
+    })();
+  </script>
+</body>
+</html>

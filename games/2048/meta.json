@@ -1,0 +1,28 @@
+{
+  "title": "2048",
+  "description": "Игра 2048 в браузере: объединяйте плитки и соберите 2048.",
+  "category": "puzzle",
+  "tag": "Головоломка",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Сдвигайте плитки и объединяйте одинаковые числа, чтобы собрать заветные 2048.",
+    "colors": ["#f59e0b", "#ea580c"]
+  },
+  "best": { "key": "2048-best" },
+  "daily": [["2048-best", "max"]],
+  "readme": "стрелки / WASD, свайпы, отмена хода",
+  "styles": ["style.css"],
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Счёт</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Сдвигайте все плитки стрелками <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd>, клавишами <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> или свайпами.",
+    "Две одинаковые плитки при столкновении сливаются в одну с удвоенным числом.",
+    "После каждого хода появляется новая плитка 2 или 4.",
+    "Цель — собрать плитку <b>2048</b>. После победы можно продолжать.",
+    "Один последний ход можно отменить (<kbd>Z</kbd>)."
+  ]
+}

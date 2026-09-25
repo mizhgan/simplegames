@@ -1,0 +1,28 @@
+{
+  "title": "Виселица",
+  "description": "Виселица: угадайте слово по буквам, пока человечек не нарисован до конца.",
+  "category": "puzzle",
+  "tag": "Слова",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Угадайте слово по буквам, пока не нарисован человечек. Тысячи русских слов.",
+    "colors": ["#64748b", "#1e293b"]
+  },
+  "best": { "key": "hangman-wins", "label": "Угадано" },
+  "daily": [["hangman-wins", "win", 2, "Угадайте 2 слова"]],
+  "readme": "экранная или обычная клавиатура",
+  "styles": ["style.css"],
+  "scripts": ["../../sg/js/site.js", "../../sg/data/nouns.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Ошибки</span><span class=\"stat-value\" id=\"mistakes\">0/7</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Серия</span><span class=\"stat-value\" id=\"streak\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Побед</span><span class=\"stat-value\" id=\"wins\">0</span></div>"
+  ],
+  "rules": [
+    "Загадано существительное из 5–8 букв. Называйте буквы по одной — на экранной или обычной клавиатуре.",
+    "Если буква есть в слове, она откроется во всех местах. Если нет — дорисовывается часть виселицы.",
+    "После 7 ошибок игра проиграна. Угадайте слово раньше!",
+    "Серия — сколько слов подряд вы угадали. Печатать можно и в английской раскладке."
+  ]
+}

@@ -1,0 +1,24 @@
+<div class="game-controls">
+  <div class="seg" id="level" role="group" aria-label="Размер">
+    <button type="button" data-value="easy">Малое</button>
+    <button type="button" data-value="medium">Среднее</button>
+    <button type="button" data-value="hard">Большое</button>
+  </div>
+  <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="stage-wrap">
+  <div class="kk-board" id="board" aria-label="Поле какуро"></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2>Решено! 🎉</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Новая головоломка</button>
+    </div>
+  </div>
+</div>
+<div class="kk-combos" id="combos" aria-live="polite"></div>
+<div class="kk-pad" id="pad" aria-label="Цифры"></div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+</div>

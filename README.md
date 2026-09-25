@@ -4,6 +4,7 @@
 
 ## Игры
 
+<!-- games:start -->
 | Игра | Папка | Управление |
 | --- | --- | --- |
 | Змейка | `games/snake/` | стрелки / WASD, свайпы, экранные кнопки |
@@ -126,6 +127,7 @@
 | Червячки | `games/worms/` | команды по 3 червяка, разрушаемый остров, базука, граната, дробовик; против компьютера, вдвоём или по сети |
 | Реакция | `games/reaction/` | 10 попыток, фальстарты и жёлтые обманки; против компьютера, вдвоём или по сети |
 | Пинбол-дуэль | `games/pinball/` | общий стол, у каждого пара флипперов, бамперы; против компьютера, вдвоём или по сети |
+<!-- games:end -->
 
 Кроме игр на сайте есть:
 
@@ -167,8 +169,11 @@ sg/data/            общие словари
 sg/img/             иконки (в т. ч. PNG для установки приложения)
 manifest.webmanifest  описание приложения для установки (PWA)
 sw.js               service worker для офлайн-режима (генерируется)
-tools/build-sw.py   сборка sw.js
-games/<игра>/       index.html + game.js (+ style.css) каждой игры
+games/catalog.json  порядок игр на главной
+tools/build.py      сборка сайта из описаний игр: страницы игр, главная, списки в site.js, таблица README, sw.js
+tools/templates/    шаблоны страницы игры, главной и service worker
+games/<игра>/       meta.json (описание), stage.html (поле), thumb.svg (картинка карточки), game.js (+ style.css);
+                    index.html генерируется
 ```
 
 ## Развёртывание
@@ -212,7 +217,7 @@ python3 -m http.server 8000
 После добавления или изменения файлов пересоберите список кешируемых файлов:
 
 ```bash
-python3 tools/build-sw.py
+python3 tools/build.py
 ```
 
 Офлайн-режим работает только по HTTPS (или на `localhost`).
@@ -271,7 +276,13 @@ bash install.sh            # домен возьмётся из сертифик
 
 ## Как добавить новую игру
 
-1. Скопируйте папку любой игры, например `games/snake/`, в `games/<новая>/`.
-2. Поменяйте заголовок, описание и `game.js`. Общие функции доступны через `window.SG`: `SG.store`, `SG.sound.play('win')` (список звуков — в `PRESETS` в `common.js`), `SG.onSwipe`, `SG.touchKeys` (экранные кнопки аркад), `SG.segmented`, `SG.formatTime`, `SG.shuffle`, `SG.cssVar`.
-3. Добавьте карточку игры в `index.html` и название в `GAMES` в `sg/js/site.js`; подключите `sg/js/site.js` после `common.js`.
-4. Запустите `python3 tools/build-sw.py`, чтобы игра попала в офлайн-кеш.
+Всё, что сайт знает об игре, лежит в её папке, а страницы и списки собирает `tools/build.py`:
+
+1. `python3 tools/build.py --new <id> "Название"` — создаст `games/<id>/` с заготовками и добавит игру в конец `games/catalog.json` (порядок карточек на главной).
+2. Заполните `meta.json`:
+   - `title`, `description` (для поисковиков), `category` (`arcade`, `puzzle` или `board` — фильтр на главной), `tag` (подпись на карточке);
+   - `card.text` и `card.colors` (градиент карточки), `best` (ключ рекорда в `SG.store` и подпись: `label`, `suffix`, `format: "time"`);
+   - `online` / `party` — есть ли игра по сети и на компанию; `daily` — задания «Игры дня» (`[ключ, "win" | "max" | "min", сколько, текст]`);
+   - `rules` — пункты «Как играть», `stats` — плашки над полем, `styles` и `scripts` — подключаемые файлы (помимо `common.js` и `game.js`), `readme` — строка для таблицы выше.
+3. Разметку поля положите в `stage.html`, картинку карточки (SVG 160×100) — в `thumb.svg`, логику — в `game.js`. Общие функции доступны через `window.SG`: `SG.store`, `SG.sound.play('win')` (список звуков — в `PRESETS` в `common.js`), `SG.onSwipe`, `SG.touchKeys` (экранные кнопки аркад), `SG.segmented`, `SG.formatTime`, `SG.shuffle`, `SG.cssVar`. Для игр на двоих есть каркасы `SG.duel` и `SG.rt`, для игр на компанию — `SG.party`.
+4. Запустите `python3 tools/build.py`: он соберёт `index.html` игры, карточку на главной, список игр и «Игру дня» в `site.js`, строку в README, список турнира и `sw.js`. Сгенерированные файлы руками не правьте — изменения пропадут при следующей сборке. `python3 tools/build.py --check` проверяет, что всё собрано (удобно перед коммитом).

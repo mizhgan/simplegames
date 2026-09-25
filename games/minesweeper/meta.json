@@ -1,0 +1,29 @@
+{
+  "title": "Сапёр",
+  "description": "Классический сапёр в браузере: три уровня сложности, флажки и рекорды времени.",
+  "category": "puzzle",
+  "tag": "Головоломка",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Откройте все клетки и не наступите на мину. Три уровня сложности — от новичка до профи.",
+    "colors": ["#64748b", "#1e293b"]
+  },
+  "best": { "key": "mines-best-beginner", "format": "time", "label": "Лучшее время" },
+  "daily": [["mines-best-beginner", "min", 0, "сапёра на лёгком уровне"]],
+  "readme": "ЛКМ — открыть, ПКМ / долгое нажатие — флажок",
+  "styles": ["style.css"],
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Мины</span><span class=\"stat-value\" id=\"mines-left\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Время</span><span class=\"stat-value\" id=\"time\">0:00</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">—</span></div>"
+  ],
+  "rules": [
+    "Откройте все клетки, в которых нет мин. Первый ход всегда безопасен.",
+    "Число в клетке — сколько мин среди восьми соседей.",
+    "<b>Флажок:</b> правый клик, долгое нажатие на телефоне или «Режим флажков».",
+    "Клик по открытому числу, вокруг которого уже стоит нужное число флажков, открывает остальных соседей.",
+    "Рекорд времени хранится для каждого уровня."
+  ]
+}

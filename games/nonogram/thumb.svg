@@ -1,0 +1,10 @@
+<svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="700" font-size="7" fill="#e2e8f0">
+  <rect x="58" y="22" width="70" height="70" fill="#f8fafc"/>
+  <g fill="#0f172a">
+    <rect x="65" y="29" width="7" height="7"/><rect x="72" y="29" width="7" height="7"/><rect x="107" y="29" width="7" height="7"/><rect x="114" y="29" width="7" height="7"/>
+    <rect x="58" y="36" width="7" height="7"/><rect x="65" y="36" width="56" height="7"/><rect x="121" y="36" width="7" height="7"/>
+    <rect x="58" y="43" width="70" height="14"/><rect x="65" y="57" width="56" height="7"/><rect x="72" y="64" width="42" height="7"/><rect x="79" y="71" width="28" height="7"/><rect x="86" y="78" width="14" height="7"/>
+  </g>
+  <text x="52" y="35" text-anchor="end">2 2</text><text x="52" y="42" text-anchor="end">10</text><text x="52" y="56" text-anchor="end">10</text><text x="52" y="63" text-anchor="end">8</text><text x="52" y="70" text-anchor="end">6</text><text x="52" y="77" text-anchor="end">4</text><text x="52" y="84" text-anchor="end">2</text>
+  <text x="61" y="18" text-anchor="middle">3</text><text x="68" y="18" text-anchor="middle">5</text><text x="75" y="18" text-anchor="middle">6</text><text x="82" y="18" text-anchor="middle">6</text><text x="89" y="18" text-anchor="middle">7</text>
+</svg>

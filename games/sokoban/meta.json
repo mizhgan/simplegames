@@ -1,0 +1,29 @@
+{
+  "title": "Сокобан",
+  "description": "Сокобан онлайн: толкайте ящики на отмеченные места. 32 уровня от простых к сложным.",
+  "category": "puzzle",
+  "tag": "Головоломка",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Толкайте ящики на отмеченные места. 32 уровня, и у каждого есть решение.",
+    "colors": ["#b45309", "#78350f"]
+  },
+  "best": { "key": "sokoban-solved", "label": "Пройдено", "suffix": " из 32" },
+  "daily": [["sokoban-solved", "win", 1, "Пройдите новый уровень"]],
+  "readme": "стрелки / WASD, свайпы, клик по клетке; 32 уровня, отмена",
+  "styles": ["style.css"],
+  "scripts": ["../../sg/js/site.js", "levels.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Уровень</span><span class=\"stat-value\" id=\"level\">1/32</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Ходы</span><span class=\"stat-value\" id=\"moves\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Толчки</span><span class=\"stat-value\" id=\"pushes\">0</span></div>"
+  ],
+  "rules": [
+    "Вы — кладовщик. Задача — расставить все ящики на отмеченные кружками места.",
+    "Ящики можно только <b>толкать</b>, и только по одному. Тянуть ящик нельзя — не загоняйте его в угол.",
+    "Управление: стрелки или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, свайпы или кнопки на экране. Можно нажать на клетку — кладовщик сам дойдёт до неё.",
+    "<kbd>Z</kbd> — отменить ход, <kbd>R</kbd> — начать уровень заново.",
+    "Все 32 уровня проверены компьютером: у каждого есть решение. После прохождения видно минимально возможное число толчков."
+  ]
+}

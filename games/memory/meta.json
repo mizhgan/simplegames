@@ -1,0 +1,28 @@
+{
+  "title": "Мемори",
+  "description": "Игра на память: найдите все пары карточек за наименьшее число ходов.",
+  "category": "puzzle",
+  "tag": "Головоломка",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Открывайте карточки и ищите пары. Тренирует память — и занимает ровно одну чашку чая.",
+    "colors": ["#ec4899", "#be185d"]
+  },
+  "best": { "key": "memory-best-s", "label": "Лучший", "suffix": " ходов" },
+  "daily": [["memory-best-s", "min", 0, "мемори 4×4", "moves"]],
+  "readme": "мышь / касание, поля 4×4, 5×4, 6×6",
+  "styles": ["style.css"],
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Ходы</span><span class=\"stat-value\" id=\"moves\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Время</span><span class=\"stat-value\" id=\"time\">0:00</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">—</span></div>"
+  ],
+  "rules": [
+    "Все карточки лежат рубашкой вверх. За ход открываются две.",
+    "Если картинки совпали — пара остаётся открытой, иначе карточки переворачиваются обратно.",
+    "Найдите все пары за наименьшее число ходов.",
+    "Рекорд хранится отдельно для каждого размера поля."
+  ]
+}

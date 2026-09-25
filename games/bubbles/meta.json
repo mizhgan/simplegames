@@ -1,0 +1,28 @@
+{
+  "title": "Шарики",
+  "description": "Шарики (Bubble Shooter): стреляйте и собирайте три шарика одного цвета.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Bubble Shooter: стреляйте шариками, собирайте три одного цвета и роняйте целые гроздья.",
+    "colors": ["#8b5cf6", "#1e1b4b"]
+  },
+  "best": { "key": "bubbles-best" },
+  "daily": [["bubbles-best", "max"]],
+  "readme": "Bubble Shooter: прицел мышью / пальцем / стрелками",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Счёт</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">До нового ряда</span><span class=\"stat-value\" id=\"shots\">6</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Цельтесь мышью (выстрел — клик) или ведите пальцем по полю и отпустите. На клавиатуре: <kbd>←</kbd> <kbd>→</kbd> и <kbd>Пробел</kbd>.",
+    "Соберите три и более шарика одного цвета — они лопнут (+10 за каждый).",
+    "Шарики, которые больше ни к чему не прикреплены, падают (+20 за каждый).",
+    "Шарики отскакивают от стен — используйте рикошет. Клик по «далее» (или <kbd>X</kbd>) меняет шарики местами.",
+    "После каждых шести выстрелов без попадания сверху появляется новый ряд. Шарики дошли до пунктирной линии — игра окончена."
+  ]
+}

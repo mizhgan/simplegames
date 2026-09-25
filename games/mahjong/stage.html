@@ -1,0 +1,17 @@
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая раскладка</button>
+  <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+  <button class="btn btn-ghost" type="button" id="shuffle-btn">🔀 Перемешать</button>
+  <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить</button>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="stage-wrap mj-wrap">
+  <div class="mj-board" id="board" aria-label="Кости маджонга"></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2>Победа! 🎉</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Новая раскладка</button>
+    </div>
+  </div>
+</div>

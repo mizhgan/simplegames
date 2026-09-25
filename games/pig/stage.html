@@ -1,0 +1,30 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="pg-wrap">
+  <div class="pg-sides">
+    <div class="pg-side" id="pg-side-0"><span id="pg-name-0">Вы</span><b id="pg-pts-0">0</b><i id="pg-bar-0"></i></div>
+    <div class="pg-side" id="pg-side-1"><span id="pg-name-1">Компьютер</span><b id="pg-pts-1">0</b><i id="pg-bar-1"></i></div>
+  </div>
+  <div class="pg-die" id="pg-die" aria-live="polite">🎲</div>
+  <div class="pg-pot" id="pg-pot"></div>
+  <div class="game-controls">
+    <button class="btn btn-primary" type="button" id="roll-btn">🎲 Бросить</button>
+    <button class="btn btn-ghost" type="button" id="hold-btn">Записать</button>
+  </div>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

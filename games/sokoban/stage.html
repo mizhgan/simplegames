@@ -1,0 +1,25 @@
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="prev-btn">◀ Уровень</button>
+  <button class="btn btn-ghost" type="button" id="next-btn">Уровень ▶</button>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="stage-wrap sk-wrap">
+  <div class="sk-board" id="board" aria-label="Склад"></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2>Уровень пройден! 🎉</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Следующий уровень</button>
+    </div>
+  </div>
+</div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="undo-btn">↶ Отменить</button>
+  <button class="btn btn-ghost" type="button" id="restart-btn">⟲ Заново</button>
+</div>
+<div class="dpad" aria-label="Управление">
+  <button type="button" data-dir="up" aria-label="Вверх">▲</button>
+  <button type="button" data-dir="left" aria-label="Влево">◀</button>
+  <button type="button" data-dir="right" aria-label="Вправо">▶</button>
+  <button type="button" data-dir="down" aria-label="Вниз">▼</button>
+</div>

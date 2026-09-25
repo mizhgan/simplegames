@@ -1,0 +1,29 @@
+{
+  "title": "Космические захватчики",
+  "description": "Космические захватчики онлайн: отбейте атаку пришельцев из лазерной пушки. Классическая аркада в браузере.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Отбейте атаку пришельцев из лазерной пушки. Классика 1978 года.",
+    "colors": ["#4338ca", "#0f172a"]
+  },
+  "best": { "key": "invaders-best" },
+  "daily": [["invaders-best", "max"]],
+  "readme": "← → и пробел, экранные кнопки",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Очки</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Жизни</span><span class=\"stat-value\" id=\"lives\">♥♥♥</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Волна</span><span class=\"stat-value\" id=\"wave\">1</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Двигайте пушку клавишами <kbd>←</kbd> <kbd>→</kbd> (<kbd>A</kbd> <kbd>D</kbd>), стреляйте — <kbd>Пробел</kbd>. На телефоне — кнопки под полем.",
+    "Одновременно в полёте может быть только один ваш выстрел — цельтесь точнее.",
+    "Прячьтесь за зелёными укрытиями, но помните: их разрушают и ваши выстрелы, и бомбы пришельцев.",
+    "Чем меньше пришельцев осталось, тем быстрее они движутся. Дошли до земли — игра окончена.",
+    "Верхний ряд стоит 30 очков, средние — 20, нижние — 10. Красная летающая тарелка — от 50 до 300. <kbd>P</kbd> — пауза."
+  ]
+}

@@ -1,0 +1,12 @@
+<svg viewBox="0 0 160 100" aria-hidden="true" font-size="20" text-anchor="middle">
+  <g transform="rotate(-8 50 50)">
+    <rect x="28" y="22" width="40" height="54" rx="8" fill="#fff"/>
+    <text x="48" y="56">🍓</text>
+  </g>
+  <rect x="62" y="20" width="40" height="54" rx="8" fill="#fbcfe8"/>
+  <path d="M72 30 h20 v34 h-20z" fill="none" stroke="#db2777" stroke-width="2" stroke-dasharray="4 3"/>
+  <g transform="rotate(8 112 50)">
+    <rect x="96" y="22" width="40" height="54" rx="8" fill="#fff"/>
+    <text x="116" y="56">🍓</text>
+  </g>
+</svg>

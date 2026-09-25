@@ -1,0 +1,29 @@
+{
+  "title": "Пакман",
+  "description": "Пакман: собирайте точки в лабиринте и убегайте от привидений.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Легендарный лабиринт: ешьте точки, убегайте от привидений, а после энергайзера — охотьтесь на них.",
+    "colors": ["#facc15", "#1e1b4b"]
+  },
+  "best": { "key": "pacman-best" },
+  "daily": [["pacman-best", "max"]],
+  "readme": "стрелки / WASD, свайпы, экранные кнопки",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Счёт</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Уровень</span><span class=\"stat-value\" id=\"level\">1</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Жизни</span><span class=\"stat-value\" id=\"lives\">●●●</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Управление: стрелки или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, свайпы по полю или кнопки под ним. Поворот можно нажать заранее — Пакман свернёт на ближайшем перекрёстке.",
+    "Точка — 10 очков, энергайзер — 50. После энергайзера привидения синеют, и их можно съесть: 200, 400, 800, 1600 очков.",
+    "У каждого привидения свой характер: красное преследует, розовое заходит наперёд, голубое — в клещи, оранжевое то нападает, то отступает.",
+    "Боковой туннель переносит на другую сторону лабиринта; привидения в нём медленнее.",
+    "Съешьте все точки — следующий уровень будет быстрее. Три жизни."
+  ]
+}

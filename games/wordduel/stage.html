@@ -1,0 +1,30 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="wq-wrap">
+  <div class="wd-wrap">
+    <div class="wd-toast" id="toast" role="status"></div>
+    <div class="wd-board" id="my-board" aria-label="Ваши попытки"></div>
+  </div>
+  <div class="wq-opp">
+    <p id="opp-label">Компьютер</p>
+    <div class="wd-board" id="opp-board" aria-label="Попытки соперника"></div>
+    <p class="wq-time" id="time">0:00</p>
+  </div>
+</div>
+
+<div class="wd-keyboard" id="keyboard" aria-label="Клавиатура"></div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новое слово</button>
+</div>

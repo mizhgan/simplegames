@@ -1,0 +1,33 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="pvp">Компанией</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Слова">
+    <button type="button" data-value="easy">Простые слова</button>
+    <button type="button" data-value="hard">Сложные слова</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="cr-wrap">
+  <div class="cr-top"><div class="cr-word" id="word"></div><div class="cr-timer" id="timer">—</div></div>
+  <div class="cr-canvas-wrap">
+    <canvas class="cr-canvas" id="canvas" aria-label="Холст для рисования"></canvas>
+    <div class="cr-pick" id="pick" hidden></div>
+  </div>
+  <div class="cr-tools" id="tools"></div>
+  <div class="cr-party" id="party" hidden>
+    <button class="btn btn-primary" type="button" id="ok-btn">Угадали!</button>
+    <button class="btn btn-ghost" type="button" id="skip-btn">Сдаться</button>
+  </div>
+  <form class="cr-guess" id="guess-form" autocomplete="off" hidden>
+    <input type="text" id="guess-input" placeholder="Ваш вариант" aria-label="Ваш вариант" maxlength="40">
+    <button class="btn btn-primary" type="submit">Отправить</button>
+  </form>
+  <ol class="cr-chat" id="chat"></ol>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новый раунд</button>
+</div>

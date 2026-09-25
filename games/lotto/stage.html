@@ -1,0 +1,26 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="stage-wrap lt-wrap">
+  <div class="lt-side"><h3><span id="opp-name">Компьютер</span><small id="opp-left"></small></h3><div class="lt-cards" id="opp-cards"></div></div>
+  <div class="lt-mid">
+    <div class="lt-barrel" id="barrel" aria-live="polite"></div>
+    <div class="lt-info">
+      <button class="btn btn-primary" type="button" id="draw-btn">Достать бочонок</button>
+      <button class="btn btn-ghost" type="button" id="auto-btn">Авто</button>
+      <span class="lt-history" id="count"></span>
+      <span class="lt-history" id="history"></span>
+    </div>
+  </div>
+  <div class="lt-side"><h3><span id="my-name">Вы</span><small id="my-left"></small></h3><div class="lt-cards" id="my-cards"></div></div>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

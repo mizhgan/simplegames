@@ -1,0 +1,19 @@
+<div class="stage-wrap" style="max-width:640px">
+  <canvas id="board" class="board-canvas" style="aspect-ratio:4/3" aria-label="Игровое поле"></canvas>
+  <div class="overlay" id="overlay">
+    <h2 id="overlay-title">Астероиды</h2>
+    <p id="overlay-text">Расстреливайте астероиды и не врезайтесь в них.</p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+    </div>
+  </div>
+</div>
+<div class="touch-keys" id="touch">
+  <button type="button" data-key="ArrowLeft" aria-label="Повернуть влево">⟲</button>
+  <button type="button" data-key="ArrowRight" aria-label="Повернуть вправо">⟳</button>
+  <button type="button" data-key="ArrowUp" aria-label="Тяга">▲</button>
+  <button type="button" data-key="Space" class="wide" aria-label="Огонь">🔥</button>
+</div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
+</div>

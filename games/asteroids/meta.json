@@ -1,0 +1,29 @@
+{
+  "title": "Астероиды",
+  "description": "Астероиды онлайн: управляйте кораблём и расстреливайте астероиды. Классическая аркада 1979 года в браузере.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Управляйте кораблём и расстреливайте астероиды, пока они не разбили вас.",
+    "colors": ["#475569", "#0f172a"]
+  },
+  "best": { "key": "asteroids-best" },
+  "daily": [["asteroids-best", "max"]],
+  "readme": "← → ↑, пробел, ↓ — гиперпрыжок, экранные кнопки",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Очки</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Жизни</span><span class=\"stat-value\" id=\"lives\">▲▲▲</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Уровень</span><span class=\"stat-value\" id=\"level\">1</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "<kbd>←</kbd> <kbd>→</kbd> — поворот, <kbd>↑</kbd> — тяга, <kbd>Пробел</kbd> — огонь. На телефоне — кнопки под полем.",
+    "<kbd>↓</kbd> или <kbd>Shift</kbd> — гиперпрыжок в случайную точку: спасает в безвыходной ситуации, но рискованно.",
+    "Большой астероид раскалывается на два средних, средний — на два маленьких. Маленькие стоят больше всего: 100 очков.",
+    "Поле замкнуто: улетев за край, вы появитесь с противоположной стороны.",
+    "Каждые 10 000 очков — дополнительная жизнь. <kbd>P</kbd> — пауза."
+  ]
+}

@@ -1,0 +1,26 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+  <button class="btn btn-ghost" type="button" id="new-btn">Новая игра</button>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="bd-layout">
+  <div class="bd-side"><h2>Вы <b id="score-me">0</b></h2><ul id="words-me"></ul></div>
+  <div class="bd-center">
+    <div class="bd-board" id="board" aria-label="Поле 5 на 5"></div>
+    <div class="bd-word" id="word"></div>
+  </div>
+  <div class="bd-side"><h2><span id="label-ai">Компьютер</span> <b id="score-ai">0</b></h2><ul id="words-ai"></ul></div>
+</div>
+<div class="bd-keyboard" id="keyboard" hidden aria-label="Буквы"></div>
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="submit-btn" disabled>Готово</button>
+  <button class="btn btn-ghost" type="button" id="cancel-btn" disabled>Сбросить ход</button>
+  <button class="btn btn-ghost" type="button" id="skip-btn">Пропустить</button>
+</div>
