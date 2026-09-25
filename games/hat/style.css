@@ -1,0 +1,37 @@
+.ht-hat {
+  font-weight: 800;
+}
+
+.ht-word {
+  padding: 16px 28px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--bg));
+  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  font-weight: 900;
+}
+
+.ht-go {
+  font-size: 1.2rem;
+}
+
+.ht-go .pt-timer {
+  margin-left: 6px;
+}
+
+.ht-guess {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.ht-guess input {
+  flex: 1;
+  min-width: 0;
+}
+
+.mm-log {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  text-align: center;
+}
