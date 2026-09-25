@@ -4,7 +4,8 @@
      const duel = SG.duel({
        game: 'chess',                   // id игры (для сети и рекордов)
        sides: ['Белые', 'Чёрные'],      // названия сторон 0 и 1
-       create() { return state },       // новая позиция; state.turn — чей ход (0 | 1)
+       create(seed) { return state },   // новая позиция; state.turn — чей ход (0 | 1);
+                                        // seed одинаков у обоих игроков по сети (для раздачи фишек и т. п.)
        legal(state, move) { return true },
        apply(state, move) {},           // сделать ход (меняет state; state.turn — кто ходит дальше)
        over(state) { return null | { winner: 0 | 1 | null, text } },  // null — игра идёт
@@ -45,6 +46,7 @@
     let finished = null;
     let token = 0; // растёт с каждой новой партией, чтобы «старый» ход компьютера не сработал
     let thinking = false;
+    let seed = 1;
     const scores = [0, 0, 0]; // сторона 0, сторона 1, ничьи
 
     const me = () => (mode === 'ai' ? humanSide : mode === 'net' ? mySide : null);
@@ -169,12 +171,15 @@
       return true;
     }
 
-    function newGame(side) {
+    const newSeed = () => Math.floor(Math.random() * 2147483647) + 1;
+
+    function newGame(side, sd) {
       token++;
       thinking = false;
       finished = null;
       history = [];
-      state = cfg.create();
+      seed = sd || newSeed();
+      state = cfg.create(seed);
       if (mode === 'ai' && side !== undefined) humanSide = side;
       if (cfg.onNew) cfg.onNew(state);
       render();
@@ -196,7 +201,7 @@
         renderScores();
       }
       const keep = history.slice(0, n);
-      state = cfg.create();
+      state = cfg.create(seed);
       if (cfg.onNew) cfg.onNew(state);
       history = [];
       finished = null;
@@ -228,7 +233,12 @@
             net.info('вы играете: ' + sideName(mySide).toLowerCase());
             syncDiff();
             resetScores();
-            newGame();
+            if (role === 'host') {
+              // первую партию начинает хозяин — с общим «зерном» раздачи
+              const sd = newSeed();
+              net.send({ t: 'new', side: 1, seed: sd });
+              newGame(undefined, sd);
+            } else newGame();
           },
           onMessage(msg) {
             if (msg.t === 'move') {
@@ -238,7 +248,7 @@
               mySide = msg.side;
               net.info('вы играете: ' + sideName(mySide).toLowerCase());
               renderScores();
-              newGame();
+              newGame(undefined, msg.seed);
             }
           },
           onDisconnect(voluntary) {
@@ -280,10 +290,11 @@
         if (mode === 'net') {
           if (!net.active) return;
           mySide = 1 - mySide; // в новой партии меняемся сторонами
-          net.send({ t: 'new', side: 1 - mySide });
+          const sd = newSeed();
+          net.send({ t: 'new', side: 1 - mySide, seed: sd });
           net.info('вы играете: ' + sideName(mySide).toLowerCase());
           renderScores();
-          newGame();
+          newGame(undefined, sd);
         } else if (mode === 'ai') newGame(cfg.swapSides === false ? 0 : history.length ? 1 - humanSide : humanSide);
         else newGame();
       });
@@ -309,6 +320,9 @@
       },
       view,
       render,
+      get history() {
+        return history;
+      },
       canMove: isHumanTurn,
       net,
       cfg,
@@ -449,6 +463,27 @@
     return best.move;
   }
 
+  // воспроизводимый генератор случайных чисел (mulberry32): одинаковая раздача у обоих игроков
+  function rng(seed) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const shuffleWith = (arr, rand) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
+  duel.rng = rng;
+  duel.shuffleWith = shuffleWith;
   duel.search = search;
   duel.mcts = mcts;
   SG.duel = duel;
