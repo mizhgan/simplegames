@@ -669,7 +669,8 @@
       switch (msg.t) {
         case '_welcome':
           U().closeDialog();
-          history.replaceState(null, '', U().baseUrl());
+          // ссылка остаётся в адресе: после перезагрузки страницы игрок вернётся на своё место
+          history.replaceState(null, '', U().baseUrl() + (msg.watcher ? '#pwatch=' : '#party=') + token);
           myId = msg.id;
           if (msg.watcher) role = 'watcher';
           players = msg.players || [];
@@ -717,6 +718,7 @@
         case '_kicked': {
           const text = { _denied: 'Код комнаты не подошёл.', _wronggame: 'По этой ссылке играют в другую игру.', _full: 'Комната заполнена.', _kicked: 'Хозяин убрал вас из комнаты.' }[msg.t];
           teardown();
+          history.replaceState(null, '', U().baseUrl());
           const b = U().dialog(`<h2 id="net-title">Не получилось</h2><p>${text}</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Понятно</button></div>`);
           b.querySelector('[data-close]').addEventListener('click', () => {
             U().closeDialog();
@@ -733,6 +735,7 @@
     function lostHost(voluntary) {
       if (role !== 'guest' && role !== 'watcher') return;
       teardown();
+      history.replaceState(null, '', U().baseUrl());
       showSetup();
       const b = U().dialog(`<h2 id="net-title">Игра закончилась</h2><p>${voluntary ? 'Хозяин закрыл комнату.' : 'Связь с хозяином комнаты потеряна.'}</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Понятно</button></div>`);
       b.querySelector('[data-close]').addEventListener('click', () => U().closeDialog());
@@ -920,6 +923,7 @@
       setTimeout(() => {
         teardown();
         tableEl.innerHTML = '';
+        history.replaceState(null, '', U().baseUrl());
         showSetup();
       }, 80);
     }
