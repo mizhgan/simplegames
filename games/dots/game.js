@@ -162,6 +162,7 @@
 
   function finish() {
     const [a, b] = [score[1], score[2]];
+    if (mode === 'net') net.result(a === b ? 'draw' : (a > b ? 1 : 2) === mySide ? 'win' : 'lose');
     if (mode === 'net') {
       const mine = mySide === 1 ? a : b;
       const theirs = mySide === 1 ? b : a;
@@ -290,6 +291,7 @@
 
   const net = SG.net.setup({
     game: 'dots',
+    onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

@@ -16,6 +16,13 @@
      net.role     — 'host' | 'guest'
      net.info(text) — подпись в полоске «Игра по сети» (например, «вы играете за X»)
      net.leave()  — выйти из сетевой игры
+     net.result('win' | 'lose' | 'draw') — партия закончилась (со своей стороны): растёт счёт серии,
+                    появляется кнопка «Реванш». Повторные вызовы до новой партии ({ t: 'new' }) не считаются.
+     opts.onRematch() — оба согласились на реванш; вызывается только у хозяина (обычно — «Новая партия»)
+
+   Полоска сетевой игры сама показывает счёт серии и даёт отправить сопернику реакцию (эмодзи или фразу).
+   Хозяин может показать комнату в списке открытых игр («Ищу соперника») — список виден в окне
+   приглашения у всех, кто открыл ту же игру (нужен свой сервер знакомств с --allow_discovery).
 */
 (() => {
   'use strict';
@@ -77,6 +84,23 @@
     return peerLoading;
   }
 
+  // В комнату войти можно, только зная её код: на сервере комната записана под хэшем кода,
+  // а гость называет сам код при знакомстве. Поэтому список комнат на сервере не раскрывает приглашения.
+  function cyrb53(str) {
+    let h1 = 0xdeadbeef;
+    let h2 = 0x41c6ce57;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h2 >>> 0).toString(36) + (h1 >>> 0).toString(36);
+  }
+  const roomPeerId = (room) => PREFIX + 'r' + cyrb53('sg:' + room);
+  const LOBBY = 'sglobby-';
+
   const code = () => Array.from({ length: 6 }, () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)]).join('');
   const baseUrl = () => location.href.split('#')[0];
 
@@ -99,6 +123,36 @@
     if (!m) return null;
     return { room: m[1], which: m[2] ? 'public' : serverList()[0] };
   }
+
+  // список открытых комнат этой игры на своём сервере (null — сервер не отдаёт список)
+  async function lobbyList(game) {
+    const srv = ownServer();
+    if (!srv || !srv.host) return null;
+    const port = srv.port || (srv.secure ? 443 : 80);
+    const path = (srv.path || '/').replace(/\/?$/, '/');
+    const url = (srv.secure ? 'https://' : 'http://') + srv.host + ':' + port + path + (srv.key || 'peerjs') + '/peers';
+    try {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), 5000);
+      const res = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
+      clearTimeout(t);
+      if (!res.ok) return null;
+      const ids = await res.json();
+      if (!Array.isArray(ids)) return null;
+      const pre = LOBBY + game + '-';
+      return ids
+        .filter((id) => typeof id === 'string' && id.startsWith(pre))
+        .map((id) => {
+          const [room, ts] = id.slice(pre.length).split('-');
+          return { room, since: parseInt(ts, 36) || 0 };
+        })
+        .filter((r) => /^[a-z0-9]{6}$/.test(r.room));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  const REACTIONS = ['👍', '😂', '😮', '😢', '🤝', '🔥', 'Хороший ход!', 'Ой!', 'Ещё партию?', 'Спасибо за игру!'];
 
   // ---------- сжатие SDP для ручного режима ----------
 
@@ -266,6 +320,7 @@
       send,
       leave,
       info,
+      result,
     };
     let conn = null; // { send(obj), close() }
     let peer = null;
@@ -275,6 +330,15 @@
     let bar = null;
     let infoText = '';
     let helloDone = false;
+    let myRoom = ''; // код комнаты хозяина (гость должен его назвать)
+    let joinKey = ''; // код комнаты, куда входит гость
+    let lobbyPeer = null;
+    let lobbyTimer = 0;
+    const series = { me: 0, them: 0, draw: 0 };
+    let resultLocked = false;
+    let finishedGame = false;
+    let rematchMine = false;
+    let rematchTheirs = false;
 
     // кнопка «По сети» в переключателе режимов
     let netBtn = null;
@@ -312,18 +376,101 @@
       bar.hidden = false;
       bar.dataset.state = state;
       if (state === 'on') {
-        bar.innerHTML = '<span class="net-dot"></span><span class="net-text"></span><button class="btn btn-ghost" type="button">Выйти</button>';
-        bar.querySelector('.net-text').textContent = 'Игра по сети' + (infoText ? ' · ' + infoText : '');
-        bar.querySelector('button').addEventListener('click', () => leave());
+        bar.innerHTML =
+          '<span class="net-dot"></span><span class="net-text"></span><span class="net-score" hidden></span>' +
+          '<button class="btn btn-ghost net-rematch" type="button" hidden>Реванш</button>' +
+          '<button class="btn btn-ghost net-react-btn" type="button" aria-label="Реакция" title="Реакция">😊</button>' +
+          '<button class="btn btn-ghost" type="button" data-leave>Выйти</button>' +
+          '<div class="net-react" hidden>' +
+          REACTIONS.map((r, i) => `<button type="button" data-r="${i}"${r.length > 2 ? ' class="phrase"' : ''}>${r}</button>`).join('') +
+          '</div>';
+        bar.querySelector('[data-leave]').addEventListener('click', () => leave());
+        const picker = bar.querySelector('.net-react');
+        bar.querySelector('.net-react-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          picker.hidden = !picker.hidden;
+        });
+        picker.addEventListener('click', (e) => {
+          const b = e.target.closest('[data-r]');
+          if (!b) return;
+          picker.hidden = true;
+          rawSend({ t: '_react', v: +b.dataset.r });
+          bubble(REACTIONS[+b.dataset.r], true);
+        });
+        bar.querySelector('.net-rematch').addEventListener('click', () => {
+          if (rematchMine) return;
+          rematchMine = true;
+          rawSend({ t: '_rematch' });
+          checkRematch();
+        });
+        updateBar();
       } else {
         bar.innerHTML = '<span class="net-dot"></span><span class="net-text">Соединение с соперником потеряно</span><button class="btn btn-ghost" type="button">Закрыть</button>';
         bar.querySelector('button').addEventListener('click', () => (bar.hidden = true));
       }
     }
 
+    document.addEventListener('click', (e) => {
+      const picker = bar && bar.querySelector('.net-react');
+      if (picker && !picker.hidden && !e.target.closest('.net-react')) picker.hidden = true;
+    });
+
+    function updateBar() {
+      if (!bar || bar.dataset.state !== 'on') return;
+      bar.querySelector('.net-text').textContent = 'Игра по сети' + (infoText ? ' · ' + infoText : '');
+      const sc = bar.querySelector('.net-score');
+      const played = series.me + series.them + series.draw;
+      sc.hidden = !played;
+      sc.textContent = 'Счёт ' + series.me + ':' + series.them;
+      sc.title = 'Вы — ' + series.me + ', соперник — ' + series.them + (series.draw ? ', ничьих — ' + series.draw : '');
+      const rb = bar.querySelector('.net-rematch');
+      rb.hidden = !(finishedGame && opts.onRematch);
+      rb.disabled = rematchMine;
+      rb.classList.toggle('pulse', rematchTheirs && !rematchMine);
+      rb.textContent = rematchMine ? 'Ждём ответа…' : rematchTheirs ? 'Реванш? Да!' : 'Реванш';
+    }
+
+    // всплывающая реакция над полем
+    function bubble(text, mine) {
+      if (!bar) return;
+      const el = document.createElement('div');
+      el.className = 'net-bubble' + (mine ? ' mine' : '');
+      el.textContent = (mine ? 'Вы: ' : 'Соперник: ') + text;
+      bar.appendChild(el);
+      if (!mine) SG.sound.play('hint');
+      setTimeout(() => el.classList.add('out'), 2600);
+      setTimeout(() => el.remove(), 3100);
+    }
+
+    function result(r) {
+      if (!api.active || resultLocked) return;
+      resultLocked = true;
+      finishedGame = true;
+      if (r === 'win') series.me++;
+      else if (r === 'lose') series.them++;
+      else series.draw++;
+      updateBar();
+    }
+
+    // началась новая партия — сбрасываем итог и предложения реванша
+    function newGameSeen() {
+      resultLocked = false;
+      finishedGame = false;
+      rematchMine = rematchTheirs = false;
+      updateBar();
+    }
+
+    function checkRematch() {
+      if (rematchMine && rematchTheirs) {
+        rematchMine = rematchTheirs = false;
+        if (api.role === 'host' && opts.onRematch) opts.onRematch();
+      }
+      updateBar();
+    }
+
     function info(text) {
       infoText = text;
-      if (api.active) renderBar('on');
+      updateBar();
     }
 
     // ---------- транспорт ----------
@@ -341,7 +488,30 @@
       lastSeen = Date.now();
       if (msg.t === '_ping') return;
       if (msg.t === '_bye') return lost(true);
+      if (msg.t === '_react') {
+        if (api.active && REACTIONS[msg.v]) bubble(REACTIONS[msg.v], false);
+        return;
+      }
+      if (msg.t === '_rematch') {
+        if (!api.active) return;
+        rematchTheirs = true;
+        checkRematch();
+        return;
+      }
+      if (msg.t === '_denied') {
+        teardown();
+        dialog('<h2 id="net-title">Не та комната</h2><p>Код комнаты не подошёл. Попросите друга прислать ссылку ещё раз.</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Понятно</button></div>')
+          .querySelector('[data-close]').addEventListener('click', cancel);
+        return;
+      }
       if (msg.t === '_hello') {
+        // в комнату на сервере знакомств пускаем только знающих код (в ручном режиме код не нужен)
+        if (!helloDone && api.role === 'host' && myRoom && msg.key !== myRoom) {
+          rawSend({ t: '_denied' });
+          const c = conn;
+          setTimeout(() => c && c.close(), 800);
+          return;
+        }
         if (msg.game !== opts.game) {
           dialog('<h2 id="net-title">Другая игра</h2><p>Соперник открыл другую игру. Попросите его перейти по вашей ссылке ещё раз.</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Понятно</button></div>')
             .querySelector('[data-close]').addEventListener('click', closeDialog);
@@ -349,11 +519,12 @@
         }
         if (!helloDone) {
           helloDone = true;
-          rawSend({ t: '_hello', game: opts.game });
+          rawSend({ t: '_hello', game: opts.game, key: joinKey });
           connected();
         }
         return;
       }
+      if (msg.t === 'new') newGameSeen();
       if (api.active && opts.onMessage) opts.onMessage(msg);
     }
 
@@ -368,14 +539,16 @@
     }
 
     function send(obj) {
-      if (api.active) rawSend(obj);
+      if (!api.active) return;
+      if (obj && obj.t === 'new') newGameSeen();
+      rawSend(obj);
     }
 
     function attach(c) {
       conn = c;
       lastSeen = Date.now();
       // гость первым здоровается, хозяин отвечает
-      if (api.role === 'guest') rawSend({ t: '_hello', game: opts.game });
+      if (api.role === 'guest') rawSend({ t: '_hello', game: opts.game, key: joinKey });
       clearInterval(pingTimer);
       pingTimer = setInterval(() => {
         rawSend({ t: '_ping' });
@@ -385,6 +558,9 @@
 
     function connected() {
       api.active = true;
+      stopLobby();
+      series.me = series.them = series.draw = 0;
+      resultLocked = finishedGame = rematchMine = rematchTheirs = false;
       closeDialog();
       markMode(true);
       renderBar('on');
@@ -406,6 +582,8 @@
 
     function teardown() {
       clearInterval(pingTimer);
+      stopLobby();
+      myRoom = '';
       api.active = false;
       helloDone = false;
       const c = conn;
@@ -450,6 +628,89 @@
 
     const wrapPeerConn = (c) => ({ send: (s) => c.send(s), close: () => c.close() });
 
+    // ---------- лобби: открытые комнаты ----------
+
+    function stopLobby() {
+      clearTimeout(lobbyTimer);
+      lobbyTimer = 0;
+      if (lobbyPeer) {
+        const p = lobbyPeer;
+        lobbyPeer = null;
+        try {
+          p.destroy();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+    }
+
+    // отдельная «табличка» на сервере: по ней другие видят, что в этой игре ждут соперника
+    function publish(room, on) {
+      if (lobbyPeer) {
+        const p = lobbyPeer;
+        lobbyPeer = null;
+        try {
+          p.destroy();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+      if (!on || !window.Peer) return;
+      try {
+        const p = new window.Peer(LOBBY + opts.game + '-' + room + '-' + Math.floor(Date.now() / 1000).toString(36), peerOptions('own'));
+        p.on('connection', (c) => c.close());
+        p.on('error', () => {});
+        p.on('disconnected', () => lobbyPeer === p && !p.destroyed && p.reconnect());
+        lobbyPeer = p;
+      } catch (e) {
+        /* ignore */
+      }
+    }
+
+    // раздел «Открытые игры» в окне приглашения
+    function lobbyBlock(box, room, onServer) {
+      const wrap = box.querySelector('.net-lobby');
+      if (!wrap) return;
+      const listEl = wrap.querySelector('.net-rooms');
+      const chk = wrap.querySelector('input[type=checkbox]');
+      chk.checked = !!SG.store.get('net-public', false);
+      if (onServer) {
+        chk.addEventListener('change', () => {
+          SG.store.set('net-public', chk.checked);
+          publish(room, chk.checked);
+          setTimeout(poll, 700);
+        });
+        if (chk.checked) publish(room, true);
+      } else wrap.querySelector('.net-public').hidden = true;
+      const poll = async () => {
+        clearTimeout(lobbyTimer);
+        if (api.active || !modal || modal.hidden || !box.isConnected || !box.contains(listEl)) return;
+        const rooms = await lobbyList(opts.game);
+        if (api.active || !box.contains(listEl)) return;
+        if (!rooms) {
+          wrap.hidden = true;
+          return;
+        }
+        wrap.hidden = false;
+        const others = rooms.filter((r) => r.room !== room).sort((a, b) => b.since - a.since).slice(0, 8);
+        const now = Date.now() / 1000;
+        listEl.innerHTML = others.length
+          ? others
+              .map((r) => {
+                const min = r.since ? Math.max(0, Math.round((now - r.since) / 60)) : 0;
+                return `<li><span>Комната <b>${r.room}</b><small>${min ? 'ждёт ' + min + ' мин' : 'только что'}</small></span><button class="btn btn-primary" type="button" data-room="${r.room}">Играть</button></li>`;
+              })
+              .join('')
+          : '<li class="empty">Пока никто не ищет соперника. Отметьте галочку — и вашу комнату увидят другие.</li>';
+        lobbyTimer = setTimeout(poll, 4000);
+      };
+      listEl.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-room]');
+        if (b) join(b.dataset.room);
+      });
+      poll();
+    }
+
     // ---------- хозяин: комната через PeerJS ----------
 
     async function host(srvIdx) {
@@ -471,13 +732,14 @@
       let opened = false;
       const timer = setTimeout(() => !opened && fallback('Сервер знакомств не отвечает.'), SERVER_TIMEOUT);
       try {
-        peer = new window.Peer(PREFIX + room, peerOptions(which));
+        peer = new window.Peer(roomPeerId(room), peerOptions(which));
       } catch (e) {
         clearTimeout(timer);
         return fallback('Сервер знакомств недоступен.');
       }
       const myPeer = peer;
       const token = roomToken(room, which);
+      myRoom = room;
       peer.on('open', () => {
         opened = true;
         clearTimeout(timer);
@@ -489,6 +751,8 @@
             '<p class="net-status"><span class="net-spinner"></span>Ждём соперника…</p>' +
             '<p class="net-note">Отправив ссылку, вернитесь на эту страницу: пока она свёрнута, браузер может её «усыпить».</p>' +
             '<details class="net-join"><summary>У меня есть код от друга</summary><div class="net-link"><input type="text" maxlength="8" autocomplete="off" placeholder="Код комнаты" aria-label="Код комнаты"><button class="btn btn-primary" type="button" data-join>Войти</button></div></details>' +
+            '<div class="net-lobby" hidden><label class="net-public"><input type="checkbox"> Ищу соперника — показать мою комнату всем</label>' +
+            '<p class="net-label">Открытые игры</p><ul class="net-rooms"></ul></div>' +
             '<div class="net-actions"><button class="btn btn-ghost" type="button" data-manual>Ручной режим</button><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
         );
         bindLink(b, url);
@@ -502,6 +766,7 @@
         };
         b.querySelector('[data-join]').addEventListener('click', go);
         joinInput.addEventListener('keydown', (e) => e.key === 'Enter' && go());
+        lobbyBlock(b, room, which === 'own');
       });
       peer.on('connection', (c) => {
         if (conn) {
@@ -587,6 +852,7 @@
       token = String(token).toLowerCase();
       teardown();
       api.role = 'guest';
+      joinKey = room;
       const box = dialog(
         '<h2 id="net-title">Игра по сети</h2><p class="net-status"><span class="net-spinner"></span>Подключаемся к комнате <b>' +
           room +
@@ -645,7 +911,7 @@
           }
           return !stuck;
         });
-        const c = myPeer.connect(PREFIX + room, { reliable: true });
+        const c = myPeer.connect(roomPeerId(room), { reliable: true });
         attempts.push(c);
         let mine = false;
         watchPc(c.peerConnection, diag, (d, st) => {
@@ -805,6 +1071,8 @@
         }
       }
       api.role = 'host';
+      stopLobby();
+      myRoom = '';
       dialog('<h2 id="net-title">Игра по сети</h2><p class="net-status"><span class="net-spinner"></span>Готовим приглашение…</p>');
       try {
         pc = new RTCPeerConnection(ICE);
@@ -884,6 +1152,7 @@
     window.addEventListener('beforeunload', () => api.active && rawSend({ t: '_bye' }));
     // уходя со страницы, сразу снимаем комнату с сервера — иначе гость ждал бы, пока сервер заметит пропажу
     window.addEventListener('pagehide', () => {
+      stopLobby();
       if (peer && !peer.destroyed) {
         const p = peer;
         peer = null;
@@ -901,6 +1170,7 @@
 
     api.host = host;
     api.join = join;
+    api.series = series;
     return api;
   }
 

@@ -299,6 +299,7 @@
     over = true;
     busy = true;
     let text;
+    if (mode === 'net') net.result(!me.length && !ai.length ? 'draw' : !me.length ? 'win' : 'lose');
     if (!me.length && !ai.length) {
       text = 'Ничья — карты кончились одновременно 🤝';
       SG.sound.play('draw');
@@ -425,6 +426,7 @@
 
   const net = SG.net.setup({
     game: 'durak',
+    onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

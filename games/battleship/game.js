@@ -317,6 +317,7 @@
       if (best === null || shots < best) SG.store.set('battleship-best', shots);
     }
     SG.sound.play(won ? 'win' : 'lose');
+    if (mode === 'net') net.result(won ? 'win' : 'lose');
     statusEl.textContent = won
       ? 'Победа! Флот противника уничтожен за ' + shots + ' выстрелов 🎉'
       : 'Поражение: ваш флот потоплен. Корабли противника показаны на поле.';
@@ -394,6 +395,7 @@
 
   const net = SG.net.setup({
     game: 'battleship',
+    onRematch: () => $('again-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

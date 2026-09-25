@@ -210,6 +210,7 @@
     renderScores();
     const lost = (mode === 'ai' && winner === 2) || (mode === 'net' && winner !== mySide);
     SG.sound.play(winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
+    if (mode === 'net') net.result(winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
     if (winner === 'D') statusEl.textContent = 'Ничья 🤝';
     else if (mode === 'net') statusEl.textContent = winner === mySide ? 'Вы победили! 🎉' : 'Соперник победил';
     else if (mode === 'ai') statusEl.textContent = winner === 1 ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
@@ -284,6 +285,7 @@
   const net = SG.net.setup({
     game: 'connect4',
     modeEl: $('mode'),
+    onRematch: () => $('new-round').click(),
     onConnect(role) {
       mode = 'net';
       mySide = role === 'host' ? 1 : 2;

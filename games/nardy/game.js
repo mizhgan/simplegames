@@ -332,6 +332,7 @@
     }
     if (who === ME) SG.store.set('nardy-wins', SG.store.get('nardy-wins', 0) + 1);
     SG.sound.play(who === ME ? 'win' : 'lose');
+    if (mode === 'net') net.result(who === ME ? 'win' : 'lose');
     statusEl.textContent =
       (who === ME ? 'Вы победили' : OPP() + ' победил') + (mars ? ' с марсом (2 очка)!' : '!') + (who === ME ? ' 🎉' : mode === 'net' ? '' : ' 🤖');
     render();
@@ -465,6 +466,7 @@
 
   const net = SG.net.setup({
     game: 'nardy',
+    onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

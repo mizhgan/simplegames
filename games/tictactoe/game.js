@@ -144,6 +144,7 @@
     renderScores();
     const lost = (mode === 'ai' && res.winner === 'O') || (mode === 'net' && res.winner !== mySide);
     SG.sound.play(res.winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
+    if (mode === 'net') net.result(res.winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
     if (res.winner === 'D') statusEl.textContent = 'Ничья 🤝';
     else if (mode === 'net') statusEl.textContent = res.winner === mySide ? 'Вы победили! 🎉' : 'Соперник победил';
     else if (mode === 'ai') statusEl.textContent = res.winner === 'X' ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
@@ -200,6 +201,7 @@
   const net = SG.net.setup({
     game: 'tictactoe',
     modeEl: $('mode'),
+    onRematch: () => $('new-round').click(),
     onConnect(role) {
       mode = 'net';
       mySide = role === 'host' ? 'X' : 'O';
