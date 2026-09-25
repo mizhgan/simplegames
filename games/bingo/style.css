@@ -1,0 +1,88 @@
+.bg-status {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.bg-ball {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.bg-called {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.bg-called span {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.bg-called span.new {
+  background: var(--accent);
+  color: #fff;
+}
+
+.bg-card {
+  width: min(100%, 360px);
+}
+
+.bg-head,
+.bg-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.bg-head span {
+  color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.bg-cell {
+  aspect-ratio: 1;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.3rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.bg-cell.can {
+  border-color: var(--warning);
+}
+
+.bg-cell.on {
+  border-color: var(--danger);
+  background: radial-gradient(circle, color-mix(in srgb, var(--danger) 55%, transparent) 55%, var(--bg) 58%);
+}
+
+.bg-shout {
+  font-size: 1.2rem;
+}
+
+.bg-auto {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.mm-log {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  text-align: center;
+}
