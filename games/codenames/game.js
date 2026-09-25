@@ -4,14 +4,16 @@
 
   const esc = SG.party.esc;
   const WORDS = (Array.isArray(window.SG_NOUNS) ? window.SG_NOUNS : String(window.SG_NOUNS).split(' ')).filter((w) => w.length >= 4 && w.length <= 8);
+  // вариант «Картинки»: вместо слов — эмодзи
+  const PICS = '🌙 ☀️ ⭐ 🌈 ⛈️ ❄️ 🔥 🌊 🌋 🌵 🌲 🌸 🍂 🍄 🌍 🏔️ 🏝️ 🏰 🏠 🗝️ 🚪 🕯️ ⏳ ⏰ 📚 ✉️ 🎁 🎈 🎭 🎨 🎵 🎲 🧩 🔮 ⚓ 🧭 🗺️ 🚀 ✈️ 🚂 ⛵ 🚲 🛸 👑 💎 💰 ⚖️ 🗡️ 🛡️ 🏹 💣 ❤️ 👻 💀 🤖 👽 🧙 🤡 🐱 🐶 🦊 🐺 🦉 🐢 🐇 🦋 🐝 🐍 🦁 🐘 🐟 🐙 🦄 🐉 🍎 🍋 🍰 ☕ 🍕 🍯 🧀 ⚽ 🏆 🎯 💡 🔒 📷 📺 📱 🔭 🧪 ⛓️ 🕸️ 🧸 🌅 🎢 🎪 🚗 🎸 🥁 🎤 🧲 🪁 🛶 🧊 🍉 🥕 🌶️ 🍔 🍩 🎃 🎄 🦀 🐧 🦒 🐌 🍀 🌻 🌴 🏀 🎳 🥊 🪓 🔔 📎 ✂️ 🧵'.split(' ');
   const TEAM = ['Красные', 'Синие'];
   const norm = (w) => String(w).toLowerCase().replace(/ё/g, 'е').trim();
 
   // ---------- правила ----------
 
-  function create(players) {
+  function create(players, opts) {
     const ids = SG.shuffle(players.map((p) => p.id));
-    const s = { ids: players.map((p) => p.id), names: {}, team: {}, captain: [null, null], phase: 'teams', now: Date.now(), log: [] };
+    const s = { pics: !!(opts && opts.pics), ids: players.map((p) => p.id), names: {}, team: {}, captain: [null, null], phase: 'teams', now: Date.now(), log: [] };
     players.forEach((p) => (s.names[p.id] = p.name));
     // поровну и случайно; первые в каждой команде — капитаны
     ids.forEach((id, i) => (s.team[id] = i % 2));
@@ -20,7 +22,7 @@
   }
 
   function deal(s) {
-    const words = SG.shuffle(WORDS.slice()).slice(0, 25);
+    const words = SG.shuffle((s.pics ? PICS : WORDS).slice()).slice(0, 25);
     s.first = Math.random() < 0.5 ? 0 : 1;
     // 9 у начинающей команды, 8 у другой, 7 мирных, 1 убийца
     const key = [...Array(9).fill(s.first), ...Array(8).fill(1 - s.first), ...Array(7).fill(2), 3];
@@ -137,6 +139,7 @@
     const cap = id === s.captain[0] || id === s.captain[1];
     const reveal = s.phase === 'end';
     return {
+      pics: s.pics,
       phase: s.phase,
       players: s.ids.map((pid) => ({ id: pid, name: s.names[pid], team: s.team[pid], cap: s.captain[s.team[pid]] === pid })),
       myTeam: s.team[id],
@@ -183,7 +186,7 @@
           .map((c, i) => {
             const marks = v.pick.filter((p) => p.card === i).map((p) => esc(ui.name(p.id))).join(', ');
             const cls = (c.open ? 'open ' : '') + (c.k !== null ? KCLS[c.k] : '') + (v.pick.some((p) => p.card === i && p.id === me) ? ' sel' : '');
-            return `<button type="button" class="cn-card ${cls}" data-card="${i}" ${canGuess && !c.open ? '' : 'disabled'}><span>${esc(c.w)}</span>${marks ? `<small>${marks}</small>` : ''}</button>`;
+            return `<button type="button" class="cn-card ${cls}${v.pics ? ' pic' : ''}" data-card="${i}" ${canGuess && !c.open ? '' : 'disabled'}><span>${esc(c.w)}</span>${marks ? `<small>${marks}</small>` : ''}</button>`;
           })
           .join('')}</div>` +
         (v.phase === 'clue' && myTurn && v.cap && !v.over ? '<form class="cn-clue"><input type="text" maxlength="24" placeholder="Слово-подсказка" required><select>' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<option value="${n}">${n}</option>`).join('') + '</select><button class="btn btn-primary" type="submit">Подсказать</button></form><p class="pt-muted cn-err" hidden>Подсказка не может быть словом с поля или его частью.</p>' : '') +
@@ -228,6 +231,13 @@
 
   SG.party({
     game: 'codenames',
+    options: {
+      html: '<label>Карточки <select data-pics><option value="0">Слова</option><option value="1">Картинки (эмодзи)</option></select></label>',
+      read: (el) => ({ pics: (el.querySelector('[data-pics]') || {}).value === '1' }),
+      show(el, o) {
+        if (o) el.querySelector('[data-pics]').value = o.pics ? '1' : '0';
+      },
+    },
     min: 4,
     max: 12,
     bots: false,
