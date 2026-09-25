@@ -1,0 +1,76 @@
+.tt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.tt-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tt-row input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.tt-row input[type="radio"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--danger);
+}
+
+.tt-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.tt-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tt-fact:disabled {
+  cursor: default;
+}
+
+.tt-fact small {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.tt-fact.sel {
+  border-color: var(--accent);
+}
+
+.tt-fact.lie {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, var(--bg));
+}
+
+.tt-fact.truth {
+  border-color: var(--success);
+}
+
+.qz-plus {
+  color: var(--success);
+  font-style: normal;
+  font-weight: 800;
+}
