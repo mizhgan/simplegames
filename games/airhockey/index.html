@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Понг — SimpleGames</title>
-  <meta name="description" content="Понг: классический теннис против компьютера или вдвоём на одном экране.">
+  <title>Аэрохоккей — SimpleGames</title>
+  <meta name="description" content="Аэрохоккей онлайн: отбивайте шайбу битой и забивайте в ворота соперника. Против компьютера, вдвоём на одном экране или по сети.">
   <meta name="theme-color" content="#0d0e1a">
   <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../../manifest.webmanifest">
@@ -28,7 +28,7 @@
   <main class="container game-page">
     <a class="back-link" href="../../index.html">← Все игры</a>
     <div class="game-head">
-      <h1>Понг</h1>
+      <h1>Аэрохоккей</h1>
     </div>
 
     <div class="game-layout">
@@ -45,11 +45,11 @@
           </div>
         </div>
         <div class="status-line" id="status" aria-live="polite"></div>
-        <div class="stage-wrap" style="max-width:720px">
-          <canvas id="board" class="board-canvas" style="aspect-ratio:3/2" aria-label="Игровое поле"></canvas>
+        <div class="stage-wrap" style="max-width:min(420px, 58vh)">
+          <canvas id="board" class="board-canvas" style="aspect-ratio:2/3" aria-label="Игровое поле"></canvas>
           <div class="overlay" id="overlay">
-            <h2 id="overlay-title">Понг</h2>
-            <p id="overlay-text">Отбивайте мяч ракеткой. До 7 очков.</p>
+            <h2 id="overlay-title">Аэрохоккей</h2>
+            <p id="overlay-text"></p>
             <div class="overlay-actions">
               <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
             </div>
@@ -61,11 +61,11 @@
         <div class="info-card">
           <h2>Как играть</h2>
           <ul>
-            <li>Отбивайте мяч своей ракеткой и не пропускайте его за край. Игра идёт до 7 очков.</li>
-            <li>Угол отскока зависит от того, какой частью ракетки вы попали по мячу. После каждого удара мяч ускоряется.</li>
-            <li>Против компьютера: ведите мышью или пальцем по полю, либо <kbd>W</kbd> <kbd>S</kbd> / <kbd>↑</kbd> <kbd>↓</kbd>.</li>
-            <li>Вдвоём: левый игрок — <kbd>W</kbd> <kbd>S</kbd>, правый — <kbd>↑</kbd> <kbd>↓</kbd>. На планшете каждый водит пальцем по своей половине поля.</li>
-            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Хозяин игры — левая ракетка, гость — правая.</li>
+            <li>Водите своей битой мышью или пальцем по своей половине поля и забивайте шайбу в ворота соперника. Игра до 7 голов.</li>
+            <li>Чем быстрее движется бита в момент удара, тем сильнее летит шайба. Шайба отскакивает от бортов.</li>
+            <li>Вдвоём на одном экране: нижний игрок — <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> или палец на нижней половине, верхний — стрелки или палец на верхней половине.</li>
+            <li>По сети у каждого своя бита внизу экрана.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Игру ведёт хозяин, гость управляет своим героем с любыми клавишами или джойстиком на экране.</li>
           </ul>
         </div>
       </aside>

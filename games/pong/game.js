@@ -1,4 +1,4 @@
-/* Понг */
+/* Понг: против компьютера, вдвоём и по сети */
 (() => {
   'use strict';
 
@@ -8,257 +8,132 @@
   const PAD_H = 72;
   const BALL = 10;
   const WIN = 7;
+  const PAD_X = [24, W - 24 - PAD_W];
   const AI_SPEED = { easy: 230, normal: 330, hard: 460 };
 
-  const $ = (id) => document.getElementById(id);
-  const canvas = $('board');
-  const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
-
-  let mode = SG.store.get('pong-mode', 'ai');
-  let difficulty = SG.store.get('pong-diff', 'normal');
-  let left, right, ball, score, state, serveTimer, colors;
-  const keys = {};
-  const touchY = { left: null, right: null };
-  let rafId = 0;
-  let last = 0;
-
-  function readColors() {
-    colors = { bg: SG.cssVar('--board-bg'), line: SG.cssVar('--board-line'), text: SG.cssVar('--text'), accent: SG.cssVar('--accent'), accent2: SG.cssVar('--accent-2') };
+  function serve(s, dir) {
+    s.ball = { x: W / 2, y: H / 2, vx: 0, vy: 0, speed: 330, dir, wait: 0.9 };
   }
 
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(((w * H) / W) * dpr);
-    ctx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
-    draw();
+  function create() {
+    const s = { pads: [H / 2 - PAD_H / 2, H / 2 - PAD_H / 2], score: [0, 0], seed: Math.random() };
+    serve(s, Math.random() < 0.5 ? -1 : 1);
+    return s;
   }
 
-  function serve(dir) {
-    ball = { x: W / 2, y: H / 2, vx: 0, vy: 0, speed: 330 };
-    serveTimer = 0.9;
-    ball.dir = dir;
+  function movePad(s, side, inp, dt) {
+    let y = s.pads[side];
+    if (inp.py !== null && inp.py !== undefined) {
+      const d = inp.py - (y + PAD_H / 2);
+      y += Math.max(-900 * dt, Math.min(900 * dt, d));
+    } else y += ((inp.d ? 1 : 0) - (inp.u ? 1 : 0)) * 420 * dt;
+    s.pads[side] = Math.max(0, Math.min(H - PAD_H, y));
   }
 
-  function newGame() {
-    left = { y: H / 2 - PAD_H / 2 };
-    right = { y: H / 2 - PAD_H / 2 };
-    score = [0, 0];
-    state = 'playing';
-    overlay.hidden = true;
-    $('labels').textContent = mode === 'ai' ? 'Вы — Компьютер' : 'Игрок 1 — Игрок 2';
-    serve(Math.random() < 0.5 ? -1 : 1);
-    updateScore();
-  }
-
-  function updateScore() {
-    $('score').textContent = score[0] + ' : ' + score[1];
-  }
-
-  function movePaddle(p, target, maxSpeed, dt) {
-    const c = p.y + PAD_H / 2;
-    const d = target - c;
-    p.y += Math.max(-maxSpeed * dt, Math.min(maxSpeed * dt, d));
-    p.y = Math.max(0, Math.min(H - PAD_H, p.y));
-  }
-
-  function update(dt) {
-    if (state !== 'playing') return;
-    // левая ракетка: W/S или касание левой половины
-    if (touchY.left !== null) movePaddle(left, touchY.left, 900, dt);
-    else left.y += ((keys.KeyS || (mode === 'ai' && keys.ArrowDown) ? 1 : 0) - (keys.KeyW || (mode === 'ai' && keys.ArrowUp) ? 1 : 0)) * 420 * dt;
-    left.y = Math.max(0, Math.min(H - PAD_H, left.y));
-
-    if (mode === 'ai') {
-      // компьютер следит за мячом с ограниченной скоростью и небольшой ошибкой
-      const target = ball.vx > 0 ? ball.y + Math.sin(performance.now() / 300) * (difficulty === 'hard' ? 8 : 22) : H / 2;
-      movePaddle(right, target, AI_SPEED[difficulty], dt);
-    } else if (touchY.right !== null) movePaddle(right, touchY.right, 900, dt);
-    else {
-      right.y += ((keys.ArrowDown ? 1 : 0) - (keys.ArrowUp ? 1 : 0)) * 420 * dt;
-      right.y = Math.max(0, Math.min(H - PAD_H, right.y));
-    }
-
-    if (serveTimer > 0) {
-      serveTimer -= dt;
-      if (serveTimer <= 0) {
-        const a = (Math.random() - 0.5) * 0.8;
-        ball.vx = Math.cos(a) * ball.speed * ball.dir;
-        ball.vy = Math.sin(a) * ball.speed;
-      }
-      return;
-    }
-
-    const steps = 3;
-    for (let s = 0; s < steps; s++) {
-      ball.x += (ball.vx * dt) / steps;
-      ball.y += (ball.vy * dt) / steps;
-      if (ball.y < BALL / 2) {
-        ball.y = BALL / 2;
-        ball.vy = Math.abs(ball.vy);
-        SG.sound.play('tick');
-      } else if (ball.y > H - BALL / 2) {
-        ball.y = H - BALL / 2;
-        ball.vy = -Math.abs(ball.vy);
-        SG.sound.play('tick');
-      }
-      hitPaddle(left, 24, 1);
-      hitPaddle(right, W - 24 - PAD_W, -1);
-    }
-
-    if (ball.x < -20) point(1);
-    else if (ball.x > W + 20) point(0);
-  }
-
-  function hitPaddle(p, x, dir) {
-    if (Math.sign(ball.vx) === dir) return;
-    if (ball.x + BALL / 2 < x || ball.x - BALL / 2 > x + PAD_W) return;
-    if (ball.y + BALL / 2 < p.y || ball.y - BALL / 2 > p.y + PAD_H) return;
+  function hit(s, side, fx) {
+    const b = s.ball;
+    const dir = side === 0 ? 1 : -1;
+    const x = PAD_X[side];
+    const py = s.pads[side];
+    if (Math.sign(b.vx) === dir) return;
+    if (b.x + BALL / 2 < x || b.x - BALL / 2 > x + PAD_W) return;
+    if (b.y + BALL / 2 < py || b.y - BALL / 2 > py + PAD_H) return;
     // угол отскока зависит от места удара
-    const rel = (ball.y - (p.y + PAD_H / 2)) / (PAD_H / 2);
-    const angle = rel * 1.0;
-    ball.speed = Math.min(900, ball.speed * 1.06);
-    ball.vx = Math.cos(angle) * ball.speed * dir;
-    ball.vy = Math.sin(angle) * ball.speed;
-    ball.x = dir > 0 ? x + PAD_W + BALL / 2 : x - BALL / 2;
-    SG.sound.play('bounce');
+    const rel = (b.y - (py + PAD_H / 2)) / (PAD_H / 2);
+    b.speed = Math.min(900, b.speed * 1.06);
+    b.vx = Math.cos(rel) * b.speed * dir;
+    b.vy = Math.sin(rel) * b.speed;
+    b.x = dir > 0 ? x + PAD_W + BALL / 2 : x - BALL / 2;
+    fx('bounce');
   }
 
-  function point(who) {
-    score[who]++;
-    updateScore();
-    SG.sound.play(mode === 'ai' && who === 1 ? 'error' : 'coin');
-    if (score[who] >= WIN) return finish(who);
-    serve(who === 0 ? 1 : -1);
-  }
-
-  function finish(who) {
-    state = 'over';
-    let title;
-    if (mode === 'ai') {
-      title = who === 0 ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
-      if (who === 0) SG.store.set('pong-wins', SG.store.get('pong-wins', 0) + 1);
-      SG.sound.play(who === 0 ? 'win' : 'lose');
-    } else {
-      title = 'Победил игрок ' + (who + 1) + '! 🎉';
-      SG.sound.play('win');
-    }
-    $('overlay-title').textContent = title;
-    $('overlay-text').textContent = 'Счёт ' + score[0] + ' : ' + score[1] + '.';
-    $('start-btn').textContent = 'Ещё раз';
-    overlay.hidden = false;
-  }
-
-  function draw() {
-    if (!ball) return;
-    ctx.fillStyle = colors.bg;
-    ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = colors.line;
-    for (let y = 8; y < H; y += 24) ctx.fillRect(W / 2 - 2, y, 4, 12);
-    ctx.fillStyle = colors.text;
-    ctx.globalAlpha = 0.25;
-    ctx.font = '800 64px system-ui, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(score[0], W / 2 - 70, 80);
-    ctx.fillText(score[1], W / 2 + 70, 80);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = colors.accent;
-    ctx.fillRect(24, left.y, PAD_W, PAD_H);
-    ctx.fillStyle = colors.accent2;
-    ctx.fillRect(W - 24 - PAD_W, right.y, PAD_W, PAD_H);
-    ctx.fillStyle = colors.text;
-    ctx.fillRect(ball.x - BALL / 2, ball.y - BALL / 2, BALL, BALL);
-  }
-
-  function frame(t) {
-    const dt = Math.min(0.033, (t - last) / 1000);
-    last = t;
-    update(dt);
-    draw();
-    rafId = requestAnimationFrame(frame);
-  }
-
-  // ---------- управление ----------
-
-  document.addEventListener('keydown', (e) => {
-    if (['ArrowUp', 'ArrowDown', 'KeyW', 'KeyS'].includes(e.code)) {
-      keys[e.code] = true;
-      e.preventDefault();
-    } else if ((e.code === 'Space' || e.code === 'Enter') && state !== 'playing') {
-      e.preventDefault();
-      newGame();
-    }
-  });
-  document.addEventListener('keyup', (e) => (keys[e.code] = false));
-  window.addEventListener('blur', () => Object.keys(keys).forEach((k) => (keys[k] = false)));
-
-  // касание или мышь: левая половина — левая ракетка, правая — правая (в режиме «вдвоём»)
-  const pointers = new Map();
-  function pointerPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    return { x: ((e.clientX - rect.left) / rect.width) * W, y: ((e.clientY - rect.top) / rect.height) * H };
-  }
-  function applyPointers() {
-    touchY.left = null;
-    touchY.right = null;
-    pointers.forEach((pos) => {
-      if (mode === 'pvp' && pos.x > W / 2) touchY.right = pos.y;
-      else touchY.left = pos.y;
-    });
-  }
-  canvas.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    canvas.setPointerCapture(e.pointerId);
-    pointers.set(e.pointerId, pointerPos(e));
-    applyPointers();
-  });
-  canvas.addEventListener('pointermove', (e) => {
-    if (e.pointerType === 'mouse' && mode === 'ai' && !pointers.has(e.pointerId)) {
-      // мышью можно управлять и без нажатия
-      touchY.left = pointerPos(e).y;
+  function step(s, inputs, dt, fx) {
+    movePad(s, 0, inputs[0], dt);
+    movePad(s, 1, inputs[1], dt);
+    const b = s.ball;
+    if (b.wait > 0) {
+      b.wait -= dt;
+      if (b.wait <= 0) {
+        const a = (Math.random() - 0.5) * 0.8;
+        b.vx = Math.cos(a) * b.speed * b.dir;
+        b.vy = Math.sin(a) * b.speed;
+      }
       return;
     }
-    if (!pointers.has(e.pointerId)) return;
-    pointers.set(e.pointerId, pointerPos(e));
-    applyPointers();
-  });
-  const up = (e) => {
-    pointers.delete(e.pointerId);
-    applyPointers();
-  };
-  canvas.addEventListener('pointerup', up);
-  canvas.addEventListener('pointercancel', up);
-  canvas.addEventListener('pointerleave', (e) => {
-    if (e.pointerType === 'mouse' && !pointers.size) touchY.left = null;
-  });
+    for (let k = 0; k < 3; k++) {
+      b.x += (b.vx * dt) / 3;
+      b.y += (b.vy * dt) / 3;
+      if (b.y < BALL / 2) {
+        b.y = BALL / 2;
+        b.vy = Math.abs(b.vy);
+        fx('tick');
+      } else if (b.y > H - BALL / 2) {
+        b.y = H - BALL / 2;
+        b.vy = -Math.abs(b.vy);
+        fx('tick');
+      }
+      hit(s, 0, fx);
+      hit(s, 1, fx);
+    }
+    if (b.x < -20 || b.x > W + 20) {
+      const who = b.x < 0 ? 1 : 0;
+      s.score[who]++;
+      fx('coin');
+      if (s.score[who] < WIN) serve(s, who === 0 ? 1 : -1);
+    }
+  }
 
-  $('start-btn').addEventListener('click', (e) => {
-    e.currentTarget.blur();
-    newGame();
-  });
-  SG.segmented($('mode'), mode, (v) => {
-    mode = v;
-    SG.store.set('pong-mode', v);
-    $('difficulty').style.display = mode === 'ai' ? '' : 'none';
-    newGame();
-  });
-  SG.segmented($('difficulty'), difficulty, (v) => {
-    difficulty = v;
-    SG.store.set('pong-diff', v);
-  });
-  $('difficulty').style.display = mode === 'ai' ? '' : 'none';
-  document.addEventListener('sg:themechange', readColors);
-  window.addEventListener('resize', resize);
+  // компьютер следит за мячом с ограниченной скоростью и небольшой ошибкой
+  function ai(s, side, level) {
+    const b = s.ball;
+    const coming = side === 1 ? b.vx > 0 : b.vx < 0;
+    const wobble = Math.sin(performance.now() / 300) * (level === 'hard' ? 8 : 22);
+    const target = coming ? b.y + wobble : H / 2;
+    const c = s.pads[side] + PAD_H / 2;
+    const maxStep = AI_SPEED[level] / 60;
+    const py = c + Math.max(-maxStep, Math.min(maxStep, target - c));
+    return { u: false, d: false, l: false, r: false, f: false, px: null, py };
+  }
 
-  readColors();
-  left = { y: H / 2 - PAD_H / 2 };
-  right = { y: H / 2 - PAD_H / 2 };
-  score = [0, 0];
-  serve(1);
-  state = 'idle';
-  resize();
-  last = performance.now();
-  rafId = requestAnimationFrame(frame);
+  function draw(g, s, v) {
+    const c = v.colors;
+    g.fillStyle = c.bg;
+    g.fillRect(0, 0, W, H);
+    g.fillStyle = c.line;
+    for (let y = 8; y < H; y += 24) g.fillRect(W / 2 - 2, y, 4, 12);
+    g.fillStyle = c.text;
+    g.globalAlpha = 0.25;
+    g.font = '800 64px system-ui, sans-serif';
+    g.textAlign = 'center';
+    g.textBaseline = 'alphabetic';
+    g.fillText(s.score[0], W / 2 - 70, 80);
+    g.fillText(s.score[1], W / 2 + 70, 80);
+    g.globalAlpha = 1;
+    g.fillStyle = c.accent;
+    g.fillRect(PAD_X[0], s.pads[0], PAD_W, PAD_H);
+    g.fillStyle = c.accent2;
+    g.fillRect(PAD_X[1], s.pads[1], PAD_W, PAD_H);
+    g.fillStyle = c.text;
+    g.fillRect(s.ball.x - BALL / 2, s.ball.y - BALL / 2, BALL, BALL);
+  }
+
+  const names = (v) => (v.mode === 'ai' ? ['Вы', 'Компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['Вы', 'Соперник'] : ['Соперник', 'Вы']) : ['Игрок 1', 'Игрок 2']);
+
+  SG.rt({
+    game: 'pong',
+    W,
+    H,
+    sides: ['Левая ракетка', 'Правая ракетка'],
+    intro: 'Отбивайте мяч ракеткой. До ' + WIN + ' очков.',
+    create,
+    step,
+    ai,
+    draw,
+    pointer: 'y',
+    over: (s) => (s.score[0] >= WIN || s.score[1] >= WIN ? { winner: s.score[0] >= WIN ? 0 : 1, text: 'Счёт ' + s.score[0] + ' : ' + s.score[1] + '.' } : null),
+    hud(s, v) {
+      const n = names(v);
+      return n[0] + ' ' + s.score[0] + ' : ' + s.score[1] + ' ' + n[1];
+    },
+  });
 })();

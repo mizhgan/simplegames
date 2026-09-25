@@ -1,5 +1,5 @@
 /* Service worker SimpleGames: офлайн-режим. Файл генерируется: python3 tools/build-sw.py */
-const VERSION = 'd84ca2e00335';
+const VERSION = '653a30dbedaf';
 const CACHE = 'sg-' + VERSION;
 const PRECACHE = [
   "./",
@@ -10,6 +10,8 @@ const PRECACHE = [
   "games/2048/game.js",
   "games/2048/index.html",
   "games/2048/style.css",
+  "games/airhockey/game.js",
+  "games/airhockey/index.html",
   "games/asteroids/game.js",
   "games/asteroids/index.html",
   "games/balda/game.js",
@@ -21,6 +23,8 @@ const PRECACHE = [
   "games/blackjack/game.js",
   "games/blackjack/index.html",
   "games/blackjack/style.css",
+  "games/bomber/game.js",
+  "games/bomber/index.html",
   "games/breakout/game.js",
   "games/breakout/index.html",
   "games/bubbles/game.js",
@@ -159,6 +163,8 @@ const PRECACHE = [
   "games/sudoku/game.js",
   "games/sudoku/index.html",
   "games/sudoku/style.css",
+  "games/tankduel/game.js",
+  "games/tankduel/index.html",
   "games/tanks/game.js",
   "games/tanks/index.html",
   "games/tetris/game.js",
@@ -170,6 +176,8 @@ const PRECACHE = [
   "games/tictactoe/game.js",
   "games/tictactoe/index.html",
   "games/tictactoe/style.css",
+  "games/tron/game.js",
+  "games/tron/index.html",
   "games/ugolki/game.js",
   "games/ugolki/index.html",
   "games/ugolki/style.css",
@@ -207,6 +215,7 @@ const PRECACHE = [
   "sg/js/common.js",
   "sg/js/duel.js",
   "sg/js/net.js",
+  "sg/js/rt.js",
   "sg/js/site.js",
   "sg/vendor/peerjs.min.js"
 ];

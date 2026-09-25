@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Понг — SimpleGames</title>
-  <meta name="description" content="Понг: классический теннис против компьютера или вдвоём на одном экране.">
+  <title>Бомбермен-дуэль — SimpleGames</title>
+  <meta name="description" content="Бомбермен-дуэль: взрывайте кирпичи, собирайте усилители и подорвите соперника. Против компьютера, вдвоём за одной клавиатурой или по сети.">
   <meta name="theme-color" content="#0d0e1a">
   <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../../manifest.webmanifest">
@@ -28,7 +28,7 @@
   <main class="container game-page">
     <a class="back-link" href="../../index.html">← Все игры</a>
     <div class="game-head">
-      <h1>Понг</h1>
+      <h1>Бомбермен-дуэль</h1>
     </div>
 
     <div class="game-layout">
@@ -46,10 +46,10 @@
         </div>
         <div class="status-line" id="status" aria-live="polite"></div>
         <div class="stage-wrap" style="max-width:720px">
-          <canvas id="board" class="board-canvas" style="aspect-ratio:3/2" aria-label="Игровое поле"></canvas>
+          <canvas id="board" class="board-canvas" style="aspect-ratio:13/11" aria-label="Игровое поле"></canvas>
           <div class="overlay" id="overlay">
-            <h2 id="overlay-title">Понг</h2>
-            <p id="overlay-text">Отбивайте мяч ракеткой. До 7 очков.</p>
+            <h2 id="overlay-title">Бомбермен-дуэль</h2>
+            <p id="overlay-text"></p>
             <div class="overlay-actions">
               <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
             </div>
@@ -61,11 +61,11 @@
         <div class="info-card">
           <h2>Как играть</h2>
           <ul>
-            <li>Отбивайте мяч своей ракеткой и не пропускайте его за край. Игра идёт до 7 очков.</li>
-            <li>Угол отскока зависит от того, какой частью ракетки вы попали по мячу. После каждого удара мяч ускоряется.</li>
-            <li>Против компьютера: ведите мышью или пальцем по полю, либо <kbd>W</kbd> <kbd>S</kbd> / <kbd>↑</kbd> <kbd>↓</kbd>.</li>
-            <li>Вдвоём: левый игрок — <kbd>W</kbd> <kbd>S</kbd>, правый — <kbd>↑</kbd> <kbd>↓</kbd>. На планшете каждый водит пальцем по своей половине поля.</li>
-            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Хозяин игры — левая ракетка, гость — правая.</li>
+            <li>Ставьте бомбы: через 2 секунды они взрываются крестом и разрушают кирпичи. Попасть в огонь — проиграть раунд (свои бомбы тоже опасны!).</li>
+            <li>Из кирпичей выпадают усилители: 💣 — ещё одна бомба, 🔥 — длиннее взрыв, 👟 — быстрее бег. Взрыв поджигает соседние бомбы.</li>
+            <li>Против компьютера: стрелки или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, бомба — <kbd>Пробел</kbd>. Вдвоём: голубой — <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> и <kbd>Пробел</kbd>, розовый — стрелки и <kbd>Enter</kbd>.</li>
+            <li>Игра до 3 побед в раундах; раунд длится не больше двух минут.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Игру ведёт хозяин, гость управляет своим героем с любыми клавишами или джойстиком на экране.</li>
           </ul>
         </div>
       </aside>
