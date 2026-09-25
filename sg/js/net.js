@@ -813,5 +813,5 @@
     return api;
   }
 
-  SG.net = { setup };
+  SG.net = { setup, ice: ICE, config: CONFIG };
 })();

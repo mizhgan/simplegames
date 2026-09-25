@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Проверка связи — SimpleGames</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="sg/css/style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <style>
+    .tt-steps { display: flex; flex-direction: column; gap: 10px; max-width: 720px; margin: 0; padding: 0; list-style: none; }
+    .tt-step { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .tt-icon { flex: none; width: 26px; font-size: 1.2rem; text-align: center; }
+    .tt-step b { display: block; }
+    .tt-step small { color: var(--muted); word-break: break-word; }
+    .tt-step.ok { border-color: color-mix(in srgb, var(--success) 50%, var(--border)); }
+    .tt-step.bad { border-color: color-mix(in srgb, var(--danger) 60%, var(--border)); }
+    .tt-servers { max-width: 720px; margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; word-break: break-word; }
+    .tt-verdict { max-width: 720px; margin-top: 16px; padding: 14px 16px; border-radius: var(--radius); background: var(--surface-2); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <img class="logo-mark" src="sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <a class="back-link" href="index.html">← Все игры</a>
+    <div class="game-head"><h1>Проверка ретранслятора</h1></div>
+    <p class="tt-servers">Страница соединяет два канала в этом браузере <b>только через TURN-сервер</b> — так же, как соединяются игроки, которым не удалось связаться напрямую. Если проверка проходит, игра по сети будет работать даже в мобильном интернете.</p>
+    <p class="tt-servers" id="servers"></p>
+    <p><button class="btn btn-primary" type="button" id="run">Проверить</button></p>
+    <ol class="tt-steps" id="steps"></ol>
+    <div class="tt-verdict" id="verdict" hidden></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="sg/js/common.js"></script>
+  <script src="sg/js/net.js"></script>
+  <script>
+    (function () {
+      var ice = SG.net.ice.iceServers.filter(function (s) {
+        return [].concat(s.urls).some(function (u) { return /^turns?:/.test(u); });
+      });
+      var stepsEl = document.getElementById('steps');
+      var verdictEl = document.getElementById('verdict');
+      document.getElementById('servers').textContent = ice.length
+        ? 'Серверы TURN: ' + ice.map(function (s) { return [].concat(s.urls).join(', '); }).join(' · ')
+        : 'На сайте не настроено ни одного TURN-сервера.';
+
+      function step(title) {
+        var li = document.createElement('li');
+        li.className = 'tt-step';
+        li.innerHTML = '<span class="tt-icon">⏳</span><span><b></b><small></small></span>';
+        li.querySelector('b').textContent = title;
+        stepsEl.appendChild(li);
+        return {
+          ok: function (text) { li.className = 'tt-step ok'; li.querySelector('.tt-icon').textContent = '✅'; li.querySelector('small').textContent = text || ''; },
+          bad: function (text) { li.className = 'tt-step bad'; li.querySelector('.tt-icon').textContent = '❌'; li.querySelector('small').textContent = text || ''; },
+          note: function (text) { li.querySelector('small').textContent = text; },
+        };
+      }
+
+      function verdict(html) {
+        verdictEl.hidden = false;
+        verdictEl.innerHTML = html;
+      }
+
+      var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+
+      async function relayCandidates(url, srv) {
+        var pc = new RTCPeerConnection({ iceServers: [{ urls: url, username: srv.username, credential: srv.credential }], iceTransportPolicy: 'relay' });
+        var found = [];
+        var errors = [];
+        pc.onicecandidate = function (e) { if (e.candidate && / typ relay/.test(e.candidate.candidate)) found.push(e.candidate.candidate); };
+        pc.onicecandidateerror = function (e) { errors.push((e.errorCode || '') + ' ' + (e.errorText || '')); };
+        pc.createDataChannel('probe');
+        await pc.setLocalDescription(await pc.createOffer());
+        for (var i = 0; i < 40 && pc.iceGatheringState !== 'complete'; i++) await wait(250);
+        pc.close();
+        return { found: found, errors: errors };
+      }
+
+      async function run() {
+        var btn = document.getElementById('run');
+        btn.disabled = true;
+        stepsEl.innerHTML = '';
+        verdictEl.hidden = true;
+        if (!ice.length) {
+          verdict('Добавьте свой TURN в <code>CONFIG.iceServers</code> в начале <code>sg/js/net.js</code> (см. README) и откройте страницу снова.');
+          btn.disabled = false;
+          return;
+        }
+
+        // 1. выдаёт ли сервер адреса-ретрансляторы по каждому способу подключения
+        var anyRelay = false;
+        var relayIp = '';
+        for (var s = 0; s < ice.length; s++) {
+          var urls = [].concat(ice[s].urls);
+          for (var u = 0; u < urls.length; u++) {
+            var st = step('Адрес на ретрансляторе через ' + urls[u]);
+            var r = await relayCandidates(urls[u], ice[s]);
+            if (r.found.length) {
+              anyRelay = true;
+              var m = r.found[0].match(/ (\d+\.\d+\.\d+\.\d+) \d+ typ relay/);
+              if (m) relayIp = m[1];
+              st.ok('получен: ' + (m ? m[1] : 'relay'));
+            } else st.bad(r.errors.length ? 'ошибка: ' + r.errors.join('; ') : 'сервер не ответил — проверьте адрес, порт и файрвол');
+          }
+        }
+        if (!anyRelay) {
+          verdict('❌ Сервер не выдаёт адреса. Проверьте, что coturn запущен (<code>systemctl status coturn</code>), порт 3478 (и 443 для TLS) открыт в файрволе хостера, а логин и пароль в <code>net.js</code> совпадают с <code>/etc/turnserver.conf</code>.');
+          btn.disabled = false;
+          return;
+        }
+
+        // 2. два канала соединяются только через ретранслятор и обмениваются сообщением
+        var st2 = step('Соединение двух игроков через ретранслятор');
+        var cfg = { iceServers: ice, iceTransportPolicy: 'relay' };
+        var a = new RTCPeerConnection(cfg);
+        var b = new RTCPeerConnection(cfg);
+        a.onicecandidate = function (e) { if (e.candidate) b.addIceCandidate(e.candidate).catch(function () {}); };
+        b.onicecandidate = function (e) { if (e.candidate) a.addIceCandidate(e.candidate).catch(function () {}); };
+        var states = [];
+        a.oniceconnectionstatechange = function () { states.push(a.iceConnectionState); st2.note('состояние: ' + states.join(' → ')); };
+        var ch = a.createDataChannel('probe');
+        var got = new Promise(function (resolve) {
+          b.ondatachannel = function (e) { e.channel.onmessage = function (m) { resolve(m.data); }; };
+        });
+        var opened = new Promise(function (resolve) { ch.onopen = resolve; });
+        var t0 = performance.now();
+        await a.setLocalDescription(await a.createOffer());
+        await b.setRemoteDescription(a.localDescription);
+        await b.setLocalDescription(await b.createAnswer());
+        await a.setRemoteDescription(b.localDescription);
+        var res = await Promise.race([opened.then(function () { return 'open'; }), wait(20000).then(function () { return 'timeout'; })]);
+        if (res !== 'open') {
+          st2.bad('за 20 секунд соединение не установилось (' + (states.join(' → ') || 'проверка не началась') + ')');
+          verdict(
+            '❌ Адреса выдаются, но данные через ретранслятор не проходят — ровно то, что мешает игре. Частые причины:<br>' +
+            '• в файрволе хостера (панель управления VPS) не открыт диапазон <b>49160–49250/udp</b>;<br>' +
+            '• VPS стоит за NAT хостера (внутренний адрес на сервере отличается от внешнего ' + (relayIp || '') + '): перезапустите свежий <code>install.sh</code> — он пропишет <code>external-ip=ВНЕШНИЙ/ВНУТРЕННИЙ</code>. Если не поможет, хостер не пропускает трафик сервера «к самому себе» по внешнему адресу — стоит взять VPS с внешним IP прямо на сетевом интерфейсе.<br>' +
+            'Посмотреть, что видит сервер: <code>journalctl -u coturn -n 100</code>.'
+          );
+        } else {
+          ch.send('ping');
+          var msg = await Promise.race([got, wait(5000).then(function () { return null; })]);
+          if (msg === 'ping') {
+            st2.ok('соединились за ' + Math.round(performance.now() - t0) + ' мс, сообщение дошло');
+            verdict('✅ Ретранслятор работает. Если игра по сети всё равно не соединяется, обновите страницу игры (Ctrl+F5) у обоих игроков, чтобы подхватился свежий <code>net.js</code>.');
+          } else {
+            st2.bad('канал открылся, но сообщение не дошло');
+            verdict('❌ Канал открылся, но данные не идут. Проверьте ограничения скорости (max-bps) и файрвол для 49160–49250/udp.');
+          }
+        }
+        a.close();
+        b.close();
+        btn.disabled = false;
+      }
+
+      document.getElementById('run').addEventListener('click', run);
+    })();
+  </script>
+</body>
+</html>
