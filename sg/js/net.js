@@ -30,6 +30,12 @@
     // (готовый конфиг coturn — deploy/coturn/turnserver.conf):
     // { urls: ['turn:turn.example.com:3478', 'turn:turn.example.com:3478?transport=tcp'], username: 'simplegames', credential: '…' }
     iceServers: [
+      // свой TURN сайта (deploy/coturn/install.sh)
+      {
+        urls: ['turn:turn.catin.org:3478', 'turn:turn.catin.org:3478?transport=tcp', 'turns:turn.catin.org:443?transport=tcp'],
+        username: 'simplegames',
+        credential: '813dbec1a287257ce1ee7cbc5c26fd94',
+      },
       { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
       { urls: 'stun:stun.cloudflare.com:3478' },
       { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' },
