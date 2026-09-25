@@ -1,0 +1,30 @@
+{
+  "title": "Танчики",
+  "description": "Танчики онлайн — по мотивам легендарной Battle City: защищайте штаб и уничтожайте вражеские танки.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "По мотивам Battle City: защищайте штаб и уничтожайте вражеские танки.",
+    "colors": ["#78716c", "#292524"]
+  },
+  "best": { "key": "tanks-best" },
+  "daily": [["tanks-best", "max"]],
+  "readme": "стрелки / WASD, пробел, экранные кнопки; 5 карт, бонусы",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Очки</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Жизни</span><span class=\"stat-value\" id=\"lives\">3</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Уровень</span><span class=\"stat-value\" id=\"stage\">1</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Враги</span><span class=\"stat-value\" id=\"enemies\">20</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Движение — стрелки или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, выстрел — <kbd>Пробел</kbd> (или <kbd>J</kbd>). На телефоне — кнопки под полем.",
+    "Защищайте штаб с орлом внизу: если в него попадут, игра окончена. На уровне 20 вражеских танков — уничтожьте всех.",
+    "Кирпич разрушается выстрелами, сталь — нет. Через воду танки не проходят, а в лесу можно спрятаться.",
+    "Мигающие красным танки оставляют бонус: ⛑ щит, ⏱ заморозка врагов, 💣 уничтожить всех, 🛡 стальные стены у штаба, ⭐ улучшение пушки, ❤ жизнь.",
+    "Зелёные бронированные танки выдерживают четыре попадания. <kbd>P</kbd> — пауза."
+  ]
+}

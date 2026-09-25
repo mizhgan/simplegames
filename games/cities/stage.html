@@ -1,0 +1,29 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="stage-wrap ct-wrap">
+  <div class="ct-top"><div class="ct-letter" id="letter" aria-label="Нужная буква">?</div><div class="ct-timer" id="timer" title="Секунд на ход">60</div></div>
+  <form class="ct-form" id="city-form" autocomplete="off">
+    <input type="text" id="city-input" placeholder="Название города" aria-label="Название города" maxlength="40">
+    <button class="btn btn-primary" type="submit">Назвать</button>
+  </form>
+  <p class="ct-error" id="city-error" aria-live="polite"></p>
+  <p class="ct-chain-head">Названо городов: <b id="chain-count">0</b></p>
+  <ol class="ct-chain" id="chain"></ol>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+  <button class="btn btn-ghost" type="button" id="give-btn">Сдаюсь</button>
+</div>

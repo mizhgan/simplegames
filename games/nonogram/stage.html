@@ -1,0 +1,29 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="pic">Картинки</button>
+    <button type="button" data-value="r5">5 × 5</button>
+    <button type="button" data-value="r10">10 × 10</button>
+    <button type="button" data-value="r15">15 × 15</button>
+  </div>
+</div>
+<div class="game-controls" id="pic-nav">
+  <button class="btn btn-ghost" type="button" id="prev-btn" aria-label="Предыдущая картинка">←</button>
+  <span id="pic-label"></span>
+  <button class="btn btn-ghost" type="button" id="next-btn" aria-label="Следующая картинка">→</button>
+</div>
+<div class="stage-wrap" style="max-width:640px">
+  <div class="ng-scroll"><div class="ng-board" id="board" aria-label="Поле кроссворда"></div></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2 id="overlay-title">Решено!</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Дальше</button>
+    </div>
+  </div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="cross-btn" aria-pressed="false">✕ Режим крестиков</button>
+  <button class="btn btn-ghost" type="button" id="clear-btn">Очистить</button>
+  <button class="btn btn-primary" type="button" id="new-btn">Заново</button>
+</div>

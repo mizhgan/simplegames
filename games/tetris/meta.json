@@ -1,0 +1,31 @@
+{
+  "title": "Тетрис",
+  "description": "Тетрис в браузере: складывайте фигуры и собирайте полные линии.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Легендарная головоломка: поворачивайте падающие фигуры и собирайте полные линии.",
+    "colors": ["#6366f1", "#312e81"]
+  },
+  "best": { "key": "tetris-best" },
+  "daily": [["tetris-best", "max"]],
+  "readme": "стрелки, пробел, Z / X / C, жесты и кнопки на телефоне",
+  "styles": ["style.css"],
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Счёт</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Линии</span><span class=\"stat-value\" id=\"lines\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Уровень</span><span class=\"stat-value\" id=\"level\">1</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "<kbd>←</kbd> <kbd>→</kbd> — сдвиг, <kbd>↓</kbd> — ускорить падение, <kbd>Пробел</kbd> — сбросить фигуру вниз.",
+    "<kbd>↑</kbd> или <kbd>X</kbd> — поворот по часовой, <kbd>Z</kbd> — против часовой.",
+    "<kbd>C</kbd> или <kbd>Shift</kbd> — отложить фигуру в «Запас» (один раз за фигуру).",
+    "На телефоне: тап по полю — поворот, ведите пальцем — сдвиг, резкий свайп вниз — сброс. Или кнопки под полем.",
+    "Каждые 10 линий — новый уровень, фигуры падают быстрее. Несколько линий разом дают больше очков.",
+    "<kbd>P</kbd> или <kbd>Esc</kbd> — пауза."
+  ]
+}

@@ -1,0 +1,16 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <rect x="34" y="14" width="92" height="80" rx="8" fill="#2b3fb0"/>
+  <g fill="#0d0e1a">
+    <circle cx="46" cy="26" r="6"/><circle cx="59" cy="26" r="6"/><circle cx="72" cy="26" r="6"/><circle cx="85" cy="26" r="6"/><circle cx="98" cy="26" r="6"/><circle cx="111" cy="26" r="6"/>
+    <circle cx="46" cy="39" r="6"/><circle cx="59" cy="39" r="6"/><circle cx="72" cy="39" r="6"/><circle cx="98" cy="39" r="6"/><circle cx="111" cy="39" r="6"/>
+    <circle cx="46" cy="52" r="6"/><circle cx="59" cy="52" r="6"/><circle cx="98" cy="52" r="6"/><circle cx="111" cy="52" r="6"/>
+    <circle cx="46" cy="65" r="6"/><circle cx="111" cy="65" r="6"/>
+  </g>
+  <g fill="#ef4444">
+    <circle cx="85" cy="39" r="6"/><circle cx="72" cy="52" r="6"/><circle cx="59" cy="65" r="6"/><circle cx="46" cy="78" r="6"/><circle cx="85" cy="65" r="6"/>
+  </g>
+  <g fill="#facc15">
+    <circle cx="85" cy="52" r="6"/><circle cx="72" cy="65" r="6"/><circle cx="59" cy="78" r="6"/><circle cx="72" cy="78" r="6"/><circle cx="98" cy="65" r="6"/><circle cx="85" cy="78" r="6"/><circle cx="98" cy="78" r="6"/><circle cx="111" cy="78" r="6"/>
+  </g>
+  <circle cx="124" cy="8" r="6" fill="#ef4444"/>
+</svg>

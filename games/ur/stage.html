@@ -1,0 +1,25 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="ur-wrap">
+  <div class="ur-pool" id="ur-pool-1"></div>
+  <div class="ur-board" id="board"></div>
+  <div class="ur-pool" id="ur-pool-0"></div>
+  <div class="game-controls"><button class="btn btn-primary" type="button" id="ur-roll">🎲 Бросить</button><div class="ur-dice" id="ur-dice"></div></div>
+  <p class="ur-note" id="ur-note"></p>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

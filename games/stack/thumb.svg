@@ -1,0 +1,9 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g>
+    <rect x="45" y="78" width="70" height="12" fill="#fda4af"/><path d="M45 78l6-6h70l-6 6z" fill="#ffe4e6"/><path d="M115 78l6-6v12l-6 6z" fill="#e11d48"/>
+    <rect x="47" y="64" width="66" height="12" fill="#fdba74"/><path d="M47 64l6-6h66l-6 6z" fill="#ffedd5"/><path d="M113 64l6-6v12l-6 6z" fill="#ea580c"/>
+    <rect x="52" y="50" width="58" height="12" fill="#fde047"/><path d="M52 50l6-6h58l-6 6z" fill="#fef9c3"/><path d="M110 50l6-6v12l-6 6z" fill="#ca8a04"/>
+    <rect x="72" y="22" width="58" height="12" fill="#86efac"/><path d="M72 22l6-6h58l-6 6z" fill="#dcfce7"/><path d="M130 22l6-6v12l-6 6z" fill="#16a34a"/>
+  </g>
+  <path d="M80 38v6" stroke="#fff" stroke-width="2" stroke-dasharray="2 2"/>
+</svg>

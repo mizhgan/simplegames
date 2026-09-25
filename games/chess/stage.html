@@ -1,0 +1,24 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="stage-wrap ch-wrap">
+  <div class="ch-board" id="board" role="grid" aria-label="Шахматная доска"></div>
+  <div class="ch-promo" id="promo" hidden></div>
+</div>
+<ol class="ch-moves" id="moves" aria-label="Ходы партии"></ol>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+  <button class="btn btn-ghost" type="button" id="undo-btn">Отменить ход</button>
+</div>

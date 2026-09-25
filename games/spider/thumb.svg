@@ -1,0 +1,15 @@
+<svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="800">
+  <g stroke="#d1d5db">
+    <rect x="28" y="10" width="30" height="42" rx="4" fill="#fff"/><rect x="28" y="22" width="30" height="42" rx="4" fill="#fff"/><rect x="28" y="34" width="30" height="42" rx="4" fill="#fff"/>
+    <rect x="65" y="10" width="30" height="42" rx="4" fill="#fff"/><rect x="65" y="22" width="30" height="42" rx="4" fill="#fff"/><rect x="65" y="34" width="30" height="42" rx="4" fill="#fff"/><rect x="65" y="46" width="30" height="42" rx="4" fill="#fff"/>
+    <rect x="102" y="10" width="30" height="42" rx="4" fill="#fff"/><rect x="102" y="22" width="30" height="42" rx="4" fill="#fff"/>
+  </g>
+  <g font-size="9" fill="#111827">
+    <text x="31" y="19">K♠</text><text x="31" y="31">Q♠</text><text x="31" y="43">J♠</text>
+    <text x="68" y="19">9♠</text><text x="68" y="31">8♠</text><text x="68" y="43">7♠</text><text x="68" y="55">6♠</text>
+    <text x="105" y="19">5♠</text><text x="105" y="31">4♠</text>
+  </g>
+  <text x="43" y="66" font-size="16" text-anchor="middle" fill="#111827">♠</text>
+  <text x="80" y="78" font-size="16" text-anchor="middle" fill="#111827">♠</text>
+  <text x="117" y="44" font-size="16" text-anchor="middle" fill="#111827">♠</text>
+</svg>

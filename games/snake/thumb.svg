@@ -1,0 +1,11 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g fill="rgba(255,255,255,.08)">
+    <rect x="10" y="10" width="140" height="80" rx="10"/>
+  </g>
+  <path d="M28 72 H74 V38 H112" fill="none" stroke="#bbf7d0" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="114" cy="38" r="9" fill="#ecfdf5"/>
+  <circle cx="116" cy="35" r="2" fill="#064e3b"/>
+  <circle cx="116" cy="41" r="2" fill="#064e3b"/>
+  <circle cx="136" cy="68" r="8" fill="#f87171"/>
+  <path d="M136 60 q4 -6 8 -4" stroke="#bbf7d0" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

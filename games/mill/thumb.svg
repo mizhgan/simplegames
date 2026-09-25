@@ -1,0 +1,3 @@
+<svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+  <g stroke="rgba(255,255,255,.45)" stroke-width="3"><rect x="38" y="8" width="84" height="84"/><rect x="52" y="22" width="56" height="56"/><rect x="66" y="36" width="28" height="28"/><path d="M80 8 V36 M80 64 V92 M38 50 H66 M94 50 H122"/></g><g fill="#fff"><circle cx="38" cy="8" r="6"/><circle cx="80" cy="8" r="6"/><circle cx="122" cy="8" r="6"/></g><g fill="#1e1b4b"><circle cx="52" cy="78" r="6"/><circle cx="94" cy="64" r="6"/><circle cx="108" cy="50" r="6"/></g>
+</svg>

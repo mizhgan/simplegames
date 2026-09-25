@@ -1,0 +1,19 @@
+<div class="game-controls">
+  <div class="seg" id="size" role="group" aria-label="Размер поля">
+    <button type="button" data-value="s">4 × 4</button>
+    <button type="button" data-value="m">5 × 4</button>
+    <button type="button" data-value="l">6 × 6</button>
+  </div>
+  <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+</div>
+
+<div class="stage-wrap mem-wrap">
+  <div class="mem-board" id="board" aria-label="Карточки"></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2 id="overlay-title">Готово!</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Сыграть ещё</button>
+    </div>
+  </div>
+</div>

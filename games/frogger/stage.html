@@ -1,0 +1,19 @@
+<div class="stage-wrap" style="max-width:440px">
+  <canvas id="board" class="board-canvas" style="aspect-ratio:11/13" aria-label="Игровое поле"></canvas>
+  <div class="overlay" id="overlay">
+    <h2 id="overlay-title">Лягушка</h2>
+    <p id="overlay-text">Переведите лягушек через дорогу и реку домой.</p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+    </div>
+  </div>
+</div>
+<div class="dpad" aria-label="Управление">
+  <button type="button" data-dir="up" aria-label="Вверх">▲</button>
+  <button type="button" data-dir="left" aria-label="Влево">◀</button>
+  <button type="button" data-dir="right" aria-label="Вправо">▶</button>
+  <button type="button" data-dir="down" aria-label="Вниз">▼</button>
+</div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
+</div>

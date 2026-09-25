@@ -1,0 +1,19 @@
+<div class="stage-wrap">
+  <div class="g2048" id="board" aria-label="Игровое поле 2048">
+    <div class="g2048-cells" id="cells"></div>
+    <div class="g2048-tiles" id="tiles"></div>
+  </div>
+  <div class="overlay" id="overlay" hidden>
+    <h2 id="overlay-title"></h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-ghost" type="button" id="continue-btn">Продолжить</button>
+      <button class="btn btn-primary" type="button" id="retry-btn">Новая игра</button>
+    </div>
+  </div>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+  <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить ход</button>
+</div>

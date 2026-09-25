@@ -1,0 +1,9 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g transform="translate(80 50)">
+    <path d="M-4 -4 V-42 A38 38 0 0 0 -42 -4 Z" fill="#22c55e" opacity=".75"/>
+    <path d="M4 -4 H42 A38 38 0 0 0 4 -42 Z" fill="#ef4444"/>
+    <path d="M-4 4 H-42 A38 38 0 0 0 -4 42 Z" fill="#facc15" opacity=".75"/>
+    <path d="M4 4 V42 A38 38 0 0 0 42 4 Z" fill="#3b82f6" opacity=".75"/>
+    <circle r="14" fill="#1e1b4b"/>
+  </g>
+</svg>

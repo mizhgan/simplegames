@@ -1,0 +1,9 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g fill="none" stroke="#e2e8f0" stroke-width="3" stroke-linejoin="round">
+    <path d="M22 30 L38 16 L58 20 L64 38 L52 54 L30 52 Z"/>
+    <path d="M110 58 L124 50 L138 58 L136 76 L118 82 L106 72 Z"/>
+    <path d="M112 16 L122 14 L126 24 L116 28 Z"/>
+  </g>
+  <g transform="translate(76 66) rotate(-35)"><path d="M0 -14 L10 12 L0 7 L-10 12 Z" fill="none" stroke="#93c5fd" stroke-width="3" stroke-linejoin="round"/></g>
+  <g fill="#fde68a"><circle cx="86" cy="48" r="2.5"/><circle cx="94" cy="37" r="2.5"/></g>
+</svg>

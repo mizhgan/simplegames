@@ -1,0 +1,10 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <rect x="30" y="10" width="100" height="80" rx="6" fill="rgba(255,255,255,.14)"/>
+  <path d="M40 10v80M50 10v80M60 10v80M70 10v80M80 10v80M90 10v80M100 10v80M110 10v80M120 10v80M30 20h100M30 30h100M30 40h100M30 50h100M30 60h100M30 70h100M30 80h100" stroke="rgba(255,255,255,.18)"/>
+  <rect x="41" y="31" width="38" height="8" rx="2" fill="#cbd5e1"/>
+  <rect x="101" y="21" width="8" height="28" rx="2" fill="#cbd5e1"/>
+  <rect x="61" y="61" width="18" height="8" rx="2" fill="#b91c1c"/>
+  <g fill="#f97316"><rect x="101" y="61" width="8" height="8" rx="2"/></g>
+  <g fill="rgba(255,255,255,.7)"><circle cx="45" cy="75" r="2"/><circle cx="95" cy="45" r="2"/><circle cx="115" cy="75" r="2"/><circle cx="85" cy="25" r="2"/></g>
+  <text x="65" y="68.5" font-size="8" fill="#fff" font-weight="900">✕✕</text>
+</svg>

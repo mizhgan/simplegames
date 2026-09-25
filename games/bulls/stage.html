@@ -1,0 +1,29 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="bc-wrap">
+  <div class="bc-setup" id="setup">
+    <input type="text" id="secret" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="????" aria-label="Ваше число">
+    <button class="btn btn-primary" type="button" id="secret-btn">Загадать</button>
+    <button class="btn btn-ghost" type="button" id="random-btn">Случайное</button>
+    <p class="bc-err" id="secret-err"></p>
+  </div>
+  <div class="bc-play" id="play">
+    <p class="bc-secret">Ваше число: <b id="my-secret">????</b></p>
+    <div class="bc-row"><input type="text" id="guess" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="????" aria-label="Ваша попытка"><button class="btn btn-primary" type="button" id="go">Проверить</button></div>
+    <div class="bc-cols">
+      <div class="bc-col"><h3>Ваши попытки</h3><ol id="mine"></ol></div>
+      <div class="bc-col"><h3 id="opp-title">Компьютер угадывает ваше число</h3><ol id="theirs"></ol></div>
+    </div>
+  </div>
+  <div class="bc-pad" id="pad"><button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" data-k="0">0</button><button type="button" data-k="del">⌫</button><button type="button" data-k="ok">OK</button></div>
+</div>
+<div class="game-controls"><button class="btn btn-primary" type="button" id="new-btn">Новая партия</button></div>

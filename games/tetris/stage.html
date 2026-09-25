@@ -1,0 +1,27 @@
+<div class="tetris-wrap">
+  <div class="stage-wrap">
+    <canvas id="board" class="board-canvas" style="aspect-ratio:1/2" aria-label="Игровое поле тетриса"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlay-title">Тетрис</h2>
+      <p id="overlay-text">Собирайте полные горизонтальные линии — они исчезают и приносят очки.</p>
+      <div class="overlay-actions">
+        <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+      </div>
+    </div>
+  </div>
+  <div class="tetris-side">
+    <div class="mini-box"><span class="stat-label">Запас</span><canvas id="hold" style="aspect-ratio:4/3"></canvas></div>
+    <div class="mini-box"><span class="stat-label">Далее</span><canvas id="next" style="aspect-ratio:4/9"></canvas></div>
+  </div>
+</div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
+</div>
+<div class="touch-pad" aria-label="Управление">
+  <button type="button" data-act="hold" aria-label="Отложить фигуру">⇄</button>
+  <button type="button" data-act="rotate" aria-label="Повернуть">⟳</button>
+  <button type="button" data-act="drop" aria-label="Сбросить вниз">⤓</button>
+  <button type="button" data-act="left" aria-label="Влево">◀</button>
+  <button type="button" data-act="down" aria-label="Вниз">▼</button>
+  <button type="button" data-act="right" aria-label="Вправо">▶</button>
+</div>

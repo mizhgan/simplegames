@@ -1,0 +1,25 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="cd-bar">
+  <div class="cd-side"><p>Вы</p><b id="mine">0</b></div>
+  <div class="cd-time" id="time">4:00</div>
+  <div class="cd-side"><p id="opp-name">Компьютер</p><b id="theirs">0</b></div>
+</div>
+
+<div class="cd-grid" id="grid" aria-label="Сетка"></div>
+<div class="cd-bank" id="bank" aria-label="Слова"></div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новый кроссворд</button>
+</div>

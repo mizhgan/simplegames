@@ -1,0 +1,8 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <path d="M24 88 H64 M38 88 V14 H84 V24" stroke="#e2e8f0" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="84" cy="33" r="8" stroke="#fde68a" stroke-width="4" fill="none"/>
+  <path d="M84 41 V62 M84 48 L75 56 M84 48 L93 56 M84 62 L77 74" stroke="#fde68a" stroke-width="4" stroke-linecap="round"/>
+  <g font-family="system-ui, sans-serif" font-weight="800" font-size="15" fill="#fff" text-anchor="middle">
+    <text x="112" y="84">С</text><text x="126" y="84">_</text><text x="140" y="84">О</text>
+  </g>
+</svg>

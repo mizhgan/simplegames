@@ -1,0 +1,25 @@
+<div class="game-controls">
+  <div class="seg" id="size" role="group" aria-label="Размер поля">
+    <button type="button" data-value="5">5×5</button>
+    <button type="button" data-value="6">6×6</button>
+    <button type="button" data-value="7">7×7</button>
+    <button type="button" data-value="8">8×8</button>
+    <button type="button" data-value="9">9×9</button>
+  </div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="stage-wrap">
+  <canvas class="fl-board" id="board" aria-label="Игровое поле"></canvas>
+  <div class="overlay" id="overlay" hidden>
+    <h2>Решено! 🎉</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Следующая головоломка</button>
+    </div>
+  </div>
+</div>
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая головоломка</button>
+  <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+  <button class="btn btn-ghost" type="button" id="reset-btn">Сбросить</button>
+</div>

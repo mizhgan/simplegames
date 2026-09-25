@@ -1,0 +1,7 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g fill="#9a5b3c" stroke="rgba(0,0,0,.25)" stroke-width="2"><rect x="18" y="14" width="124" height="16"/><rect x="18" y="30" width="16" height="56"/><rect x="126" y="30" width="16" height="56"/><rect x="34" y="70" width="92" height="16"/></g>
+  <rect x="62" y="38" width="26" height="26" rx="4" fill="#d99a4e" stroke="#a0652a" stroke-width="3"/>
+  <path d="M64 40 L86 62 M86 40 L64 62" stroke="rgba(0,0,0,.25)" stroke-width="3"/>
+  <circle cx="108" cy="51" r="7" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <circle cx="46" cy="51" r="9" fill="#3b82f6"/>
+</svg>

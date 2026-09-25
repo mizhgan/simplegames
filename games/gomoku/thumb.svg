@@ -1,0 +1,6 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <g stroke="rgba(60,30,5,.45)" stroke-width="1.5"><path d="M30 14V86M50 14V86M70 14V86M90 14V86M110 14V86M130 14V86M24 20H136M24 36H136M24 52H136M24 68H136M24 84H136"/></g>
+  <g fill="#111"><circle cx="50" cy="84" r="7"/><circle cx="70" cy="68" r="7"/><circle cx="90" cy="52" r="7"/><circle cx="110" cy="36" r="7"/><circle cx="130" cy="20" r="7"/></g>
+  <g fill="#fff"><circle cx="70" cy="52" r="7"/><circle cx="90" cy="68" r="7"/><circle cx="50" cy="36" r="7"/></g>
+  <path d="M44 90 L136 14" stroke="#22c55e" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+</svg>

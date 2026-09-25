@@ -1,0 +1,25 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="a">Игра А</button>
+    <button type="button" data-value="b">Игра Б</button>
+  </div>
+</div>
+<div class="stage-wrap" style="max-width:600px">
+  <canvas id="board" class="board-canvas" style="aspect-ratio:10/7" aria-label="Игровое поле"></canvas>
+  <div class="overlay" id="overlay">
+    <h2 id="overlay-title">Яйцелов</h2>
+    <p id="overlay-text">Ловите яйца корзиной — не дайте ни одному разбиться!</p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+    </div>
+  </div>
+</div>
+<div class="touch-keys" id="touch">
+  <button type="button" data-key="0" aria-label="Левый верхний">↖</button>
+  <button type="button" data-key="1" aria-label="Левый нижний">↙</button>
+  <button type="button" data-key="2" aria-label="Правый верхний">↗</button>
+  <button type="button" data-key="3" aria-label="Правый нижний">↘</button>
+</div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="pause-btn">Пауза</button>
+</div>

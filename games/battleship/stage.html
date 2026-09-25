@@ -1,0 +1,34 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="game-controls" id="setup">
+  <div class="seg" id="rules" role="group" aria-label="Правила">
+    <button type="button" data-value="classic">Классика</button>
+    <button type="button" data-value="salvo">Салво</button>
+  </div>
+  <button class="btn btn-ghost" type="button" id="shuffle-btn">🔀 Перемешать флот</button>
+  <button class="btn btn-primary" type="button" id="start-btn">В бой!</button>
+</div>
+<div class="bs-boards">
+  <div class="bs-side">
+    <h2>Ваш флот <span>кораблей: <b id="my-left">10</b></span></h2>
+    <div class="bs-grid" id="my-board" aria-label="Ваше поле"></div>
+  </div>
+  <div class="bs-side enemy">
+    <h2>Противник <span>кораблей: <b id="enemy-left">10</b></span></h2>
+    <div class="bs-grid" id="enemy-board" aria-label="Поле противника"></div>
+  </div>
+</div>
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="salvo-btn" hidden>Огонь!</button>
+  <button class="btn btn-ghost" type="button" id="surrender-btn" hidden>🏳 Сдаться</button>
+  <div id="restart-row" hidden><button class="btn btn-primary" type="button" id="again-btn">Новая игра</button></div>
+</div>

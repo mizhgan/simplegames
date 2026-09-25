@@ -1,0 +1,22 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="stage-wrap ck-wrap">
+  <div class="ck-frame">
+    <div class="ck-board" id="board" aria-label="Шашечная доска"></div>
+    <div class="ck-pieces" id="pieces"></div>
+  </div>
+</div>
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+  <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить ход</button>
+</div>

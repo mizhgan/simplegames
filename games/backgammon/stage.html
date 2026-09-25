@@ -1,0 +1,30 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="nd-dice" id="dice" aria-live="polite"></div>
+<div class="nd-wrap">
+  <div class="nd-frame">
+    <div class="nd-board" id="board" aria-label="Доска для нард"></div>
+    <div class="nd-side">
+      <div class="nd-ai-off">⚫<br><b id="off-1">0</b></div>
+      <button class="nd-tray" type="button" id="bg-off" aria-label="Выбросить шашку"><span>⇥</span><b id="off-0">0</b></button>
+    </div>
+  </div>
+</div>
+<div class="game-controls"><button class="btn btn-primary" type="button" id="bg-roll">🎲 Бросить кости</button></div>
+<p class="bg-note" id="bg-note"></p>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

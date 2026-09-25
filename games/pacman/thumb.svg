@@ -1,0 +1,6 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <rect x="14" y="14" width="132" height="72" rx="10" fill="#05061a" stroke="#3b5bdb" stroke-width="3"/>
+  <path d="M52 50 L74 37 A26 26 0 1 0 74 63 Z" fill="#facc15" transform="translate(-14 0)"/>
+  <g fill="#fde68a"><circle cx="78" cy="50" r="3"/><circle cx="92" cy="50" r="3"/><circle cx="106" cy="50" r="6"/></g>
+  <g transform="translate(118 36)"><path d="M0 14 A12 12 0 0 1 24 14 V28 l-4 -4 -4 4 -4 -4 -4 4 -4 -4 -4 4Z" fill="#ef4444"/><circle cx="7" cy="12" r="4" fill="#fff"/><circle cx="17" cy="12" r="4" fill="#fff"/><circle cx="8.5" cy="12" r="2" fill="#1e3a8a"/><circle cx="18.5" cy="12" r="2" fill="#1e3a8a"/></g>
+</svg>

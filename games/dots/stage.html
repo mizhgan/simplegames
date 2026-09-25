@@ -1,0 +1,23 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+  <div class="seg" id="size" role="group" aria-label="Размер поля">
+    <button type="button" data-value="3">3×3</button>
+    <button type="button" data-value="4">4×4</button>
+    <button type="button" data-value="5">5×5</button>
+  </div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="stage-wrap">
+  <svg class="db-board" id="board" aria-label="Поле с точками"></svg>
+</div>
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

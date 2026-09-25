@@ -1,0 +1,25 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="stage-wrap"><div class="tb">
+  <div class="tb-label" id="label-opp"><span id="opp-name">Компьютер</span><span class="hd-bet" id="opp-bet"></span><span class="chips" id="opp-chips"></span></div>
+  <div class="tb-hand" id="opp-hand"></div>
+  <div class="tb-center"><div class="tb-pot" id="pot"></div><div class="hd-board" id="board"></div><div class="tb-msg" id="msg"></div></div>
+  <div class="tb-hand mine" id="my-hand"></div>
+  <div class="tb-label" id="label-me"><span id="my-name">Вы</span><span class="hd-combo" id="my-combo"></span><span class="hd-bet" id="my-bet"></span><span class="chips" id="my-chips"></span></div>
+  <div class="tb-actions" id="actions"></div>
+</div></div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

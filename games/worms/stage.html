@@ -1,0 +1,22 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="stage-wrap" style="max-width:720px">
+  <canvas id="board" class="board-canvas" style="aspect-ratio:16/9" aria-label="Игровое поле"></canvas>
+  <div class="overlay" id="overlay">
+    <h2 id="overlay-title">Червячки</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+    </div>
+  </div>
+</div>

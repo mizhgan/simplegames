@@ -1,0 +1,21 @@
+<div class="game-controls">
+  <div class="seg" id="suits" role="group" aria-label="Количество мастей">
+    <button type="button" data-value="1">1 масть</button>
+    <button type="button" data-value="2">2 масти</button>
+    <button type="button" data-value="4">4 масти</button>
+  </div>
+  <button class="btn btn-primary" type="button" id="new-btn">Новая раздача</button>
+  <button class="btn btn-ghost" type="button" id="deal-btn">Сдать ряд</button>
+  <button class="btn btn-ghost" type="button" id="undo-btn" disabled>↶ Отменить</button>
+</div>
+<div class="spider-info" id="status" aria-live="polite"></div>
+<div class="stage-wrap sol-wrap spider-wrap">
+  <div class="sol-table" id="table" aria-label="Игровой стол"></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2>Пасьянс сошёлся! 🎉</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Новая раздача</button>
+    </div>
+  </div>
+</div>

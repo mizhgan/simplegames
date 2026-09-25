@@ -1,0 +1,20 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+  </div>
+</div>
+<div class="dk">
+  <div class="dk-label"><span id="opp-name">Компьютер</span><span>карт: <b id="ai-count">6</b></span></div>
+  <div class="dk-hand" id="ai-hand" aria-label="Карты компьютера"></div>
+  <div class="dk-middle">
+    <div class="dk-deck" id="deck" aria-label="Колода"></div>
+    <div class="dk-table" id="table" aria-label="Стол"></div>
+  </div>
+  <div class="dk-info"><span>Козырь: <b id="trump-name"></b></span><span>Бито: <b id="discard">0</b></span></div>
+  <div class="dk-hand mine" id="my-hand" aria-label="Ваши карты"></div>
+</div>
+<div class="status-line" id="status" aria-live="polite"></div>
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="action-btn">Бито</button>
+  <button class="btn btn-ghost" type="button" id="new-btn">Новая партия</button>
+</div>

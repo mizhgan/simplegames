@@ -1,0 +1,30 @@
+<div class="game-controls">
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="ai">Против компьютера</button>
+    <button type="button" data-value="pvp">Вдвоём</button>
+  </div>
+  <div class="seg" id="difficulty" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Легко</button>
+    <button type="button" data-value="normal">Средне</button>
+    <button type="button" data-value="hard">Сложно</button>
+  </div>
+</div>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="bm-build" id="bm-build" hidden>
+  <div class="bm-grid" id="bm-editor"></div>
+  <p id="bm-count"></p>
+  <div class="game-controls"><button class="btn btn-ghost" type="button" id="bm-random">🎲 Случайный</button><button class="btn btn-ghost" type="button" id="bm-clear">Очистить</button><button class="btn btn-primary" type="button" id="bm-done">Готово</button></div>
+</div>
+<p class="pt-muted" id="bm-wait" hidden>Соперник строит лабиринт…</p>
+<div class="bm-play" id="bm-play" hidden>
+  <div><h3 id="bm-t1">Вы в лабиринте соперника</h3><div class="bm-grid" id="bm-mine"></div></div>
+  <div><h3 id="bm-t2">Соперник в вашем лабиринте</h3><div class="bm-grid" id="bm-theirs"></div></div>
+</div>
+<p class="bm-note" id="bm-note"></p>
+<div class="bm-pad" id="bm-pad" hidden><span></span><button class="btn btn-primary" type="button" data-dir="u">▲</button><span></span><button class="btn btn-primary" type="button" data-dir="l">◀</button><button class="btn btn-primary" type="button" data-dir="d">▼</button><button class="btn btn-primary" type="button" data-dir="r">▶</button></div>
+
+<div class="game-controls">
+  <button class="btn btn-primary" type="button" id="new-btn">Новая партия</button>
+</div>

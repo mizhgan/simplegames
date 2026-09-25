@@ -1,0 +1,26 @@
+<div class="game-controls">
+  <div class="seg" id="level" role="group" aria-label="Сложность">
+    <button type="button" data-value="easy">Лёгкий</button>
+    <button type="button" data-value="medium">Средний</button>
+    <button type="button" data-value="hard">Сложный</button>
+  </div>
+  <button class="btn btn-primary" type="button" id="new-btn">Новая игра</button>
+</div>
+<div class="stage-wrap sd-wrap">
+  <div class="sd-board" id="board" aria-label="Поле киллер-судоку"></div>
+  <div class="overlay" id="overlay" hidden>
+    <h2>Решено! 🎉</h2>
+    <p id="overlay-text"></p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="again-btn">Новая игра</button>
+    </div>
+  </div>
+</div>
+<div class="kl-combos" id="combos" aria-live="polite"></div>
+<div class="sd-pad" id="pad" aria-label="Цифры"></div>
+<div class="game-controls">
+  <button class="btn btn-ghost" type="button" id="undo-btn">↶ Отменить</button>
+  <button class="btn btn-ghost" type="button" id="erase-btn">⌫ Стереть</button>
+  <button class="btn btn-ghost" type="button" id="notes-btn" aria-pressed="false">✎ Заметки</button>
+  <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+</div>

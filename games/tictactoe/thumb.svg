@@ -1,0 +1,15 @@
+<svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+  <g stroke="rgba(255,255,255,.45)" stroke-width="3">
+    <path d="M68 14 V86 M92 14 V86 M44 38 H116 M44 62 H116"/>
+  </g>
+  <g stroke="#fde68a" stroke-width="6">
+    <path d="M49 19 l14 14 M63 19 l-14 14"/>
+    <path d="M73 43 l14 14 M87 43 l-14 14"/>
+    <path d="M97 67 l14 14 M111 67 l-14 14"/>
+  </g>
+  <g stroke="#fff" stroke-width="6">
+    <circle cx="104" cy="26" r="7"/>
+    <circle cx="56" cy="74" r="7"/>
+  </g>
+  <path d="M44 14 L116 86" stroke="#fb7185" stroke-width="4" opacity=".9"/>
+</svg>

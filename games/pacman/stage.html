@@ -1,0 +1,16 @@
+<div class="stage-wrap" style="max-width:480px">
+  <canvas id="board" class="board-canvas" style="aspect-ratio:28/31" aria-label="Лабиринт"></canvas>
+  <div class="overlay on-dark" id="overlay">
+    <h2 id="overlay-title">Пакман</h2>
+    <p id="overlay-text">Съешьте все точки и не попадитесь привидениям. Большая точка делает их съедобными!</p>
+    <div class="overlay-actions">
+      <button class="btn btn-primary" type="button" id="start-btn">Играть</button>
+    </div>
+  </div>
+</div>
+<div class="dpad" aria-label="Управление">
+  <button type="button" data-dir="up" aria-label="Вверх">▲</button>
+  <button type="button" data-dir="left" aria-label="Влево">◀</button>
+  <button type="button" data-dir="right" aria-label="Вправо">▶</button>
+  <button type="button" data-dir="down" aria-label="Вниз">▼</button>
+</div>

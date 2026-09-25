@@ -1,0 +1,26 @@
+{
+  "title": "Птичка",
+  "description": "Птичка в браузере: пролетайте между трубами как можно дальше.",
+  "category": "arcade",
+  "tag": "Аркада",
+  "online": false,
+  "party": false,
+  "card": {
+    "text": "Один клик — один взмах. Проведите птичку между трубами как можно дальше.",
+    "colors": ["#38bdf8", "#0369a1"]
+  },
+  "best": { "key": "flappy-best" },
+  "daily": [["flappy-best", "max"]],
+  "readme": "пробел / клик / касание",
+  "scripts": ["../../sg/js/site.js"],
+  "stats": [
+    "<div class=\"stat\"><span class=\"stat-label\">Счёт</span><span class=\"stat-value\" id=\"score\">0</span></div>",
+    "<div class=\"stat\"><span class=\"stat-label\">Рекорд</span><span class=\"stat-value\" id=\"best\">0</span></div>"
+  ],
+  "rules": [
+    "Каждое нажатие — взмах крыльями: птичка подлетает вверх.",
+    "Управление: <kbd>Пробел</kbd>, <kbd>↑</kbd>, клик мышью или касание поля.",
+    "Пролетайте в просветы между трубами — за каждую пару труб +1 очко.",
+    "Не задевайте трубы и не падайте на землю."
+  ]
+}

@@ -1,0 +1,16 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <rect x="100" y="0" width="22" height="34" fill="#4ade80"/>
+  <rect x="97" y="28" width="28" height="8" rx="2" fill="#16a34a"/>
+  <rect x="100" y="70" width="22" height="30" fill="#4ade80"/>
+  <rect x="97" y="68" width="28" height="8" rx="2" fill="#16a34a"/>
+  <circle cx="30" cy="30" r="9" fill="rgba(255,255,255,.7)"/>
+  <circle cx="42" cy="26" r="11" fill="rgba(255,255,255,.7)"/>
+  <circle cx="54" cy="31" r="8" fill="rgba(255,255,255,.7)"/>
+  <g transform="translate(66 54) rotate(-12)">
+    <ellipse rx="15" ry="12" fill="#facc15"/>
+    <ellipse cx="-5" cy="2" rx="7" ry="4.5" fill="#fef08a"/>
+    <circle cx="6" cy="-4" r="4.5" fill="#fff"/>
+    <circle cx="7.5" cy="-4" r="2" fill="#111827"/>
+    <path d="M11 0 L20 3 L11 6z" fill="#f97316"/>
+  </g>
+</svg>

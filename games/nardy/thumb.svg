@@ -1,0 +1,10 @@
+<svg viewBox="0 0 160 100" aria-hidden="true">
+  <rect x="22" y="10" width="116" height="80" rx="6" fill="#e9cf9f" stroke="#7c4a1e" stroke-width="4"/>
+  <rect x="77" y="12" width="6" height="76" fill="#7c4a1e"/>
+  <g fill="#9a3412"><path d="M26 12h9l-4.5 30z"/><path d="M44 12h9l-4.5 30z"/><path d="M62 12h9l-4.5 30z"/><path d="M89 88h9l-4.5-30z"/><path d="M107 88h9l-4.5-30z"/><path d="M125 88h9l-4.5-30z"/></g>
+  <g fill="#1f2937"><path d="M35 12h9l-4.5 30z"/><path d="M53 12h9l-4.5 30z"/><path d="M98 88h9l-4.5-30z"/><path d="M116 88h9l-4.5-30z"/></g>
+  <g fill="#fff" stroke="#9ca3af"><circle cx="129" cy="82" r="4"/><circle cx="129" cy="74" r="4"/><circle cx="129" cy="66" r="4"/></g>
+  <g fill="#111827"><circle cx="30.5" cy="18" r="4"/><circle cx="30.5" cy="26" r="4"/><circle cx="30.5" cy="34" r="4"/></g>
+  <g transform="translate(92 30) rotate(12)"><rect width="16" height="16" rx="3" fill="#fff" stroke="#111"/><circle cx="4.5" cy="4.5" r="1.6"/><circle cx="11.5" cy="11.5" r="1.6"/><circle cx="8" cy="8" r="1.6"/></g>
+  <g transform="translate(112 34) rotate(-10)"><rect width="16" height="16" rx="3" fill="#fff" stroke="#111"/><circle cx="4.5" cy="4.5" r="1.6"/><circle cx="11.5" cy="11.5" r="1.6"/><circle cx="11.5" cy="4.5" r="1.6"/><circle cx="4.5" cy="11.5" r="1.6"/></g>
+</svg>
