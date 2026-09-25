@@ -800,6 +800,12 @@
           return p ? p.name : '?';
         },
         chat: (text) => sysChat(text),
+        // сообщение в чат от своего имени (например, догадка в «Крокодиле»)
+        say(text) {
+          if (role === 'watcher' || !String(text).trim()) return;
+          if (role === 'host' || role === 'solo') chatFrom(myId, text);
+          else sendHost({ t: 'chat', text });
+        },
       };
     }
 

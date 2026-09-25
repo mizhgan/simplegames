@@ -1,0 +1,56 @@
+.cp {
+  gap: 10px;
+}
+
+.cp-top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.cp-top .pt-timer {
+  background: var(--bg);
+}
+
+.cp-word {
+  min-height: 1.6em;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.cp-word.mask {
+  letter-spacing: 0.2em;
+}
+
+.cp-scores .pt-seat {
+  background: var(--bg);
+}
+
+.cp-scores .pt-seat.turn {
+  border-color: var(--accent);
+}
+
+.cp-guess {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.cp-guess input {
+  flex: 1;
+  min-width: 0;
+}
+
+.cp-guess[hidden] {
+  display: none;
+}
+
+.cr-color.active,
+.cr-size.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
