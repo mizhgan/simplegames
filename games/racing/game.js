@@ -158,7 +158,7 @@
 
   // ---------- отрисовка ----------
 
-  const PAL = ['#22d3ee', '#ff5c93'];
+  const PAL = ['#3b82f6', '#ef4444'];
   function draw(g, s, v) {
     const c = v.colors;
     const path = PATHS[s.tr];
@@ -227,14 +227,14 @@
     void c;
   }
 
-  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['голубая', 'розовая']);
+  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['синяя', 'красная']);
   const lapOf = (car) => Math.min(LAPS, Math.max(1, car.lap));
 
   SG.rt({
     game: 'racing',
     W,
     H,
-    sides: ['Голубая машинка', 'Розовая машинка'],
+    sides: ['Синяя машинка', 'Красная машинка'],
     intro: 'Пять кругов. ↑ — газ, ↓ — тормоз, ← → — руль. На траве машинка вязнет.',
     create,
     step,
@@ -249,7 +249,7 @@
     hud(s, v) {
       const n = names(v);
       const lead = s.cars[0].prog === s.cars[1].prog ? '' : ' · лидирует ' + (s.cars[0].prog > s.cars[1].prog ? n[0] : n[1]);
-      return 'Голубая (' + n[0] + ') круг ' + lapOf(s.cars[0]) + '/' + LAPS + ' · розовая (' + n[1] + ') круг ' + lapOf(s.cars[1]) + '/' + LAPS + lead;
+      return 'Синяя (' + n[0] + ') круг ' + lapOf(s.cars[0]) + '/' + LAPS + ' · красная (' + n[1] + ') круг ' + lapOf(s.cars[1]) + '/' + LAPS + lead;
     },
   });
 })();

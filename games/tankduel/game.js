@@ -246,7 +246,7 @@
   }
 
   // ---------- отрисовка ----------
-  const PAL = ['#22d3ee', '#ff5c93'];
+  const PAL = ['#3b82f6', '#ef4444'];
   function draw(g, s, v) {
     const c = v.colors;
     g.fillStyle = c.bg;
@@ -304,7 +304,7 @@
     game: 'tankduel',
     W,
     H,
-    sides: ['Голубой танк', 'Розовый танк'],
+    sides: ['Синий танк', 'Красный танк'],
     intro: 'Подбейте танк соперника ' + WIN + ' раз.',
     create,
     step,
@@ -315,7 +315,7 @@
     over: (s) => (s.score[0] >= WIN || s.score[1] >= WIN ? { winner: s.score[0] >= WIN ? 0 : 1, text: 'Попадания ' + s.score[0] + ' : ' + s.score[1] + '.' } : null),
     hud(s, v) {
       const n = names(v);
-      return 'Голубой (' + n[0] + ') ' + s.score[0] + ' : ' + s.score[1] + ' розовый (' + n[1] + ')';
+      return 'Синий (' + n[0] + ') ' + s.score[0] + ' : ' + s.score[1] + ' красный (' + n[1] + ')';
     },
   });
 })();

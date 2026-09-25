@@ -287,7 +287,7 @@
   }
 
   // ---------- отрисовка ----------
-  const PAL = ['#22d3ee', '#ff5c93'];
+  const PAL = ['#3b82f6', '#ef4444'];
   const ICON = { b: '💣', r: '🔥', s: '👟' };
   function draw(g, s, v) {
     const c = v.colors;
@@ -381,7 +381,7 @@
     game: 'bomber',
     W,
     H,
-    sides: ['Голубой', 'Розовый'],
+    sides: ['Синий', 'Красный'],
     intro: 'Подорвите соперника бомбой. До ' + WIN + ' побед в раундах.',
     create,
     step,
@@ -392,7 +392,7 @@
     over: (s) => (s.pause <= 0.05 && (s.score[0] >= WIN || s.score[1] >= WIN) ? { winner: s.score[0] >= WIN ? 0 : 1, text: 'Раунды ' + s.score[0] + ' : ' + s.score[1] + '.' } : null),
     hud(s, v) {
       const n = names(v);
-      return 'Голубой (' + n[0] + ') ' + s.score[0] + ' : ' + s.score[1] + ' розовый (' + n[1] + ') · ' + Math.max(0, Math.ceil(s.time)) + ' с';
+      return 'Синий (' + n[0] + ') ' + s.score[0] + ' : ' + s.score[1] + ' красный (' + n[1] + ') · ' + Math.max(0, Math.ceil(s.time)) + ' с';
     },
   });
 })();

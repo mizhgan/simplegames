@@ -203,8 +203,8 @@
   // ---------- отрисовка ----------
 
   const PAL = [
-    ['#22d3ee', '#0e7490'],
-    ['#ff5c93', '#9d174d'],
+    ['#3b82f6', '#1d4ed8'],
+    ['#ef4444', '#b91c1c'],
   ];
   function draw(g, s, v) {
     const c = v.colors;
@@ -213,11 +213,11 @@
     g.fillStyle = c.cell;
     for (let y = 0; y < CH; y++) for (let x = (y & 1); x < CW; x += 2) g.fillRect(x * CELL, y * CELL, CELL, CELL);
     s.apples.forEach(([x, y, val]) => {
-      g.fillStyle = val > 1 ? '#fbbf24' : '#ef4444';
+      g.fillStyle = val > 1 ? '#fbbf24' : '#84cc16';
       g.beginPath();
       g.arc(x * CELL + CELL / 2, y * CELL + CELL / 2 + 1, CELL * 0.38, 0, Math.PI * 2);
       g.fill();
-      g.fillStyle = '#22c55e';
+      g.fillStyle = '#78350f';
       g.fillRect(x * CELL + CELL / 2, y * CELL + 1, 3, 4);
     });
     s.snakes.forEach((sn, i) => {
@@ -245,13 +245,13 @@
     }
   }
 
-  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['голубая', 'розовая']);
+  const names = (v) => (v.mode === 'ai' ? ['вы', 'компьютер'] : v.mode === 'net' ? (v.me === 0 ? ['вы', 'соперник'] : ['соперник', 'вы']) : ['синяя', 'красная']);
 
   SG.rt({
     game: 'snakeduel',
     W,
     H,
-    sides: ['Голубая змейка', 'Розовая змейка'],
+    sides: ['Синяя змейка', 'Красная змейка'],
     intro: 'Собирайте яблоки и не врезайтесь. До ' + WIN + ' побед в раундах.',
     create,
     step,
@@ -261,7 +261,7 @@
     over: (s) => (s.pause <= 0.05 && (s.score[0] >= WIN || s.score[1] >= WIN) ? { winner: s.score[0] >= WIN ? 0 : 1, text: 'Раунды ' + s.score[0] + ' : ' + s.score[1] + '.' } : null),
     hud(s, v) {
       const n = names(v);
-      return 'Голубая (' + n[0] + ', длина ' + s.snakes[0].body.length + ') ' + s.score[0] + ' : ' + s.score[1] + ' розовая (' + n[1] + ', длина ' + s.snakes[1].body.length + ')';
+      return 'Синяя (' + n[0] + ', длина ' + s.snakes[0].body.length + ') ' + s.score[0] + ' : ' + s.score[1] + ' красная (' + n[1] + ', длина ' + s.snakes[1].body.length + ')';
     },
     snapshot: (s) => ({ sn: s.snakes.map((sn) => ({ b: sn.body, d: sn.dir, a: sn.alive })), ap: s.apples, sc: s.score, p: s.pause, rw: s.roundWinner, t: s.tick }),
     restore: (x) => ({

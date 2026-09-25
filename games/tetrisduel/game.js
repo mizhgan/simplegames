@@ -297,7 +297,7 @@
     g.fillStyle = c.text;
     g.font = '800 15px system-ui, sans-serif';
     g.fillText('Линии: ' + b.lines, tx, OY + 70);
-    g.fillStyle = i ? '#ff5c93' : '#22d3ee';
+    g.fillStyle = i ? '#ef4444' : '#3b82f6';
     g.fillText(names(v)[i], tx, OY + 94);
     if (b.dead) {
       g.fillStyle = c.danger;
