@@ -1678,6 +1678,12 @@ kbd {
   font-weight: 800;
 }
 
+.rt-fire.rt-extra {
+  width: 52px;
+  height: 52px;
+  font-size: 1.1rem;
+}
+
 .rt-dpad button.on,
 .rt-fire.on {
   background: var(--accent);
