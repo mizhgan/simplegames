@@ -22,9 +22,9 @@
 
   // ---------- настройки (владелец сайта может поменять) ----------
   const CONFIG = {
-    // свой сервер знакомств PeerJS, например { host: 'peer.example.com', port: 443, path: '/', secure: true };
-    // null — бесплатный публичный 0.peerjs.com
-    peerServer: null,
+    // свой сервер знакомств PeerJS (deploy/peerjs/install.sh); null — только бесплатный публичный 0.peerjs.com.
+    // Если свой не отвечает, комната создаётся на публичном, а к коду в ссылке добавляется «-p».
+    peerServer: { host: 'turn.catin.org', port: 8443, path: '/', secure: true },
     // STUN помогает узнать внешний адрес, TURN пересылает трафик, когда напрямую соединиться нельзя
     // (частый случай в мобильном интернете). Для надёжной игры добавьте сюда свой TURN-сервер
     // (готовый конфиг coturn — deploy/coturn/turnserver.conf):
@@ -81,11 +81,23 @@
   const baseUrl = () => location.href.split('#')[0];
 
   // свой сервер PeerJS можно указать в localStorage: sg:peer-server = {"host":"…","port":443,"path":"/","secure":true}
-  function peerOptions() {
-    const custom = SG.store.get('peer-server', null) || CONFIG.peerServer;
+  // серверы знакомств по порядку: свой (если настроен), затем публичный 0.peerjs.com как запасной
+  const ownServer = () => SG.store.get('peer-server', null) || CONFIG.peerServer;
+  const serverList = () => (ownServer() && ownServer().host ? ['own', 'public'] : ['public']);
+
+  function peerOptions(which) {
     const opts = { config: ICE, debug: 0 };
-    if (custom && custom.host) Object.assign(opts, custom);
+    const srv = which === 'own' ? ownServer() : SG.store.get('peer-server-public', null);
+    if (srv && srv.host) Object.assign(opts, srv);
     return opts;
+  }
+
+  // код комнаты в ссылке: «abc123» — на основном сервере, «abc123-p» — на запасном публичном
+  const roomToken = (room, which) => room + (which === 'public' && serverList()[0] === 'own' ? '-p' : '');
+  function parseToken(token) {
+    const m = String(token || '').toLowerCase().match(/^([a-z0-9]{6})(-p)?$/);
+    if (!m) return null;
+    return { room: m[1], which: m[2] ? 'public' : serverList()[0] };
   }
 
   // ---------- сжатие SDP для ручного режима ----------
@@ -438,9 +450,14 @@
 
     // ---------- хозяин: комната через PeerJS ----------
 
-    async function host() {
+    async function host(srvIdx) {
       teardown();
       api.role = 'host';
+      const servers = serverList();
+      const idx = srvIdx || 0;
+      const which = servers[idx];
+      // свой сервер не ответил — пробуем следующий, и только потом ручной режим
+      const fallback = (reason) => (idx + 1 < servers.length ? host(idx + 1) : manualHost(reason));
       const room = code();
       const box = dialog(
         '<h2 id="net-title">Игра по сети</h2><p class="net-status">Создаём комнату…</p>' +
@@ -450,24 +467,26 @@
       if (!(await loadPeer())) return manualHost('Не удалось загрузить модуль связи.');
       if (api.role !== 'host' || (modal && modal.hidden)) return;
       let opened = false;
-      const timer = setTimeout(() => !opened && manualHost('Сервер знакомств не отвечает.'), SERVER_TIMEOUT);
+      const timer = setTimeout(() => !opened && fallback('Сервер знакомств не отвечает.'), SERVER_TIMEOUT);
       try {
-        peer = new window.Peer(PREFIX + room, peerOptions());
+        peer = new window.Peer(PREFIX + room, peerOptions(which));
       } catch (e) {
         clearTimeout(timer);
-        return manualHost('Сервер знакомств недоступен.');
+        return fallback('Сервер знакомств недоступен.');
       }
+      const myPeer = peer;
+      const token = roomToken(room, which);
       peer.on('open', () => {
         opened = true;
         clearTimeout(timer);
-        const url = baseUrl() + '#join=' + room;
+        const url = baseUrl() + '#join=' + token;
         const b = dialog(
           '<h2 id="net-title">Игра по сети</h2>' +
             linkBlock(url, 'Отправьте другу эту ссылку:') +
-            `<p class="net-code">Или продиктуйте код комнаты: <b>${room}</b></p>` +
+            `<p class="net-code">Или продиктуйте код комнаты: <b>${token}</b></p>` +
             '<p class="net-status"><span class="net-spinner"></span>Ждём соперника…</p>' +
             '<p class="net-note">Отправив ссылку, вернитесь на эту страницу: пока она свёрнута, браузер может её «усыпить».</p>' +
-            '<details class="net-join"><summary>У меня есть код от друга</summary><div class="net-link"><input type="text" maxlength="6" autocomplete="off" placeholder="Код комнаты" aria-label="Код комнаты"><button class="btn btn-primary" type="button" data-join>Войти</button></div></details>' +
+            '<details class="net-join"><summary>У меня есть код от друга</summary><div class="net-link"><input type="text" maxlength="8" autocomplete="off" placeholder="Код комнаты" aria-label="Код комнаты"><button class="btn btn-primary" type="button" data-join>Войти</button></div></details>' +
             '<div class="net-actions"><button class="btn btn-ghost" type="button" data-manual>Ручной режим</button><button class="btn btn-ghost" type="button" data-cancel>Отмена</button></div>'
         );
         bindLink(b, url);
@@ -476,7 +495,7 @@
         const joinInput = b.querySelector('.net-join input');
         const go = () => {
           const v = joinInput.value.trim().toLowerCase();
-          if (/^[a-z0-9]{6}$/.test(v) && v !== room) join(v);
+          if (parseToken(v) && v !== token) join(v);
           else joinInput.focus();
         };
         b.querySelector('[data-join]').addEventListener('click', go);
@@ -527,10 +546,11 @@
         c.on('error', dropped);
       });
       peer.on('error', (err) => {
-        if (err.type === 'unavailable-id') return host();
+        if (peer !== myPeer) return;
+        if (err.type === 'unavailable-id') return host(idx);
         if (!opened || ['network', 'server-error', 'socket-error', 'socket-closed', 'browser-incompatible'].includes(err.type)) {
           clearTimeout(timer);
-          if (!api.active && !opened) manualHost('Сервер знакомств недоступен.');
+          if (!api.active && !opened) fallback('Сервер знакомств недоступен.');
         }
       });
       peer.on('disconnected', () => {
@@ -558,7 +578,11 @@
 
     // ---------- гость: вход по коду комнаты ----------
 
-    async function join(room) {
+    async function join(token) {
+      const parsed = parseToken(token);
+      if (!parsed) return fail('Неверный код комнаты.');
+      const room = parsed.room;
+      token = String(token).toLowerCase();
       teardown();
       api.role = 'guest';
       const box = dialog(
@@ -570,11 +594,11 @@
       const statusEl = box.querySelector('.net-status');
       const noteEl = box.querySelector('.net-note');
       const setStatus = (html) => (statusEl.innerHTML = '<span class="net-spinner"></span>' + html);
-      if (!(await loadPeer())) return fail('Не удалось загрузить модуль связи.', room);
+      if (!(await loadPeer())) return fail('Не удалось загрузить модуль связи.', token);
       if (modal && modal.hidden) return;
 
       const diag = newDiag();
-      const myPeer = new window.Peer(peerOptions());
+      const myPeer = new window.Peer(peerOptions(parsed.which));
       peer = myPeer;
       const started = Date.now();
       let retryTimer = 0;
@@ -593,7 +617,7 @@
         if (!diag.server) why = 'Не удалось связаться с сервером знакомств. Проверьте интернет или попросите друга включить «Ручной режим» в окне приглашения.';
         else if (!diag.answered) why = 'Друг не отвечает. Скорее всего, страница игры у него свёрнута или закрыта: пусть он откроет её, а вы нажмите «Повторить».';
         else why = NO_DIRECT;
-        fail(why + '<br><small class="net-diag">' + diagText(diag) + '</small>', room);
+        fail(why + '<br><small class="net-diag">' + diagText(diag) + '</small>', token);
       }, JOIN_TIMEOUT);
 
       // попытка соединения; если долго нет ответа — пробуем ещё раз (хозяин мог вернуться на страницу)
@@ -679,13 +703,13 @@
           // комнаты нет прямо сейчас — возможно, хозяин переподключается к серверу; пробуем дальше, пока не выйдет время
           if (Date.now() - started > 30000) {
             stop();
-            fail('Комната <b>' + room + '</b> не найдена. Возможно, друг закрыл страницу — попросите новую ссылку.', room);
+            fail('Комната <b>' + room + '</b> не найдена. Возможно, друг закрыл страницу — попросите новую ссылку.', token);
           } else setStatus('Комната пока не отвечает, пробуем ещё раз…');
           return;
         }
         if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(err.type) && !diag.server) {
           stop();
-          fail('Сервер знакомств недоступен. Попросите друга нажать «Ручной режим» в окне приглашения и прислать новую ссылку.', room);
+          fail('Сервер знакомств недоступен. Попросите друга нажать «Ручной режим» в окне приглашения и прислать новую ссылку.', token);
         }
       });
       myPeer.on('disconnected', () => {
@@ -851,7 +875,7 @@
 
     // вход по ссылке-приглашению
     const m = location.hash.match(/^#(join|offer)=(.+)$/);
-    if (m) setTimeout(() => (m[1] === 'join' ? join(decodeURIComponent(m[2]).toLowerCase()) : manualGuest(m[2])), 50);
+    if (m) setTimeout(() => (m[1] === 'join' ? join(decodeURIComponent(m[2])) : manualGuest(m[2])), 50);
 
     api.host = host;
     api.join = join;
