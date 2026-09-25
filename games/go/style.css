@@ -1,0 +1,82 @@
+.go-board {
+  width: min(100%, 560px);
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, #e8c27a, #d3a553);
+  box-shadow: var(--shadow);
+}
+
+.go-grid line {
+  stroke: #4a3212;
+  stroke-width: 0.35;
+}
+
+.go-grid .star {
+  fill: #4a3212;
+}
+
+.go-hits rect {
+  fill: transparent;
+}
+
+.go-board.can .go-hits rect {
+  cursor: pointer;
+}
+
+.go-board.can .go-hits rect:hover {
+  fill: rgba(0, 0, 0, 0.18);
+}
+
+.go-board.can.turn-w .go-hits rect:hover {
+  fill: rgba(255, 255, 255, 0.45);
+}
+
+.go-stones {
+  pointer-events: none;
+}
+
+.go-stone.b {
+  fill: #1c1c24;
+  stroke: #000;
+  stroke-width: 0.3;
+}
+
+.go-stone.w {
+  fill: #f7f7f2;
+  stroke: #0005;
+  stroke-width: 0.3;
+}
+
+.go-last {
+  fill: none;
+  stroke-width: 0.7;
+}
+
+.go-last.b {
+  stroke: #fff;
+}
+
+.go-last.w {
+  stroke: #000;
+}
+
+.go-terr.b {
+  fill: #1c1c24;
+}
+
+.go-terr.w {
+  fill: #fff;
+  stroke: #0006;
+  stroke-width: 0.2;
+}
+
+.go-ko {
+  fill: none;
+  stroke: var(--danger);
+  stroke-width: 0.6;
+}
+
+.go-info {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}

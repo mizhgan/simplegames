@@ -1,0 +1,63 @@
+.hx-board {
+  width: min(100%, 680px);
+  border-radius: var(--radius);
+  background: var(--board-bg);
+  box-shadow: var(--shadow);
+  --hx-red: #ef4444;
+  --hx-blue: #3b82f6;
+}
+
+.hx {
+  fill: var(--board-cell);
+  stroke: var(--board-line);
+  stroke-width: 1;
+}
+
+.hx.free {
+  cursor: pointer;
+}
+
+.hx.free:hover {
+  fill: color-mix(in srgb, var(--hx-red) 30%, var(--board-cell));
+}
+
+.turn-blue .hx.free:hover {
+  fill: color-mix(in srgb, var(--hx-blue) 30%, var(--board-cell));
+}
+
+.hx-stones {
+  pointer-events: none;
+}
+
+.hx-stone.red {
+  fill: var(--hx-red);
+}
+
+.hx-stone.blue {
+  fill: var(--hx-blue);
+}
+
+.hx-stone.last {
+  stroke: var(--warning);
+  stroke-width: 2;
+}
+
+.hx-stone.path {
+  stroke: #fff;
+  stroke-width: 1.6;
+}
+
+.hx-edge {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hx-edge.red {
+  stroke: var(--hx-red);
+}
+
+.hx-edge.blue {
+  stroke: var(--hx-blue);
+}

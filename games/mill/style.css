@@ -1,0 +1,141 @@
+.ml-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: min(100%, 520px);
+}
+
+.ml-hand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+
+.ml-hand.turn {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.ml-hand b {
+  margin-left: auto;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.ml-hand span {
+  display: flex;
+  gap: 3px;
+}
+
+.ml-hand i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.ml-hand.side-0 i {
+  background: #f5f5f7;
+  box-shadow: inset 0 -2px 0 #0003, 0 0 0 1px #0004;
+}
+
+.ml-hand.side-1 i {
+  background: #262634;
+  box-shadow: inset 0 -2px 0 #fff2, 0 0 0 1px #fff3;
+}
+
+.ml-board {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, #e9c98f, #d4a862);
+  box-shadow: var(--shadow);
+}
+
+.ml-lines line {
+  stroke: #6b4a1f;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.ml-pt {
+  cursor: pointer;
+  outline: none;
+}
+
+.ml-pt .hit {
+  fill: transparent;
+}
+
+.ml-pt .dot {
+  fill: #6b4a1f;
+}
+
+.ml-pt .man {
+  display: none;
+  stroke-width: 1;
+  transition: transform 0.15s;
+}
+
+.ml-pt.white .man,
+.ml-pt.black .man {
+  display: block;
+}
+
+.ml-pt.white .man {
+  fill: #fafafa;
+  stroke: #0006;
+}
+
+.ml-pt.black .man {
+  fill: #23232f;
+  stroke: #fff5;
+}
+
+.ml-pt.target .dot {
+  r: 4.5px;
+  fill: var(--accent);
+}
+
+.ml-pt.movable .man {
+  stroke: var(--accent-2);
+  stroke-width: 1.6;
+}
+
+.ml-pt.sel .man {
+  stroke: var(--accent);
+  stroke-width: 2.6;
+}
+
+.ml-pt.remove .man {
+  stroke: var(--danger);
+  stroke-width: 2.6;
+  stroke-dasharray: 3 2;
+}
+
+.ml-pt.mill .man {
+  filter: drop-shadow(0 0 2px var(--warning));
+}
+
+.ml-pt.last .dot {
+  fill: var(--warning);
+}
+
+.ml-pt.last:not(.white):not(.black) .dot,
+.ml-pt.taken .dot {
+  r: 4px;
+  fill: var(--danger);
+  opacity: 0.6;
+}
+
+.ml-pt:focus-visible .hit {
+  stroke: var(--accent);
+  stroke-width: 1;
+}

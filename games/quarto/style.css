@@ -1,0 +1,128 @@
+.q-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  --q-dark: #7c3a1d;
+  --q-light: #f3c98b;
+  --q-hole: rgba(0, 0, 0, 0.45);
+  --q-rim: var(--accent-2);
+}
+
+.q-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 8px;
+  width: min(100%, 380px);
+  aspect-ratio: 1;
+  padding: 14px;
+  border-radius: 50%;
+  background: var(--board-bg);
+  box-shadow: var(--shadow), inset 0 0 0 2px var(--board-line);
+}
+
+.q-cell {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 3px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--board-cell);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.q-cell:disabled {
+  cursor: default;
+}
+
+.q-board.active .q-cell:not(:disabled):hover {
+  background: color-mix(in srgb, var(--accent) 30%, var(--board-cell));
+}
+
+.q-cell.last {
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
+
+.q-cell.win {
+  background: color-mix(in srgb, var(--success) 40%, var(--board-cell));
+  box-shadow: 0 0 0 3px var(--success);
+}
+
+.q-cell svg,
+.q-piece svg,
+.q-hand svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.q-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  width: min(100%, 300px);
+}
+
+.q-hand-box {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.q-hand {
+  width: 64px;
+  height: 64px;
+}
+
+.q-hand-box.empty {
+  opacity: 0.5;
+}
+
+.q-pool {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.q-pool.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.q-piece {
+  aspect-ratio: 1;
+  padding: 4px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.q-piece:disabled {
+  cursor: default;
+}
+
+.q-pool.active .q-piece:not(:disabled):hover {
+  background: color-mix(in srgb, var(--accent) 30%, var(--surface-2));
+}
+
+.q-piece.used {
+  visibility: hidden;
+}
