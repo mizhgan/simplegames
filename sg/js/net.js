@@ -54,7 +54,7 @@
     return cfg;
   })();
   const SERVER_TIMEOUT = 9000;
-  const JOIN_TIMEOUT = 75000; // гость ждёт, пока хозяин вернётся на страницу
+  const JOIN_TIMEOUT = 45000; // гость ждёт, пока хозяин вернётся на страницу
   const RETRY_EVERY = 15000;
   const SCRIPT_URL = document.currentScript ? document.currentScript.src : location.href;
 
@@ -418,12 +418,14 @@
         }
       }
       if (peer) {
+        // сначала отпускаем ссылку: при destroy() PeerJS шлёт «disconnected», и обработчик не должен переподключаться
+        const p = peer;
+        peer = null;
         try {
-          peer.destroy();
+          p.destroy();
         } catch (e) {
           /* ignore */
         }
-        peer = null;
       }
       if (pc) {
         try {
@@ -555,7 +557,7 @@
       });
       peer.on('disconnected', () => {
         // связь с сервером знакомств не нужна после соединения
-        if (!api.active && peer && !peer.destroyed) peer.reconnect();
+        if (!api.active && peer === myPeer && !myPeer.destroyed) myPeer.reconnect();
       });
     }
 
@@ -600,9 +602,9 @@
       const diag = newDiag();
       const myPeer = new window.Peer(peerOptions(parsed.which));
       peer = myPeer;
-      const started = Date.now();
       let retryTimer = 0;
       let hintTimer = 0;
+      let unavailable = 0;
       let attempts = [];
       const stop = () => {
         clearTimeout(retryTimer);
@@ -615,7 +617,7 @@
         await collectStats(diag);
         let why;
         if (!diag.server) why = 'Не удалось связаться с сервером знакомств. Проверьте интернет или попросите друга включить «Ручной режим» в окне приглашения.';
-        else if (!diag.answered) why = 'Друг не отвечает. Скорее всего, страница игры у него свёрнута или закрыта: пусть он откроет её, а вы нажмите «Повторить».';
+        else if (!diag.answered) why = 'Друг не отвечает: похоже, он закрыл окно приглашения или страницу игры (или она свёрнута). Попросите его открыть страницу или прислать новую ссылку — и нажмите «Повторить».';
         else why = NO_DIRECT;
         fail(why + '<br><small class="net-diag">' + diagText(diag) + '</small>', token);
       }, JOIN_TIMEOUT);
@@ -700,11 +702,17 @@
       myPeer.on('error', (err) => {
         if (api.active || peer !== myPeer) return;
         if (err.type === 'peer-unavailable') {
-          // комнаты нет прямо сейчас — возможно, хозяин переподключается к серверу; пробуем дальше, пока не выйдет время
-          if (Date.now() - started > 30000) {
+          // комнаты на сервере нет: хозяин закрыл приглашение или страницу. Один раз перепроверяем —
+          // вдруг он как раз переподключается к серверу, — и сразу говорим как есть
+          unavailable++;
+          if (unavailable >= 2) {
             stop();
-            fail('Комната <b>' + room + '</b> не найдена. Возможно, друг закрыл страницу — попросите новую ссылку.', token);
-          } else setStatus('Комната пока не отвечает, пробуем ещё раз…');
+            fail('Приглашение больше не действует: друг закрыл окно ожидания или страницу игры. Попросите у него новую ссылку.', token);
+          } else {
+            setStatus('Комната не отвечает, проверяем ещё раз…');
+            clearTimeout(retryTimer);
+            retryTimer = setTimeout(attempt, 2500);
+          }
           return;
         }
         if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(err.type) && !diag.server) {
@@ -713,7 +721,7 @@
         }
       });
       myPeer.on('disconnected', () => {
-        if (!api.active && !myPeer.destroyed) {
+        if (!api.active && peer === myPeer && !myPeer.destroyed) {
           try {
             myPeer.reconnect();
           } catch (e) {
@@ -787,12 +795,14 @@
 
     async function manualHost(reason) {
       if (peer) {
+        // сначала отпускаем ссылку: при destroy() PeerJS шлёт «disconnected», и обработчик не должен переподключаться
+        const p = peer;
+        peer = null;
         try {
-          peer.destroy();
+          p.destroy();
         } catch (e) {
           /* ignore */
         }
-        peer = null;
       }
       api.role = 'host';
       dialog('<h2 id="net-title">Игра по сети</h2><p class="net-status"><span class="net-spinner"></span>Готовим приглашение…</p>');
@@ -872,6 +882,18 @@
     }
 
     window.addEventListener('beforeunload', () => api.active && rawSend({ t: '_bye' }));
+    // уходя со страницы, сразу снимаем комнату с сервера — иначе гость ждал бы, пока сервер заметит пропажу
+    window.addEventListener('pagehide', () => {
+      if (peer && !peer.destroyed) {
+        const p = peer;
+        peer = null;
+        try {
+          p.destroy();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+    });
 
     // вход по ссылке-приглашению
     const m = location.hash.match(/^#(join|offer)=(.+)$/);
