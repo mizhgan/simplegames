@@ -1,6 +1,7 @@
 .ut-board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   gap: 10px;
   width: min(100%, 540px);
   aspect-ratio: 1;
@@ -13,7 +14,10 @@
 .ut-sub {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+  min-height: 0;
   gap: 3px;
   padding: 4px;
   border-radius: 10px;

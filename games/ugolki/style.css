@@ -1,7 +1,7 @@
 .ug-board {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, 1fr);
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
   width: min(100%, 520px);
   aspect-ratio: 1;
   overflow: hidden;

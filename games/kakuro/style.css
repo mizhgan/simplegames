@@ -1,7 +1,7 @@
 .kk-board {
   --c: 9;
   display: grid;
-  grid-template-columns: repeat(var(--c), 1fr);
+  grid-template-columns: repeat(var(--c), minmax(0, 1fr));
   gap: 2px;
   width: min(520px, 92vw);
   padding: 3px;
@@ -101,7 +101,7 @@
 
 .kk-pad {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 5px;
   width: min(520px, 92vw);
 }

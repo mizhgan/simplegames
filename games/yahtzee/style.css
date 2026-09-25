@@ -6,7 +6,7 @@
 
 .yz-die {
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  grid-template: repeat(3, minmax(0, 1fr)) / repeat(3, minmax(0, 1fr));
   gap: 3px;
   width: clamp(48px, 14vw, 64px);
   aspect-ratio: 1;

@@ -31,7 +31,7 @@
 
 .bs-grid {
   display: grid;
-  grid-template-columns: 0.7fr repeat(10, 1fr);
+  grid-template-columns: 0.7fr repeat(10, minmax(0, 1fr));
   gap: 2px;
   padding: 8px;
   border-radius: var(--radius);

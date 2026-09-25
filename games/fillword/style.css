@@ -4,7 +4,8 @@
 
 .fw-board {
   display: grid;
-  grid-template-columns: repeat(var(--n, 6), 1fr);
+  grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--n, 6), minmax(0, 1fr));
   gap: 4px;
   padding: 8px;
   aspect-ratio: 1;
