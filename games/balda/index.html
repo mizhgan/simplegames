@@ -35,6 +35,9 @@
     <div class="game-layout">
       <div class="game-stage">
         <div class="game-controls">
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="ai">Против компьютера</button>
+          </div>
           <div class="seg" id="difficulty" role="group" aria-label="Сложность">
             <button type="button" data-value="easy">Легко</button>
             <button type="button" data-value="normal">Средне</button>
@@ -49,7 +52,7 @@
             <div class="bd-board" id="board" aria-label="Поле 5 на 5"></div>
             <div class="bd-word" id="word"></div>
           </div>
-          <div class="bd-side"><h2>Компьютер <b id="score-ai">0</b></h2><ul id="words-ai"></ul></div>
+          <div class="bd-side"><h2><span id="label-ai">Компьютер</span> <b id="score-ai">0</b></h2><ul id="words-ai"></ul></div>
         </div>
         <div class="bd-keyboard" id="keyboard" hidden aria-label="Буквы"></div>
         <div class="game-controls">
@@ -69,6 +72,7 @@
             <li>Засчитываются существительные в начальной форме, которые ещё не звучали в игре. За слово — столько очков, сколько в нём букв.</li>
             <li>Выберите клетку → букву (на экранной или обычной клавиатуре) → кликайте по буквам слова по порядку → «Готово».</li>
             <li>Игра заканчивается, когда поле заполнено или оба игрока дважды подряд пропустили ход. Побеждает набравший больше очков.</li>
+            <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами.</li>
           </ul>
         </div>
       </aside>
@@ -84,6 +88,7 @@
 
   <script src="../../sg/js/common.js"></script>
   <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
   <script src="../../sg/data/balda-dict.js"></script>
   <script src="game.js"></script>
 </body>

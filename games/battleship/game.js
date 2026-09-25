@@ -23,6 +23,12 @@
   let shots = 0;
   let hits = 0;
   let aiTimer = 0;
+  // сетевая игра: свой флот знаем только мы, результат выстрела сообщает соперник
+  let mode = 'ai';
+  let pending = false; // ждём ответа на свой выстрел
+  let meReady = false;
+  let oppReady = false;
+  let iStart = true; // кто стреляет первым в сетевой партии
 
   const idx = (r, c) => r * N + c;
   const inside = (r, c) => r >= 0 && r < N && c >= 0 && c < N;
@@ -213,7 +219,7 @@
       if (s === MISS) el.classList.add('miss');
       if (s === HIT) el.classList.add('hit');
       if (s === SUNK) el.classList.add('sunk');
-      el.disabled = !(side === enemy && phase === 'player' && s === UNKNOWN);
+      el.disabled = !(side === enemy && phase === 'player' && s === UNKNOWN && !pending);
     });
   }
 
@@ -221,7 +227,7 @@
     paint(myCells, me, true);
     paint(enemyCells, enemy, phase === 'over');
     $('my-left').textContent = fleetLeft(me);
-    $('enemy-left').textContent = fleetLeft(enemy);
+    $('enemy-left').textContent = mode === 'net' ? FLEET.length - (enemy.sunk || 0) : fleetLeft(enemy);
     $('shots').textContent = shots;
     $('accuracy').textContent = shots ? Math.round((hits / shots) * 100) + '%' : '—';
     enemyEl.classList.toggle('active', phase === 'player');
@@ -238,8 +244,19 @@
   // ---------- ход ----------
 
   function playerShoot(i) {
-    if (phase !== 'player' || enemy.shots[i] !== UNKNOWN) return;
-    const res = fire(enemy, i);
+    if (phase !== 'player' || enemy.shots[i] !== UNKNOWN || pending) return;
+    if (mode === 'net') {
+      if (!net.active) return;
+      pending = true;
+      net.send({ t: 'shot', i });
+      render();
+      return;
+    }
+    shotResult(i, fire(enemy, i));
+  }
+
+  // результат своего выстрела: у компьютера считаем сами, по сети — присылает соперник
+  function shotResult(i, res) {
     shots++;
     if (res !== 'miss') hits++;
     render();
@@ -249,21 +266,29 @@
       phase = 'enemy';
       statusEl.textContent = 'Мимо. Стреляет противник…';
       render();
-      aiTimer = setTimeout(aiShoot, 750);
+      if (mode === 'ai') aiTimer = setTimeout(aiShoot, 750);
     } else if (res === 'hit') {
       SG.sound.play('hit');
       statusEl.textContent = 'Попадание! Стреляйте ещё.';
     } else {
       SG.sound.play('explode');
-      if (allSunk(enemy)) return finish(true);
+      if (mode === 'net' ? enemy.sunk >= FLEET.length : allSunk(enemy)) return finish(true);
       statusEl.textContent = 'Корабль потоплен! Стреляйте ещё.';
     }
   }
 
   function aiShoot() {
-    if (phase !== 'enemy') return;
-    const i = aiChoose();
+    if (phase !== 'enemy' || mode !== 'ai') return;
+    incoming(aiChoose());
+  }
+
+  // выстрел по нашему флоту (компьютера или соперника по сети)
+  function incoming(i) {
     const res = fire(me, i);
+    if (mode === 'net') {
+      const ship = me.at.get(i);
+      net.send({ t: 'result', i, res, cells: res === 'sunk' ? ship.cells : null });
+    }
     render();
     flash(myCells, i, 'boom');
     const where = LETTERS[i % N] + (Math.floor(i / N) + 1);
@@ -277,12 +302,15 @@
     SG.sound.play(res === 'hit' ? 'hit' : 'explode');
     if (res === 'sunk' && allSunk(me)) return finish(false);
     statusEl.textContent = (res === 'hit' ? 'Противник попал в ' : 'Противник потопил корабль в ') + where + '…';
-    aiTimer = setTimeout(aiShoot, 850);
+    if (mode === 'ai') aiTimer = setTimeout(aiShoot, 850);
   }
 
   function finish(won) {
     phase = 'over';
+    pending = false;
     clearTimeout(aiTimer);
+    // показываем сопернику свою расстановку
+    if (mode === 'net') net.send({ t: 'fleet', ships: me.ships.map((sh) => sh.cells) });
     if (won) {
       SG.store.set('battleship-wins', SG.store.get('battleship-wins', 0) + 1);
       const best = SG.store.get('battleship-best', null);
@@ -299,10 +327,15 @@
   function newGame() {
     clearTimeout(aiTimer);
     me = randomFleet();
-    enemy = randomFleet();
+    enemy = mode === 'net' ? { ships: [], at: new Map(), shots: Array(N * N).fill(UNKNOWN), sunk: 0 } : randomFleet();
     shots = 0;
     hits = 0;
+    pending = false;
+    meReady = false;
+    oppReady = false;
     phase = 'setup';
+    $('start-btn').disabled = false;
+    $('shuffle-btn').disabled = false;
     statusEl.textContent = 'Расставьте флот: нажмите «Перемешать», пока расстановка не понравится.';
     $('restart-row').hidden = true;
     render();
@@ -316,16 +349,114 @@
   });
   $('start-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    SG.sound.play('click');
+    if (mode === 'net') {
+      if (!net.active) return;
+      meReady = true;
+      $('start-btn').disabled = true;
+      $('shuffle-btn').disabled = true;
+      net.send({ t: 'ready' });
+      return tryStart();
+    }
     phase = 'player';
     statusEl.textContent = 'Ваш выстрел — кликните по полю противника.';
-    SG.sound.play('click');
     render();
   });
   $('surrender-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net') net.send({ t: 'surrender' });
     finish(false);
   });
-  $('again-btn').addEventListener('click', newGame);
+  $('again-btn').addEventListener('click', () => {
+    if (mode === 'net') {
+      if (!net.active) return;
+      net.send({ t: 'new' });
+      iStart = !iStart;
+    }
+    newGame();
+  });
+
+  // ---------- игра по сети ----------
+
+  function tryStart() {
+    if (!meReady) {
+      statusEl.textContent = 'Соперник уже готов. Расставьте флот и нажмите «В бой!».';
+      return;
+    }
+    if (!oppReady) {
+      statusEl.textContent = 'Ждём, пока соперник расставит флот…';
+      return;
+    }
+    phase = iStart ? 'player' : 'enemy';
+    statusEl.textContent = iStart ? 'Бой! Ваш выстрел первый.' : 'Бой! Первым стреляет соперник…';
+    render();
+  }
+
+  const net = SG.net.setup({
+    game: 'battleship',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      iStart = role === 'host';
+      $('difficulty').style.display = 'none';
+      net.info('флот соперника скрыт, пока идёт бой');
+      newGame();
+    },
+    onMessage(msg) {
+      if (msg.t === 'new') {
+        iStart = !iStart;
+        newGame();
+      } else if (msg.t === 'ready' && phase === 'setup') {
+        oppReady = true;
+        tryStart();
+      } else if (msg.t === 'shot' && phase === 'enemy' && Number.isInteger(msg.i) && me.shots[msg.i] === UNKNOWN) {
+        incoming(msg.i);
+      } else if (msg.t === 'result' && pending && Number.isInteger(msg.i)) {
+        pending = false;
+        const i = msg.i;
+        if (msg.res === 'miss') enemy.shots[i] = MISS;
+        else if (msg.res === 'hit') enemy.shots[i] = HIT;
+        else if (msg.res === 'sunk' && Array.isArray(msg.cells)) {
+          enemy.sunk++;
+          msg.cells.forEach((c) => (enemy.shots[c] = SUNK));
+          msg.cells.forEach((c) => around(c).forEach((n) => enemy.shots[n] === UNKNOWN && (enemy.shots[n] = MISS)));
+        }
+        shotResult(i, msg.res);
+      } else if (msg.t === 'surrender' && phase !== 'over' && phase !== 'setup') {
+        finish(true);
+        statusEl.textContent = 'Соперник сдался — победа! 🎉';
+      } else if (msg.t === 'fleet' && Array.isArray(msg.ships)) {
+        // открываем расстановку соперника после боя
+        msg.ships.forEach((cells) => {
+          const ship = { cells, hits: 0 };
+          cells.forEach((c) => enemy.at.set(c, ship));
+        });
+        render();
+      }
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        mode = 'ai';
+        modeSeg.set('ai');
+        $('difficulty').style.display = '';
+        newGame();
+      } else {
+        pending = false;
+        if (phase !== 'over') phase = 'over';
+        render();
+        statusEl.textContent = 'Нет соединения с соперником';
+      }
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), 'ai', () => {
+    if (mode !== 'ai') {
+      mode = 'ai';
+      $('difficulty').style.display = '';
+      newGame();
+    }
+  });
 
   SG.segmented($('difficulty'), difficulty, (v) => {
     difficulty = v;

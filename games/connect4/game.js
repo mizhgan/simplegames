@@ -18,6 +18,7 @@
   let difficulty = SG.store.get('c4-diff', 'normal');
   // Клетка (r, c): r = 0 — нижний ряд. Индекс r * COLS + c.
   let grid, heights, turn, finished, thinking;
+  let mySide = 1; // в сетевой игре: 1 — красные, 2 — жёлтые
   let starter = 2;
   const scores = { 1: 0, 2: 0, D: 0 };
 
@@ -191,6 +192,10 @@
   function humanMove(c) {
     if (finished || thinking || heights[c] >= ROWS) return;
     if (mode === 'ai' && turn === 2) return;
+    if (mode === 'net') {
+      if (!net.active || turn !== mySide) return;
+      net.send({ t: 'move', c });
+    }
     place(c);
   }
 
@@ -201,17 +206,20 @@
       boardEl.classList.add('finished');
       line.forEach(([r, c]) => cellEls[r * COLS + c].classList.add('win'));
     }
-    if (mode === 'ai' && winner === 1) SG.store.set('c4-wins', SG.store.get('c4-wins', 0) + 1);
+    if ((mode === 'ai' && winner === 1) || (mode === 'net' && winner === mySide)) SG.store.set('c4-wins', SG.store.get('c4-wins', 0) + 1);
     renderScores();
-    SG.sound.play(winner === 'D' ? 'draw' : mode === 'ai' && winner === 2 ? 'lose' : 'win');
+    const lost = (mode === 'ai' && winner === 2) || (mode === 'net' && winner !== mySide);
+    SG.sound.play(winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
     if (winner === 'D') statusEl.textContent = 'Ничья 🤝';
+    else if (mode === 'net') statusEl.textContent = winner === mySide ? 'Вы победили! 🎉' : 'Соперник победил';
     else if (mode === 'ai') statusEl.textContent = winner === 1 ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
     else statusEl.textContent = (winner === 1 ? 'Красные' : 'Жёлтые') + ' победили!';
   }
 
   function updateStatus() {
     statusEl.dataset.turn = turn;
-    if (mode === 'ai') statusEl.textContent = turn === 1 ? 'Ваш ход' : 'Компьютер думает…';
+    if (mode === 'net') statusEl.textContent = !net.active ? 'Нет соединения с соперником' : turn === mySide ? 'Ваш ход' : 'Ход соперника…';
+    else if (mode === 'ai') statusEl.textContent = turn === 1 ? 'Ваш ход' : 'Компьютер думает…';
     else statusEl.textContent = 'Ходят ' + (turn === 1 ? 'красные' : 'жёлтые');
     markerEl.dataset.turn = turn;
   }
@@ -220,17 +228,18 @@
     $('score-1').textContent = scores[1];
     $('score-2').textContent = scores[2];
     $('score-d').textContent = scores.D;
-    $('label-1').textContent = mode === 'ai' ? 'Вы' : 'Красные';
-    $('label-2').textContent = mode === 'ai' ? 'Компьютер' : 'Жёлтые';
+    const n = mode === 'net';
+    $('label-1').textContent = n ? (mySide === 1 ? 'Вы · красные' : 'Соперник') : mode === 'ai' ? 'Вы' : 'Красные';
+    $('label-2').textContent = n ? (mySide === 2 ? 'Вы · жёлтые' : 'Соперник') : mode === 'ai' ? 'Компьютер' : 'Жёлтые';
   }
 
-  function newRound() {
+  function newRound(first) {
     clearTimeout(thinking);
     thinking = null;
     grid = Array(ROWS * COLS).fill(0);
     heights = Array(COLS).fill(0);
     finished = false;
-    starter = 3 - starter;
+    starter = first || 3 - starter;
     turn = starter;
     boardEl.classList.remove('finished');
     cellEls.forEach((el) => {
@@ -266,11 +275,38 @@
     if (n >= 1 && n <= COLS) humanMove(n - 1);
     else if ((e.key === 'Enter' || e.key === ' ') && finished) {
       e.preventDefault();
-      newRound();
+      $('new-round').click();
     }
   });
 
-  SG.segmented($('mode'), mode, (v) => {
+  // ---------- игра по сети ----------
+
+  const net = SG.net.setup({
+    game: 'connect4',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      mySide = role === 'host' ? 1 : 2;
+      net.info('вы играете ' + (mySide === 1 ? 'красными' : 'жёлтыми'));
+      diffEl.style.display = 'none';
+      resetScores();
+    },
+    onMessage(msg) {
+      if (msg.t === 'move' && !finished && turn !== mySide && Number.isInteger(msg.c) && msg.c >= 0 && msg.c < COLS) place(msg.c);
+      else if (msg.t === 'new') newRound(msg.first);
+      else if (msg.t === 'reset') resetScores();
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        modeSeg.set('pvp');
+        mode = 'pvp';
+        resetScores();
+      } else updateStatus();
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;
     SG.store.set('c4-mode', v);
     diffEl.style.display = mode === 'ai' ? '' : 'none';
@@ -283,10 +319,19 @@
   });
   $('new-round').addEventListener('click', (e) => {
     e.currentTarget.blur();
-    newRound();
+    if (mode === 'net') {
+      if (!net.active) return;
+      const first = 3 - starter;
+      net.send({ t: 'new', first });
+      newRound(first);
+    } else newRound();
   });
   $('reset-score').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net') {
+      if (!net.active) return;
+      net.send({ t: 'reset' });
+    }
     resetScores();
   });
 

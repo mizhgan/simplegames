@@ -14,6 +14,7 @@
   let difficulty = SG.store.get('dots-diff', 'normal');
   let size = SG.store.get('dots-size', '4');
   let R, C, H, L, lines, owner, turn, score, over, busy, timer, boxLines, lineBoxes, lastLine;
+  let mySide = 1; // в сетевой игре: 1 — синие (ходят первыми), 2 — красные
 
   // ---------- геометрия ----------
 
@@ -161,7 +162,21 @@
 
   function finish() {
     const [a, b] = [score[1], score[2]];
-    if (mode === 'ai') {
+    if (mode === 'net') {
+      const mine = mySide === 1 ? a : b;
+      const theirs = mySide === 1 ? b : a;
+      if (mine > theirs) {
+        statusEl.textContent = 'Победа ' + mine + ':' + theirs + '! 🎉';
+        SG.store.set('dots-wins', SG.store.get('dots-wins', 0) + 1);
+        SG.sound.play('win');
+      } else if (mine < theirs) {
+        statusEl.textContent = 'Соперник выиграл ' + theirs + ':' + mine + '.';
+        SG.sound.play('lose');
+      } else {
+        statusEl.textContent = 'Ничья ' + a + ':' + b + '.';
+        SG.sound.play('draw');
+      }
+    } else if (mode === 'ai') {
       if (a > b) {
         statusEl.textContent = 'Победа ' + a + ':' + b + '! 🎉';
         SG.store.set('dots-wins', SG.store.get('dots-wins', 0) + 1);
@@ -221,15 +236,17 @@
     svg.querySelectorAll('.db-box').forEach((g) => {
       const o = owner[Number(g.dataset.b)];
       g.dataset.o = o;
-      g.querySelector('text').textContent = o ? (mode === 'ai' ? (o === 1 ? 'Я' : 'К') : o === 1 ? 'С' : 'К') : '';
+      g.querySelector('text').textContent = o ? (mode === 'ai' ? (o === 1 ? 'Я' : 'К') : mode === 'net' ? (o === mySide ? 'Я' : 'С') : o === 1 ? 'С' : 'К') : '';
     });
     svg.dataset.turn = turn;
     $('s1').textContent = score[1];
     $('s2').textContent = score[2];
-    $('l1').textContent = mode === 'ai' ? 'Вы' : 'Синие';
-    $('l2').textContent = mode === 'ai' ? 'Компьютер' : 'Красные';
+    const n = mode === 'net';
+    $('l1').textContent = n ? (mySide === 1 ? 'Вы' : 'Соперник') : mode === 'ai' ? 'Вы' : 'Синие';
+    $('l2').textContent = n ? (mySide === 2 ? 'Вы' : 'Соперник') : mode === 'ai' ? 'Компьютер' : 'Красные';
     if (!over) {
-      if (mode === 'ai') statusEl.textContent = turn === 1 ? 'Ваш ход — проведите линию.' : 'Ходит компьютер…';
+      if (n) statusEl.textContent = !net.active ? 'Нет соединения с соперником' : turn === mySide ? 'Ваш ход — проведите линию.' : 'Ход соперника…';
+      else if (mode === 'ai') statusEl.textContent = turn === 1 ? 'Ваш ход — проведите линию.' : 'Ходит компьютер…';
       else statusEl.textContent = 'Ходят ' + (turn === 1 ? 'синие' : 'красные') + '.';
     }
   }
@@ -238,7 +255,13 @@
     const g = e.target.closest('.db-line');
     if (!g || over || busy) return;
     if (mode === 'ai' && turn !== 1) return;
-    play(Number(g.dataset.l));
+    const l = Number(g.dataset.l);
+    if (lines[l]) return;
+    if (mode === 'net') {
+      if (!net.active || turn !== mySide) return;
+      net.send({ t: 'move', l });
+    }
+    play(l);
   });
 
   function newGame() {
@@ -256,7 +279,51 @@
     $('wins').textContent = SG.store.get('dots-wins', 0);
   }
 
-  SG.segmented($('mode'), mode, (v) => {
+  // ---------- игра по сети ----------
+
+  function netNew() {
+    // начинающий новую партию меняется цветом с соперником и сообщает размер поля
+    mySide = 3 - mySide;
+    net.send({ t: 'new', side: 3 - mySide, size });
+    newGame();
+  }
+
+  const net = SG.net.setup({
+    game: 'dots',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      diffEl.style.display = 'none';
+      net.info('поле ' + size + '×' + size);
+      if (role === 'host') {
+        mySide = 2;
+        netNew();
+      } else {
+        mySide = 2;
+        newGame();
+      }
+    },
+    onMessage(msg) {
+      if (msg.t === 'move' && !over && turn !== mySide && Number.isInteger(msg.l) && msg.l >= 0 && msg.l < L && !lines[msg.l]) play(msg.l);
+      else if (msg.t === 'new' && ['3', '4', '5'].includes(String(msg.size))) {
+        mySide = msg.side;
+        size = String(msg.size);
+        sizeSeg.set(size);
+        net.info('поле ' + size + '×' + size);
+        newGame();
+      }
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        modeSeg.set('pvp');
+        mode = 'pvp';
+        newGame();
+      } else render();
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;
     SG.store.set('dots-mode', v);
     diffEl.style.display = mode === 'ai' ? '' : 'none';
@@ -267,14 +334,21 @@
     SG.store.set('dots-diff', v);
     newGame();
   });
-  SG.segmented($('size'), size, (v) => {
+  const sizeSeg = SG.segmented($('size'), size, (v) => {
     size = v;
     SG.store.set('dots-size', v);
-    newGame();
+    if (mode === 'net') {
+      if (net.active) {
+        net.info('поле ' + size + '×' + size);
+        netNew();
+      }
+    } else newGame();
   });
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
-    newGame();
+    if (mode === 'net') {
+      if (net.active) netNew();
+    } else newGame();
   });
 
   diffEl.style.display = mode === 'ai' ? '' : 'none';

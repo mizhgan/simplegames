@@ -23,6 +23,9 @@
   let lastMove = null;
   const scores = { 1: 0, '-1': 0, D: 0 };
   let pieceEls = {}; // клетка → DOM-элемент шашки
+  let mySide = 1; // в сетевой игре: 1 — белые, -1 — чёрные
+  let flipped = false; // доска развёрнута, чтобы свои шашки были снизу
+  const V = (i) => (flipped ? 63 - i : i);
 
   const side = (v) => Math.sign(v);
   const isKing = (v) => Math.abs(v) === 2;
@@ -215,6 +218,7 @@
   }
 
   function place(el, i) {
+    i = V(i);
     el.style.setProperty('--r', Math.floor(i / 8));
     el.style.setProperty('--c', i % 8);
   }
@@ -235,19 +239,19 @@
   function renderHints() {
     squares.forEach((sq) => sq.classList.remove('target', 'from', 'last'));
     Object.values(pieceEls).forEach((el) => el.classList.remove('selected', 'movable'));
-    if (lastMove) [lastMove.from, lastMove.to].forEach((i) => squares[i].classList.add('last'));
+    if (lastMove) [lastMove.from, lastMove.to].forEach((i) => squares[V(i)].classList.add('last'));
     if (finished || busy || !humanTurn()) return;
     if (selected) {
       const at = selected.at;
       if (pieceEls[at]) pieceEls[at].classList.add('selected');
-      squares[at].classList.add('from');
-      selected.candidates.forEach((m) => squares[m.path[selected.step]].classList.add('target'));
+      squares[V(at)].classList.add('from');
+      selected.candidates.forEach((m) => squares[V(m.path[selected.step])].classList.add('target'));
     } else {
       new Set(legal.map((m) => m.from)).forEach((i) => pieceEls[i] && pieceEls[i].classList.add('movable'));
     }
   }
 
-  const humanTurn = () => mode === 'pvp' || turn === 1;
+  const humanTurn = () => mode === 'pvp' || (mode === 'net' ? net.active && turn === mySide : turn === 1);
 
   // ---------- ход партии ----------
 
@@ -264,13 +268,14 @@
     }
     updateStatus();
     renderHints();
-    undoBtn.disabled = !history.length || busy;
-    if (!humanTurn()) {
+    undoBtn.disabled = !history.length || busy || mode === 'net';
+    if (mode === 'ai' && !humanTurn()) {
       busy = true;
       renderHints();
       setTimeout(() => {
-        const m = aiChoose();
         busy = false;
+        if (mode !== 'ai' || finished) return;
+        const m = aiChoose();
         perform(m, m.from);
       }, 350);
     }
@@ -323,6 +328,7 @@
           const start = selected.at;
           selected = null;
           renderHints();
+          if (mode === 'net') net.send({ t: 'move', from: cands[0].from, path: cands[0].path });
           perform(cands[0], start);
         } else {
           // промежуточная клетка серии взятий
@@ -343,19 +349,22 @@
   function finish(winner) {
     finished = true;
     scores[winner]++;
-    if (mode === 'ai' && winner === 1) SG.store.set('checkers-wins', SG.store.get('checkers-wins', 0) + 1);
+    if ((mode === 'ai' && winner === 1) || (mode === 'net' && winner === mySide)) SG.store.set('checkers-wins', SG.store.get('checkers-wins', 0) + 1);
     renderScores();
     renderHints();
     undoBtn.disabled = true;
-    SG.sound.play(winner === 'D' ? 'draw' : mode === 'ai' && winner === -1 ? 'lose' : 'win');
+    const lost = (mode === 'ai' && winner === -1) || (mode === 'net' && winner !== mySide);
+    SG.sound.play(winner === 'D' ? 'draw' : lost ? 'lose' : 'win');
     if (winner === 'D') statusEl.textContent = 'Ничья: 15 ходов дамками без взятий 🤝';
+    else if (mode === 'net') statusEl.textContent = winner === mySide ? 'Вы победили! 🎉' : 'Соперник победил';
     else if (mode === 'ai') statusEl.textContent = winner === 1 ? 'Вы победили! 🎉' : 'Компьютер победил 🤖';
     else statusEl.textContent = (winner === 1 ? 'Белые' : 'Чёрные') + ' победили!';
   }
 
   function updateStatus() {
     const mustCapture = legal.length && legal[0].captured.length ? ' — нужно бить' : '';
-    if (mode === 'ai') statusEl.textContent = (turn === 1 ? 'Ваш ход' : 'Компьютер думает…') + (turn === 1 ? mustCapture : '');
+    if (mode === 'net') statusEl.textContent = !net.active ? 'Нет соединения с соперником' : turn === mySide ? 'Ваш ход' + mustCapture : 'Ход соперника…';
+    else if (mode === 'ai') statusEl.textContent = (turn === 1 ? 'Ваш ход' : 'Компьютер думает…') + (turn === 1 ? mustCapture : '');
     else statusEl.textContent = 'Ходят ' + (turn === 1 ? 'белые' : 'чёрные') + mustCapture;
   }
 
@@ -363,8 +372,9 @@
     $('score-w').textContent = scores[1];
     $('score-b').textContent = scores[-1];
     $('score-d').textContent = scores.D;
-    $('label-w').textContent = mode === 'ai' ? 'Вы · белые' : 'Белые';
-    $('label-b').textContent = mode === 'ai' ? 'Компьютер' : 'Чёрные';
+    const n = mode === 'net';
+    $('label-w').textContent = n ? (mySide === 1 ? 'Вы · белые' : 'Соперник') : mode === 'ai' ? 'Вы · белые' : 'Белые';
+    $('label-b').textContent = n ? (mySide === -1 ? 'Вы · чёрные' : 'Соперник') : mode === 'ai' ? 'Компьютер' : 'Чёрные';
   }
 
   function newGame() {
@@ -381,12 +391,15 @@
     quiet = 0;
     history = [];
     lastMove = null;
+    flipped = mode === 'net' && mySide === -1;
+    if (mode === 'net') net.info('вы играете ' + (mySide === 1 ? 'белыми (ходят первыми)' : 'чёрными'));
+    renderScores();
     buildPieces();
     startTurn();
   }
 
   function undo() {
-    if (busy || !history.length) return;
+    if (busy || !history.length || mode === 'net') return;
     // откатываемся до ближайшей позиции, где ходит человек
     let h;
     do h = history.pop();
@@ -406,10 +419,48 @@
     const rect = boardEl.getBoundingClientRect();
     const c = Math.floor(((e.clientX - rect.left) / rect.width) * 8);
     const r = Math.floor(((e.clientY - rect.top) / rect.height) * 8);
-    if (inside(r, c)) onSquare(r * 8 + c);
+    if (inside(r, c)) onSquare(V(r * 8 + c));
   });
 
-  SG.segmented($('mode'), mode, (v) => {
+  // ---------- игра по сети ----------
+
+  const net = SG.net.setup({
+    game: 'checkers',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      mySide = role === 'host' ? 1 : -1;
+      diffEl.style.display = 'none';
+      scores[1] = scores[-1] = scores.D = 0;
+      newGame();
+    },
+    onMessage(msg) {
+      // ход соперника может прийти, пока ещё анимируется наш
+      if (msg.t === 'move' && busy) return setTimeout(() => net.active && this.onMessage(msg), 120);
+      if (msg.t === 'move' && !finished && turn !== mySide && Array.isArray(msg.path)) {
+        const key = msg.path.join(',');
+        const m = legal.find((x) => x.from === msg.from && x.path.join(',') === key);
+        if (m) perform(m, m.from);
+      } else if (msg.t === 'new') {
+        mySide = msg.side;
+        newGame();
+      }
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        modeSeg.set('pvp');
+        mode = 'pvp';
+        scores[1] = scores[-1] = scores.D = 0;
+        newGame();
+      } else {
+        updateStatus();
+        renderHints();
+      }
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;
     SG.store.set('checkers-mode', v);
     diffEl.style.display = mode === 'ai' ? '' : 'none';
@@ -424,6 +475,11 @@
   });
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net') {
+      if (!net.active) return;
+      mySide = -mySide;
+      net.send({ t: 'new', side: -mySide });
+    }
     newGame();
   });
   undoBtn.addEventListener('click', () => {

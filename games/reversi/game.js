@@ -28,6 +28,7 @@
   let mode = SG.store.get('reversi-mode', 'ai');
   let difficulty = SG.store.get('reversi-diff', 'normal');
   let board, turn, finished, thinking, history, lastMove;
+  let mySide = BLACK; // в сетевой игре
 
   const cells = [];
   for (let i = 0; i < N * N; i++) {
@@ -136,7 +137,7 @@
 
   // ---------- партия ----------
 
-  const humanTurn = () => mode === 'pvp' || turn === BLACK;
+  const humanTurn = () => mode === 'pvp' || (mode === 'net' ? net.active && turn === mySide : turn === BLACK);
 
   function render(flipped = []) {
     const moves = !finished && humanTurn() && !thinking ? validMoves(board, turn) : [];
@@ -155,7 +156,7 @@
     });
     $('score-b').textContent = count(board, BLACK);
     $('score-w').textContent = count(board, WHITE);
-    undoBtn.disabled = !history.length || !!thinking;
+    undoBtn.disabled = !history.length || !!thinking || mode === 'net';
   }
 
   function place(m) {
@@ -176,16 +177,16 @@
         return;
       }
       // ход переходит к сопернику
-      const who = mode === 'ai' ? (turn === BLACK ? 'У вас нет ходов — пропуск' : 'У компьютера нет ходов — ваш ход') : (turn === BLACK ? 'У чёрных' : 'У белых') + ' нет ходов — пропуск';
+      const who = mode === 'net' ? (turn === mySide ? 'У вас нет ходов — пропуск' : 'У соперника нет ходов — ваш ход') : mode === 'ai' ? (turn === BLACK ? 'У вас нет ходов — пропуск' : 'У компьютера нет ходов — ваш ход') : (turn === BLACK ? 'У чёрных' : 'У белых') + ' нет ходов — пропуск';
       turn = -turn;
       statusEl.textContent = who;
       render(flipped);
-      if (!humanTurn()) scheduleAi(900);
+      if (mode === 'ai' && !humanTurn()) scheduleAi(900);
       return;
     }
     updateStatus();
     render(flipped);
-    if (!humanTurn()) scheduleAi(450);
+    if (mode === 'ai' && !humanTurn()) scheduleAi(450);
   }
 
   function scheduleAi(delay) {
@@ -201,6 +202,7 @@
     if (finished || thinking || !humanTurn()) return;
     const flips = flipsFor(board, i, turn);
     if (!flips.length) return;
+    if (mode === 'net') net.send({ t: 'move', i });
     place({ i, flips });
   }
 
@@ -212,6 +214,13 @@
     if (b === w) {
       text = 'Ничья ' + b + ':' + w + ' 🤝';
       SG.sound.play('draw');
+    } else if (mode === 'net') {
+      const win = (b > w ? BLACK : WHITE) === mySide;
+      const mine = mySide === BLACK ? b : w;
+      const theirs = mySide === BLACK ? w : b;
+      text = (win ? 'Вы победили ' : 'Соперник победил ') + mine + ':' + theirs + (win ? ' 🎉' : '');
+      SG.sound.play(win ? 'win' : 'lose');
+      if (win) SG.store.set('reversi-wins', SG.store.get('reversi-wins', 0) + 1);
     } else if (mode === 'ai') {
       const win = b > w;
       text = (win ? 'Вы победили ' : 'Компьютер победил ') + b + ':' + w + (win ? ' 🎉' : ' 🤖');
@@ -225,7 +234,8 @@
   }
 
   function updateStatus() {
-    if (mode === 'ai') statusEl.textContent = turn === BLACK ? 'Ваш ход (чёрные)' : 'Компьютер думает…';
+    if (mode === 'net') statusEl.textContent = !net.active ? 'Нет соединения с соперником' : turn === mySide ? 'Ваш ход (' + (mySide === BLACK ? 'чёрные' : 'белые') + ')' : 'Ход соперника…';
+    else if (mode === 'ai') statusEl.textContent = turn === BLACK ? 'Ваш ход (чёрные)' : 'Компьютер думает…';
     else statusEl.textContent = 'Ходят ' + (turn === BLACK ? 'чёрные' : 'белые');
   }
 
@@ -241,14 +251,16 @@
     finished = false;
     history = [];
     lastMove = -1;
-    $('label-b').textContent = mode === 'ai' ? 'Вы · чёрные' : 'Чёрные';
-    $('label-w').textContent = mode === 'ai' ? 'Компьютер' : 'Белые';
+    const n = mode === 'net';
+    $('label-b').textContent = n ? (mySide === BLACK ? 'Вы · чёрные' : 'Соперник') : mode === 'ai' ? 'Вы · чёрные' : 'Чёрные';
+    $('label-w').textContent = n ? (mySide === WHITE ? 'Вы · белые' : 'Соперник') : mode === 'ai' ? 'Компьютер' : 'Белые';
+    if (n) net.info('вы играете ' + (mySide === BLACK ? 'чёрными (ходят первыми)' : 'белыми'));
     updateStatus();
     render();
   }
 
   function undo() {
-    if (thinking || !history.length) return;
+    if (thinking || !history.length || mode === 'net') return;
     let h;
     do h = history.pop();
     while (mode === 'ai' && h.turn !== BLACK && history.length);
@@ -261,7 +273,41 @@
     render();
   }
 
-  SG.segmented($('mode'), mode, (v) => {
+  // ---------- игра по сети ----------
+
+  const net = SG.net.setup({
+    game: 'reversi',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      mySide = role === 'host' ? BLACK : WHITE;
+      diffEl.style.display = 'none';
+      newGame();
+    },
+    onMessage(msg) {
+      if (msg.t === 'move' && !finished && turn !== mySide && Number.isInteger(msg.i)) {
+        const flips = flipsFor(board, msg.i, turn);
+        if (flips.length) place({ i: msg.i, flips });
+      } else if (msg.t === 'new') {
+        // тот, кто начал новую партию, прислал, за кого теперь играем мы
+        mySide = msg.side;
+        newGame();
+      }
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        modeSeg.set('pvp');
+        mode = 'pvp';
+        newGame();
+      } else {
+        updateStatus();
+        render();
+      }
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;
     SG.store.set('reversi-mode', v);
     diffEl.style.display = mode === 'ai' ? '' : 'none';
@@ -274,6 +320,12 @@
   });
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net') {
+      if (!net.active) return;
+      // в новой партии меняемся цветами
+      mySide = -mySide;
+      net.send({ t: 'new', side: -mySide });
+    }
     newGame();
   });
   undoBtn.addEventListener('click', () => {

@@ -14,6 +14,7 @@
   let mode = SG.store.get('gomoku-mode', 'ai');
   let difficulty = SG.store.get('gomoku-diff', 'normal');
   let board, turn, over, history, thinking, timer;
+  let mySide = 1; // в сетевой игре: 1 — чёрные, 2 — белые
 
   const cells = [];
   for (let i = 0; i < N * N; i++) {
@@ -167,7 +168,16 @@
       SG.sound.play('draw');
       return;
     }
-    if (mode === 'ai') {
+    if (mode === 'net') {
+      if (winner === mySide) {
+        statusEl.textContent = 'Вы победили! 🎉';
+        SG.store.set('gomoku-wins', SG.store.get('gomoku-wins', 0) + 1);
+        SG.sound.play('win');
+      } else {
+        statusEl.textContent = 'Соперник собрал пять в ряд.';
+        SG.sound.play('lose');
+      }
+    } else if (mode === 'ai') {
       if (winner === 1) {
         statusEl.textContent = 'Вы победили! 🎉';
         SG.store.set('gomoku-wins', SG.store.get('gomoku-wins', 0) + 1);
@@ -185,6 +195,10 @@
   function humanMove(i) {
     if (over || thinking || board[i]) return;
     if (mode === 'ai' && turn !== 1) return;
+    if (mode === 'net') {
+      if (!net.active || turn !== mySide) return;
+      net.send({ t: 'move', i });
+    }
     place(i);
     if (!over && mode === 'ai') {
       thinking = true;
@@ -204,16 +218,17 @@
       el.classList.toggle('last', i === last && !line);
       el.classList.toggle('win', win.has(i));
     });
-    undoBtn.disabled = !history.length || over;
+    undoBtn.disabled = !history.length || over || mode === 'net';
     $('wins').textContent = SG.store.get('gomoku-wins', 0);
     if (!over && !thinking) {
-      if (mode === 'ai') statusEl.textContent = 'Ваш ход (чёрные).';
+      if (mode === 'net') statusEl.textContent = !net.active ? 'Нет соединения с соперником' : turn === mySide ? 'Ваш ход (' + (mySide === 1 ? 'чёрные' : 'белые') + ')' : 'Ход соперника…';
+      else if (mode === 'ai') statusEl.textContent = 'Ваш ход (чёрные).';
       else statusEl.textContent = 'Ходят ' + (turn === 1 ? 'чёрные' : 'белые') + '.';
     }
   }
 
   function undo() {
-    if (thinking || over || !history.length) return;
+    if (thinking || over || !history.length || mode === 'net') return;
     const steps = mode === 'ai' ? (history.length >= 2 ? 2 : 1) : 1;
     for (let k = 0; k < steps; k++) board[history.pop()] = 0;
     turn = history.length % 2 === 0 ? 1 : 2;
@@ -227,10 +242,39 @@
     over = false;
     thinking = false;
     history = [];
+    if (mode === 'net') net.info('вы играете ' + (mySide === 1 ? 'чёрными (ходят первыми)' : 'белыми'));
     render();
   }
 
-  SG.segmented($('mode'), mode, (v) => {
+  // ---------- игра по сети ----------
+
+  const net = SG.net.setup({
+    game: 'gomoku',
+    modeEl: $('mode'),
+    onConnect(role) {
+      mode = 'net';
+      mySide = role === 'host' ? 1 : 2;
+      diffEl.style.display = 'none';
+      newGame();
+    },
+    onMessage(msg) {
+      if (msg.t === 'move' && !over && turn !== mySide && Number.isInteger(msg.i) && msg.i >= 0 && msg.i < N * N && !board[msg.i]) place(msg.i);
+      else if (msg.t === 'new') {
+        mySide = msg.side;
+        newGame();
+      }
+    },
+    onDisconnect(voluntary) {
+      if (mode !== 'net') return;
+      if (voluntary) {
+        modeSeg.set('pvp');
+        mode = 'pvp';
+        newGame();
+      } else render();
+    },
+  });
+
+  const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;
     SG.store.set('gomoku-mode', v);
     diffEl.style.display = mode === 'ai' ? '' : 'none';
@@ -243,6 +287,11 @@
   });
   $('new-btn').addEventListener('click', (e) => {
     e.currentTarget.blur();
+    if (mode === 'net') {
+      if (!net.active) return;
+      mySide = 3 - mySide;
+      net.send({ t: 'new', side: 3 - mySide });
+    }
     newGame();
   });
   undoBtn.addEventListener('click', () => {
