@@ -484,7 +484,15 @@
       });
       peer.on('connection', (c) => {
         if (conn) {
-          c.on('open', () => c.close());
+          // комната уже занята — прямо говорим об этом опоздавшему, а не молча закрываем
+          c.on('open', () => {
+            try {
+              c.send(JSON.stringify({ t: '_busy' }));
+            } catch (e) {
+              /* ignore */
+            }
+            setTimeout(() => c.close(), 1500);
+          });
           return;
         }
         let mine = false;
@@ -628,7 +636,20 @@
           attempts = [c];
           attach(wrapPeerConn(c));
         });
-        c.on('data', (x) => mine && handle(x));
+        c.on('data', (x) => {
+          if (!mine) return;
+          let msg = x;
+          try {
+            if (typeof x === 'string') msg = JSON.parse(x);
+          } catch (e) {
+            /* ignore */
+          }
+          if (msg && msg.t === '_busy' && !api.active) {
+            stop();
+            return busy(room);
+          }
+          handle(x);
+        });
         c.on('close', () => {
           if (!mine) return;
           mine = false;
@@ -676,6 +697,24 @@
           }
         }
       });
+    }
+
+    // в комнате уже идёт игра — ссылку открыл кто-то ещё из чата
+    function busy(room) {
+      teardown();
+      const b = dialog(
+        '<h2 id="net-title">Комната уже занята</h2><p>В комнате <b>' +
+          room +
+          '</b> уже играют двое — вы опоздали. Создайте свою игру и отправьте ссылку тому, с кем хотите сыграть.</p>' +
+          '<div class="net-actions"><button class="btn btn-primary" type="button" data-host>Создать свою игру</button>' +
+          '<button class="btn btn-ghost" type="button" data-close>Закрыть</button></div>'
+      );
+      b.querySelector('[data-close]').addEventListener('click', cancel);
+      b.querySelector('[data-host]').addEventListener('click', () => {
+        history.replaceState(null, '', baseUrl());
+        host();
+      });
+      SG.sound.play('error');
     }
 
     function fail(text, room) {
