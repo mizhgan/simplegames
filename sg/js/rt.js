@@ -70,8 +70,8 @@
     const isGuest = () => mode === 'net' && net.role === 'guest';
 
     function readColors() {
-      const v = (n) => SG.cssVar(n);
-      colors = { bg: v('--board-bg'), line: v('--board-line'), cell: v('--board-cell'), text: v('--text'), muted: v('--muted'), accent: v('--accent'), accent2: v('--accent-2'), accent3: v('--accent-3'), success: v('--success'), danger: v('--danger'), warning: v('--warning') };
+      const c = SG.colors;
+      colors = { bg: c.boardBg, line: c.boardLine, cell: c.boardCell, text: c.text, muted: c.muted, accent: c.accent, accent2: c.accent2, accent3: c.accent3, success: c.success, danger: c.danger, warning: c.warning, players: c.players };
     }
 
     function resize() {

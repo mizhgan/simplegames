@@ -252,7 +252,7 @@
 
   // ---------- отрисовка ----------
 
-  const PAL = ['#3b82f6', '#ef4444'];
+  const PAL = SG.colors.players; // [0] — синий, [1] — красный
   function draw(g, s, v) {
     g.fillStyle = '#eef6fb';
     g.fillRect(0, 0, W, H);

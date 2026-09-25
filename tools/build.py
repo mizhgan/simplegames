@@ -195,7 +195,7 @@ def replace_between(text, start, end, body, name):
 
 # ---------- общие стили: sg/css/src/*.css → sg/css/style.css ----------
 
-CSS_ORDER = ['tokens', 'base', 'layout', 'buttons', 'home', 'game', 'toast', 'achievements', 'net', 'rt']
+CSS_ORDER = ['tokens', 'base', 'layout', 'buttons', 'home', 'game', 'components', 'achievements', 'net', 'rt']
 
 
 def css_bundle():
@@ -226,7 +226,7 @@ def css_bundle():
 # ---------- service worker ----------
 
 SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src'}
-SW_SKIP_FILES = {'sw.js', 'README.md', '.htaccess', 'robots.txt', '.gitignore', '404.html', 'meta.json', 'stage.html', 'thumb.svg', 'catalog.json'}
+SW_SKIP_FILES = {'sw.js', 'styleguide.html', 'README.md', '.htaccess', 'robots.txt', '.gitignore', '404.html', 'meta.json', 'stage.html', 'thumb.svg', 'catalog.json'}
 SW_EXTS = {'.html', '.css', '.js', '.svg', '.png', '.webmanifest', '.json'}
 
 

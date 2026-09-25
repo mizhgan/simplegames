@@ -39,7 +39,20 @@
     root.dataset.theme ||
     (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
-  const notifyTheme = () => document.dispatchEvent(new CustomEvent('sg:themechange'));
+  // Цвета темы для рисования на холсте: SG.colors.text, SG.colors.players[0] и т. д.
+  // Объект и массив игроков обновляются на месте при смене темы — их можно запомнить в константу.
+  const colors = { players: [] };
+  function readColors() {
+    const names = ['bg', 'surface', 'surface-2', 'border', 'text', 'muted', 'accent', 'accent-2', 'accent-3', 'success', 'danger', 'warning', 'gold', 'on-accent', 'board-bg', 'board-cell', 'board-line'];
+    names.forEach((n) => (colors[n.replace(/-(\w)/g, (m, c) => c.toUpperCase())] = cssVar('--' + n)));
+    for (let i = 0; i < 8; i++) colors.players[i] = cssVar('--p' + (i + 1));
+  }
+  readColors();
+
+  const notifyTheme = () => {
+    readColors();
+    document.dispatchEvent(new CustomEvent('sg:themechange'));
+  };
 
   const SUN =
     '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
@@ -351,7 +364,108 @@
     nav.insertBefore(btn, nav.firstChild);
   }
 
-  window.SG = { store, cssVar, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound };
+
+  // ---------- Уведомления и модальное окно ----------
+
+  // SG.toast({ icon, title, text, href, tone: 'info' | 'success' | 'warning' | 'danger', timeout, sound, actions: [{ label, primary, onClick }] })
+  // Возвращает { close() }. Действия закрывают уведомление, если onClick не вернул false.
+  let toastBox = null;
+  function toast(opts) {
+    if (!toastBox) {
+      toastBox = document.createElement('div');
+      toastBox.className = 'sg-toasts';
+      toastBox.setAttribute('aria-live', 'polite');
+      document.body.appendChild(toastBox);
+    }
+    const el = document.createElement(opts.href && !opts.actions ? 'a' : 'div');
+    el.className = 'sg-toast';
+    if (opts.tone) el.dataset.tone = opts.tone;
+    if (opts.href && !opts.actions) el.href = opts.href;
+    el.innerHTML = '<span class="sg-toast-icon"></span><span class="sg-toast-body"><b></b><small></small></span>';
+    const icon = el.querySelector('.sg-toast-icon');
+    if (opts.icon) icon.textContent = opts.icon;
+    else icon.remove();
+    el.querySelector('b').textContent = opts.title || '';
+    const small = el.querySelector('small');
+    if (opts.text) small.textContent = opts.text;
+    else small.remove();
+    let timer = 0;
+    const close = () => {
+      clearTimeout(timer);
+      if (!el.isConnected || el.classList.contains('out')) return;
+      el.classList.add('out');
+      setTimeout(() => el.remove(), 450);
+    };
+    if (opts.actions && opts.actions.length) {
+      el.setAttribute('role', 'alertdialog');
+      const row = document.createElement('div');
+      row.className = 'sg-toast-actions';
+      opts.actions.forEach((a) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn ' + (a.primary ? 'btn-primary' : 'btn-ghost');
+        b.textContent = a.label;
+        b.addEventListener('click', () => {
+          if (!a.onClick || a.onClick() !== false) close();
+        });
+        row.appendChild(b);
+      });
+      el.querySelector('.sg-toast-body').appendChild(row);
+    }
+    toastBox.appendChild(el);
+    if (opts.sound !== false) sound.play(opts.sound || 'hint');
+    const ms = opts.timeout === undefined ? 4500 : opts.timeout;
+    if (ms > 0) timer = setTimeout(() => {
+      close();
+      if (opts.onTimeout) opts.onTimeout();
+    }, ms);
+    return { el, close };
+  }
+
+  // SG.modal(html) — показать окно с разметкой html (заголовок — <h2 id="sg-modal-title">), вернуть его элемент.
+  // SG.modal.close() — закрыть. Esc нажимает в окне кнопку [data-cancel] или [data-close], если она есть.
+  let modalEl = null;
+  let modalReturn = null;
+  function modal(html) {
+    if (!modalEl) {
+      modalEl = document.createElement('div');
+      modalEl.className = 'sg-modal';
+      modalEl.innerHTML = '<div class="sg-modal-box" role="dialog" aria-modal="true"></div>';
+      document.body.appendChild(modalEl);
+      modalEl.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const b = modalEl.querySelector('[data-cancel], [data-close]');
+        if (b) {
+          e.preventDefault();
+          b.click();
+        }
+      });
+    }
+    const box = modalEl.firstChild;
+    if (modalEl.hidden !== false || !modalEl.dataset.open) modalReturn = document.activeElement;
+    box.innerHTML = html;
+    const title = box.querySelector('h2');
+    if (title) {
+      if (!title.id) title.id = 'sg-modal-title';
+      box.setAttribute('aria-labelledby', title.id);
+    }
+    modalEl.hidden = false;
+    modalEl.dataset.open = '1';
+    // фокус — на первое поле ввода или кнопку, чтобы с клавиатуры можно было сразу действовать
+    const focus = box.querySelector('input:not([readonly]), textarea:not([readonly]), .btn-primary, button');
+    if (focus) setTimeout(() => focus.focus({ preventScroll: true }), 30);
+    return box;
+  }
+  modal.close = () => {
+    if (!modalEl || modalEl.hidden) return;
+    modalEl.hidden = true;
+    delete modalEl.dataset.open;
+    if (modalReturn && modalReturn.focus) modalReturn.focus({ preventScroll: true });
+    modalReturn = null;
+  };
+  modal.isOpen = () => !!(modalEl && !modalEl.hidden);
+
+  window.SG = { store, cssVar, colors, toast, modal, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound };
 
   // ---------- офлайн-режим и установка как приложения ----------
 

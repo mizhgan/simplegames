@@ -118,7 +118,7 @@
     return inp;
   }
 
-  const PAL = ['#3b82f6', '#ef4444'];
+  const PAL = SG.colors.players; // [0] — синий, [1] — красный
   function shape(g, kind, x, y, r) {
     g.beginPath();
     if (kind === 'circle') g.arc(x, y, r, 0, Math.PI * 2);

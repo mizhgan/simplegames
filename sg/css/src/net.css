@@ -5,39 +5,7 @@
   color: var(--on-accent);
 }
 
-.net-modal {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  background: rgba(5, 6, 15, 0.6);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-}
-
-.net-modal[hidden] {
-  display: none;
-}
-
-.net-box {
-  width: min(480px, 100%);
-  max-height: calc(100vh - 32px);
-  overflow: auto;
-  padding: 22px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow-lg);
-}
-
-.net-box h2 {
-  margin: 0 0 12px;
-  font-size: 1.3rem;
-}
-
-.net-box p {
+.sg-modal-box p {
   margin: 0 0 12px;
 }
 
@@ -470,31 +438,3 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
   font-size: 0.85rem;
 }
 
-.net-invite {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  z-index: var(--z-float);
-  width: min(360px, calc(100vw - 32px));
-  padding: 14px 16px;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow-pop);
-  animation: net-invite-in 0.25s ease-out;
-}
-
-.net-invite p {
-  margin: 0 0 10px;
-}
-
-.net-invite .net-actions {
-  margin-top: 0;
-}
-
-@keyframes net-invite-in {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-}

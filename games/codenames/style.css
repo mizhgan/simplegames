@@ -26,12 +26,12 @@
 
 .cn-team.red,
 .cn-card.red.open {
-  background: color-mix(in srgb, #ef4444 22%, var(--bg));
+  background: color-mix(in srgb, var(--p2) 22%, var(--bg));
 }
 
 .cn-team.blue,
 .cn-card.blue.open {
-  background: color-mix(in srgb, #3b82f6 22%, var(--bg));
+  background: color-mix(in srgb, var(--p1) 22%, var(--bg));
 }
 
 .cn-red {
@@ -92,11 +92,11 @@
 
 /* капитан видит ключ: цветная рамка у закрытых карт */
 .cn-card.red:not(.open) {
-  border-color: #ef4444;
+  border-color: var(--p2);
 }
 
 .cn-card.blue:not(.open) {
-  border-color: #3b82f6;
+  border-color: var(--p1);
 }
 
 .cn-card.killer:not(.open) {
