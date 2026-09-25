@@ -178,8 +178,15 @@
 
   // ---------- отрисовка ----------
 
+  let counted = '';
   function render(v, ui) {
     cur = { view: v, ui };
+    const tid = v.matches.length ? v.matches[0].room : '';
+    if (v.over && v.champ.includes(ui.me) && !ui.watcher && counted !== tid) {
+      counted = tid;
+      SG.store.set('tournament-wins', SG.store.get('tournament-wins', 0) + 1);
+      SG.sound.play('win');
+    }
     const nm = (id) => (id === null ? '—' : esc(v.names[id] || '?'));
     const mine = v.matches.filter((m) => !m.res && (m.a === ui.me || m.b === ui.me));
     let html = `<div class="tr"><p class="tr-head">🏆 Турнир по игре <b>${esc(v.title)}</b> · ${v.format === 'round' ? 'круговой' : 'олимпийская система'}</p>`;
