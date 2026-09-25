@@ -1,0 +1,131 @@
+.mg-board {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  gap: 2px;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 1;
+}
+
+.mg-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  font-size: clamp(0.45rem, 1.5vw, 0.66rem);
+  line-height: 1.1;
+  text-align: center;
+}
+
+.mg-cell.go,
+.mg-cell.jail,
+.mg-cell.park,
+.mg-cell.gojail {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+}
+
+.mg-cell.offer {
+  box-shadow: inset 0 0 0 3px var(--warning);
+}
+
+.mg-cell.can {
+  box-shadow: inset 0 0 0 3px var(--success);
+  cursor: pointer;
+}
+
+.mg-band {
+  width: 100%;
+  min-height: 22%;
+  font-size: 0.8em;
+}
+
+.mg-icon {
+  font-size: 1.5em;
+}
+
+.mg-name {
+  padding: 1px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.mg-price {
+  color: var(--muted);
+}
+
+.mg-owner {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 22%;
+  aspect-ratio: 1;
+  border: 1px solid #fff;
+  border-radius: 3px;
+}
+
+.mg-toks {
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  max-width: 70%;
+}
+
+.mg-toks i,
+.mg-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.mg-dot {
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+
+.mg-center {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  grid-row: 2 / 8;
+  grid-column: 2 / 8;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.mg-dice {
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  line-height: 1;
+}
+
+.mg-status {
+  font-weight: 700;
+}
+
+.mg-log {
+  width: 100%;
+  font-size: clamp(0.62rem, 1.8vw, 0.8rem);
+  color: var(--muted);
+}
+
+.mg-round {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.mg .pt-seat small {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
