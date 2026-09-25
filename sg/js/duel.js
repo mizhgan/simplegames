@@ -47,11 +47,12 @@
     let token = 0; // растёт с каждой новой партией, чтобы «старый» ход компьютера не сработал
     let thinking = false;
     let seed = 1;
+    let hostSide = 0; // у зрителя: за кого играет хозяин (игрок 1)
     const scores = [0, 0, 0]; // сторона 0, сторона 1, ничьи
 
     const me = () => (mode === 'ai' ? humanSide : mode === 'net' ? mySide : null);
     const isHumanTurn = () => {
-      if (finished || thinking) return false;
+      if (finished || thinking || mode === 'watch') return false;
       if (mode === 'pvp') return true;
       if (mode === 'net') return net.active && state.turn === mySide;
       return state.turn === humanSide;
@@ -66,18 +67,24 @@
         last: history.length ? history[history.length - 1] : null,
         flip: m === 1 || (mode === 'pvp' && cfg.flipPvp && state.turn === 1),
         over: finished,
+        watch: mode === 'watch',
+        hostSide,
       };
     }
 
     function render() {
       cfg.render(state, view());
       updateStatus();
-      if (undoBtn) undoBtn.disabled = mode === 'net' || !history.length || !!thinking || (mode === 'ai' && !history.some((h) => h.side === humanSide));
+      if (undoBtn) undoBtn.disabled = mode === 'net' || mode === 'watch' || !history.length || !!thinking || (mode === 'ai' && !history.some((h) => h.side === humanSide));
     }
 
     function sideName(s) {
       return cfg.sides[s];
     }
+    const playerOf = (s) => 'игрок ' + (s === hostSide ? 1 : 2);
+    // «игрок 1 (белые)»; обезличенные названия сторон («Первый», «Игрок 2») не повторяем
+    const plainSides = cfg.sides.every((n) => /^(первый|второй|игрок \d)$/i.test(n));
+    const whoSide = (s) => playerOf(s) + (plainSides ? '' : ' (' + sideName(s).toLowerCase() + ')');
 
     function updateStatus() {
       if (!statusEl) return;
@@ -87,6 +94,7 @@
       let text;
       if (mode === 'net') text = !net.active ? 'Нет соединения с соперником' : state.turn === mySide ? 'Ваш ход' : 'Ход соперника…';
       else if (mode === 'ai') text = state.turn === humanSide ? 'Ваш ход' : 'Компьютер думает…';
+      else if (mode === 'watch') text = !net.active ? 'Трансляция закончилась' : 'Ходит ' + whoSide(state.turn);
       else text = 'Ход: ' + sideName(state.turn).toLowerCase();
       statusEl.textContent = text + (hint && (mode === 'pvp' || state.turn === me()) ? ' — ' + hint : '');
     }
@@ -99,6 +107,7 @@
       const label = (s) => {
         if (mode === 'ai') return (s === humanSide ? 'Вы' : 'Компьютер') + ' · ' + sideName(s);
         if (mode === 'net') return (s === mySide ? 'Вы' : 'Соперник') + ' · ' + sideName(s);
+        if (mode === 'watch') return (s === hostSide ? 'Игрок 1' : 'Игрок 2') + (plainSides ? '' : ' · ' + sideName(s));
         return sideName(s);
       };
       set('label-0', label(0));
@@ -120,12 +129,13 @@
         text = 'Ничья 🤝';
         snd = 'draw';
       } else if (mode === 'pvp') text = 'Победили ' + sideName(w).toLowerCase() + '! 🎉';
+      else if (mode === 'watch') text = 'Победил ' + whoSide(w) + ' 🎉';
       else if (w === mine) text = 'Вы победили! 🎉';
       else {
         text = mode === 'ai' ? 'Компьютер победил 🤖' : 'Соперник победил';
         snd = 'lose';
       }
-      if (mode !== 'pvp' && w === mine) SG.store.set(key('wins'), SG.store.get(key('wins'), 0) + 1);
+      if (mode !== 'pvp' && mode !== 'watch' && w === mine) SG.store.set(key('wins'), SG.store.get(key('wins'), 0) + 1);
       if (mode === 'net') net.result(w === null || w === undefined ? 'draw' : w === mine ? 'win' : 'lose');
       SG.sound.play(snd);
       if (statusEl) statusEl.textContent = (res.text ? res.text + ' ' : '') + text;
@@ -227,7 +237,43 @@
           game: cfg.game,
           modeEl: $('mode'),
           onRematch: () => $('new-btn') && $('new-btn').click(),
+          // зрители: при входе получают «зерно» и все ходы партии, дальше — каждый ход
+          watch: {
+            snapshot: () => ({ seed, moves: history.map((h) => h.m), hostSide: mySide, scores: scores.slice() }),
+            onSync(d) {
+              hostSide = d.hostSide === 1 ? 1 : 0;
+              newGame(undefined, d.seed);
+              for (const m of d.moves || []) {
+                if (!cfg.legal(state, m)) break;
+                const side = state.turn;
+                cfg.apply(state, m);
+                history.push({ m, side });
+              }
+              finished = cfg.over(state);
+              if (Array.isArray(d.scores)) d.scores.forEach((v, i) => (scores[i] = v | 0));
+              renderScores();
+              render();
+              if (finished && statusEl) statusEl.textContent = (finished.text || '') + ' Партия окончена.';
+            },
+            onForward(m, from) {
+              if (m.t === 'move') {
+                if (finished || m.n !== history.length || !cfg.legal(state, m.m)) return;
+                doMove(m.m, true);
+              } else if (m.t === 'new' && (m.side === 0 || m.side === 1)) {
+                // «new» от хозяина называет сторону гостя, от гостя — сторону хозяина
+                hostSide = from === 'host' ? 1 - m.side : m.side;
+                renderScores();
+                newGame(undefined, m.seed);
+              }
+            },
+          },
           onConnect(role) {
+            if (role === 'watcher') {
+              mode = 'watch';
+              syncDiff();
+              resetScores();
+              return;
+            }
             mode = 'net';
             mySide = role === 'host' ? 0 : 1;
             net.info('вы играете: ' + sideName(mySide).toLowerCase());
@@ -252,7 +298,7 @@
             }
           },
           onDisconnect(voluntary) {
-            if (mode !== 'net') return;
+            if (mode !== 'net' && mode !== 'watch') return;
             if (voluntary) {
               mode = modes.includes('pvp') ? 'pvp' : modes[0];
               modeSeg.set(mode);
@@ -287,6 +333,7 @@
     if ($('new-btn')) {
       $('new-btn').addEventListener('click', (e) => {
         e.currentTarget.blur();
+        if (mode === 'watch') return;
         if (mode === 'net') {
           if (!net.active) return;
           mySide = 1 - mySide; // в новой партии меняемся сторонами

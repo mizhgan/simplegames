@@ -284,6 +284,11 @@
 
   const net = SG.net.setup({
     game: 'wordduel',
+    // зрители видят цвета попыток, но не буквы
+    mirrorMask: (el) => {
+      el.querySelectorAll('#my-board .wd-tile').forEach((t) => (t.textContent = ''));
+      el.querySelectorAll('#keyboard, #toast').forEach((k) => k.remove());
+    },
     modeEl: $('mode'),
     onRematch: () => newGame(),
     onConnect(role) {

@@ -426,6 +426,11 @@
 
   const net = SG.net.setup({
     game: 'durak',
+    // зрителям не показываем карты хозяина
+    mirrorMask: (el) => el.querySelectorAll('#my-hand .sol-card').forEach((c) => {
+      c.className = 'sol-card';
+      c.innerHTML = '<div class="sol-back"></div>';
+    }),
     onRematch: () => $('new-btn').click(),
     modeEl: $('mode'),
     onConnect(role) {

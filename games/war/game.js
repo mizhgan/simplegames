@@ -109,7 +109,7 @@
     render(s, v) {
       const top = v.flip ? 0 : 1; // сверху — соперник
       const bottom = 1 - top;
-      const name = (side) => (v.mode === 'pvp' ? (side ? 'Игрок 2' : 'Игрок 1') : side === v.me ? 'Вы' : v.mode === 'ai' ? 'Компьютер' : 'Соперник');
+      const name = (side) => (v.mode === 'pvp' ? (side ? 'Игрок 2' : 'Игрок 1') : v.watch ? (side === v.hostSide ? 'Игрок 1' : 'Игрок 2') : side === v.me ? 'Вы' : v.mode === 'ai' ? 'Компьютер' : 'Соперник');
       [[top, 'top'], [bottom, 'bottom']].forEach(([side, pos]) => {
         $('name-' + pos).textContent = name(side);
         $('count-' + pos).textContent = s.piles[side].length + ' карт';

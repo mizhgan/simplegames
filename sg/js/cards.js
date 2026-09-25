@@ -26,5 +26,14 @@
   const back = (extra = '') => `<div class="sol-card ${extra}"><div class="sol-back"></div></div>`;
   const name = (c) => RANK_NAMES[c.rank] + SUITS[c.suit];
 
-  SG.cards = { SUITS, SUIT_NAMES, RANK_NAMES, isRed, deck, byId, html, back, name };
+  // для зрителя: «вы/соперник» превращаются в «игрок 1/игрок 2»
+  const NEUTRAL = [
+    [/Вы выиграли/g, 'Игрок 1 выиграл'], [/Вы объявили/g, 'Игрок 1 объявил'], [/Вы сыграли/g, 'Игрок 1 сыграл'],
+    [/Вы не добрали/g, 'Игрок 1 не добрал'], [/вы спасовали/g, 'игрок 1 спасовал'], [/вы сбросили/g, 'игрок 1 сбросил'],
+    [/забрали вы/g, 'забрал игрок 1'], [/Вам/g, 'Игроку 1'], [/очки: вы/g, 'очки: игрок 1'], [/\(вы\)/g, '(игрок 1)'],
+    [/соперник/g, 'игрок 2'], [/Соперник/g, 'Игрок 2'],
+  ];
+  const neutral = (text) => NEUTRAL.reduce((t, [re, to]) => t.replace(re, to), text);
+
+  SG.cards = { SUITS, SUIT_NAMES, RANK_NAMES, isRed, deck, byId, html, back, name, neutral };
 })();

@@ -201,7 +201,9 @@
       const n = names(v);
       return 'Голубой (' + n[0] + ') ' + s.score[0] + ' : ' + s.score[1] + ' розовый (' + n[1] + ')';
     },
-    snapshot(s) {
+    snapshot(s, full) {
+      // full — весь след целиком (для зрителя, пришедшего посреди раунда)
+      if (full) return { id: s.id, add: s.trail.slice(), bikes: s.bikes, score: s.score, round: s.round, pause: s.pause, rw: s.roundWinner, tick: s.tick };
       if (sent.id !== s.id) sent = { id: s.id, n: 0 };
       const add = s.trail.slice(sent.n);
       sent.n = s.trail.length;

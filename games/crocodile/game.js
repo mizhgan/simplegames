@@ -313,6 +313,13 @@
 
   const net = SG.net.setup({
     game: 'crocodile',
+    // загаданное слово зрителям не показываем
+    mirrorMask: (el) => {
+      el.querySelectorAll('#pick').forEach((k) => k.remove());
+      const w = el.querySelector('#word');
+      if (w && /Рисуйте/.test(w.textContent)) w.textContent = 'Рисует игрок 1';
+      el.querySelectorAll('#guess-form, #tools, #party').forEach((k) => k.remove());
+    },
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';

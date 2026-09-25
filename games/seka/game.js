@@ -191,16 +191,18 @@
     aiDelay: 700,
     sound: (s, m) => (m.a === 'next' ? 'card' : m.a === 'fold' ? 'flip' : s.result ? (s.result.winner === null ? 'draw' : 'coin') : m.a === 'raise' ? 'coin' : 'click'),
     render(s, v) {
-      const me = v.me === null || v.me === undefined ? 0 : v.me;
+      const me = v.watch ? v.hostSide : v.me === null || v.me === undefined ? 0 : v.me;
       const op = 1 - me;
-      const oppName = v.mode === 'ai' ? 'Компьютер' : 'Соперник';
+      const oppName = v.mode === 'ai' ? 'Компьютер' : v.watch ? 'Игрок 2' : 'Соперник';
       const reveal = s.phase === 'done' && s.result && s.result.how === 'show';
       $('opp-name').textContent = oppName;
+      $('my-name').textContent = v.watch ? 'Игрок 1' : 'Вы';
       $('opp-chips').textContent = s.chips[op] + ' фишек';
       $('my-chips').textContent = s.chips[me] + ' фишек';
       $('opp-hand').innerHTML = s.cards[op].map((id) => (reveal ? C.html(C.byId(id), id === JOKER ? 'joker' : '') : C.back())).join('');
-      $('my-hand').innerHTML = s.cards[me].map((id) => C.html(C.byId(id), id === JOKER ? 'joker' : '')).join('');
-      $('my-points').textContent = points(s.cards[me]) + ' очков';
+      // зритель не видит карт, пока их не вскроют
+      $('my-hand').innerHTML = s.cards[me].map((id) => (v.watch && !reveal ? C.back() : C.html(C.byId(id), id === JOKER ? 'joker' : ''))).join('');
+      $('my-points').textContent = v.watch && !reveal ? '' : points(s.cards[me]) + ' очков';
       $('opp-points').textContent = reveal ? points(s.cards[op]) + ' очков' : '';
       $('pot').textContent = 'Банк: ' + (s.pot || (s.result ? s.result.pot || s.carry : 0)) + (s.carry && s.phase === 'done' ? ' (свара — переходит дальше)' : '');
       $('label-opp').classList.toggle('turn', s.turn === op && s.phase === 'bet');
@@ -214,7 +216,7 @@
           msg = who + ' банк ' + s.result.pot + (s.result.how === 'fold' ? ' — ' + (w === me ? 'соперник спасовал' : 'вы спасовали') : ': ' + s.result.pts[w] + ' против ' + s.result.pts[1 - w]);
         }
       } else if (s.last && s.last.side === op) msg = oppName + ' ' + said[s.last.a] + (s.last.a === 'raise' ? s.last.v : '');
-      $('msg').textContent = msg;
+      $('msg').textContent = v.watch ? C.neutral(msg) : msg;
       actEl.innerHTML = '';
       if (v.canMove) {
         for (const m of moves(s)) {
