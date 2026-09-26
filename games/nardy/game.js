@@ -7,6 +7,7 @@
   const ME = 'me';
   const AI = 'ai';
   const STEP_MS = 420;
+  const ROLL_MS = 800; // бросок костей
   const DICE_FACES = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
   const $ = (id) => document.getElementById(id);
@@ -23,6 +24,10 @@
   let doneMoves = [];
   let oppStart = null; // позиция до хода соперника — для его «переходить»
   const netScore = { me: 0, ai: 0 };
+  // пока кости катятся, выпавшее не показываем и никто не ходит; ходы соперника по сети ждут
+  let rolling = false;
+  let spinId = 0;
+  let pending = [];
   const OPP = () => (mode === 'net' ? 'Соперник' : 'Компьютер');
 
   const opp = (who) => (who === ME ? AI : ME);
@@ -172,6 +177,33 @@
     return [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)];
   }
 
+  // один спокойный оборот: кости докатываются и ближе к концу ложатся выпавшими гранями, потом then()
+  function spin(then) {
+    const my = ++spinId;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return then();
+    rolling = true;
+    const cls = 'nd-die' + (turn === AI ? ' ai' : '');
+    const was = [...diceEl.querySelectorAll('.nd-die')].slice(0, 2).map((x) => x.textContent);
+    diceEl.innerHTML = [0, 1].map((i) => `<span class="${cls}">${was[i] || '🎲'}</span>`).join('');
+    diceEl.classList.add('rolling');
+    const final = dice.slice();
+    // грани меняем у тех же костей, чтобы не начинать их вращение заново
+    setTimeout(() => my === spinId && diceEl.querySelectorAll('.nd-die').forEach((x, i) => (x.textContent = DICE_FACES[final[i]])), ROLL_MS * 0.6);
+    setTimeout(() => {
+      if (my !== spinId) return;
+      rolling = false;
+      diceEl.classList.remove('rolling');
+      then();
+      while (pending.length && !rolling) onNet(pending.shift());
+    }, ROLL_MS);
+  }
+  function stopSpin() {
+    spinId++;
+    rolling = false;
+    pending = [];
+    diceEl.classList.remove('rolling');
+  }
+
   function startTurn(who) {
     turn = who;
     selectedFrom = null;
@@ -204,14 +236,17 @@
     turnStart = clone(S);
     seqs = sequences(S, ME, dice);
     rollBtn.disabled = true;
-    if (!seqs.length || !seqs[0].moves.length) {
-      statusEl.textContent = 'Выпало ' + dice.join(' и ') + ' — ходов нет, ход переходит ' + (mode === 'net' ? 'сопернику.' : 'компьютеру.');
+    statusEl.textContent = 'Кости катятся…';
+    spin(() => {
+      if (!seqs.length || !seqs[0].moves.length) {
+        statusEl.textContent = 'Выпало ' + dice.join(' и ') + ' — ходов нет, ход переходит ' + (mode === 'net' ? 'сопернику.' : 'компьютеру.');
+        render();
+        setTimeout(() => endTurn(ME), 1400);
+        return;
+      }
+      statusEl.textContent = 'Выпало ' + dice.join(' и ') + '. Выберите шашку.';
       render();
-      setTimeout(() => endTurn(ME), 1400);
-      return;
-    }
-    statusEl.textContent = 'Выпало ' + dice.join(' и ') + '. Выберите шашку.';
-    render();
+    });
   }
 
   function aiTurn() {
@@ -219,6 +254,11 @@
     if (mode !== 'ai' || over) return;
     dice = roll();
     SG.sound.play('drop');
+    statusEl.textContent = 'Компьютер бросает кости…';
+    spin(() => mode === 'ai' && !over && aiMoves());
+  }
+
+  function aiMoves() {
     const list = sequences(S, AI, dice, true);
     render();
     if (!list.length || !list[0].moves.length) {
@@ -281,7 +321,7 @@
   }
 
   function onPoint(board) {
-    if (turn !== ME || !dice || over) return;
+    if (turn !== ME || !dice || over || rolling) return;
     const moves = availableMoves();
     if (selectedFrom !== null) {
       const route = toRoute(ME, board);
@@ -298,7 +338,7 @@
   }
 
   function onOff() {
-    if (turn !== ME || selectedFrom === null) return;
+    if (turn !== ME || selectedFrom === null || rolling) return;
     const opts = availableMoves().filter((x) => x.from === selectedFrom && x.from + x.d > 23);
     if (!opts.length) return;
     // выбрасываем по возможности меньшим значением
@@ -369,7 +409,7 @@
   }
 
   function render() {
-    const moves = turn === ME && dice ? availableMoves() : [];
+    const moves = turn === ME && dice && !rolling ? availableMoves() : [];
     const froms = new Set(moves.map((m) => m.from));
     const targets = new Set(
       moves.filter((m) => m.from === selectedFrom && m.from + m.d <= 23).map((m) => toBoard(ME, m.from + m.d))
@@ -396,7 +436,9 @@
     $('off-ai').textContent = S.ai.off;
     $('off-tray').classList.toggle('target', offOk);
 
-    if (dice) {
+    if (rolling) {
+      // кости докатываются сами (spin)
+    } else if (dice) {
       const all = dice[0] === dice[1] ? [dice[0], dice[0], dice[0], dice[0]] : dice.slice();
       const used = done.slice();
       diceEl.innerHTML = all
@@ -418,6 +460,7 @@
   }
 
   function newGame(lots) {
+    stopSpin();
     S = {
       me: { pos: [15, ...Array(23).fill(0)], off: 0, turns: 0 },
       ai: { pos: [15, ...Array(23).fill(0)], off: 0, turns: 0 },
@@ -487,29 +530,7 @@
         statusEl.textContent = 'Соперник бросает жребий…';
       }
     },
-    onMessage(msg) {
-      const okMove = (m) => Number.isInteger(m.from) && Number.isInteger(m.d) && m.d >= 1 && m.d <= 6;
-      if (msg.t === 'new' && Array.isArray(msg.lots)) newGame(msg.lots);
-      else if (turn !== AI || over) return;
-      else if (msg.t === 'roll' && Array.isArray(msg.dice)) {
-        dice = msg.dice;
-        done = [];
-        oppStart = clone(S);
-        SG.sound.play('drop');
-        statusEl.textContent = 'У соперника ' + dice.join(' и ') + '.';
-        render();
-      } else if (msg.t === 'step' && okMove(msg) && canMove(S, AI, msg.from, msg.d, 0, 99)) {
-        applyMove(S, AI, msg.from, msg.d);
-        done.push(msg.d);
-        SG.sound.play('place', 3);
-        render();
-        checkWin(AI);
-      } else if (msg.t === 'undo' && oppStart) {
-        S = clone(oppStart);
-        done = [];
-        render();
-      } else if (msg.t === 'end') endTurn(AI);
-    },
+    onMessage: (msg) => onNet(msg),
     onDisconnect(voluntary) {
       if (mode !== 'net') return;
       if (voluntary) {
@@ -522,6 +543,34 @@
       }
     },
   });
+
+  function onNet(msg) {
+    if (rolling && msg.t !== 'new') return pending.push(msg);
+    const okMove = (m) => Number.isInteger(m.from) && Number.isInteger(m.d) && m.d >= 1 && m.d <= 6;
+    if (msg.t === 'new' && Array.isArray(msg.lots)) newGame(msg.lots);
+    else if (turn !== AI || over) return;
+    else if (msg.t === 'roll' && Array.isArray(msg.dice)) {
+      dice = msg.dice;
+      done = [];
+      oppStart = clone(S);
+      SG.sound.play('drop');
+      statusEl.textContent = 'Соперник бросает кости…';
+      spin(() => {
+        statusEl.textContent = 'У соперника ' + dice.join(' и ') + '.';
+        render();
+      });
+    } else if (msg.t === 'step' && okMove(msg) && canMove(S, AI, msg.from, msg.d, 0, 99)) {
+      applyMove(S, AI, msg.from, msg.d);
+      done.push(msg.d);
+      SG.sound.play('place', 3);
+      render();
+      checkWin(AI);
+    } else if (msg.t === 'undo' && oppStart) {
+      S = clone(oppStart);
+      done = [];
+      render();
+    } else if (msg.t === 'end') endTurn(AI);
+  }
 
   const modeSeg = SG.segmented($('mode'), 'ai', () => {
     if (mode !== 'ai') {
