@@ -87,7 +87,7 @@
     const avatarLetter = (name) => (Array.from(String(name).trim())[0] || '?').toUpperCase();
     const myPid = () => U().profile.id();
     const cleanPid = (x) => (/^[a-z0-9]{12}$/.test(String(x)) ? String(x) : '');
-    const gameTitle = () => (document.querySelector('.game-head h1') || {}).textContent || document.title.split(' — ')[0];
+    const gameTitle = () => (document.querySelector('.page-head h1, .game-head h1') || {}).textContent || document.title.split(' — ')[0];
 
     // партия с живыми людьми началась — запоминаем их как недавних соперников
     function noteRivals() {

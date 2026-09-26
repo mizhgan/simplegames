@@ -10,6 +10,7 @@
 Скрипт генерирует:
     games/<id>/index.html   страница игры (шаблон tools/templates/game.html)
     index.html              главная с карточками (шаблон tools/templates/index.html)
+    sg/js/net.js            игра по сети из частей sg/js/src/net/*.js
     sg/css/style.css        общие стили из sg/css/src/*.css (порядок — CSS_ORDER)
     sg/js/site.js           список игр и задания «Игры дня» (между метками @build)
     games/tournament/game.js  игры для турнира (между метками @build:duo)
@@ -226,6 +227,20 @@ def css_bundle():
     return head + ''.join(parts)
 
 
+# ---------- скрипты из частей: sg/js/src/<имя>/*.js → sg/js/<имя>.js ----------
+
+JS_BUNDLES = ['net']
+
+
+def js_bundle(name):
+    """Части склеиваются по порядку имён; 00-about.js — шапка-комментарий, остальное оборачивается в (() => { … })()."""
+    src = os.path.join(ROOT, 'sg', 'js', 'src', name)
+    files = sorted(f for f in os.listdir(src) if f.endswith('.js'))
+    head = read(os.path.join(src, files[0])) if files[0].startswith('00-') else ''
+    body = ''.join(read(os.path.join(src, f)) for f in files if not f.startswith('00-'))
+    return head + "(() => {\n  'use strict';\n\n" + body + '})();\n'
+
+
 # ---------- service worker ----------
 
 SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src'}
@@ -345,6 +360,8 @@ def main():
         out['games/%s/index.html' % g['id']] = game_page(g)
     out['index.html'] = index_page(games)
     out['sg/css/style.css'] = css_bundle()
+    for name in JS_BUNDLES:
+        out['sg/js/%s.js' % name] = js_bundle(name)
     out['sg/js/site.js'] = site_js(games, read(os.path.join(ROOT, 'sg/js/site.js')))
     out['README.md'] = readme(games, read(os.path.join(ROOT, 'README.md')))
     out['games/tournament/game.js'] = tournament_js(games, read(os.path.join(GAMES, 'tournament', 'game.js')))
