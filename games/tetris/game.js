@@ -30,9 +30,7 @@
   const nextCtx = nextCanvas.getContext('2d');
   const holdCanvas = $('hold');
   const holdCtx = holdCanvas.getContext('2d');
-  const overlay = $('overlay');
-  const overlayTitle = $('overlay-title');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
   const startBtn = $('start-btn');
   const pauseBtn = $('pause-btn');
 
@@ -271,8 +269,8 @@
   }
 
   function showOverlay(title, text, btn) {
-    overlayTitle.textContent = title;
-    overlayText.textContent = text;
+    overlay.title = title;
+    overlay.text = text;
     startBtn.textContent = btn;
     overlay.hidden = false;
   }

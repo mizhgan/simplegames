@@ -39,7 +39,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let state = 'idle';
   let player, bullet, bombs, invaders, dir, stepTimer, frameFlip, bunkers, ufo, ufoTimer, score, lives, wave, particles, flash;
@@ -301,8 +301,8 @@
       best = score;
       SG.store.set('invaders-best', best);
     }
-    $('overlay-title').textContent = 'Игра окончена';
-    $('overlay-text').textContent = 'Очки: ' + score + ', волна ' + wave + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
+    overlay.title = 'Игра окончена';
+    overlay.text = 'Очки: ' + score + ', волна ' + wave + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     hud();
     overlay.hidden = false;

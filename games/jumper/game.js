@@ -16,7 +16,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let state = 'ready';
   let hero, platforms, camY, maxHeight, time, particles;
@@ -161,8 +161,8 @@
       SG.store.set('jumper-best', best);
       $('best').textContent = best;
     }
-    $('overlay-title').textContent = 'Упал!';
-    $('overlay-text').textContent = 'Высота: ' + s + '.' + (s > 0 && s === best ? ' Новый рекорд! 🏆' : '');
+    overlay.title = 'Упал!';
+    overlay.text = 'Высота: ' + s + '.' + (s > 0 && s === best ? ' Новый рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     overlay.hidden = false;
   }

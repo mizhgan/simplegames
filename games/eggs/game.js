@@ -17,7 +17,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let mode = SG.store.get('eggs-mode', 'a');
   let state = 'idle';
@@ -132,8 +132,8 @@
   function gameOver() {
     state = 'over';
     SG.sound.play('lose');
-    $('overlay-title').textContent = 'Ну, погоди!';
-    $('overlay-text').textContent = 'Поймано яиц: ' + score + '.' + (score && score === best ? ' Это рекорд! 🏆' : '');
+    overlay.title = 'Ну, погоди!';
+    overlay.text = 'Поймано яиц: ' + score + '.' + (score && score === best ? ' Это рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     setTimeout(() => (overlay.hidden = false), 900);
   }

@@ -13,9 +13,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
-  const overlayTitle = $('overlay-title');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
 
   let state = 'ready'; // ready | playing | over
   let stack, moving, debris, camY, targetCamY, combo, hue0, speed, dir, time;
@@ -109,8 +107,8 @@
       $('best').textContent = best;
     }
     setTimeout(() => {
-      overlayTitle.textContent = 'Башня рухнула';
-      overlayText.textContent = 'Высота: ' + s + '.' + (s > 0 && s === best ? ' Новый рекорд! 🏆' : '');
+      overlay.title = 'Башня рухнула';
+      overlay.text = 'Высота: ' + s + '.' + (s > 0 && s === best ? ' Новый рекорд! 🏆' : '');
       $('start-btn').textContent = 'Ещё раз';
       overlay.hidden = false;
     }, 700);

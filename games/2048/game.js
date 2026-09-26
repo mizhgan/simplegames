@@ -22,9 +22,7 @@
   const tilesLayer = $('tiles');
   const scoreEl = $('score');
   const bestEl = $('best');
-  const overlay = $('overlay');
-  const overlayTitle = $('overlay-title');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
   const continueBtn = $('continue-btn');
   const undoBtn = $('undo-btn');
 
@@ -250,8 +248,8 @@
   }
 
   function showOverlay(title, text, canContinue) {
-    overlayTitle.textContent = title;
-    overlayText.textContent = text;
+    overlay.title = title;
+    overlay.text = text;
     continueBtn.hidden = !canContinue;
     overlay.hidden = false;
   }

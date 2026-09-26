@@ -15,7 +15,7 @@
   const scoreEl = $('score');
   const bestEl = $('best');
   const undoBtn = $('undo-btn');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let grid; // 0 — пусто, 1..7 — цвет шара
   let next;
@@ -219,7 +219,7 @@
   function showGameOver() {
     SG.sound.play('lose');
     const record = score > 0 && score >= best;
-    $('overlay-text').textContent = 'Поле заполнено. Счёт: ' + score + '.' + (record ? ' Новый рекорд! 🏆' : '');
+    overlay.text = 'Поле заполнено. Счёт: ' + score + '.' + (record ? ' Новый рекорд! 🏆' : '');
     overlay.hidden = false;
     SG.store.remove('lines-state');
   }

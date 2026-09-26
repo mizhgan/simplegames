@@ -30,7 +30,7 @@
   const $ = (id) => document.getElementById(id);
   const boardEl = $('board');
   const statusEl = $('status');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let mode = SG.store.get('nonogram-mode', 'pic'); // pic | r5 | r10 | r15
   let picIndex = SG.store.get('nonogram-pic', 0);
@@ -248,8 +248,8 @@
     render();
     boardEl.classList.add('solved');
     SG.sound.play('win');
-    $('overlay-title').textContent = mode === 'pic' ? 'Это «' + title + '»! 🎉' : 'Решено! 🎉';
-    $('overlay-text').textContent = 'Время: ' + SG.formatTime(seconds) + '.';
+    overlay.title = mode === 'pic' ? 'Это «' + title + '»! 🎉' : 'Решено! 🎉';
+    overlay.text = 'Время: ' + SG.formatTime(seconds) + '.';
     setTimeout(() => {
       boardEl.classList.remove('solved');
       overlay.hidden = false;

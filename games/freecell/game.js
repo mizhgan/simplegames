@@ -13,7 +13,7 @@
   const timeEl = $('time');
   const bestEl = $('best');
   const undoBtn = $('undo-btn');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let cards = [];
   let cells, foundations, tableau;
@@ -206,7 +206,7 @@
     renderBest();
     undoBtn.disabled = true;
     SG.sound.play('win');
-    $('overlay-text').textContent =
+    overlay.text =
       'Пасьянс сошёлся за ' + SG.formatTime(seconds) + ' и ' + moves + ' ходов.' + (record ? ' Новый рекорд! 🏆' : '');
     table.classList.add('won');
     setTimeout(() => (overlay.hidden = false), 600);

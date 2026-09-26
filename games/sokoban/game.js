@@ -8,7 +8,7 @@
   const $ = (id) => document.getElementById(id);
   const boardEl = $('board');
   const statusEl = $('status');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let done = SG.store.get('sokoban-done', []);
   let level = Math.min(SG.store.get('sokoban-level', 0), LEVELS.length - 1);
@@ -152,7 +152,7 @@
         SG.store.set('sokoban-best', bests);
       }
       SG.store.set('sokoban-solved', done.length);
-      $('overlay-text').textContent =
+      overlay.text =
         'Ходов: ' + moves + ', толчков: ' + pushes + ' (минимум толчков — ' + LEVELS[level].p + ').' + (rec ? ' Новый рекорд!' : '');
       $('again-btn').textContent = level < LEVELS.length - 1 ? 'Следующий уровень' : 'Сыграть заново';
       SG.sound.play('win');

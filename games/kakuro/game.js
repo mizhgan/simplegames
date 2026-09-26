@@ -9,7 +9,7 @@
   const padEl = $('pad');
   const statusEl = $('status');
   const comboEl = $('combos');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let level = SG.store.get('kakuro-level', 'easy');
   let game, cellEls, sel, timerId;
@@ -163,7 +163,7 @@
     const best = SG.store.get(key, null);
     const record = !game.hints && (!best || game.elapsed < best);
     if (record) SG.store.set(key, game.elapsed);
-    $('overlay-text').textContent =
+    overlay.text =
       'Время: ' + SG.formatTime(game.elapsed) + (game.hints ? ' · подсказок: ' + game.hints : '') + (record ? ' · новый рекорд!' : '');
     statusEl.textContent = 'Решено! 🎉';
     sel = null;

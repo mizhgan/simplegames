@@ -44,7 +44,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let state = 'idle';
   let map, player, enemies, bullets, booms, bonus, queue, spawnTimer, spawnIdx, score, lives, stage, freeze, shovel, clearTimer, stageBanner, killed;
@@ -416,8 +416,8 @@
       SG.store.set('tanks-best', best);
     }
     $('best').textContent = best;
-    $('overlay-title').textContent = reason;
-    $('overlay-text').textContent = 'Очки: ' + score + ', уровень ' + stage + ', подбито танков: ' + killed + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
+    overlay.title = reason;
+    overlay.text = 'Очки: ' + score + ', уровень ' + stage + ', подбито танков: ' + killed + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     setTimeout(() => (overlay.hidden = false), 900);
   }

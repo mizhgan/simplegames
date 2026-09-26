@@ -13,7 +13,7 @@
   const bestEl = $('best');
   const undoBtn = $('undo-btn');
   const autoBtn = $('auto-btn');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let drawCount = SG.store.get('solitaire-draw', 1);
   let cards = []; // все 52 карты: { id, suit, rank, up, el }
@@ -280,7 +280,7 @@
     SG.store.set('solitaire-wins', SG.store.get('solitaire-wins', 0) + 1);
     renderBest();
     undoBtn.disabled = true;
-    $('overlay-text').textContent =
+    overlay.text =
       'Пасьянс сошёлся за ' + SG.formatTime(seconds) + ' и ' + moves + ' ходов.' + (record ? ' Новый рекорд! 🏆' : '');
     table.classList.add('won');
     setTimeout(() => (overlay.hidden = false), 700);

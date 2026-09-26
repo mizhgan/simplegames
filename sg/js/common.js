@@ -465,7 +465,84 @@
   };
   modal.isOpen = () => !!(modalEl && !modalEl.hidden);
 
-  window.SG = { store, cssVar, colors, toast, modal, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound };
+
+  // ---------- Оверлей поверх поля и рекорды ----------
+
+  // SG.overlay() — оверлей игры (#overlay с #overlay-title, #overlay-text и кнопкой #start-btn).
+  // overlay.show('Пауза', 'Нажмите пробел'), overlay.hide(), overlay.title = '…', overlay.text = '…',
+  // overlay.button = '…'; overlay.hidden читается и задаётся как у элемента.
+  function overlay(root) {
+    const el = typeof root === 'string' ? document.getElementById(root) : root || document.getElementById('overlay');
+    const title = el.querySelector('#overlay-title') || el.querySelector('h2');
+    const text = el.querySelector('#overlay-text') || el.querySelector('p');
+    const btn = el.querySelector('#start-btn');
+    return {
+      el,
+      show(t, x, b) {
+        if (t !== undefined && title) title.textContent = t;
+        if (x !== undefined && text) text.textContent = x;
+        if (b !== undefined && btn) btn.textContent = b;
+        el.hidden = false;
+      },
+      hide() {
+        el.hidden = true;
+      },
+      get hidden() {
+        return el.hidden;
+      },
+      set hidden(v) {
+        el.hidden = v;
+      },
+      get visible() {
+        return !el.hidden;
+      },
+      get title() {
+        return title ? title.textContent : '';
+      },
+      set title(v) {
+        if (title) title.textContent = v;
+      },
+      get text() {
+        return text ? text.textContent : '';
+      },
+      set text(v) {
+        if (text) text.textContent = v;
+      },
+      set button(v) {
+        if (btn) btn.textContent = v;
+      },
+    };
+  }
+
+  // SG.record('snake-best', { el: 'best', lower: false, initial: 0, format: String })
+  // — рекорд в хранилище и на табло. record.submit(value) сохраняет, если результат лучше, и возвращает true.
+  function record(key, opts = {}) {
+    const el = typeof opts.el === 'string' ? document.getElementById(opts.el) : opts.el || null;
+    const fmt = opts.format || String;
+    const empty = opts.empty === undefined ? '—' : opts.empty;
+    let value = store.get(key, opts.initial === undefined ? null : opts.initial);
+    const render = () => {
+      if (el) el.textContent = value === null || value === undefined ? empty : fmt(value);
+    };
+    render();
+    return {
+      get value() {
+        return value;
+      },
+      submit(v) {
+        const better = value === null || value === undefined || (opts.lower ? v < value : v > value);
+        if (better) {
+          value = v;
+          store.set(key, v);
+          render();
+        }
+        return better;
+      },
+      render,
+    };
+  }
+
+  window.SG = { store, cssVar, colors, toast, modal, overlay, record, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound };
 
   // ---------- офлайн-режим и установка как приложения ----------
 

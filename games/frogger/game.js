@@ -27,7 +27,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let state = 'idle';
   let frog, lanes, homes, score, lives, level, timeLeft, maxRow, dead, clock;
@@ -191,8 +191,8 @@
       best = score;
       SG.store.set('frogger-best', best);
     }
-    $('overlay-title').textContent = 'Игра окончена';
-    $('overlay-text').textContent = 'Очки: ' + score + ', уровень ' + level + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
+    overlay.title = 'Игра окончена';
+    overlay.text = 'Очки: ' + score + ', уровень ' + level + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     hud();
     overlay.hidden = false;

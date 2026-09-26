@@ -8,7 +8,7 @@
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
   const statusEl = $('status');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let size = Number(SG.store.get('flow-size', '6'));
   let N, ends, paths, active, solved, owner, sol, hints;
@@ -216,7 +216,7 @@
     if (!solved && done === ends.length && filled === N * N) {
       solved = true;
       SG.store.set('flow-solved', SG.store.get('flow-solved', 0) + 1);
-      $('overlay-text').textContent = hints ? 'Подсказок: ' + hints + '.' : 'Без подсказок!';
+      overlay.text = hints ? 'Подсказок: ' + hints + '.' : 'Без подсказок!';
       $('solved').textContent = SG.store.get('flow-solved', 0);
       SG.sound.play('win');
       setTimeout(() => (overlay.hidden = false), 400);

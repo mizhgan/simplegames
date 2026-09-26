@@ -17,7 +17,7 @@
   const $ = (id) => document.getElementById(id);
   const boardEl = $('board');
   const statusEl = $('status');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let size = Number(SG.store.get('pipes-size', '7'));
   let N, base, rot, src, moves, solved, tiles;
@@ -143,7 +143,7 @@
       boardEl.classList.add('done');
       SG.store.set('pipes-solved', SG.store.get('pipes-solved', 0) + 1);
       $('solved').textContent = SG.store.get('pipes-solved', 0);
-      $('overlay-text').textContent = 'Ходов: ' + moves + '.';
+      overlay.text = 'Ходов: ' + moves + '.';
       SG.sound.play('win');
       setTimeout(() => (overlay.hidden = false), 700);
     }

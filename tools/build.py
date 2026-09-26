@@ -10,6 +10,7 @@
 Скрипт генерирует:
     games/<id>/index.html   страница игры (шаблон tools/templates/game.html)
     index.html              главная с карточками (шаблон tools/templates/index.html)
+    sg/js/net.js            игра по сети из частей sg/js/src/net/*.js
     sg/css/style.css        общие стили из sg/css/src/*.css (порядок — CSS_ORDER)
     sg/js/site.js           список игр и задания «Игры дня» (между метками @build)
     games/tournament/game.js  игры для турнира (между метками @build:duo)
@@ -226,6 +227,20 @@ def css_bundle():
     return head + ''.join(parts)
 
 
+# ---------- скрипты из частей: sg/js/src/<имя>/*.js → sg/js/<имя>.js ----------
+
+JS_BUNDLES = ['net']
+
+
+def js_bundle(name):
+    """Части склеиваются по порядку имён; 00-about.js — шапка-комментарий, остальное оборачивается в (() => { … })()."""
+    src = os.path.join(ROOT, 'sg', 'js', 'src', name)
+    files = sorted(f for f in os.listdir(src) if f.endswith('.js'))
+    head = read(os.path.join(src, files[0])) if files[0].startswith('00-') else ''
+    body = ''.join(read(os.path.join(src, f)) for f in files if not f.startswith('00-'))
+    return head + "(() => {\n  'use strict';\n\n" + body + '})();\n'
+
+
 # ---------- service worker ----------
 
 SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src'}
@@ -277,15 +292,59 @@ def new_game(gid, title):
         'party': False,
         'card': {'text': 'Одна-две фразы для карточки на главной.', 'colors': ['#6366f1', '#312e81']},
         'best': {'key': gid + '-best'},
+        'players': [1, 1],
         'readme': 'управление и особенности',
         'scripts': ['../../sg/js/site.js'],
         'rules': ['Первое правило.', 'Второе правило.'],
     }
+    meta['stats'] = [
+        '<div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>',
+        '<div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>',
+    ]
+    stage = (
+        '<div class="stage-wrap">\n'
+        '  <canvas id="board" class="board-canvas" width="480" height="480" aria-label="Игровое поле"></canvas>\n'
+        '  <div class="overlay" id="overlay">\n'
+        '    <h2 id="overlay-title">%s</h2>\n'
+        '    <p id="overlay-text">Нажмите «Играть» или пробел.</p>\n'
+        '    <div class="overlay-actions"><button class="btn btn-primary" type="button" id="start-btn">Играть</button></div>\n'
+        '  </div>\n'
+        '</div>\n' % title
+    )
+    game_js = (
+        "/* %s */\n(() => {\n  'use strict';\n\n"
+        "  const canvas = document.getElementById('board');\n"
+        "  const g = canvas.getContext('2d');\n"
+        "  const overlay = SG.overlay(); // оверлей поверх поля: show(), hide(), title, text\n"
+        "  const best = SG.record('%s-best', { el: 'best', initial: 0 }); // рекорд в хранилище и на табло\n"
+        "  let score = 0;\n\n"
+        "  function draw() {\n"
+        "    g.fillStyle = SG.colors.boardBg;\n"
+        "    g.fillRect(0, 0, canvas.width, canvas.height);\n"
+        "    g.fillStyle = SG.colors.players[0];\n"
+        "    g.fillRect(40 + score * 10, 220, 40, 40);\n"
+        "  }\n\n"
+        "  function start() {\n"
+        "    score = 0;\n"
+        "    overlay.hide();\n"
+        "    draw();\n"
+        "  }\n\n"
+        "  function finish() {\n"
+        "    const isRecord = best.submit(score);\n"
+        "    SG.sound.play('win');\n"
+        "    overlay.show('Готово!', 'Счёт: ' + score + (isRecord ? '. Новый рекорд! 🏆' : '.'), 'Ещё раз');\n"
+        "  }\n\n"
+        "  document.getElementById('start-btn').addEventListener('click', start);\n"
+        "  document.addEventListener('sg:themechange', draw);\n"
+        "  draw();\n"
+        "  void finish;\n"
+        "})();\n" % (title, gid)
+    )
     files = {
         'meta.json': dump_json(meta) + '\n',
-        'stage.html': '<div class="stage-wrap">\n  <canvas id="board" class="board-canvas" width="480" height="480" aria-label="Игровое поле"></canvas>\n</div>\n',
-        'thumb.svg': '<svg viewBox="0 0 160 100" aria-hidden="true">\n  <circle cx="80" cy="50" r="30" fill="#fff"/>\n</svg>\n',
-        'game.js': "/* %s */\n(() => {\n  'use strict';\n\n  const canvas = document.getElementById('board');\n  const g = canvas.getContext('2d');\n  g.fillStyle = SG.cssVar('--accent');\n  g.fillRect(0, 0, canvas.width, canvas.height);\n})();\n" % title,
+        'stage.html': stage,
+        'thumb.svg': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true">\n  <circle cx="80" cy="50" r="30" fill="#fff"/>\n</svg>\n',
+        'game.js': game_js,
     }
     for name, text in files.items():
         with open(os.path.join(base, name), 'w', encoding='utf-8') as fh:
@@ -345,6 +404,8 @@ def main():
         out['games/%s/index.html' % g['id']] = game_page(g)
     out['index.html'] = index_page(games)
     out['sg/css/style.css'] = css_bundle()
+    for name in JS_BUNDLES:
+        out['sg/js/%s.js' % name] = js_bundle(name)
     out['sg/js/site.js'] = site_js(games, read(os.path.join(ROOT, 'sg/js/site.js')))
     out['README.md'] = readme(games, read(os.path.join(ROOT, 'README.md')))
     out['games/tournament/game.js'] = tournament_js(games, read(os.path.join(GAMES, 'tournament', 'game.js')))

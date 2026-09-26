@@ -21,7 +21,7 @@
   const boardEl = $('board');
   const kbEl = $('keyboard');
   const toastEl = $('toast');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let mode = SG.store.get('wordle-mode', 'daily');
   let game; // { mode, day?, answer, guesses: [], done, won }
@@ -250,7 +250,7 @@
 
   function showResult() {
     const stats = getStats();
-    $('overlay-title').textContent = game.won ? 'Победа! 🎉' : 'Не угадали 😔';
+    overlay.title = game.won ? 'Победа! 🎉' : 'Не угадали 😔';
     $('overlay-word').textContent = game.done ? 'Загаданное слово: ' + game.answer.toUpperCase() : '';
     $('st-played').textContent = stats.played;
     $('st-winrate').textContent = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0;
@@ -335,7 +335,7 @@
     e.currentTarget.blur();
     showResult();
     if (!game.done) {
-      $('overlay-title').textContent = 'Статистика';
+      overlay.title = 'Статистика';
     }
   });
 

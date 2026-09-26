@@ -13,8 +13,7 @@
   const bestEl = $('best');
   const notesBtn = $('notes-btn');
   const undoBtn = $('undo-btn');
-  const overlay = $('overlay');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
 
   // Соседи клетки: та же строка, столбец и блок 3×3
   const PEERS = Array.from({ length: 81 }, (_, i) => {
@@ -384,7 +383,7 @@
     const best = SG.store.get(key, null);
     const record = !game.hints && (best === null || game.elapsed < best);
     if (record) SG.store.set(key, game.elapsed);
-    overlayText.textContent =
+    overlay.text =
       'Решено за ' + SG.formatTime(game.elapsed) +
       (game.hints ? ' с подсказками: ' + game.hints + '.' : '.') +
       (record ? ' Новый рекорд! 🏆' : '');
