@@ -197,14 +197,39 @@
   gap: 4px;
 }
 
-.mg-dice.rolling span {
+.mg-dice span {
   display: inline-block;
-  animation: mg-roll 0.12s linear infinite;
+}
+
+/* бросок: кубики один раз прокатываются с замедлением, второй чуть позже первого */
+.mg-dice.rolling {
+  animation: mg-roll 0.62s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.mg-dice.rolling span + span {
+  animation: mg-roll-2 0.62s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 @keyframes mg-roll {
-  50% {
-    transform: rotate(18deg) translateY(-3px);
+  0% {
+    opacity: 0.4;
+    transform: translateY(-10px) rotate(-120deg) scale(0.85);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(1px) rotate(6deg) scale(1.02);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes mg-roll-2 {
+  0% {
+    transform: rotate(80deg);
+  }
+  100% {
+    transform: none;
   }
 }
 
@@ -263,5 +288,10 @@
 @media (prefers-reduced-motion: reduce) {
   .mg-tok {
     transition: none;
+  }
+
+  .mg-dice.rolling,
+  .mg-dice.rolling span {
+    animation: none;
   }
 }
