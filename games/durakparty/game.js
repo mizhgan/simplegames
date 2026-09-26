@@ -25,9 +25,8 @@
     return s;
   }
 
-  function say(s, t) {
-    s.log.push(t);
-    if (s.log.length > 5) s.log.shift();
+  function say(s, t, o) {
+    SG.party.log(s, t, o);
   }
 
   const active = (s, i) => !s.out.includes(s.ids[i]);
@@ -262,7 +261,7 @@
       trump: s.trumpCard,
       deck: s.deck.length,
       phase: s.phase,
-      log: s.log.slice(-3),
+      log: s.log.slice(-30),
       over: s.over,
       loser: s.loser,
       limit: s.limit,
@@ -299,7 +298,7 @@
       `<div class="tb"><div class="pt-seats">${seats}</div>` +
       `<div class="tb-center"><div class="tb-row dp-table">${table || '<span class="pt-muted">стол пуст</span>'}</div>` +
       `<div class="tb-row"><span class="tb-pot">колода ${v.deck}</span>${v.deck ? C.html(v.trump, 'dp-trump') : `<span class="tb-pot">козырь ${C.SUITS[v.trump.suit]}</span>`}</div>` +
-      `<div class="tb-msg">${status}</div><div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>` +
+      `<div class="tb-msg">${status}</div></div>` +
       (v.hand ? `<div class="tb-hand mine">${v.hand.map((c) => C.html(c, (v.ok.includes(c.id) ? 'playable' : 'dim') + (sel === c.id ? ' sel' : ''))).join('')}</div>` : '') +
       `<div class="tb-actions">${v.canTake ? '<button class="btn btn-primary" type="button" data-take>Беру</button>' : ''}${v.canPass ? `<button class="btn btn-ghost" type="button" data-pass>${v.phase === 'take' ? 'Больше не подкидываю' : 'Бито / пас'}</button>` : ''}</div></div>`;
     el.querySelectorAll('.tb-hand.mine .sol-card.playable').forEach((c) =>

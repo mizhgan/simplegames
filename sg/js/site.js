@@ -801,7 +801,9 @@
     const rules = document.querySelector('[data-rules]');
     if (rules) {
       const saved = store.get('rules-open', null);
-      rules.open = saved === null ? window.matchMedia('(min-width: 861px)').matches : saved;
+      // в широкой раскладке (игры на компанию) правила под столом — по умолчанию свёрнуты
+      const wide = !!rules.closest('.game-layout.wide');
+      rules.open = saved === null ? !wide && window.matchMedia('(min-width: 861px)').matches : saved;
       // запоминаем только выбор самого игрока (событие toggle приходит и от программного open)
       rules.querySelector('summary').addEventListener('click', () => setTimeout(() => store.set('rules-open', rules.open)));
     }

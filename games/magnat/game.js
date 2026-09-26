@@ -6,7 +6,6 @@
   const START = 1500;
   const PASS_GO = 200;
   const TURN_TIME = 40;
-  const TOKENS = ['#ef4444', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#f97316'];
   const GROUPS = ['#8b5a2b', '#38bdf8', '#ec4899', '#f97316', '#ef4444', '#16a34a'];
   // поле из 28 клеток: t — тип, g — группа улиц, p — цена
   const B = [
@@ -42,16 +41,15 @@
       s.money[p.id] = START;
       s.pos[p.id] = 0;
       s.jail[p.id] = 0;
-      s.color[p.id] = TOKENS[i % TOKENS.length];
+      s.color[p.id] = 'var(--p' + ((i % 8) + 1) + ')'; // как аватарки в лобби и ленте
     });
     s.deadline = s.now + TURN_TIME * 1000;
-    say(s, 'Первым бросает ' + s.names[s.ids[0]] + '.');
+    say(s, 'Первым бросает ' + s.names[s.ids[0]] + '.', { w: s.ids[0], i: '🎲' });
     return s;
   }
 
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 7) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
   const cur = (s) => s.ids[s.turn];
   const alive = (s) => s.ids.filter((id) => !s.out.includes(id));
@@ -107,7 +105,7 @@
         delete s.houses[i];
       }
     });
-    say(s, '💸 ' + s.names[id] + ' — банкрот!');
+    say(s, s.names[id] + ' — банкрот!', { w: id, i: '💸', k: 'bad', big: true });
     if (alive(s).length <= 1) finish(s);
   }
 
@@ -116,14 +114,17 @@
     const a = alive(s);
     const best = Math.max(...a.map((id) => worth(s, id)));
     s.winner = a.find((id) => worth(s, id) === best);
-    say(s, '🏆 ' + s.names[s.winner] + ' — магнат!');
+    say(s, s.names[s.winner] + ' — магнат!', { w: s.winner, i: '🏆', k: 'good', big: true });
   }
 
   function moveTo(s, id, to, passGo) {
     if (passGo && to < s.pos[id]) {
       s.money[id] += PASS_GO;
-      say(s, s.names[id] + ' проходит Старт: +' + PASS_GO);
+      say(s, s.names[id] + ' проходит Старт: +' + PASS_GO, { w: id, i: '🏁', k: 'good' });
     }
+    // последний переход — для анимации фишки: шагом по клеткам (бросок) или сразу (карточка «Шанс»)
+    s.moveN = (s.moveN || 0) + 1;
+    s.lastMove = { id, from: s.pos[id], to, walk: passGo, n: s.moveN };
     s.pos[id] = to;
     land(s, id);
   }
@@ -138,16 +139,16 @@
       if (o === undefined) s.offer = i;
       else if (o !== id) {
         const r = rent(s, i, s.dice);
-        say(s, name + ' платит ' + s.names[o] + ' аренду ' + r + ' (' + c.n + ')');
+        say(s, name + ' платит ' + s.names[o] + ' аренду ' + r + ' (' + c.n + ')', { w: id, i: '💰', k: 'bad', big: r >= 100 });
         pay(s, id, r, o);
       }
     } else if (c.t === 'tax') {
-      say(s, name + ': ' + c.n.toLowerCase() + ' −' + c.p);
+      say(s, name + ': ' + c.n.toLowerCase() + ' −' + c.p, { w: id, i: '🧾', k: 'bad' });
       pay(s, id, c.p);
     } else if (c.t === 'gojail') toJail(s, id);
     else if (c.t === 'ch') {
       const [text, v] = CHANCE[Math.floor(Math.random() * CHANCE.length)];
-      say(s, '❓ ' + name + ': ' + text);
+      say(s, name + ': ' + text, { w: id, i: '❓', big: true });
       if (typeof v === 'number') {
         if (v > 0) s.money[id] += v;
         else pay(s, id, -v);
@@ -162,11 +163,13 @@
   }
 
   function toJail(s, id) {
+    s.moveN = (s.moveN || 0) + 1;
+    s.lastMove = { id, from: s.pos[id], to: JAIL, walk: false, n: s.moveN };
     s.pos[id] = JAIL;
     s.jail[id] = 3;
     s.doubles = 0;
     s.again = false;
-    say(s, '🚓 ' + s.names[id] + ' отправляется в тюрьму');
+    say(s, s.names[id] + ' отправляется в тюрьму', { w: id, i: '🚓', k: 'bad', big: true });
   }
 
   function nextTurn(s, now) {
@@ -196,14 +199,14 @@
       if (s.jail[id]) {
         if (dbl) {
           s.jail[id] = 0;
-          say(s, name + ' выбрасывает дубль и выходит из тюрьмы');
+          say(s, name + ' выбрасывает дубль и выходит из тюрьмы', { w: id, i: '🔓', k: 'good' });
         } else {
           s.jail[id]--;
           if (s.jail[id] === 0) {
             pay(s, id, 50);
-            say(s, name + ' платит 50 и выходит из тюрьмы');
+            say(s, name + ' платит 50 и выходит из тюрьмы', { w: id, i: '🔓' });
           } else {
-            say(s, name + ' остаётся в тюрьме');
+            say(s, name + ' остаётся в тюрьме', { w: id, i: '🚔' });
             s.phase = 'act';
             s.again = false;
             s.deadline = now + TURN_TIME * 1000;
@@ -220,7 +223,7 @@
         }
         s.again = dbl;
       }
-      say(s, name + ' бросает ' + d[0] + '+' + d[1]);
+      say(s, name + ' бросает ' + d[0] + '+' + d[1] + ' → ' + B[(s.pos[id] + d[0] + d[1]) % N].n, { w: id, i: '🎲' });
       moveTo(s, id, (s.pos[id] + d[0] + d[1]) % N, true);
       if (s.out.includes(id)) {
         nextTurn(s, now);
@@ -234,14 +237,14 @@
     if (a.bail && s.phase === 'roll' && s.jail[id] && s.money[id] >= 50) {
       pay(s, id, 50);
       s.jail[id] = 0;
-      say(s, name + ' платит 50 и выходит из тюрьмы');
+      say(s, name + ' платит 50 и выходит из тюрьмы', { w: id, i: '🔓' });
       return true;
     }
     if (s.phase !== 'act') return false;
     if (a.buy && s.offer !== null && s.offer !== undefined && s.money[id] >= B[s.offer].p) {
       s.money[id] -= B[s.offer].p;
       s.own[s.offer] = id;
-      say(s, name + ' покупает ' + B[s.offer].n + ' за ' + B[s.offer].p);
+      say(s, name + ' покупает ' + B[s.offer].n + ' за ' + B[s.offer].p, { w: id, i: '🛒', k: 'good', big: true });
       s.offer = null;
       return true;
     }
@@ -254,7 +257,7 @@
       if ((s.houses[i] || 0) > min) return false;
       s.money[id] -= houseCost(c);
       s.houses[i] = (s.houses[i] || 0) + 1;
-      say(s, name + ' строит дом: ' + c.n + ' (' + s.houses[i] + ')');
+      say(s, name + ' строит дом: ' + c.n + ' (' + s.houses[i] + ')', { w: id, i: '🏠', k: 'good' });
       return true;
     }
     if (a.end) {
@@ -262,7 +265,7 @@
       if (s.again) {
         s.phase = 'roll';
         s.deadline = now + TURN_TIME * 1000;
-        say(s, name + ' выбросил дубль — бросает ещё');
+        say(s, name + ' выбросил дубль — бросает ещё', { w: id, i: '🎲' });
       } else nextTurn(s, now);
       return true;
     }
@@ -331,8 +334,9 @@
       offer: me && s.offer !== null && s.offer !== undefined ? s.offer : null,
       canBuild,
       again: s.again,
-      log: s.log.slice(-6),
+      log: s.log.slice(-30),
       round: s.round,
+      move: s.lastMove || null,
       limit: s.limit,
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over: s.phase === 'end',
@@ -352,19 +356,24 @@
   const ICON = { go: '🏁', jail: '🚔', park: '🅿', gojail: '👮', ch: '❓', tax: '💰', tr: '🚆' };
   const DIE = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
+  // что уже показано: позиции фишек, деньги, последний ход и кубики — чтобы анимировать только изменения
+  const seen = { pos: {}, money: {}, move: 0, dice: '' };
+  const letter = (name) => (Array.from(String(name).trim().replace(/^Бот\s+/, ''))[0] || '?').toUpperCase();
+
   function render(v, ui) {
     const el = ui.el;
+    lastV = v;
+    lastEl = el;
     const colorOf = (pid) => (v.players.find((p) => p.id === pid) || {}).color;
     const cells = B.map((c, i) => {
       const [r, col] = cellPos(i);
       const owner = v.own[i];
       const h = v.houses[i] || 0;
-      const toks = v.players.filter((p) => !p.out && p.pos === i).map((p) => `<i style="background:${p.color}"></i>`).join('');
       return `<div class="mg-cell ${c.t}${v.offer === i ? ' offer' : ''}${v.canBuild.includes(i) ? ' can' : ''}" style="grid-row:${r};grid-column:${col}" data-i="${i}">` +
         (c.g !== undefined ? `<span class="mg-band" style="background:${GROUPS[c.g]}">${h ? '🏠'.repeat(h) : ''}</span>` : `<span class="mg-icon">${c.t === 'tr' && i > 10 ? '✈' : ICON[c.t] || ''}</span>`) +
         `<span class="mg-name">${esc(c.n)}</span>${c.p && c.t !== 'tax' ? `<span class="mg-price">${c.p}</span>` : ''}` +
-        (owner !== undefined ? `<span class="mg-owner" style="background:${colorOf(owner)}"></span>` : '') +
-        `<span class="mg-toks">${toks}</span></div>`;
+        (owner !== undefined ? `<span class="mg-owner" style="background:${colorOf(owner)}" title="${esc(ui.name(owner))}"></span>` : '') +
+        '</div>';
     }).join('');
     const mine = v.turn === ui.me && !v.over;
     let actions = '';
@@ -377,17 +386,31 @@
       actions += `<button class="btn btn-ghost" type="button" data-end>${v.again ? 'Бросить ещё (дубль)' : 'Завершить ход'}</button>`;
       if (v.canBuild.length) actions += '<p class="pt-muted">Можно строить дома: нажмите на подсвеченную улицу.</p>';
     }
+    const turnP = v.players.find((p) => p.id === v.turn);
     let status;
     if (v.over) status = v.winner === ui.me ? 'Вы — магнат! 🏆' : 'Победил ' + esc(ui.name(v.winner));
-    else status = (mine ? 'Ваш ход' : 'Ходит ' + esc(ui.name(v.turn))) + ` <span class="pt-timer" data-left="${v.left}">${Math.ceil(v.left)}</span>`;
+    else
+      status =
+        (turnP ? `<span class="mg-ava" style="background:${turnP.color}">${esc(letter(turnP.name))}</span>` : '') +
+        (mine ? 'Ваш ход' : 'Ходит ' + esc(ui.name(v.turn))) +
+        ` <span class="pt-timer" data-left="${v.left}">${Math.ceil(v.left)}</span>`;
     const center =
-      `<div class="mg-center"><div class="mg-dice">${v.dice[0] ? DIE[v.dice[0]] + DIE[v.dice[1]] : '🎲'}</div><div class="mg-status">${status}</div>` +
-      `<div class="tb-actions">${actions}</div><div class="mg-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div>` +
+      `<div class="mg-center"><div class="mg-dice" aria-label="Кубики">${diceHtml(v.dice)}</div><div class="mg-status">${status}</div>` +
+      `<div class="tb-actions">${actions}</div>` +
       `<div class="mg-round">Круг ${v.round}${v.limit ? ' из ' + v.limit : ''}</div></div>`;
     const players = v.players
-      .map((p) => `<div class="pt-seat${p.id === v.turn && !v.over ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.out ? ' out' : ''}"><b><i class="mg-dot" style="background:${p.color}"></i>${esc(p.name)}</b><span>${p.out ? 'банкрот' : '💵 ' + p.money}${p.jail ? ' · 🚔' : ''}</span><small>капитал ${p.worth}</small></div>`)
+      .map(
+        (p) =>
+          `<div class="pt-seat${p.id === v.turn && !v.over ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.out ? ' out' : ''}" data-seat="${p.id}" title="Капитал ${p.worth}">` +
+          `<b><span class="mg-ava" style="background:${p.color}">${esc(letter(p.name))}</span>${esc(p.name)}</b>` +
+          `<span class="mg-money">${p.out ? 'банкрот' : '💵 ' + p.money}${p.jail ? ' · 🚔' : ''}</span></div>`
+      )
       .join('');
-    el.innerHTML = `<div class="pt-panel mg"><div class="pt-seats">${players}</div><div class="mg-board">${cells}${center}</div></div>`;
+    const tokens = v.players
+      .filter((p) => !p.out)
+      .map((p) => `<span class="mg-tok${p.id === v.turn && !v.over ? ' turn' : ''}" data-tok="${p.id}" style="--c:${p.color}" title="${esc(p.name)}">${esc(letter(p.name))}</span>`)
+      .join('');
+    el.innerHTML = `<div class="pt-panel mg"><div class="pt-seats">${players}</div><div class="mg-board">${cells}${center}<div class="mg-tokens">${tokens}</div></div></div>`;
     const on = (sel, a) => {
       const b = el.querySelector(sel);
       if (b) b.addEventListener('click', () => ui.send(a));
@@ -397,7 +420,10 @@
     on('[data-buy]', { buy: 1 });
     on('[data-end]', { end: 1 });
     el.querySelectorAll('.mg-cell.can').forEach((c) => c.addEventListener('click', () => ui.send({ build: +c.dataset.i })));
-    const key = v.dice.join() + v.log.length + v.log[v.log.length - 1];
+
+    animate(v, el);
+
+    const key = v.dice.join() + (v.log.length ? v.log[v.log.length - 1].n : 0);
     if (render.key !== key) {
       render.key = key;
       if (!v.over) SG.sound.play('click');
@@ -409,6 +435,115 @@
     }
     if (!v.over) render.done = false;
   }
+
+  const diceHtml = (d) => (d[0] ? `<span>${DIE[d[0]]}</span><span>${DIE[d[1]]}</span>` : '<span>🎲</span>');
+
+  // фишки лежат отдельным слоем поверх поля и переезжают в центр своей клетки
+  function placeTokens(el, pos) {
+    const board = el.querySelector('.mg-board');
+    const layer = el.querySelector('.mg-tokens');
+    if (!board || !layer) return;
+    const b = board.getBoundingClientRect();
+    const byCell = {};
+    layer.querySelectorAll('[data-tok]').forEach((t) => {
+      const i = pos[t.dataset.tok];
+      (byCell[i] = byCell[i] || []).push(t);
+    });
+    Object.entries(byCell).forEach(([i, toks]) => {
+      const cell = board.querySelector('.mg-cell[data-i="' + i + '"]');
+      if (!cell) return;
+      const r = cell.getBoundingClientRect();
+      toks.forEach((t, k) => {
+        const size = t.offsetWidth;
+        // несколько фишек в клетке — веером, чтобы не закрывали друг друга
+        const spread = toks.length > 1 ? (k - (toks.length - 1) / 2) * size * 0.55 : 0;
+        const x = r.left - b.left + r.width / 2 - size / 2 + spread;
+        const y = r.top - b.top + r.height * 0.62 - size / 2;
+        t.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+  }
+
+  function animate(v, el) {
+    const target = {};
+    v.players.forEach((p) => (target[p.id] = p.pos));
+    const layer = el.querySelector('.mg-tokens');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mv = v.move;
+    const fresh = mv && mv.n !== seen.move && seen.pos[mv.id] !== undefined;
+    // сначала ставим фишки туда, где их видели в прошлый раз, без анимации
+    const start = Object.assign({}, target);
+    if (fresh && !reduce) start[mv.id] = mv.from;
+    layer.classList.add('still');
+    placeTokens(el, start);
+    void layer.offsetWidth;
+    layer.classList.remove('still');
+    if (fresh && !reduce) {
+      const tok = layer.querySelector('[data-tok="' + mv.id + '"]');
+      const steps = [];
+      if (mv.walk) for (let c = mv.from; c !== mv.to; ) steps.push((c = (c + 1) % N));
+      else steps.push(mv.to);
+      if (tok) tok.classList.add('moving');
+      let k = 0;
+      const next = () => {
+        if (!layer.isConnected) return;
+        if (k >= steps.length) {
+          if (tok) tok.classList.remove('moving');
+          const cell = el.querySelector('.mg-cell[data-i="' + mv.to + '"]');
+          if (cell) cell.classList.add('landed');
+          return;
+        }
+        const pos = Object.assign({}, target, { [mv.id]: steps[k++] });
+        placeTokens(el, pos);
+        setTimeout(next, mv.walk ? 170 : 380);
+      };
+      next();
+    } else placeTokens(el, target);
+    if (mv) seen.move = mv.n;
+    seen.pos = target;
+
+    // кубики «катятся» при новом броске
+    const dk = v.dice.join();
+    const dice = el.querySelector('.mg-dice');
+    if (dice && v.dice[0] && dk !== seen.dice && seen.dice !== '' && !reduce) {
+      let t = 0;
+      dice.classList.add('rolling');
+      const spin = setInterval(() => {
+        if (!dice.isConnected || ++t > 6) {
+          clearInterval(spin);
+          if (dice.isConnected) {
+            dice.innerHTML = diceHtml(v.dice);
+            dice.classList.remove('rolling');
+          }
+          return;
+        }
+        dice.innerHTML = diceHtml([1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)]);
+      }, 60);
+    }
+    seen.dice = dk;
+
+    // деньги: всплывающие «+200» / «−140» у игрока
+    v.players.forEach((p) => {
+      const before = seen.money[p.id];
+      if (before !== undefined && before !== p.money) {
+        const seat = el.querySelector('[data-seat="' + p.id + '"]');
+        if (seat) {
+          const d = p.money - before;
+          const f = document.createElement('span');
+          f.className = 'mg-delta ' + (d > 0 ? 'up' : 'down');
+          f.textContent = (d > 0 ? '+' : '−') + Math.abs(d);
+          seat.appendChild(f);
+          setTimeout(() => f.remove(), 1800);
+        }
+      }
+      seen.money[p.id] = p.money;
+    });
+  }
+
+  // при изменении размера окна фишки встают на свои клетки заново
+  let lastV = null;
+  let lastEl = null;
+  window.addEventListener('resize', () => lastV && lastEl && lastEl.isConnected && placeTokens(lastEl, Object.fromEntries(lastV.players.map((p) => [p.id, p.pos]))));
 
   SG.party({
     game: 'magnat',

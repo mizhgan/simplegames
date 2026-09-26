@@ -1274,6 +1274,17 @@ main {
   }
 }
 
+.game-layout.wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.game-layout.wide .game-aside {
+  position: static;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
 .game-stage {
   display: flex;
   flex-direction: column;

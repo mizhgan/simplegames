@@ -111,6 +111,8 @@ def game_page(g):
         'description': g['description'],
         'head': ''.join('  <link rel="stylesheet" href="%s">\n' % href for href in g.get('styles', [])),
         'stats': stats,
+        # игры на компанию занимают всю ширину: у них своя боковая колонка (ход игры, чат), правила — под столом
+        'layout': ' wide' if g.get('party') else '',
         'stage': indent(g['stageHtml'], 8),
         'rules': '\n'.join('            <li>%s</li>' % r for r in g['rules']),
         'scripts': ''.join('  <script src="%s"></script>\n' % s for s in ['../../sg/js/common.js'] + g.get('scripts', []) + ['game.js']),

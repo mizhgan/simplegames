@@ -46,9 +46,8 @@
     return s;
   }
 
-  function say(s, t) {
-    s.log.push(t);
-    if (s.log.length > 6) s.log.shift();
+  function say(s, t, o) {
+    SG.party.log(s, t, o);
   }
 
   const top = (s) => s.pile[s.pile.length - 1];
@@ -175,7 +174,7 @@
       color: s.color,
       deck: s.draw.length,
       dir: s.dir,
-      log: s.log.slice(-4),
+      log: s.log.slice(-30),
       winner: s.winner,
       over: s.winner !== null,
       myTurn: cur(s) === id && s.winner === null,
@@ -207,7 +206,7 @@
     el.innerHTML =
       `<div class="tb un-table"><div class="pt-seats">${seats}</div>` +
       `<div class="tb-center"><div class="tb-row"><div class="un-card back"><span>УНО</span></div><span class="tb-pot">колода ${v.deck}</span>${cardHtml(v.top, 'top')}<span class="un-dot c${v.color}" title="${CNAME[v.color]}"></span><span class="tb-pot">${v.dir > 0 ? '↻' : '↺'}</span></div>` +
-      `<div class="tb-msg">${status}</div><div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>` +
+      `<div class="tb-msg">${status}</div></div>` +
       (v.hand ? `<div class="un-hand">${v.hand.map((x) => cardHtml(x, v.ok.includes(x.id) ? 'playable' : v.myTurn ? 'dim' : '')).join('')}</div>` : '') +
       `<div class="tb-actions">${v.myTurn && !v.drew ? '<button class="btn btn-primary" type="button" data-draw>Взять карту</button>' : ''}${v.myTurn && v.drew ? '<button class="btn btn-ghost" type="button" data-pass>Пас</button>' : ''}</div>` +
       `<div class="un-pick" hidden><p>Какой цвет?</p><div class="pt-choices">${CNAME.map((n, i) => `<button type="button" class="un-dot big c${i}" data-color="${i}" aria-label="${n}"></button>`).join('')}</div></div></div>`;

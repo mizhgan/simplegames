@@ -19,9 +19,8 @@
     return s;
   }
 
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 10) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
   const size = (s) => SIZES[s.n][s.mission];
   const needFails = (s) => (s.n >= 7 && s.mission === 3 ? 2 : 1);
@@ -183,7 +182,7 @@
       myCard: s.cards[id],
       players: s.ids.map((pid) => ({ id: pid, name: s.names[pid], spy: over || (spy && s.spy[pid]) ? s.spy[pid] : null })),
       mySpy: s.names[id] !== undefined ? spy : null,
-      log: s.log.slice(-6),
+      log: s.log.slice(-30),
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over,
       winner: s.winner || null,
@@ -216,12 +215,12 @@
     } else if (v.phase === 'mission') {
       const inTeam = v.team.includes(me);
       body = `<p>Команда на задании… ${timer}</p>` + (inTeam && !v.myCard ? `<div class="pt-choices"><button class="btn btn-primary" type="button" data-card="ok">✅ Выполнить</button>${v.mySpy ? '<button class="btn btn-ghost rs-fail" type="button" data-card="fail">❌ Провалить</button>' : ''}</div>` : inTeam ? '<p class="pt-muted">Карта сыграна.</p>' : '') + `<p class="pt-muted">Сыграли карты: ${v.played.length} из ${v.team.length}</p>`;
-    } else if (v.phase === 'reveal') body = `<p class="pt-big">${esc(v.log[v.log.length - 1])}</p>`;
+    } else if (v.phase === 'reveal') body = `<p class="pt-big">${esc(v.log[v.log.length - 1].t)}</p>`;
     else if (v.over) {
       const mine = v.mySpy === null ? null : v.mySpy === (v.winner === 'spy');
       body = `<p class="pt-big">${v.winner === 'spy' ? '🕶 Победа шпионов' : '✊ Победа Сопротивления'}</p>${mine === null ? '' : `<p>${mine ? 'Вы победили!' : 'Вы проиграли.'}</p>`}`;
     }
-    el.innerHTML = `<div class="pt-panel rs">${role}<div class="rs-track">${track}</div><div class="rs-list">${list}</div>${body}<div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>`;
+    el.innerHTML = `<div class="pt-panel rs">${role}<div class="rs-track">${track}</div><div class="rs-list">${list}</div>${body}</div>`;
     el.querySelectorAll('.rs-p').forEach((b) =>
       b.addEventListener('click', () => {
         if (v.phase !== 'pick' || v.leader !== me) return;

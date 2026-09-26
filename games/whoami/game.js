@@ -52,9 +52,8 @@
     return s;
   }
 
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 12) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
   const active = (s) => s.ids.filter((id) => !s.done.includes(id));
   // кому игрок загадывает персонажа (следующему по кругу)
@@ -177,7 +176,7 @@
       myAns: s.answers[id],
       writeFor: s.phase === 'write' && s.names[id] ? target(s, id) : null,
       wrote: s.phase === 'write' ? s.ids.filter((x) => s.who[target(s, x)]) : [],
-      log: s.log.slice(-8),
+      log: s.log.slice(-30),
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over: s.phase === 'end',
       place: s.place,
@@ -213,7 +212,7 @@
       body = `<p class="pt-big">${w === me ? 'Вы угадали первым! 🏆' : 'Первым угадал(а) ' + esc(ui.name(w))}</p>`;
     }
     const giveup = !v.over && v.phase !== 'write' && !v.done && !ui.watcher ? '<button class="btn btn-ghost wa-give" type="button" data-giveup>Сдаться</button>' : '';
-    el.innerHTML = `<div class="pt-panel wa"><div class="wa-cards">${cards}</div>${body}<div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div>${giveup}</div>`;
+    el.innerHTML = `<div class="pt-panel wa"><div class="wa-cards">${cards}</div>${body}${giveup}</div>`;
     el.querySelectorAll('.wa-form').forEach((f) =>
       f.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -227,7 +226,7 @@
     if (sk) sk.addEventListener('click', () => ui.send({ skip: 1 }));
     const g = el.querySelector('[data-giveup]');
     if (g) g.addEventListener('click', () => confirm('Сдаться и узнать, кто вы?') && ui.send({ giveup: 1 }));
-    const key = v.phase + v.turn + v.log.length;
+    const key = v.phase + v.turn + (v.log.length ? v.log[v.log.length - 1].n : 0);
     if (render.key !== key) {
       render.key = key;
       if (v.phase === 'answer' && v.turn !== me) SG.sound.play('hint');

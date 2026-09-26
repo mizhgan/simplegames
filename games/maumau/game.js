@@ -24,9 +24,8 @@
     return s;
   }
 
-  function say(s, text) {
-    s.log.push(text);
-    if (s.log.length > 6) s.log.shift();
+  function say(s, text, o) {
+    SG.party.log(s, text, o);
   }
 
   const top = (s) => s.pile[s.pile.length - 1];
@@ -165,7 +164,7 @@
       penalty: s.penalty,
       deck: s.draw.length,
       dir: s.dir,
-      log: s.log.slice(-4),
+      log: s.log.slice(-30),
       winner: s.winner,
       over: s.winner !== null,
       myTurn: cur(s) === id && s.winner === null,
@@ -199,7 +198,7 @@
       `<div class="tb"><div class="pt-seats">${seats}</div>` +
       `<div class="tb-center"><div class="tb-row">${C.back('mm-deck')}<span class="tb-pot">колода ${v.deck}</span>${C.html(v.top)}${suitNote}</div>` +
       `<div class="tb-msg">${status}</div>` +
-      `<div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div>` +
+      `` +
       (v.penalty ? `<div class="tb-pot">Штраф: +${v.penalty}</div>` : '') +
       `</div>` +
       (v.hand ? `<div class="tb-hand mine">${hand}</div>` : '') +

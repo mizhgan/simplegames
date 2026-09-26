@@ -287,19 +287,156 @@
 
 .pt-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: var(--sp-3);
+  align-items: start;
   width: 100%;
-  max-width: 980px;
+  max-width: 1040px;
 }
 
-.pt-main > .pt-table {
+.pt-stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
   min-width: 0;
 }
 
-.pt-chat[hidden] + *,
-.pt-main:has(.pt-chat[hidden]) {
+.pt-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.pt-main:has(.pt-chat[hidden]):has(.pt-events[hidden]) {
   grid-template-columns: minmax(0, 1fr);
+}
+
+/* ---------- «Ход игры»: лента событий ---------- */
+
+.pt-events {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.pt-events h3 {
+  margin: var(--sp-1) 0 var(--sp-2);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pt-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 340px;
+  margin: 0;
+  padding: 0 var(--sp-1) 0 0;
+  overflow-y: auto;
+  list-style: none;
+  font-size: 0.86rem;
+  overscroll-behavior: contain;
+}
+
+.pt-ev {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: flex-start;
+  padding: 4px 6px;
+  border-radius: var(--radius-xs);
+  line-height: 1.35;
+  transition: background var(--dur-slow);
+}
+
+.pt-ev.new {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.pt-ev-ico {
+  flex: none;
+  width: 1.3em;
+  text-align: center;
+}
+
+.pt-ev-ava,
+.pt-now .pt-ev-ava {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.pt-ev-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pt-who {
+  font-weight: 800;
+}
+
+.pt-ev.tone-good .pt-ev-text {
+  color: color-mix(in srgb, var(--success) 70%, var(--text));
+}
+
+.pt-ev.tone-bad .pt-ev-text {
+  color: color-mix(in srgb, var(--danger) 75%, var(--text));
+}
+
+.pt-ev.tone-warn .pt-ev-text {
+  color: color-mix(in srgb, var(--warning) 70%, var(--text));
+}
+
+.pt-ev.big {
+  font-weight: 700;
+}
+
+/* «что произошло»: последнее событие крупно над столом */
+.pt-now {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-weight: 600;
+}
+
+.pt-now.tone-good {
+  border-left-color: var(--success);
+}
+
+.pt-now.tone-bad {
+  border-left-color: var(--danger);
+}
+
+.pt-now.tone-warn {
+  border-left-color: var(--warning);
+}
+
+.pt-now.flash {
+  animation: pt-now-in var(--dur-slow) var(--ease);
+}
+
+@keyframes pt-now-in {
+  from {
+    background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+    transform: translateY(-3px);
+  }
 }
 
 .pt-chat {
@@ -356,6 +493,17 @@
 
   .pt-chat {
     max-height: 240px;
+  }
+
+  .pt-events-list {
+    max-height: 180px;
+  }
+
+  .pt-now {
+    position: sticky;
+    top: 72px;
+    z-index: var(--z-raised);
+    box-shadow: var(--shadow-sm);
   }
 }
 

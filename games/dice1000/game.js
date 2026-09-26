@@ -55,9 +55,8 @@
   }
 
   const cur = (s) => s.ids[s.turn];
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 6) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
   const rollDice = (n) => Array.from({ length: n }, () => 1 + Math.floor(Math.random() * 6));
 
@@ -147,7 +146,7 @@
       kept: s.kept,
       turnPts: s.turnPts,
       hint: s.phase === 'pick' ? best(s.roll).v : 0,
-      log: s.log.slice(-5),
+      log: s.log.slice(-30),
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over: s.winner !== null,
       winner: s.winner,
@@ -184,7 +183,7 @@
       `<div class="pt-panel dk"><div class="pt-seats">${seats}</div><p class="dk-status">${status} ${!v.over ? `<span class="pt-timer" data-left="${v.left}">${Math.ceil(v.left)}</span>` : ''}</p>` +
       `<div class="dk-dice">${dice || '<span class="pt-muted">кубики в стакане</span>'}</div>` +
       (v.kept.length ? `<div class="dk-kept">Отложено: ${v.kept.map((d) => FACES[d]).join('')}</div>` : '') +
-      `<div class="tb-actions">${actions}</div><div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div>` +
+      `<div class="tb-actions">${actions}</div>` +
       `<details class="dk-rules"><summary>Очки</summary><p>1 — 10, 5 — 5. Три одинаковых: единицы — 100, остальные — ×10 (три шестёрки — 60). Четыре — вдвое, пять — вдесятеро. Стрит 1–5 — 125, 2–6 — 250.</p></details></div>`;
     el.querySelectorAll('.dk-die:not(:disabled)').forEach((b) =>
       b.addEventListener('click', () => {
