@@ -17,7 +17,7 @@
        chat(state, id, text) → undefined | false (не показывать) | 'другой текст',
        relay(state, id, msg) → true (разослать остальным), // поток данных мимо «вида» (рисунок)
        onRelay(msg, ui),                          // у всех: пришли данные потока
-       render(view, ui),                          // ui: { el, me, send(action), relay(msg), players, host, left(sec), mode, hold(ms, busy) }
+       render(view, ui),                          // ui: { el, me, send(action), relay(msg), players, host, left(sec), mode, hold(ms, busy, firstMs) }
        local: { label, start(ui) },               // свой режим «на одном устройстве» (необязательно)
      });
    Разметка: <div id="party"></div> внутри .game-stage.
@@ -857,10 +857,13 @@
           return p ? p.name : '?';
         },
         chat: (text) => sysChat(text),
-        // игра показывает анимацию (кубики, ход фишки): новые записи ленты, кроме первой, ждут ms, ходы ботов — busy (по умолчанию столько же)
-        hold(ms, busy) {
-          holdUntil = Math.max(holdUntil, Date.now() + ms);
-          busyUntil = Math.max(busyUntil, Date.now() + (busy === undefined ? ms : busy));
+        // игра показывает анимацию (кубики, ход фишки): первая новая запись ленты ждёт firstMs (по умолчанию 0),
+        // остальные — ms, ходы ботов — busy (по умолчанию ms)
+        hold(ms, busy, firstMs) {
+          const now = Date.now();
+          holdUntil = Math.max(holdUntil, now + ms);
+          firstUntil = Math.max(firstUntil, now + (firstMs || 0));
+          busyUntil = Math.max(busyUntil, now + (busy === undefined ? ms : busy));
         },
         // сообщение в чат от своего имени (например, догадка в «Крокодиле»)
         say(text) {
@@ -913,6 +916,7 @@
     let shownLog = [];
     // пока идёт анимация хода (ui.hold), в ленте видна только первая новая запись — остальные после неё
     let holdUntil = 0;
+    let firstUntil = 0;
     let busyUntil = 0;
     let holdTimer = 0;
     let pendingLog = null;
@@ -971,17 +975,17 @@
     function renderEvents(log) {
       pendingLog = log;
       if (holdTimer) return;
-      const wait = holdUntil - Date.now();
-      if (wait > 0 && log && shownLog.length) {
-        const n = freshCount(log);
-        if (n > 1) {
-          drawEvents(log.slice(0, log.length - n + 1));
-          holdTimer = setTimeout(() => {
-            holdTimer = 0;
-            renderEvents(pendingLog);
-          }, wait);
-          return;
-        }
+      const now = Date.now();
+      const n = log && shownLog.length ? freshCount(log) : 0;
+      // сначала ждёт даже первая новая запись (кубики ещё катятся), потом видна только она, остальные — когда анимация дойдёт
+      const lead = firstUntil > now && n > 0 ? 0 : holdUntil > now && n > 1 ? 1 : -1;
+      if (lead >= 0) {
+        drawEvents(log.slice(0, log.length - n + lead));
+        holdTimer = setTimeout(() => {
+          holdTimer = 0;
+          renderEvents(pendingLog);
+        }, (lead ? holdUntil : firstUntil) - now);
+        return;
       }
       drawEvents(log);
     }
@@ -1294,7 +1298,7 @@
       shownLog = [];
       clearTimeout(holdTimer);
       holdTimer = 0;
-      holdUntil = busyUntil = 0;
+      holdUntil = firstUntil = busyUntil = 0;
       pendingLog = null;
       seatNums = {};
       eventsList.innerHTML = '';

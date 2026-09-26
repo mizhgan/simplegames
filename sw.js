@@ -1,5 +1,5 @@
 /* Service worker SimpleGames: офлайн-режим. Файл генерируется: python3 tools/build.py */
-const VERSION = '9f6c07baeff2';
+const VERSION = 'f14bfa310dc4';
 const CACHE = 'sg-' + VERSION;
 const PRECACHE = [
   "./",
@@ -527,7 +527,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // остальное: сразу из кеша, а в фоне обновляем
+  // код (скрипты, стили, данные): сначала сеть — иначе после обновления сайта страница
+  // получила бы из кеша старый код вперемешку с новым; без сети — из кеша
+  if (/\.(js|css|json)$/.test(new URL(request.url).pathname)) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => saveCopy(request, response))
+        .catch(() => caches.match(request, { ignoreSearch: true }))
+    );
+    return;
+  }
+
+  // остальное (картинки, шрифты, звуки): сразу из кеша, а в фоне обновляем
   event.respondWith(
     caches.match(request, { ignoreSearch: true }).then((cached) => {
       const network = fetch(request)
