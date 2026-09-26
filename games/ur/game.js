@@ -6,6 +6,8 @@
   const END = 15; // 0 — ещё не вышла, 1–14 — на поле, 15 — дома
   const ROSETTE = [4, 8, 14];
   const shared = (p) => p >= 5 && p <= 12;
+  const ROLL_MS = 800; // бросок кубиков
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function rnd(s) {
     s.rnd = (s.rnd + 0x6d2b79f5) >>> 0;
@@ -157,6 +159,17 @@
     if (t) duel.play({ from: t.from });
   }
 
+  // один спокойный оборот: кубики докатываются и ближе к концу ложатся выпавшей стороной (сумму покажет render)
+  let rolled = null; // ход, бросок которого сейчас катится
+  function rollDice(el, dice) {
+    const b = el.querySelector('b');
+    if (b) b.textContent = '';
+    if (!el.querySelector('.ur-die')) el.innerHTML = '<i class="ur-die"></i>'.repeat(4) + '<b></b>';
+    el.classList.add('rolling');
+    // грани меняем у тех же кубиков, чтобы не начинать их вращение заново
+    setTimeout(() => el.classList.contains('rolling') && el.querySelectorAll('.ur-die').forEach((x, i) => x.classList.toggle('on', !!dice[i])), ROLL_MS * 0.6);
+  }
+
   $('ur-roll').addEventListener('click', () => duel.play({ roll: 1 }));
   $('ur-pool-0').addEventListener('click', () => duel.canMove() && duel.state.turn === 0 && duel.play({ from: 0 }));
   $('ur-pool-1').addEventListener('click', () => duel.canMove() && duel.state.turn === 1 && duel.play({ from: 0 }));
@@ -178,6 +191,8 @@
     ai,
     aiDelay: 600,
     sound: (s, m) => (m.roll ? 'drop' : s.last && s.last.hit ? 'capture' : 'place'),
+    roll: (s, m) => (m.roll && !reduce() ? ROLL_MS : 0),
+    rollText: 'Кубики катятся…',
     render(s, v) {
       Object.values(cells).forEach((c) => {
         c.innerHTML = '';
@@ -207,6 +222,17 @@
         pool.innerHTML = '<span>Ждут:</span>' + ('<i class="ur-pc s' + side + '"></i>').repeat(waiting) + '<span>Дома: ' + home(s, side) + '</span>';
         pool.classList.toggle('can', ts.some((t) => t.from === 0) && s.turn === side);
       }
+      // пока кубики катятся, выпавшее и его последствия не показываем
+      if (v.busy) {
+        if (v.last !== rolled) {
+          rolled = v.last;
+          rollDice($('ur-dice'), s.dice);
+        }
+        $('ur-roll').disabled = true;
+        return;
+      }
+      rolled = null;
+      $('ur-dice').classList.remove('rolling');
       $('ur-dice').innerHTML = s.dice ? s.dice.map((d) => `<i class="ur-die${d ? ' on' : ''}"></i>`).join('') + `<b>${s.roll}</b>` : '';
       $('ur-roll').disabled = !v.canMove || s.phase !== 'roll';
       let note = '';

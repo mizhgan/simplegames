@@ -162,7 +162,15 @@
   font-size: 44px;
   line-height: 1;
   color: var(--text);
-  animation: nd-roll 0.35s ease;
+}
+
+/* бросок: один спокойный оборот (только в момент броска, а не при каждой перерисовке) */
+.nd-dice.rolling .nd-die {
+  animation: nd-roll 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+.nd-dice.rolling .nd-die + .nd-die {
+  animation-name: nd-roll-2;
 }
 
 .nd-die.ai {
@@ -174,8 +182,31 @@
 }
 
 @keyframes nd-roll {
-  from {
-    transform: rotate(-200deg) scale(0.4);
-    opacity: 0;
+  0% {
+    transform: translateY(-8px) rotate(-450deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(6deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes nd-roll-2 {
+  0% {
+    transform: translateY(-6px) rotate(420deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(-4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nd-dice.rolling .nd-die {
+    animation: none;
   }
 }

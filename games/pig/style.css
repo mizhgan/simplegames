@@ -51,13 +51,25 @@
   color: var(--danger);
 }
 
-.pg-die.roll {
-  animation: pg-roll 0.35s ease-out;
+.pg-die.rolling {
+  animation: pg-roll 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
 }
 
 @keyframes pg-roll {
-  from {
-    transform: rotate(-200deg) scale(0.6);
+  0% {
+    transform: translateY(-8px) rotate(-450deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(6deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-die.rolling {
+    animation: none;
   }
 }
 

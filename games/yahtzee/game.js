@@ -30,6 +30,11 @@
   let mode = SG.store.get('yahtzee-mode', 'ai');
   let dice, held, rollsLeft, turn, sheets, over, busy, timer;
   let lastAi = -1;
+  // пока кости катятся, выпавшее не записать и не перебросить; ходы соперника по сети ждут
+  const ROLL_MS = 800;
+  let rolling = false;
+  let spinId = 0;
+  let pending = [];
 
   // ---------- подсчёт ----------
 
@@ -140,20 +145,40 @@
 
   function roll() {
     if (over || rollsLeft === 0) return;
+    const was = dice;
     dice = dice.map((v, i) => (held[i] && rollsLeft < 3 ? v : rnd()));
     rollsLeft--;
     if (mode === 'net' && turn === 0) net.send({ t: 'roll', dice, held });
     SG.sound.play('drop');
-    render(true);
+    spin(was);
+  }
+
+  // один спокойный оборот: брошенные кости докатываются и ближе к концу ложатся выпавшими гранями
+  function spin(was) {
+    const my = ++spinId;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return render();
+    rolling = true;
+    render(was);
+    setTimeout(() => {
+      if (my !== spinId) return;
+      [...diceEl.children].forEach((el, i) => el.classList.contains('rolling') && (el.innerHTML = dieHTML(dice[i])));
+    }, ROLL_MS * 0.6);
+    setTimeout(() => {
+      if (my !== spinId) return;
+      rolling = false;
+      [...diceEl.children].forEach((el) => el.classList.remove('rolling'));
+      render();
+      while (pending.length && !rolling) onNet(pending.shift());
+    }, ROLL_MS);
   }
 
   function humanRoll() {
-    if (busy || turn !== 0 || (mode === 'net' && !net.active)) return;
+    if (busy || rolling || turn !== 0 || (mode === 'net' && !net.active)) return;
     roll();
   }
 
   function toggleHold(i) {
-    if (busy || turn !== 0 || over || rollsLeft === 3 || rollsLeft === 0) return;
+    if (busy || rolling || turn !== 0 || over || rollsLeft === 3 || rollsLeft === 0) return;
     held[i] = !held[i];
     if (mode === 'net') net.send({ t: 'hold', held });
     SG.sound.play('click');
@@ -163,6 +188,7 @@
   function record(cat) {
     const sheet = sheets[turn];
     if (sheet[cat] != null || rollsLeft === 3) return;
+    if (turn === 1) lastAi = cat;
     if (mode === 'net' && turn === 0) net.send({ t: 'rec', cat });
     sheet[cat] = scoreFor(cat, dice);
     SG.sound.play(sheet[cat] ? (cat === 11 ? 'win' : 'coin') : 'error');
@@ -185,7 +211,7 @@
     const step = () => {
       if (rollsLeft === 3) {
         roll();
-        timer = setTimeout(step, 700);
+        timer = setTimeout(step, ROLL_MS + 500);
         return;
       }
       if (rollsLeft > 0) {
@@ -195,7 +221,7 @@
           render();
           timer = setTimeout(() => {
             roll();
-            timer = setTimeout(step, 700);
+            timer = setTimeout(step, ROLL_MS + 500);
           }, 550);
           return;
         }
@@ -238,19 +264,20 @@
 
   const dieHTML = (v) => Array.from({ length: 9 }, (_, k) => `<i class="${PIPS[v].includes(k) ? 'on' : ''}"></i>`).join('');
 
-  function render(rolled) {
+  // was — грани до броска: брошенные кости начинают вращение с них (spin)
+  function render(was) {
     [...diceEl.children].forEach((el, i) => {
-      el.innerHTML = dieHTML(dice[i]);
-      el.classList.toggle('held', held[i] && rollsLeft < 3);
-      el.classList.toggle('blank', rollsLeft === 3);
-      if (rolled && !(held[i] && rollsLeft < 2)) {
+      if (was && !(held[i] && rollsLeft < 2)) {
+        el.innerHTML = dieHTML(was[i]);
         el.classList.remove('rolling');
         void el.offsetWidth;
         el.classList.add('rolling');
-      }
-      el.disabled = busy || turn !== 0 || over || rollsLeft === 3 || rollsLeft === 0;
+      } else if (!el.classList.contains('rolling')) el.innerHTML = dieHTML(dice[i]);
+      el.classList.toggle('held', held[i] && rollsLeft < 3);
+      el.classList.toggle('blank', rollsLeft === 3);
+      el.disabled = busy || rolling || turn !== 0 || over || rollsLeft === 3 || rollsLeft === 0;
     });
-    rollBtn.disabled = busy || turn !== 0 || over || rollsLeft === 0;
+    rollBtn.disabled = busy || rolling || turn !== 0 || over || rollsLeft === 0;
     rollBtn.textContent = rollsLeft === 3 ? 'Бросить кости' : 'Перебросить (' + rollsLeft + ')';
 
     const cols = mode === 'ai' || mode === 'net' ? [0, 1] : [0];
@@ -262,7 +289,7 @@
       cols.forEach((p) => {
         const v = sheets[p][k];
         if (v != null) tr += `<td class="${p === 1 && k === lastAi ? 'fresh' : ''}">${v}</td>`;
-        else if (p === turn && rollsLeft < 3 && !busy && !over) {
+        else if (p === turn && rollsLeft < 3 && !busy && !rolling && !over) {
           const s = scoreFor(k, dice);
           tr += `<td><button type="button" class="yz-pick ${s ? '' : 'zero'}" data-cat="${k}">${s}</button></td>`;
         } else tr += '<td></td>';
@@ -281,8 +308,11 @@
     $('best').textContent = SG.store.get('yahtzee-best', 0);
     if (!over) {
       if (mode === 'net' && !net.active) statusEl.textContent = 'Нет соединения с соперником';
+      else if (rolling) statusEl.textContent = 'Кости катятся…';
       else if (turn === 1) statusEl.textContent = mode === 'net' ? 'Ходит соперник…' : 'Ходит компьютер…';
-      else if (rollsLeft === 3) statusEl.textContent = 'Бросайте кости.';
+      else if (rollsLeft === 3)
+        // что только что записал соперник — сколько и куда
+        statusEl.textContent = (lastAi >= 0 && mode !== 'solo' ? (mode === 'net' ? 'Соперник' : 'Компьютер') + ' записал ' + sheets[1][lastAi] + ' в «' + CATS[lastAi].name + '». ' : '') + 'Бросайте кости.';
       else if (rollsLeft > 0) statusEl.textContent = 'Отметьте кости, которые оставить, и перебросьте остальные — или запишите результат.';
       else statusEl.textContent = 'Выберите, куда записать результат.';
     }
@@ -294,7 +324,7 @@
   });
   tableEl.addEventListener('click', (e) => {
     const b = e.target.closest('.yz-pick');
-    if (b && turn === 0 && !busy) record(Number(b.dataset.cat));
+    if (b && turn === 0 && !busy && !rolling) record(Number(b.dataset.cat));
   });
   rollBtn.addEventListener('click', () => {
     rollBtn.blur();
@@ -311,6 +341,10 @@
 
   function newGame(first) {
     clearTimeout(timer);
+    spinId++;
+    rolling = false;
+    pending = [];
+    [...diceEl.children].forEach((el) => el.classList.remove('rolling'));
     dice = [1, 2, 3, 4, 5];
     held = [false, false, false, false, false];
     rollsLeft = 3;
@@ -345,22 +379,7 @@
       netFirst = role === 'host' ? 0 : 1;
       newGame(netFirst);
     },
-    onMessage(msg) {
-      if (msg.t === 'new') {
-        netFirst = msg.first === 'you' ? 0 : 1;
-        newGame(netFirst);
-      } else if (turn !== 1 || over) return;
-      else if (msg.t === 'roll' && Array.isArray(msg.dice) && msg.dice.length === 5 && rollsLeft > 0) {
-        dice = msg.dice.map((v) => Math.min(6, Math.max(1, v | 0)));
-        held = (msg.held || []).map(Boolean).slice(0, 5);
-        rollsLeft--;
-        SG.sound.play('drop');
-        render(true);
-      } else if (msg.t === 'hold' && Array.isArray(msg.held)) {
-        held = msg.held.map(Boolean).slice(0, 5);
-        render();
-      } else if (msg.t === 'rec' && Number.isInteger(msg.cat) && msg.cat >= 0 && msg.cat < 13) record(msg.cat);
-    },
+    onMessage: (msg) => onNet(msg),
     onDisconnect(voluntary) {
       if (mode !== 'net') return;
       if (voluntary) {
@@ -370,6 +389,25 @@
       } else render();
     },
   });
+
+  function onNet(msg) {
+    if (rolling && msg.t !== 'new') return pending.push(msg);
+    if (msg.t === 'new') {
+      netFirst = msg.first === 'you' ? 0 : 1;
+      newGame(netFirst);
+    } else if (turn !== 1 || over) return;
+    else if (msg.t === 'roll' && Array.isArray(msg.dice) && msg.dice.length === 5 && rollsLeft > 0) {
+      const was = dice;
+      held = (msg.held || []).map(Boolean).slice(0, 5);
+      dice = msg.dice.map((v) => Math.min(6, Math.max(1, v | 0)));
+      rollsLeft--;
+      SG.sound.play('drop');
+      spin(was);
+    } else if (msg.t === 'hold' && Array.isArray(msg.held)) {
+      held = msg.held.map(Boolean).slice(0, 5);
+      render();
+    } else if (msg.t === 'rec' && Number.isInteger(msg.cat) && msg.cat >= 0 && msg.cat < 13) record(msg.cat);
+  }
 
   const modeSeg = SG.segmented($('mode'), mode, (v) => {
     mode = v;

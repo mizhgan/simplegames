@@ -976,7 +976,7 @@
       pendingLog = log;
       if (holdTimer) return;
       const now = Date.now();
-      const n = log && shownLog.length ? freshCount(log) : 0;
+      const n = log ? (shownLog.length ? freshCount(log) : log.length) : 0;
       // сначала ждёт даже первая новая запись (кубики ещё катятся), потом видна только она, остальные — когда анимация дойдёт
       const lead = firstUntil > now && n > 0 ? 0 : holdUntil > now && n > 1 ? 1 : -1;
       if (lead >= 0) {

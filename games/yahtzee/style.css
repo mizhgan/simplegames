@@ -43,7 +43,7 @@
 }
 
 .yz-die.rolling {
-  animation: yz-roll 0.4s ease-out;
+  animation: yz-roll 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
 }
 
 .yz-table {
@@ -125,7 +125,19 @@
 }
 
 @keyframes yz-roll {
-  0% { transform: rotate(0) scale(0.8); }
-  60% { transform: rotate(300deg) scale(1.05); }
-  100% { transform: rotate(360deg) scale(1); }
+  0% {
+    transform: translateY(-8px) rotate(-450deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(6deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yz-die.rolling {
+    animation: none;
+  }
 }

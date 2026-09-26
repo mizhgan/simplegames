@@ -5,6 +5,8 @@
   const FACES = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
   const BAR = -1;
   const OFF = 24;
+  const ROLL_MS = 800; // бросок костей
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function rnd(s) {
     s.rnd = (s.rnd + 0x6d2b79f5) >>> 0;
@@ -304,6 +306,17 @@
     } else sel = null;
     duel.render();
   }
+  // один спокойный оборот: кости докатываются и ближе к концу ложатся выпавшими гранями (остальное покажет render)
+  let rolled = null; // ход, бросок которого сейчас катится
+  function rollDice(el, dice) {
+    const spans = el.querySelectorAll('.nd-die');
+    if (spans.length !== 2) el.innerHTML = '<span class="nd-die">🎲</span><span class="nd-die">🎲</span>';
+    el.querySelectorAll('.nd-die').forEach((x) => x.classList.remove('used'));
+    el.classList.add('rolling');
+    // грани меняем у тех же костей, чтобы не начинать их вращение заново
+    setTimeout(() => el.classList.contains('rolling') && el.querySelectorAll('.nd-die').forEach((x, i) => (x.textContent = FACES[dice[i]])), ROLL_MS * 0.6);
+  }
+
   $('bg-off').addEventListener('click', () => clickPoint(OFF));
   $('bg-roll').addEventListener('click', () => duel.play({ roll: 1 }));
 
@@ -321,6 +334,8 @@
     ai,
     aiDelay: 700,
     sound: (s, m) => (m.roll ? 'drop' : s.last && s.last.hit ? 'capture' : 'place'),
+    roll: (s, m) => (m.roll && !reduce() ? ROLL_MS : 0),
+    rollText: 'Кости катятся…',
     onNew() {
       sel = null;
     },
@@ -354,6 +369,16 @@
       $('off-0').textContent = s.off[0];
       $('off-1').textContent = s.off[1];
       $('bg-roll').disabled = !v.canMove || s.phase !== 'roll';
+      // пока кости катятся, выпавшее и его последствия не показываем
+      if (v.busy) {
+        if (v.last !== rolled) {
+          rolled = v.last;
+          rollDice($('dice'), s.dice);
+        }
+        return;
+      }
+      rolled = null;
+      $('dice').classList.remove('rolling');
       const all = s.dice.length ? (s.dice[0] === s.dice[1] ? [s.dice[0], s.dice[0], s.dice[0], s.dice[0]] : s.dice.slice()) : [];
       const left = s.left.slice();
       $('dice').innerHTML = s.phase === 'roll' && !s.last ? '' : all
