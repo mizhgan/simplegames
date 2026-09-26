@@ -40,6 +40,44 @@
   cursor: default;
 }
 
+.dk-dice.rolling .dk-die {
+  animation: dk-roll 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+.dk-dice.rolling .dk-die:nth-child(even) {
+  animation-name: dk-roll-2;
+}
+
+@keyframes dk-roll {
+  0% {
+    transform: translateY(-8px) rotate(-450deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(6deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes dk-roll-2 {
+  0% {
+    transform: translateY(-6px) rotate(420deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(-4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dk-dice.rolling .dk-die {
+    animation: none;
+  }
+}
+
 .dk-die.sel {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 16%, transparent);

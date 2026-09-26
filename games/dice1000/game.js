@@ -6,6 +6,8 @@
   const GOAL = 1000;
   const TURN_TIME = 30;
   const FACES = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+  const ROLL_MS = 800; // бросок кубиков
+  const pts = (n) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? 'очко' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'очка' : 'очков');
 
   // очки за набор отложенных кубиков; null — в наборе есть «пустой» кубик
   function score(dice) {
@@ -76,7 +78,7 @@
     s.roll = rollDice(n);
     s.deadline = now + TURN_TIME * 1000;
     if (!best(s.roll).v) {
-      say(s, '💥 ' + s.names[cur(s)] + ': ' + s.roll.map((d) => FACES[d]).join('') + ' — пусто, очки хода сгорают');
+      say(s, s.names[cur(s)] + ': ' + s.roll.map((d) => FACES[d]).join('') + ' — пусто, ' + (s.turnPts ? 'сгорает ' + pts(s.turnPts) + ' хода' : 'ход переходит'), { i: '💥', k: 'bad' });
       s.phase = 'bust';
       s.deadline = now + 2500;
     } else s.phase = 'pick';
@@ -154,23 +156,48 @@
   }
 
   let sel = [];
+  // бросок: кубики крутятся ROLL_MS, пока лента, боты и кнопки ждут; до броска — прежние грани
+  const spin = { key: undefined, until: 0, was: [], shown: [], timer: 0 };
+  let last = null;
   function render(v, ui) {
     const el = ui.el;
     const me = ui.me;
-    const mine = v.turn === me && !v.over;
+    last = { v, ui };
+    const rkey = v.turn + v.phase + v.roll.join('') + '/' + v.kept.length;
+    if (rkey !== spin.key) {
+      const fresh = spin.key !== undefined && v.roll.length && (v.phase === 'pick' || v.phase === 'bust') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      spin.key = rkey;
+      if (fresh) {
+        spin.until = Date.now() + ROLL_MS;
+        spin.was = v.roll.map((d, i) => spin.shown[i % spin.shown.length] || 1 + Math.floor(Math.random() * 6));
+        if (ui.hold) ui.hold(ROLL_MS, ROLL_MS + 150, ROLL_MS);
+        clearTimeout(spin.timer);
+        spin.timer = setTimeout(() => {
+          if (!last || !last.ui.el.isConnected) return;
+          render(last.v, last.ui);
+          if (last.v.phase === 'bust') SG.sound.play('error');
+        }, ROLL_MS);
+      }
+    }
+    const rolling = Date.now() < spin.until;
+    if (!rolling && v.roll.length) spin.shown = v.roll;
+    const mine = v.turn === me && !v.over && !rolling;
     if (v.phase !== 'pick' || !mine) sel = [];
     const selV = score(sel.map((i) => v.roll[i]));
     const seats = v.players
       .map((p) => `<div class="pt-seat${p.id === v.turn && !v.over ? ' turn' : ''}${p.id === me ? ' me' : ''}" data-seat="${p.id}" data-num="${p.score}" data-unit="очков"><b>${esc(p.name)}</b><span>${p.score} / ${GOAL}</span><i class="dk-bar" style="width:${Math.min(100, (p.score / GOAL) * 100)}%"></i></div>`)
       .join('');
-    const dice = v.roll.map((d, i) => `<button type="button" class="dk-die${sel.includes(i) ? ' sel' : ''}" data-i="${i}" ${mine && v.phase === 'pick' ? '' : 'disabled'}>${FACES[d]}</button>`).join('');
+    const dice = v.roll.map((d, i) => `<button type="button" class="dk-die${sel.includes(i) ? ' sel' : ''}" data-i="${i}" ${mine && v.phase === 'pick' ? '' : 'disabled'}>${FACES[rolling ? spin.was[i] : d]}</button>`).join('');
     let status;
-    if (v.over) status = v.winner === me ? 'Вы набрали тысячу! 🏆' : esc(ui.name(v.winner)) + ' побеждает';
+    if (rolling) status = (v.turn === me ? 'Бросаем' : 'Бросает ' + esc(ui.name(v.turn))) + '…' + (v.turnPts ? ' · в ходе ' + v.turnPts : '');
+    else if (v.over) status = v.winner === me ? 'Вы набрали тысячу! 🏆' : esc(ui.name(v.winner)) + ' побеждает';
+    else if (v.phase === 'bust') status = 'Пусто — ' + (v.turnPts ? 'сгорает ' + pts(v.turnPts) + ', ' : '') + 'ход переходит.';
     else if (!mine) status = 'Бросает ' + esc(ui.name(v.turn)) + (v.turnPts ? ' · в ходе ' + v.turnPts : '');
     else if (v.phase === 'roll') status = 'Ваш ход — бросайте!';
     else if (v.phase === 'pick') status = 'Отметьте кубики с очками' + (selV ? ': +' + selV : selV === null && sel.length ? ' — в наборе лишний кубик' : '') + ' · в ходе ' + v.turnPts;
-    else status = 'Пусто — ход переходит.';
     let actions = '';
+    // пока свои кубики катятся, кнопка броска видна, но ждёт
+    if (rolling && v.turn === me && !v.over) actions = '<button class="btn btn-primary" type="button" disabled>🎲 Бросить</button>';
     if (mine && v.phase === 'roll') actions = '<button class="btn btn-primary" type="button" data-roll>🎲 Бросить</button>';
     if (mine && v.phase === 'pick') {
       const leftN = v.roll.length - sel.length;
@@ -181,7 +208,7 @@
     }
     el.innerHTML =
       `<div class="pt-panel dk"><div class="pt-seats">${seats}</div><p class="dk-status">${status} ${!v.over ? `<span class="pt-timer" data-left="${v.left}">${Math.ceil(v.left)}</span>` : ''}</p>` +
-      `<div class="dk-dice">${dice || '<span class="pt-muted">кубики в стакане</span>'}</div>` +
+      `<div class="dk-dice${rolling ? ' rolling' : ''}">${dice || '<span class="pt-muted">кубики в стакане</span>'}</div>` +
       (v.kept.length ? `<div class="dk-kept">Отложено: ${v.kept.map((d) => FACES[d]).join('')}</div>` : '') +
       `<div class="tb-actions">${actions}</div>` +
       `<details class="dk-rules"><summary>Очки</summary><p>1 — 10, 5 — 5. Три одинаковых: единицы — 100, остальные — ×10 (три шестёрки — 60). Четыре — вдвое, пять — вдесятеро. Стрит 1–5 — 125, 2–6 — 250.</p></details></div>`;
@@ -206,10 +233,16 @@
         sel = best(v.roll).idx;
         render(v, ui);
       });
+    if (rolling) {
+      // грани меняются один раз, ближе к концу оборота, у тех же кубиков
+      const left = spin.until - Date.now();
+      const faces = v.roll.slice();
+      setTimeout(() => el.querySelectorAll('.dk-dice.rolling .dk-die').forEach((b, i) => (b.textContent = FACES[faces[i]])), Math.max(0, left - ROLL_MS * 0.4));
+    }
     const key = v.roll.join('') + v.phase + v.turn;
     if (render.key !== key) {
       render.key = key;
-      if (v.roll.length) SG.sound.play(v.phase === 'bust' ? 'error' : 'drop');
+      if (v.roll.length) SG.sound.play(v.phase === 'bust' && !rolling ? 'error' : 'drop');
     }
     if (v.over && !render.done) {
       render.done = true;
