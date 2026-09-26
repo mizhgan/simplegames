@@ -371,7 +371,7 @@
   const DIE = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
   // что уже показано: позиции фишек, деньги и последний ход — чтобы анимировать только изменения
-  const seen = { pos: {}, money: {}, jail: {}, move: 0 };
+  const seen = { pos: {}, money: {}, jail: {}, move: 0, dice: [0, 0] };
   const letter = (name) => (Array.from(String(name).trim().replace(/^Бот\s+/, ''))[0] || '?').toUpperCase();
 
   function render(v, ui) {
@@ -481,7 +481,7 @@
     });
   }
 
-  const ROLL_MS = 620; // бросок кубиков
+  const ROLL_MS = 800; // бросок кубиков
   const STEP_MS = 170; // шаг фишки по клетке
   const JUMP_MS = 420; // прыжок по карточке «Шанс» или в тюрьму
   const PAUSE_MS = 900; // пауза перед прыжком: успеть прочитать, что выпало
@@ -518,9 +518,14 @@
     void layer.offsetWidth;
     layer.classList.remove('still');
 
-    if (rollMs) rollDice(dice, v.dice);
+    if (rollMs) {
+      // пока крутятся — прежние грани, выпавшие видны только в конце
+      dice.innerHTML = diceHtml(seen.dice[0] ? seen.dice : [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)]);
+      rollDice(dice, v.dice);
+    }
+    seen.dice = v.dice.slice();
     if (total) {
-      if (ui.hold) ui.hold(arrive, total + 150);
+      if (ui.hold) ui.hold(arrive, total + 150, rollMs);
       // пока ход не закончился, кнопки видны, но не нажимаются
       const acts = el.querySelector('.tb-actions');
       if (acts) acts.classList.add('mg-wait');
@@ -599,21 +604,14 @@
   }
 
   function rollDice(dice, final) {
-    // один спокойный бросок: грани меняются всё реже, кубики докатываются и встают
-    const rnd = () => 1 + Math.floor(Math.random() * 6);
-    dice.innerHTML = diceHtml([rnd(), rnd()]);
+    // один спокойный бросок: кубики крутятся, замедляются и, почти остановившись, показывают выпавшее
     dice.classList.add('rolling');
-    [110, 250, 420].forEach((ms) =>
-      setTimeout(() => {
-        if (dice.isConnected && dice.classList.contains('rolling')) dice.innerHTML = diceHtml([rnd(), rnd()]);
-      }, ms)
-    );
     setTimeout(() => {
-      if (!dice.isConnected) return;
-      dice.innerHTML = diceHtml(final);
-      dice.classList.remove('rolling');
-    }, ROLL_MS);
+      if (dice.isConnected) dice.innerHTML = diceHtml(final);
+    }, ROLL_MS * 0.6);
+    setTimeout(() => dice.isConnected && dice.classList.remove('rolling'), ROLL_MS);
   }
+
 
   // при изменении размера окна фишки встают на свои клетки заново
   let lastV = null;

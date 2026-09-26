@@ -201,23 +201,21 @@
   display: inline-block;
 }
 
-/* бросок: кубики один раз прокатываются с замедлением, второй чуть позже первого */
-.mg-dice.rolling {
-  animation: mg-roll 0.62s cubic-bezier(0.2, 0.7, 0.3, 1);
+/* бросок: кубики один раз плавно прокручиваются и останавливаются, второй чуть медленнее первого */
+.mg-dice.rolling span {
+  animation: mg-roll 0.8s cubic-bezier(0.15, 0.6, 0.25, 1);
 }
 
 .mg-dice.rolling span + span {
-  animation: mg-roll-2 0.62s cubic-bezier(0.2, 0.7, 0.3, 1);
+  animation-name: mg-roll-2;
 }
 
 @keyframes mg-roll {
   0% {
-    opacity: 0.4;
-    transform: translateY(-10px) rotate(-120deg) scale(0.85);
+    transform: translateY(-8px) rotate(-360deg);
   }
-  70% {
-    opacity: 1;
-    transform: translateY(1px) rotate(6deg) scale(1.02);
+  75% {
+    transform: translateY(1px) rotate(4deg);
   }
   100% {
     transform: none;
@@ -226,7 +224,10 @@
 
 @keyframes mg-roll-2 {
   0% {
-    transform: rotate(80deg);
+    transform: translateY(-6px) rotate(420deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(-3deg);
   }
   100% {
     transform: none;
@@ -290,7 +291,6 @@
     transition: none;
   }
 
-  .mg-dice.rolling,
   .mg-dice.rolling span {
     animation: none;
   }
