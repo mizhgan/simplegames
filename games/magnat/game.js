@@ -457,9 +457,12 @@
         const size = t.offsetWidth;
         // несколько фишек в клетке — веером, чтобы не закрывали друг друга
         const spread = toks.length > 1 ? (k - (toks.length - 1) / 2) * size * 0.55 : 0;
-        const x = r.left - b.left + r.width / 2 - size / 2 + spread;
-        const y = r.top - b.top + r.height * 0.62 - size / 2;
-        t.style.transform = `translate(${x}px, ${y}px)`;
+        // в процентах от поля: если поле потом сожмётся или растянется, фишки останутся на своих клетках
+        const x = ((r.left - b.left + r.width / 2) / b.width) * 100;
+        const y = ((r.top - b.top + r.height * 0.62) / b.height) * 100;
+        t.style.left = x + '%';
+        t.style.top = y + '%';
+        t.style.transform = `translate(calc(-50% + ${spread}px), -50%)`;
       });
     });
   }

@@ -138,7 +138,7 @@
   font-size: clamp(0.6rem, 1.4vw, 0.8rem);
   font-weight: 800;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
-  transition: transform 0.16s var(--ease);
+  transition: left 0.16s var(--ease), top 0.16s var(--ease), transform 0.16s var(--ease);
 }
 
 .mg-tokens.still .mg-tok {
