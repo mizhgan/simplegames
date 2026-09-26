@@ -237,7 +237,7 @@
         }
         s.again = dbl;
       }
-      say(s, name + ' бросает ' + d[0] + '+' + d[1] + ' → ' + B[(s.pos[id] + d[0] + d[1]) % N].n, { w: id, i: '🎲' });
+      say(s, name + (a.again ? ' бросает ещё раз: ' : ' бросает ') + d[0] + '+' + d[1] + ' → ' + B[(s.pos[id] + d[0] + d[1]) % N].n, { w: id, i: '🎲' });
       moveTo(s, id, (s.pos[id] + d[0] + d[1]) % N, true);
       if (s.out.includes(id)) {
         nextTurn(s, now);
@@ -277,10 +277,11 @@
     if (a.end) {
       s.offer = null;
       if (s.again) {
+        // дубль: сразу второй бросок, без лишнего нажатия «Бросить кубики»
         s.phase = 'roll';
-        s.deadline = now + TURN_TIME * 1000;
-        say(s, name + ' выбросил дубль — бросает ещё', { w: id, i: '🎲' });
-      } else nextTurn(s, now);
+        return act(s, id, { roll: 1, again: 1 }, now);
+      }
+      nextTurn(s, now);
       return true;
     }
     return false;
@@ -397,7 +398,7 @@
       if (me.jail && me.money >= 50) actions += '<button class="btn btn-ghost" type="button" data-bail>Заплатить 50 и выйти</button>';
     } else if (mine && v.phase === 'act') {
       if (v.offer !== null) actions += `<button class="btn btn-primary" type="button" data-buy>Купить ${esc(B[v.offer].n)} за ${B[v.offer].p}</button>`;
-      actions += `<button class="btn btn-ghost" type="button" data-end>${v.again ? 'Бросить ещё (дубль)' : 'Завершить ход'}</button>`;
+      actions += `<button class="btn btn-ghost" type="button" data-end>${v.again ? '🎲 Бросить ещё (дубль)' : 'Завершить ход'}</button>`;
       if (v.canBuild.length) actions += '<p class="pt-muted">Можно строить дома: нажмите на подсвеченную улицу.</p>';
     }
     const turnP = v.players.find((p) => p.id === v.turn);
