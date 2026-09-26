@@ -509,19 +509,18 @@
     const dk = v.dice.join();
     const dice = el.querySelector('.mg-dice');
     if (dice && v.dice[0] && dk !== seen.dice && seen.dice !== '' && !reduce) {
-      let t = 0;
+      // один спокойный бросок: грани меняются всё реже, кубики докатываются и встают
+      const rnd = () => 1 + Math.floor(Math.random() * 6);
+      dice.innerHTML = diceHtml([rnd(), rnd()]);
       dice.classList.add('rolling');
-      const spin = setInterval(() => {
-        if (!dice.isConnected || ++t > 6) {
-          clearInterval(spin);
-          if (dice.isConnected) {
-            dice.innerHTML = diceHtml(v.dice);
-            dice.classList.remove('rolling');
-          }
-          return;
-        }
-        dice.innerHTML = diceHtml([1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)]);
-      }, 60);
+      [110, 250, 420].forEach((ms) => setTimeout(() => {
+        if (dice.isConnected && dice.classList.contains('rolling')) dice.innerHTML = diceHtml([rnd(), rnd()]);
+      }, ms));
+      setTimeout(() => {
+        if (!dice.isConnected) return;
+        dice.innerHTML = diceHtml(v.dice);
+        dice.classList.remove('rolling');
+      }, 620);
     }
     seen.dice = dk;
 
