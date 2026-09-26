@@ -34,12 +34,12 @@
     s.left = 0;
     s.pick = {};
     s.winner = null;
-    s.log = ['Первыми ходят ' + TEAM[s.first].toLowerCase() + '.'];
+    s.log = [];
+    SG.party.log(s, 'Первыми ходят ' + TEAM[s.first].toLowerCase() + '.');
   }
 
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 8) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
   const remaining = (s, t) => s.cards.filter((c) => c.k === t && !c.open).length;
   const teamOk = (s) => [0, 1].every((t) => s.captain[t] !== null && s.team[s.captain[t]] === t && s.ids.some((id) => s.team[id] === t && id !== s.captain[t]));
@@ -151,7 +151,7 @@
       left: s.left,
       pick: s.pick ? Object.entries(s.pick).map(([pid, card]) => ({ id: +pid, card })) : [],
       remain: s.cards ? [remaining(s, 0), remaining(s, 1)] : null,
-      log: s.log.slice(-5),
+      log: s.log.slice(-30),
       winner: s.winner,
       over: s.phase === 'end',
     };
@@ -191,7 +191,7 @@
           .join('')}</div>` +
         (v.phase === 'clue' && myTurn && v.cap && !v.over ? '<form class="cn-clue"><input type="text" maxlength="24" placeholder="Слово-подсказка" required><select>' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<option value="${n}">${n}</option>`).join('') + '</select><button class="btn btn-primary" type="submit">Подсказать</button></form><p class="pt-muted cn-err" hidden>Подсказка не может быть словом с поля или его частью.</p>' : '') +
         (canGuess ? '<button class="btn btn-ghost" type="button" data-end>Закончить ход</button>' : '') +
-        `<div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div>`;
+        ``;
     }
     el.innerHTML = `<div class="pt-panel cn">${teams}${body}</div>`;
     el.querySelectorAll('[data-team]').forEach((b) => b.addEventListener('click', () => ui.send({ team: +b.dataset.team })));

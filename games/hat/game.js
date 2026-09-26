@@ -46,8 +46,7 @@
     // недоугаданное слово возвращается в шляпу
     if (s.word) s.hat.push(s.word);
     s.word = null;
-    s.log.push(s.names[explainer(s)] + ' → ' + s.names[guesser(s)] + ': ' + s.got.length + ' сл.');
-    if (s.log.length > 8) s.log.shift();
+    SG.party.log(s, s.names[explainer(s)] + ' → ' + s.names[guesser(s)] + ': ' + s.got.length + ' сл.', { w: explainer(s), i: '🎩' });
     if (!s.hat.length) {
       s.phase = 'end';
       const best = Math.max(...s.ids.map((id) => s.score[id]));
@@ -128,7 +127,7 @@
       hat: s.hat.length + (s.word ? 1 : 0),
       total: s.total,
       scores: s.ids.map((pid) => ({ id: pid, name: s.names[pid], score: s.score[pid] })),
-      log: s.log.slice(-5),
+      log: s.log.slice(-30),
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over: s.phase === 'end',
       winners: s.winners || null,
@@ -158,7 +157,7 @@
       const w = v.winners || [];
       body = `<p class="pt-big">${w.includes(me) ? (w.length > 1 ? 'Вы среди лучших! 🤝' : 'Вы победили! 🏆') : 'Победа: ' + w.map((x) => esc(ui.name(x))).join(', ')}</p>`;
     }
-    el.innerHTML = `<div class="pt-panel ht"><div class="ht-hat">🎩 В шляпе ${v.hat} из ${v.total}</div><div class="pt-seats">${scores}</div>${body}<div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>`;
+    el.innerHTML = `<div class="pt-panel ht"><div class="ht-hat">🎩 В шляпе ${v.hat} из ${v.total}</div><div class="pt-seats">${scores}</div>${body}</div>`;
     const on = (sel, a) => {
       const b = el.querySelector(sel);
       if (b) b.addEventListener('click', () => ui.send(a));

@@ -156,7 +156,7 @@
     s.lastTiles = [];
     if (m.pass) {
       s.passes++;
-      s.log.unshift({ side: me, text: 'пас' });
+      SG.party.log(s, s.names[me] + ': пас', { w: s.ids[me], i: '⏭' });
     } else if (Array.isArray(m.swap)) {
       if (!m.swap.length || s.bag.length < RACK || !hasTiles(rack, m.swap)) return false;
       for (const ch of m.swap) rack.splice(rack.indexOf(ch), 1);
@@ -164,7 +164,7 @@
       shuffle(s, s.bag);
       draw(s, me);
       s.passes++;
-      s.log.unshift({ side: me, text: 'обмен ' + m.swap.length + ' фишек' });
+      SG.party.log(s, s.names[me] + ': обмен ' + m.swap.length + ' фишек', { w: s.ids[me], i: '🔄' });
     } else if (Array.isArray(m.tiles)) {
       if (!hasTiles(rack, m.tiles.map((t) => t[1]))) return false;
       const res = evaluate(s, m.tiles);
@@ -176,7 +176,7 @@
       s.scores[me] += res.score;
       s.lastTiles = m.tiles.map((t) => t[0]);
       s.passes = 0;
-      s.log.unshift({ side: me, text: res.words.map((w) => w.word.toUpperCase()).join(', ') + ' +' + res.score });
+      SG.party.log(s, s.names[me] + ': ' + res.words.map((w) => w.word.toUpperCase()).join(', ') + ' +' + res.score, { w: s.ids[me], i: '🔤', k: 'good' });
       draw(s, me);
       if (!rack.length && !s.bag.length) {
         // закончил первым — забирает очки за фишки соперников
@@ -189,7 +189,6 @@
         return finish(s);
       }
     } else return false;
-    if (s.log.length > 12) s.log.length = 12;
     if (s.passes >= s.ids.length * 2) {
       s.ids.forEach((_, k) => (s.scores[k] -= rackValue(s.racks[k])));
       return finish(s);
@@ -327,7 +326,7 @@
       myTurn: me === s.turn && !s.over,
       players: s.ids.map((pid, k) => ({ id: pid, name: s.names[k], score: s.scores[k], n: s.racks[k].length, turn: k === s.turn && !s.over })),
       bag: s.bag.length,
-      log: s.log.map((x) => ({ name: s.names[x.side], text: x.text })),
+      log: s.log.slice(-30),
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over: s.over,
       winners: s.winners || null,
@@ -354,7 +353,7 @@
   function render(v, ui) {
     V = v;
     UI = ui;
-    const key = v.players.map((p) => p.turn).join() + v.log.length + (v.log[0] ? v.log[0].text : '');
+    const key = v.players.map((p) => p.turn).join() + (v.log.length ? v.log[v.log.length - 1].n : 0);
     if (key !== lastTurnKey) {
       lastTurnKey = key;
       reset();
@@ -402,7 +401,7 @@
       `<div class="er-board">${cellsHtml}</div>` +
       (v.rack ? `<div class="er-rack">${rackHtml}</div><p class="er-preview ${pcls}">${preview}</p>` : '') +
       (v.myTurn ? `<div class="er-actions"><button class="btn btn-primary" type="button" data-play ${swapMode ? (swapSel.size ? '' : 'disabled') : pending.size ? '' : 'disabled'}>${swapMode ? 'Обменять' : 'Сделать ход'}</button><button class="btn btn-ghost" type="button" data-recall>Вернуть</button><button class="btn btn-ghost ${swapMode ? 'active' : ''}" type="button" data-swap ${v.bag >= RACK ? '' : 'disabled'}>Обмен</button><button class="btn btn-ghost" type="button" data-pass>Пас</button></div>` : '') +
-      `<ol class="er-log">${v.log.map((x) => `<li><b>${esc(x.name)}:</b> ${esc(x.text)}</li>`).join('')}</ol></div>`;
+      '</div>';
     el.querySelectorAll('[data-cell]').forEach((b) =>
       b.addEventListener('click', () => {
         const i = +b.dataset.cell;

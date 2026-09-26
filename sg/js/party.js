@@ -69,9 +69,10 @@
       '<button class="btn btn-ghost" type="button" data-mute hidden title="Выключить микрофон">🔊</button>' +
       '<button class="btn btn-ghost" type="button" data-leave>Выйти</button></div>' +
       '<div class="pt-watchbox" hidden></div>' +
-      '<div class="pt-main" hidden><div class="pt-table" id="table"></div>' +
+      '<div class="pt-main" hidden><div class="pt-stage"><div class="pt-now" hidden aria-live="polite"></div><div class="pt-table" id="table"></div></div>' +
+      '<div class="pt-side"><section class="pt-events" hidden aria-label="Ход игры"><h3>Ход игры</h3><ol class="pt-events-list"></ol></section>' +
       '<div class="pt-chat"><div class="pt-chat-log" aria-live="polite"></div>' +
-      '<form class="pt-chat-form"><input type="text" maxlength="140" placeholder="Сообщение…" aria-label="Сообщение"><button class="btn btn-primary" type="submit">➤</button></form></div></div>';
+      '<form class="pt-chat-form"><input type="text" maxlength="140" placeholder="Сообщение…" aria-label="Сообщение"><button class="btn btn-primary" type="submit">➤</button></form></div></div></div>';
     const $ = (s) => root.querySelector(s);
     const setupEl = $('.pt-setup');
     const lobbyEl = $('.pt-lobby');
@@ -80,11 +81,15 @@
     const tableEl = $('.pt-table');
     const chatEl = $('.pt-chat');
     const chatLogEl = $('.pt-chat-log');
+    const nowEl = $('.pt-now');
+    const eventsEl = $('.pt-events');
+    const eventsList = $('.pt-events-list');
     const watchBox = $('.pt-watchbox');
 
     const myName = () => SG.store.get('party-name', '') || '';
     // первая буква имени для аватарки (эмодзи и символы вне алфавита — как есть)
-    const avatarLetter = (name) => (Array.from(String(name).trim())[0] || '?').toUpperCase();
+    // у ботов («Бот Вася») берём букву имени, иначе у всех была бы «Б»
+    const avatarLetter = (name) => (Array.from(String(name).trim().replace(/^Бот\s+/, ''))[0] || '?').toUpperCase();
     const myPid = () => U().profile.id();
     const cleanPid = (x) => (/^[a-z0-9]{12}$/.test(String(x)) ? String(x) : '');
     const gameTitle = () => (document.querySelector('.page-head h1, .game-head h1') || {}).textContent || document.title.split(' — ')[0];
@@ -485,7 +490,9 @@
       if (role === 'host' || role === 'solo') gotView(cfg.view(state, myId));
     }
 
+    let lastChangeAt = 0;
     function afterChange() {
+      lastChangeAt = Date.now();
       broadcastViews();
       updateBar();
     }
@@ -522,6 +529,15 @@
       renderLobby();
     }
 
+    // темп ботов: после любого события даём людям его прочитать (после важного — дольше)
+    function pace() {
+      const log = state && state.log;
+      const last = log && log[log.length - 1];
+      const base = cfg.pace === undefined ? 1500 : cfg.pace;
+      const entry = typeof last === 'string' ? { t: last } : last;
+      return entry && (entry.big || BIG_RE.test(entry.t || '')) ? base + 1000 : base;
+    }
+
     function hostTick() {
       if (mode !== 'play' || !state) return;
       const now = Date.now();
@@ -536,7 +552,7 @@
             return;
           }
           if (!botReady[p.id]) botReady[p.id] = now + (cfg.botDelay ? cfg.botDelay(state, p.id) : 700 + Math.random() * 900);
-          else if (now >= botReady[p.id]) {
+          else if (now >= botReady[p.id] && now >= lastChangeAt + pace()) {
             botReady[p.id] = 0;
             if (cfg.act(state, p.id, a, now)) changed = true;
           }
@@ -854,7 +870,132 @@
       view = v;
       viewAt = performance.now();
       cfg.render(view, ui());
+      showDeltas();
+      renderEvents(v && Array.isArray(v.log) ? v.log : null);
       updateBar();
+    }
+
+    // ---------- всплывающие изменения у игроков ----------
+    // Игра помечает место игрока: data-seat="id" data-num="число" (фишки, очки, карты); data-less-good — если меньше лучше.
+    let seatNums = {};
+    function showDeltas() {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const next = {};
+      tableEl.querySelectorAll('[data-seat][data-num]').forEach((el) => {
+        const id = el.dataset.seat;
+        const val = +el.dataset.num;
+        if (!Number.isFinite(val)) return;
+        next[id] = val;
+        const before = seatNums[id];
+        if (before === undefined || before === val || reduce) return;
+        const d = val - before;
+        const good = el.dataset.lessGood ? d < 0 : d > 0;
+        const f = document.createElement('span');
+        f.className = 'pt-delta ' + (good ? 'up' : 'down');
+        f.textContent = (d > 0 ? '+' : '−') + Math.abs(d);
+        if (el.dataset.unit) f.title = f.textContent + ' ' + el.dataset.unit;
+        if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+        el.appendChild(f);
+        setTimeout(() => f.remove(), 1800);
+      });
+      seatNums = next;
+    }
+
+    // ---------- лента событий «Ход игры» и строка «что произошло» ----------
+    // Игра кладёт в вид массив log: строки или записи { t: текст, w: id игрока, i: значок, k: 'good' | 'bad' | 'warn', big }.
+    // Имена игроков в тексте подсвечиваются их цветом, новые записи дописываются без перерисовки ленты.
+
+    let shownLog = [];
+    const entryOf = (x) => (typeof x === 'string' ? { t: x } : x && typeof x === 'object' ? x : { t: String(x) });
+    const keyOf = (x) => (typeof x === 'string' ? x : x && x.n !== undefined ? '#' + x.n : JSON.stringify(x));
+    const ICONS = [
+      [/бросает|кубик|выброс/i, '🎲'],
+      [/покупает|купил/i, '🛒'],
+      [/строит|дом/i, '🏠'],
+      [/тюрьм/i, '🚔'],
+      [/банкрот|выбыва|выбыл|сгорел|сгорает/i, '💥'],
+      [/побед|выиграл|забирает банк|бинго|магнат/i, '🏆'],
+      [/платит|аренд|налог|получает|\+\d+|−\d+|-\d+/i, '💰'],
+      [/голос/i, '🗳'],
+      [/раздача|блайнд/i, '🃏'],
+      [/(^|[\s:«])(колл|чек|рейз|ставка|ва-банк|олл-ин)([\s.,!»]|$)/i, '🪙'],
+      [/пропуска|(^|[\s:«])(пас|фолд|сбросил)([\s.,!»]|$)/i, '⏭'],
+      [/карт|кладёт|бер[уё]|козыр|бито|подкид|отбива|кроет/i, '🃏'],
+      [/ночь|убит|мафи/i, '🌙'],
+    ];
+    // тон и «важность» записи, если игра их не указала: по словам в тексте
+    const GOOD = /выигр|побед|забирает банк|забирает|бинго|магнат|угадал|\+\d/i;
+    const BAD = /банкрот|сгор|штраф|проиграл|выбыва|выбыл|убит|казн|дурак|платит|−\d|не угадал/i;
+    const BIG_RE = /побед|выиграл|банкрот|выбыва|выбыл|убит|казн|дурак|бинго|магнат|уно!/i;
+    const toneFor = (e) => e.k || (GOOD.test(e.t) ? 'good' : BAD.test(e.t) ? 'bad' : '');
+    const isBig = (e) => !!(e && (e.big || BIG_RE.test(e.t || '')));
+    function iconFor(e) {
+      if (e.i) return e.i;
+      const hit = ICONS.find(([re]) => re.test(e.t));
+      return hit ? hit[1] : '•';
+    }
+    function colorOfPlayer(id) {
+      const i = players.findIndex((p) => p.id === id);
+      return i < 0 ? 'var(--text)' : 'var(--p' + ((i % 8) + 1) + ')';
+    }
+    function markNames(text) {
+      let html = esc(text);
+      const byLen = players.slice().sort((a, b) => b.name.length - a.name.length);
+      const marks = [];
+      byLen.forEach((p) => {
+        const n = esc(p.name);
+        if (!n || !html.includes(n)) return;
+        html = html.split(n).join('\u0000' + marks.length + '\u0000');
+        marks.push('<b class="pt-who" style="color:' + colorOfPlayer(p.id) + '">' + n + '</b>');
+      });
+      return html.replace(/\u0000(\d+)\u0000/g, (m, k) => marks[+k]);
+    }
+    function eventHtml(x) {
+      const e = entryOf(x);
+      // игрок записи: указан явно или угадывается по имени в начале текста («Аня кладёт …»)
+      const who = e.w !== undefined ? players.find((p) => p.id === e.w) : players.slice().sort((a, b) => b.name.length - a.name.length).find((p) => p.name && e.t.startsWith(p.name));
+      const ava = who ? '<span class="pt-ev-ava" style="background:' + colorOfPlayer(who.id) + '">' + esc(avatarLetter(who.name)) + '</span>' : '';
+      const tone = toneFor(e);
+      return { cls: 'pt-ev' + (tone ? ' tone-' + tone : '') + (isBig(e) ? ' big' : ''), html: '<span class="pt-ev-ico" aria-hidden="true">' + iconFor(e) + '</span>' + ava + '<span class="pt-ev-text">' + markNames(e.t) + '</span>' };
+    }
+    function renderEvents(log) {
+      if (!log) {
+        eventsEl.hidden = true;
+        nowEl.hidden = true;
+        shownLog = [];
+        return;
+      }
+      eventsEl.hidden = !log.length;
+      const keys = log.map(keyOf);
+      const prev = shownLog;
+      // сколько последних уже показанных записей совпадает с началом новых — остальное новое
+      let overlap = Math.min(prev.length, keys.length);
+      while (overlap > 0 && prev.slice(prev.length - overlap).join('\u0001') !== keys.slice(0, overlap).join('\u0001')) overlap--;
+      const fresh = prev.length && overlap === 0 && keys.length ? log : log.slice(overlap);
+      if (!prev.length || (overlap === 0 && prev.length)) eventsList.innerHTML = '';
+      const atBottom = eventsList.scrollHeight - eventsList.scrollTop - eventsList.clientHeight < 30;
+      fresh.forEach((x, i) => {
+        const { cls, html } = eventHtml(x);
+        const li = document.createElement('li');
+        li.className = cls + (prev.length ? ' new' : '');
+        li.innerHTML = html;
+        eventsList.appendChild(li);
+        if (prev.length) setTimeout(() => li.classList.remove('new'), 1600 + i * 200);
+      });
+      while (eventsList.children.length > 80) eventsList.firstChild.remove();
+      if (atBottom || !prev.length) eventsList.scrollTop = eventsList.scrollHeight;
+      shownLog = keys;
+      // «что произошло»: последнее событие крупно над столом
+      const last = log[log.length - 1];
+      if (last !== undefined && fresh.length) {
+        const { cls, html } = eventHtml(last);
+        nowEl.className = 'pt-now ' + cls.replace('pt-ev', '').trim();
+        nowEl.innerHTML = html;
+        nowEl.hidden = false;
+        nowEl.classList.remove('flash');
+        void nowEl.offsetWidth;
+        nowEl.classList.add('flash');
+      } else if (!log.length) nowEl.hidden = true;
     }
 
     // раз в четверть секунды — обновить таймеры
@@ -1115,6 +1256,11 @@
         }
       }
       chatLog.length = 0;
+      shownLog = [];
+      seatNums = {};
+      eventsList.innerHTML = '';
+      eventsEl.hidden = true;
+      nowEl.hidden = true;
       state = view = null;
       mode = 'idle';
       if (cfg.onReset) cfg.onReset();
@@ -1191,6 +1337,19 @@
 
   // перемешивание и случайные числа для игр
   party.shuffle = (a) => SG.shuffle(a);
+  // запись в ленту событий: SG.party.log(state, 'Аня покупает Арбат', { w: id, i: '🛒', k: 'good', big: true })
+  party.log = (s, t, o = {}) => {
+    if (!s.log) s.log = [];
+    s.logN = (s.logN || 0) + 1;
+    const e = { n: s.logN, t };
+    if (o.w !== undefined && o.w !== null) e.w = o.w;
+    if (o.i) e.i = o.i;
+    if (o.k) e.k = o.k;
+    if (o.big) e.big = true;
+    s.log.push(e);
+    if (s.log.length > (o.keep || 60)) s.log.shift();
+    return e;
+  };
   party.esc = esc;
   SG.party = party;
 })();

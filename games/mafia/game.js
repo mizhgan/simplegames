@@ -57,9 +57,8 @@
 
   const alive = (s) => s.ids.filter((id) => s.alive[id]);
   const aliveRole = (s, r) => alive(s).filter((id) => s.role[id] === r);
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 30) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
 
   function startNight(s, now) {
@@ -257,7 +256,7 @@
       phase: s.phase,
       day: s.day,
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
-      log: s.log.slice(-8),
+      log: s.log.slice(-30),
       me: me ? { role: me, alive: s.alive[id] } : null,
       players: s.ids.map((pid) => {
         let role = null;
@@ -331,7 +330,7 @@
       else body = '<p>Вы спите. Ночью общий чат молчит.</p>';
     } else if (v.phase === 'morning') {
       head = '☀ Утро';
-      body = `<p class="pt-big">${esc(v.log[v.log.length - 1].replace('☀ Утро. ', ''))}</p>`;
+      body = `<p class="pt-big">${esc(v.log[v.log.length - 1].t.replace('☀ Утро. ', ''))}</p>`;
     } else if (v.phase === 'day') {
       head = `💬 День ${v.day} — обсуждение ${timer}`;
       body =
@@ -355,7 +354,7 @@
       .join('');
     el.innerHTML =
       `<div class="pt-panel mf ${v.phase === 'night' ? 'night' : ''}"><h3>${head}</h3>${myCard}${body}` +
-      `<ul class="mf-list">${list}</ul><div class="mf-log">${v.log.slice(-5).map((x) => `<p>${esc(x)}</p>`).join('')}</div></div>`;
+      `<ul class="mf-list">${list}</ul></div>`;
     const on = (sel, fn) => el.querySelectorAll(sel).forEach((b) => b.addEventListener('click', fn));
     on('[data-flip]', () => {
       showRole = !showRole;
@@ -378,7 +377,7 @@
     if (render.phase !== v.phase + v.day) {
       render.phase = v.phase + v.day;
       if (v.phase === 'night') SG.sound.play('drop');
-      if (v.phase === 'morning') SG.sound.play(v.log.length && /убит/.test(v.log[v.log.length - 1]) ? 'explode' : 'match');
+      if (v.phase === 'morning') SG.sound.play(v.log.length && /убит/.test(v.log[v.log.length - 1].t) ? 'explode' : 'match');
       if (v.over && me) {
         const won = (me.role === 'mafia') === (v.winner === 'mafia');
         SG.sound.play(won ? 'win' : 'lose');

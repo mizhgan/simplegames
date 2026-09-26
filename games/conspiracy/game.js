@@ -28,9 +28,8 @@
     return s;
   }
 
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 10) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
   const presId = (s) => s.ids[s.pres];
   const alive = (s) => s.ids.filter((x) => s.alive[x]);
@@ -266,7 +265,7 @@
       power: s.phase === 'power' ? s.power : null,
       peek: s.phase === 'power' && id === presId(s) ? s.peek : null,
       deck: s.deck.length,
-      log: s.log.slice(-6),
+      log: s.log.slice(-30),
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over,
       winner: s.winner,
@@ -308,7 +307,7 @@
       const won = v.myRole && ((v.myRole === 'good') === (v.winner === 'good'));
       body = `<p class="pt-big">${v.winner === 'good' ? '🕊 Победа честных граждан' : '🐍 Победа заговора'}</p>${v.myRole ? `<p>${won ? 'Вы победили!' : 'Вы проиграли.'}</p>` : ''}`;
     }
-    el.innerHTML = `<div class="pt-panel cs">${role}<div class="cs-board">${board}</div><div class="rs-list">${list}</div>${body}<div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>`;
+    el.innerHTML = `<div class="pt-panel cs">${role}<div class="cs-board">${board}</div><div class="rs-list">${list}</div>${body}</div>`;
     el.querySelectorAll('.rs-p').forEach((b) =>
       b.addEventListener('click', () => {
         const id = +b.dataset.p;

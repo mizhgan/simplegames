@@ -25,9 +25,8 @@
     return s;
   }
 
-  function say(s, t) {
-    s.log.push(t);
-    if (s.log.length > 5) s.log.shift();
+  function say(s, t, o) {
+    SG.party.log(s, t, o);
   }
 
   const active = (s, i) => !s.out.includes(s.ids[i]);
@@ -155,10 +154,12 @@
         s.table[pi].d = c;
         hand.splice(i, 1);
         s.passed = [];
+        say(s, s.names[id] + ' кроет ' + C.name(s.table[pi].a) + ' картой ' + C.name(c), { w: id, i: '🛡' });
       } else {
         if (!canAdd(s, id, c)) return false;
         s.table.push({ a: c, d: null, by: id });
         hand.splice(i, 1);
+        say(s, s.names[id] + (s.table.length > 1 ? ' подкидывает ' : ' ходит ') + C.name(c), { w: id, i: '⚔' });
         s.passed = s.passed.filter((x) => x !== id);
       }
       s.last = now;
@@ -262,7 +263,7 @@
       trump: s.trumpCard,
       deck: s.deck.length,
       phase: s.phase,
-      log: s.log.slice(-3),
+      log: s.log.slice(-30),
       over: s.over,
       loser: s.loser,
       limit: s.limit,
@@ -285,7 +286,7 @@
     const el = ui.el;
     const def = v.seats.find((p) => p.def);
     const seats = v.seats
-      .map((p) => `<div class="pt-seat${p.def ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.out ? ' out' : ''}"><b>${esc(p.name)}${p.id === ui.me ? ' (вы)' : ''}</b><span>${p.out ? 'вышел' : '🂠 ' + p.n}${p.def ? ' · 🛡' : p.att ? ' · ⚔' : ''}${p.passed ? ' · пас' : ''}</span></div>`)
+      .map((p) => `<div class="pt-seat${p.def ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.out ? ' out' : ''}" data-seat="${p.id}" data-num="${p.n}" data-unit="карт" data-less-good="1"><b>${esc(p.name)}${p.id === ui.me ? ' (вы)' : ''}</b><span>${p.out ? 'вышел' : '🂠 ' + p.n}${p.def ? ' · 🛡' : p.att ? ' · ⚔' : ''}${p.passed ? ' · пас' : ''}</span></div>`)
       .join('');
     let status;
     if (v.over) status = v.loser === null ? 'Ничья!' : v.loser === ui.me ? 'Вы остались в дураках 🃏' : esc(ui.name(v.loser)) + ' — дурак!';
@@ -299,7 +300,7 @@
       `<div class="tb"><div class="pt-seats">${seats}</div>` +
       `<div class="tb-center"><div class="tb-row dp-table">${table || '<span class="pt-muted">стол пуст</span>'}</div>` +
       `<div class="tb-row"><span class="tb-pot">колода ${v.deck}</span>${v.deck ? C.html(v.trump, 'dp-trump') : `<span class="tb-pot">козырь ${C.SUITS[v.trump.suit]}</span>`}</div>` +
-      `<div class="tb-msg">${status}</div><div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>` +
+      `<div class="tb-msg">${status}</div></div>` +
       (v.hand ? `<div class="tb-hand mine">${v.hand.map((c) => C.html(c, (v.ok.includes(c.id) ? 'playable' : 'dim') + (sel === c.id ? ' sel' : ''))).join('')}</div>` : '') +
       `<div class="tb-actions">${v.canTake ? '<button class="btn btn-primary" type="button" data-take>Беру</button>' : ''}${v.canPass ? `<button class="btn btn-ghost" type="button" data-pass>${v.phase === 'take' ? 'Больше не подкидываю' : 'Бито / пас'}</button>` : ''}</div></div>`;
     el.querySelectorAll('.tb-hand.mine .sol-card.playable').forEach((c) =>

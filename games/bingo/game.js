@@ -50,10 +50,10 @@
       if ((s.block[id] || 0) > now) return false;
       if (hasLine(s, id)) {
         s.winner = id;
-        s.log.push('🎉 ' + s.names[id] + ': БИНГО!');
+        SG.party.log(s, s.names[id] + ': БИНГО!', { w: id, i: '🎉', k: 'good', big: true });
       } else {
         s.block[id] = now + 10000;
-        s.log.push('✗ ' + s.names[id] + ' поспешил(а) — штраф 10 секунд');
+        SG.party.log(s, s.names[id] + ' поспешил(а) — штраф 10 секунд', { w: id, i: '✗', k: 'bad' });
       }
       return true;
     }
@@ -93,7 +93,7 @@
       next: Math.max(0, (s.next - Date.now()) / 1000),
       blocked: Math.max(0, ((s.block[id] || 0) - Date.now()) / 1000),
       players: s.ids.map((pid) => ({ id: pid, name: s.names[pid], n: s.marks[pid].length - 1 })),
-      log: s.log.slice(-4),
+      log: s.log.slice(-30),
       over: s.winner !== null,
       winner: s.winner,
     };
@@ -133,7 +133,7 @@
       grid +
       (v.card && !v.over ? `<div class="pt-choices"><button class="btn btn-primary bg-shout" type="button" data-bingo ${v.blocked ? 'disabled' : ''}>БИНГО!${v.blocked ? ' (' + Math.ceil(v.blocked) + ')' : ''}</button><label class="bg-auto"><input type="checkbox" ${auto ? 'checked' : ''}> Отмечать самому компьютеру</label></div>` : '') +
       `<p class="pt-muted">Вызвано ${v.count} из 75. Соберите линию — строку, столбец или диагональ — и жмите «БИНГО!». Ошибка — 10 секунд штрафа.</p>` +
-      `<div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>`;
+      `</div>`;
     el.querySelectorAll('.bg-cell').forEach((b) => b.addEventListener('click', () => ui.send(v.marks.includes(+b.dataset.i) ? { unmark: +b.dataset.i } : { mark: +b.dataset.i })));
     const bb = el.querySelector('[data-bingo]');
     if (bb) bb.addEventListener('click', () => ui.send({ bingo: 1 }));

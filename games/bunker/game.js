@@ -49,9 +49,8 @@
   }
 
   const alive = (s) => s.ids.filter((x) => s.alive[x]);
-  const say = (s, t) => {
-    s.log.push(t);
-    if (s.log.length > 10) s.log.shift();
+  const say = (s, t, o) => {
+    SG.party.log(s, t, o);
   };
   // в первом раунде все открывают профессию
   const mustProf = (s, id) => s.round === 1 && !s.open[id].includes('prof');
@@ -179,7 +178,7 @@
       })),
       myVote: s.votes[id],
       ready: s.phase === 'talk' && (s.ready || []).includes(id),
-      log: s.log.slice(-6),
+      log: s.log.slice(-30),
       left: Math.max(0, (s.deadline - Date.now()) / 1000),
       over,
     };
@@ -204,9 +203,9 @@
     if (v.phase === 'reveal') status = `Раунд ${v.round}: ${v.canOpen ? (v.mustProf ? 'откройте свою профессию' : 'откройте одну карту') : 'игроки открывают карты'} ${timer}`;
     else if (v.phase === 'talk') status = `Обсуждение: кого не брать в бункер? ${timer} ` + (v.alive && !v.ready && !ui.watcher ? '<button class="btn btn-primary" type="button" data-ready>К голосованию</button>' : '');
     else if (v.phase === 'vote') status = `Голосование: кого не брать? ${timer}`;
-    else if (v.phase === 'result') status = esc(v.log[v.log.length - 1]);
+    else if (v.phase === 'result') status = esc(v.log[v.log.length - 1].t);
     else if (v.over) status = v.alive ? '🎉 Вы в бункере!' : '💀 Вы остались снаружи.';
-    el.innerHTML = `<div class="pt-panel bk">${head}<p class="bk-status">${status}</p>${mine}<div class="bk-table">${table}</div><div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>`;
+    el.innerHTML = `<div class="pt-panel bk">${head}<p class="bk-status">${status}</p>${mine}<div class="bk-table">${table}</div></div>`;
     el.querySelectorAll('[data-open]:not(:disabled)').forEach((b) => b.addEventListener('click', () => ui.send({ open: b.dataset.open })));
     el.querySelectorAll('[data-vote]').forEach((b) => b.addEventListener('click', () => ui.send({ vote: +b.dataset.vote })));
     const r = el.querySelector('[data-ready]');

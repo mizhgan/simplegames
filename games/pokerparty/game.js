@@ -143,9 +143,8 @@
     checkRound(s, now);
   }
 
-  function say(s, t) {
-    s.log.push(t);
-    if (s.log.length > 5) s.log.shift();
+  function say(s, t, o) {
+    SG.party.log(s, t, o);
   }
 
   function post(s, id, v) {
@@ -375,7 +374,7 @@
       })),
       board: board(s),
       pot: pot(s),
-      log: s.log.slice(-4),
+      log: s.log.slice(-30),
       done: s.done,
       over: s.over,
       winner: s.winner,
@@ -418,7 +417,7 @@
   function render(v, ui) {
     const el = ui.el;
     const seats = v.seats
-      .map((p) => `<div class="pt-seat pk-seat${p.turn ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.folded || p.out ? ' out' : ''}">` +
+      .map((p) => `<div class="pt-seat pk-seat${p.turn ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.folded || p.out ? ' out' : ''}" data-seat="${p.id}" data-num="${p.chips}" data-unit="фишек">` +
         `<b>${p.dealer ? '<span class="pk-d">D</span> ' : ''}${esc(p.name)}</b><span>💰 ${p.chips}${p.allin ? ' · ва-банк' : ''}</span>` +
         `<div class="pk-cards">${p.cards.map((c) => card(c, 'mini')).join('')}</div>` +
         `<span class="pk-bet">${p.bet ? 'ставка ' + p.bet : p.folded ? 'пас' : p.out ? 'выбыл' : '&nbsp;'}</span></div>`)
@@ -436,7 +435,7 @@
       `<div class="tb"><div class="pt-seats">${seats}</div>` +
       `<div class="tb-center"><div class="tb-row">${v.board.map((c) => card(c)).join('')}${'<div class="sol-card ph"></div>'.repeat(5 - v.board.length)}</div>` +
       `<div class="tb-pot">Банк ${v.pot} · блайнды ${v.blinds[0]}/${v.blinds[1]} · раздача ${v.hand}</div>` +
-      `<div class="tb-msg">${msg}</div><div class="mm-log">${v.log.map((x) => `<div>${esc(x)}</div>`).join('')}</div></div>` +
+      `<div class="tb-msg">${msg}</div></div>` +
       (me && me.cards.length && me.cards[0] >= 0 ? `<div class="tb-label"><span>Ваши карты${v.combo ? ' · ' + v.combo : ''}</span><span>💰 ${me.chips}</span></div><div class="tb-hand mine">${me.cards.map((c) => card(c)).join('')}</div>` : '') +
       `<div class="tb-actions pk-actions"></div></div>`;
     const actEl = el.querySelector('.pk-actions');
