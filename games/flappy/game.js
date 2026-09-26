@@ -17,9 +17,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
-  const overlayTitle = $('overlay-title');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
   const startBtn = $('start-btn');
 
   let state = 'ready'; // ready | playing | dying | over
@@ -87,8 +85,8 @@
       $('best').textContent = best;
     }
     const record = score > 0 && score === best ? ' Новый рекорд! 🏆' : '';
-    overlayTitle.textContent = 'Игра окончена';
-    overlayText.textContent = 'Пролетели труб: ' + score + '.' + record;
+    overlay.title = 'Игра окончена';
+    overlay.text = 'Пролетели труб: ' + score + '.' + record;
     startBtn.textContent = 'Ещё раз';
     overlay.hidden = false;
   }
@@ -286,8 +284,8 @@
 
   function restart() {
     reset();
-    overlayTitle.textContent = 'Птичка';
-    overlayText.textContent = 'Нажмите пробел, кликните или коснитесь поля, чтобы взлететь.';
+    overlay.title = 'Птичка';
+    overlay.text = 'Нажмите пробел, кликните или коснитесь поля, чтобы взлететь.';
     startBtn.textContent = 'Начать';
     overlay.hidden = false;
   }

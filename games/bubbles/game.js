@@ -17,7 +17,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let grid; // grid[row][col] = индекс цвета или -1
   let parity; // сдвинут ли нулевой ряд
@@ -205,8 +205,8 @@
       SG.store.set('bubbles-best', best);
     }
     $('best').textContent = best;
-    $('overlay-title').textContent = 'Шары дошли до низа';
-    $('overlay-text').textContent = 'Счёт: ' + score + '.' + (score > 0 && score === best ? ' Новый рекорд! 🏆' : '');
+    overlay.title = 'Шары дошли до низа';
+    overlay.text = 'Счёт: ' + score + '.' + (score > 0 && score === best ? ' Новый рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     overlay.hidden = false;
   }

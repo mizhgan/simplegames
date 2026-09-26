@@ -15,7 +15,7 @@
   const doneEl = $('done');
   const bestEl = $('best');
   const undoBtn = $('undo-btn');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
   const statusEl = $('status');
 
   let suits = SG.store.get('spider-suits', 1);
@@ -247,7 +247,7 @@
     renderBest();
     undoBtn.disabled = true;
     SG.sound.play('win');
-    $('overlay-text').textContent =
+    overlay.text =
       'Пасьянс сошёлся за ' + moves + ' ходов и ' + SG.formatTime(seconds) + '. Очки: ' + score + '.' + (record ? ' Новый рекорд! 🏆' : '');
     table.classList.add('won');
     setTimeout(() => (overlay.hidden = false), 700);

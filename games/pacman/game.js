@@ -54,7 +54,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let grid, dotsLeft, dotsEaten, pac, ghosts, score, lives, level;
   let modeIndex, modeTime, frightTime, eatCombo, state, stateTime, time;
@@ -381,8 +381,8 @@
 
   function gameOver() {
     state = 'over';
-    $('overlay-title').textContent = 'Игра окончена';
-    $('overlay-text').textContent = 'Счёт: ' + score + ', уровень ' + level + '.' + (score > 0 && score >= best ? ' Новый рекорд! 🏆' : '');
+    overlay.title = 'Игра окончена';
+    overlay.text = 'Счёт: ' + score + ', уровень ' + level + '.' + (score > 0 && score >= best ? ' Новый рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     overlay.hidden = false;
   }

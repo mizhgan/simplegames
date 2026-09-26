@@ -27,7 +27,7 @@
   const timeEl = $('time');
   const bestEl = $('best');
   const statusEl = $('status');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let tiles = []; // { z, r, c, kind, el, alive }
   let selected = null;
@@ -193,7 +193,7 @@
     SG.store.set('mahjong-wins', SG.store.get('mahjong-wins', 0) + 1);
     renderBest();
     SG.sound.play('win');
-    $('overlay-text').textContent = 'Все кости убраны за ' + SG.formatTime(seconds) + '.' + (record ? ' Новый рекорд! 🏆' : '');
+    overlay.text = 'Все кости убраны за ' + SG.formatTime(seconds) + '.' + (record ? ' Новый рекорд! 🏆' : '');
     overlay.hidden = false;
   }
 

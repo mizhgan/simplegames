@@ -14,7 +14,7 @@
   const foundEl = $('found');
   const timeEl = $('time');
   const bestEl = $('best');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let size = SG.store.get('fillword-size', 6);
   if (!SIZES[size]) size = 6;
@@ -245,7 +245,7 @@
     SG.store.set('fillword-wins', SG.store.get('fillword-wins', 0) + 1);
     renderBest();
     SG.sound.play('win');
-    $('overlay-text').textContent =
+    overlay.text =
       'Все ' + segments.length + ' слов найдены за ' + SG.formatTime(seconds) + '.' + (record ? ' Новый рекорд! 🏆' : '');
     setTimeout(() => (overlay.hidden = false), 500);
   }

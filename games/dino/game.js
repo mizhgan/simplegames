@@ -14,9 +14,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
-  const overlayTitle = $('overlay-title');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
 
   let state = 'ready'; // ready | running | over
   let dino, obstacles, clouds, speed, distance, nextSpawn, time, overAt;
@@ -88,8 +86,8 @@
       SG.store.set('dino-best', best);
       $('best').textContent = best;
     }
-    overlayTitle.textContent = 'Игра окончена';
-    overlayText.textContent = 'Счёт: ' + s + '.' + (s > 0 && s === best ? ' Новый рекорд! 🏆' : '') + ' Пробел или касание — заново.';
+    overlay.title = 'Игра окончена';
+    overlay.text = 'Счёт: ' + s + '.' + (s > 0 && s === best ? ' Новый рекорд! 🏆' : '') + ' Пробел или касание — заново.';
     overlay.hidden = false;
   }
 

@@ -13,7 +13,7 @@
   const $ = (id) => document.getElementById(id);
   const canvas = $('board');
   const ctx = canvas.getContext('2d');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let state = 'idle';
   let ship, bullets, rocks, particles, score, lives, level, nextLife, levelTimer;
@@ -251,8 +251,8 @@
       best = score;
       SG.store.set('asteroids-best', best);
     }
-    $('overlay-title').textContent = 'Корабль разбит';
-    $('overlay-text').textContent = 'Очки: ' + score + ', уровень ' + level + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
+    overlay.title = 'Корабль разбит';
+    overlay.text = 'Очки: ' + score + ', уровень ' + level + '.' + (rec && score ? ' Новый рекорд! 🏆' : '');
     $('start-btn').textContent = 'Ещё раз';
     hud();
     setTimeout(() => (overlay.hidden = false), 700);

@@ -7,8 +7,7 @@
   const movesEl = $('moves');
   const timeEl = $('time');
   const bestEl = $('best');
-  const overlay = $('overlay');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
 
   let size = SG.store.get('fifteen-size', 4);
   if (![3, 4, 5].includes(size)) size = 4;
@@ -151,7 +150,7 @@
     if (record) SG.store.set(key, moves);
     renderBest();
     boardEl.classList.add('solved');
-    overlayText.textContent =
+    overlay.text =
       'Собрано за ' + moves + ' ходов и ' + SG.formatTime(seconds) + '.' + (record ? ' Новый рекорд! 🏆' : '');
     setTimeout(() => {
       boardEl.classList.remove('solved');

@@ -22,9 +22,7 @@
   const ctx = canvas.getContext('2d');
   const scoreEl = $('score');
   const bestEl = $('best');
-  const overlay = $('overlay');
-  const overlayTitle = $('overlay-title');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
   const startBtn = $('start-btn');
   const pauseBtn = $('pause-btn');
 
@@ -91,8 +89,8 @@
   }
 
   function showOverlay(title, text, button) {
-    overlayTitle.textContent = title;
-    overlayText.textContent = text;
+    overlay.title = title;
+    overlay.text = text;
     startBtn.textContent = button;
     overlay.hidden = false;
   }

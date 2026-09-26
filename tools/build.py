@@ -292,15 +292,59 @@ def new_game(gid, title):
         'party': False,
         'card': {'text': 'Одна-две фразы для карточки на главной.', 'colors': ['#6366f1', '#312e81']},
         'best': {'key': gid + '-best'},
+        'players': [1, 1],
         'readme': 'управление и особенности',
         'scripts': ['../../sg/js/site.js'],
         'rules': ['Первое правило.', 'Второе правило.'],
     }
+    meta['stats'] = [
+        '<div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>',
+        '<div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>',
+    ]
+    stage = (
+        '<div class="stage-wrap">\n'
+        '  <canvas id="board" class="board-canvas" width="480" height="480" aria-label="Игровое поле"></canvas>\n'
+        '  <div class="overlay" id="overlay">\n'
+        '    <h2 id="overlay-title">%s</h2>\n'
+        '    <p id="overlay-text">Нажмите «Играть» или пробел.</p>\n'
+        '    <div class="overlay-actions"><button class="btn btn-primary" type="button" id="start-btn">Играть</button></div>\n'
+        '  </div>\n'
+        '</div>\n' % title
+    )
+    game_js = (
+        "/* %s */\n(() => {\n  'use strict';\n\n"
+        "  const canvas = document.getElementById('board');\n"
+        "  const g = canvas.getContext('2d');\n"
+        "  const overlay = SG.overlay(); // оверлей поверх поля: show(), hide(), title, text\n"
+        "  const best = SG.record('%s-best', { el: 'best', initial: 0 }); // рекорд в хранилище и на табло\n"
+        "  let score = 0;\n\n"
+        "  function draw() {\n"
+        "    g.fillStyle = SG.colors.boardBg;\n"
+        "    g.fillRect(0, 0, canvas.width, canvas.height);\n"
+        "    g.fillStyle = SG.colors.players[0];\n"
+        "    g.fillRect(40 + score * 10, 220, 40, 40);\n"
+        "  }\n\n"
+        "  function start() {\n"
+        "    score = 0;\n"
+        "    overlay.hide();\n"
+        "    draw();\n"
+        "  }\n\n"
+        "  function finish() {\n"
+        "    const isRecord = best.submit(score);\n"
+        "    SG.sound.play('win');\n"
+        "    overlay.show('Готово!', 'Счёт: ' + score + (isRecord ? '. Новый рекорд! 🏆' : '.'), 'Ещё раз');\n"
+        "  }\n\n"
+        "  document.getElementById('start-btn').addEventListener('click', start);\n"
+        "  document.addEventListener('sg:themechange', draw);\n"
+        "  draw();\n"
+        "  void finish;\n"
+        "})();\n" % (title, gid)
+    )
     files = {
         'meta.json': dump_json(meta) + '\n',
-        'stage.html': '<div class="stage-wrap">\n  <canvas id="board" class="board-canvas" width="480" height="480" aria-label="Игровое поле"></canvas>\n</div>\n',
-        'thumb.svg': '<svg viewBox="0 0 160 100" aria-hidden="true">\n  <circle cx="80" cy="50" r="30" fill="#fff"/>\n</svg>\n',
-        'game.js': "/* %s */\n(() => {\n  'use strict';\n\n  const canvas = document.getElementById('board');\n  const g = canvas.getContext('2d');\n  g.fillStyle = SG.cssVar('--accent');\n  g.fillRect(0, 0, canvas.width, canvas.height);\n})();\n" % title,
+        'stage.html': stage,
+        'thumb.svg': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true">\n  <circle cx="80" cy="50" r="30" fill="#fff"/>\n</svg>\n',
+        'game.js': game_js,
     }
     for name, text in files.items():
         with open(os.path.join(base, name), 'w', encoding='utf-8') as fh:

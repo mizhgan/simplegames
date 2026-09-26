@@ -13,7 +13,7 @@
   const scoreEl = $('score');
   const movesEl = $('moves');
   const bestEl = $('best');
-  const overlay = $('overlay');
+  const overlay = SG.overlay();
 
   let grid; // grid[r][c] = { type, el }
   let score = 0;
@@ -234,7 +234,7 @@
   function gameOver() {
     const record = score > 0 && score >= best;
     SG.sound.play(record ? 'win' : 'level');
-    $('overlay-text').textContent = 'Ходы закончились. Счёт: ' + score + '.' + (record ? ' Новый рекорд! 🏆' : '');
+    overlay.text = 'Ходы закончились. Счёт: ' + score + '.' + (record ? ' Новый рекорд! 🏆' : '');
     overlay.hidden = false;
   }
 

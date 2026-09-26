@@ -17,8 +17,7 @@
   const movesEl = $('moves');
   const timeEl = $('time');
   const bestEl = $('best');
-  const overlay = $('overlay');
-  const overlayText = $('overlay-text');
+  const overlay = SG.overlay();
 
   let size = SG.store.get('memory-size', 's');
   if (!SIZES[size]) size = 's';
@@ -129,7 +128,7 @@
     const record = best === null || moves < best;
     if (record) SG.store.set(key, moves);
     renderBest();
-    overlayText.textContent =
+    overlay.text =
       'Все пары найдены за ' + moves + ' ходов и ' + SG.formatTime(seconds) + '.' + (record ? ' Новый рекорд! 🏆' : '');
     setTimeout(() => (overlay.hidden = false), 500);
   }
