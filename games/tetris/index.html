@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Тетрис</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Линии</span><span class="stat-value" id="lines">0</span></div>
@@ -69,9 +70,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li><kbd>←</kbd> <kbd>→</kbd> — сдвиг, <kbd>↓</kbd> — ускорить падение, <kbd>Пробел</kbd> — сбросить фигуру вниз.</li>
             <li><kbd>↑</kbd> или <kbd>X</kbd> — поворот по часовой, <kbd>Z</kbd> — против часовой.</li>
@@ -80,7 +81,7 @@
             <li>Каждые 10 линий — новый уровень, фигуры падают быстрее. Несколько линий разом дают больше очков.</li>
             <li><kbd>P</kbd> или <kbd>Esc</kbd> — пауза.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

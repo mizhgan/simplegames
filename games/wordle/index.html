@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Вордли</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -68,9 +69,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Угадайте загаданное существительное из пяти букв за шесть попыток.</li>
             <li>После каждой попытки буквы подсвечиваются: <b style="color:#16a34a">зелёная</b> — буква на своём месте, <b style="color:#d9a406">жёлтая</b> — есть в слове, но в другом месте, серая — буквы в слове нет.</li>
@@ -78,7 +79,7 @@
             <li>«Слово дня» одно и то же для всех игроков и меняется в полночь. В «Свободной игре» можно играть сколько угодно.</li>
             <li>Печатать можно и на английской раскладке — буквы берутся по положению клавиш ЙЦУКЕН.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

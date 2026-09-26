@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Яйцелов</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Яйца</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Штраф</span><span class="stat-value" id="misses">—</span></div>
@@ -65,9 +66,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Куры несут яйца, и те скатываются по четырём желобам. Подставляйте корзину под желоб, с которого сейчас упадёт яйцо.</li>
             <li>Клавиши: <kbd>Q</kbd> — левый верхний, <kbd>A</kbd> — левый нижний, <kbd>P</kbd> — правый верхний, <kbd>L</kbd> — правый нижний. Подойдут и стрелки.</li>
@@ -75,7 +76,7 @@
             <li>Разбилось яйцо — штрафной цыплёнок. Три цыплёнка — конец игры. Пока в окошке виден заяц, штраф вдвое меньше.</li>
             <li>Чем больше поймано, тем быстрее катятся яйца. На 200 и 500 очках штрафы сгорают. «Игра Б» быстрее с самого начала.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

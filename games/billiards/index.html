@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Бильярд</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -57,9 +58,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>На столе 15 шаров. Бейте битком (белым) так, чтобы прицельный шар ушёл в лузу. Годится любой шар и любая луза.</li>
             <li>Забили — бьёте ещё раз. Не забили — ход переходит к сопернику.</li>
@@ -68,7 +69,7 @@
             <li>Целиться — мышью (или пальцем по столу) либо ← →, точная доводка — ↑ ↓. Держите пробел (или кнопку «Удар») — сила качается на шкале, отпустите — удар. Вдвоём бьют по очереди.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Игру ведёт хозяин, гость управляет своим героем с любыми клавишами или джойстиком на экране. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

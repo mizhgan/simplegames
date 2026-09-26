@@ -41,8 +41,10 @@
   </header>
 
   <main class="container game-page sgd">
-    <a class="back-link" href="index.html">← Все игры</a>
-    <div class="game-head"><h1>Дизайн-система</h1></div>
+    <div class="page-head">
+      <a class="back-link" href="index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
+      <h1>Дизайн-система</h1>
+    </div>
     <p class="note">Токены живут в <code>sg/css/src/tokens.css</code>, компоненты — в <code>sg/css/src/*.css</code>, общий файл <code>sg/css/style.css</code> собирает <code>python3 tools/build.py</code>. На холсте цвета берутся из <code>SG.colors</code> (обновляются при смене темы). Переключите тему кнопкой в шапке.</p>
 
     <section><h2>Цвета</h2><div class="swatches" id="sw-base"></div></section>

@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Линии</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
@@ -55,9 +56,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Выберите шар, затем пустую клетку — шар переместится, если к ней есть путь по свободным клеткам.</li>
             <li>Соберите 5 и более шаров одного цвета в линию по горизонтали, вертикали или диагонали — они исчезнут и принесут очки.</li>
@@ -65,7 +66,7 @@
             <li>После каждого хода без собранной линии на поле появляются три новых шара (их цвета видны в «Далее»).</li>
             <li>Игра заканчивается, когда поле заполнено. Партия сохраняется автоматически.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

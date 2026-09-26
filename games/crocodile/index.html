@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Крокодил-рисовалка</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label" id="label-me">Угадано</span><span class="stat-value" id="score-me">0</span></div>
         <div class="stat"><span class="stat-label">Раундов</span><span class="stat-value" id="score-rounds">0</span></div>
@@ -73,9 +74,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Один игрок выбирает слово из трёх и рисует его, остальные угадывают. Буквы и цифры писать нельзя!</li>
             <li><b>Компанией</b> — у одного экрана: рисующий открывает слово так, чтобы не видели остальные, все угадывают вслух, и рисующий нажимает «Угадали!».</li>
@@ -83,7 +84,7 @@
             <li>На раунд — 90 секунд. Когда слово угадано, очко получают оба: и нарисовавший, и угадавший.</li>
             <li>Инструменты: цвет, толщина линии, отмена последнего штриха и очистка холста.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

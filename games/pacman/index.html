@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Пакман</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Уровень</span><span class="stat-value" id="level">1</span></div>
@@ -57,9 +58,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Управление: стрелки или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, свайпы по полю или кнопки под ним. Поворот можно нажать заранее — Пакман свернёт на ближайшем перекрёстке.</li>
             <li>Точка — 10 очков, энергайзер — 50. После энергайзера привидения синеют, и их можно съесть: 200, 400, 800, 1600 очков.</li>
@@ -67,7 +68,7 @@
             <li>Боковой туннель переносит на другую сторону лабиринта; привидения в нём медленнее.</li>
             <li>Съешьте все точки — следующий уровень будет быстрее. Три жизни.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Сумо</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -57,9 +58,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Два борца на круглом помосте. Вытолкните соперника за белую линию — и раунд ваш.</li>
             <li>Рывок даёт резкий толчок вперёд, но потом его нужно перезарядить (полоска над борцом). Рывок у края опасен: соперник может увернуться, и вы улетите сами.</li>
@@ -67,7 +68,7 @@
             <li>Против компьютера: стрелки или <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> — движение, пробел — рывок. Вдвоём: синий — <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> и пробел, красный — стрелки и <kbd>Enter</kbd>. На телефоне — джойстик и кнопка на экране.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Игру ведёт хозяин, гость управляет своим героем с любыми клавишами или джойстиком на экране. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

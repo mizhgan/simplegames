@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Танчики</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Очки</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">Жизни</span><span class="stat-value" id="lives">3</span></div>
@@ -62,9 +63,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Движение — стрелки или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, выстрел — <kbd>Пробел</kbd> (или <kbd>J</kbd>). На телефоне — кнопки под полем.</li>
             <li>Защищайте штаб с орлом внизу: если в него попадут, игра окончена. На уровне 20 вражеских танков — уничтожьте всех.</li>
@@ -72,7 +73,7 @@
             <li>Мигающие красным танки оставляют бонус: ⛑ щит, ⏱ заморозка врагов, 💣 уничтожить всех, 🛡 стальные стены у штаба, ⭐ улучшение пушки, ❤ жизнь.</li>
             <li>Зелёные бронированные танки выдерживают четыре попадания. <kbd>P</kbd> — пауза.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Крестики-нолики</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat stat-x"><span class="stat-label" id="label-x">Вы · X</span><span class="stat-value" id="score-x">0</span></div>
         <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
@@ -63,9 +64,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Игроки по очереди ставят крестики и нолики на поле 3×3.</li>
             <li>Побеждает тот, кто первым выстроит три своих знака в ряд — по горизонтали, вертикали или диагонали.</li>
@@ -74,7 +75,7 @@
             <li>Можно ходить клавишами <kbd>1</kbd>–<kbd>9</kbd> (как на цифровом блоке).</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Ходы идут напрямую между браузерами. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

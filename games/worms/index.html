@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Червячки</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
     </div>
 
     <div class="game-layout">
@@ -57,9 +58,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>У каждой команды три червяка по 100 здоровья. Ходят по очереди, каждый раз — следующий червяк команды. На ход 30 секунд.</li>
             <li>Оружие: <b>базука</b> (снаряд сносит ветром), <b>граната</b> (отскакивает и взрывается через 3 секунды), <b>дробовик</b> (бьёт по прямой). Взрывы выгрызают землю и отбрасывают червяков.</li>
@@ -67,7 +68,7 @@
             <li>← → — ползти, ↑ ↓ — прицел, <kbd>E</kbd> — прыжок, <kbd>Q</kbd> — сменить оружие, пробел — держите для силы и отпустите. Вдвоём ходят по очереди с одной клавиатуры; на телефоне — кнопки на экране.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку. Игру ведёт хозяин, гость управляет своим героем с любыми клавишами или джойстиком на экране. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

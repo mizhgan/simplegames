@@ -26,9 +26,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Шарики</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
         <div class="stat"><span class="stat-label">До нового ряда</span><span class="stat-value" id="shots">6</span></div>
@@ -50,9 +51,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Цельтесь мышью (выстрел — клик) или ведите пальцем по полю и отпустите. На клавиатуре: <kbd>←</kbd> <kbd>→</kbd> и <kbd>Пробел</kbd>.</li>
             <li>Соберите три и более шарика одного цвета — они лопнут (+10 за каждый).</li>
@@ -60,7 +61,7 @@
             <li>Шарики отскакивают от стен — используйте рикошет. Клик по «далее» (или <kbd>X</kbd>) меняет шарики местами.</li>
             <li>После каждых шести выстрелов без попадания сверху появляется новый ряд. Шарики дошли до пунктирной линии — игра окончена.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

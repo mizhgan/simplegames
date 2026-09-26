@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Го 9×9</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label" id="label-0">Вы · Чёрные</span><span class="stat-value" id="score-0">0</span></div>
         <div class="stat"><span class="stat-label">Ничьи</span><span class="stat-value" id="score-d">0</span></div>
@@ -63,9 +64,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Игроки по очереди ставят камни на пересечения линий; первыми ходят чёрные. Камни не двигаются.</li>
             <li>Камень или группа, у которой соседние пустые пересечения («дыхания») заняты камнями соперника, снимается с доски.</li>
@@ -74,7 +75,7 @@
             <li>Счёт по площади: ваши камни плюс окружённые только вами пустые точки. Белые получают 6,5 очка коми за второй ход. Мёртвые камни соперника внутри своей территории лучше снять до пасов.</li>
             <li><b>🌐 По сети</b> — играйте с другом на другом устройстве: нажмите «По сети» и отправьте ему ссылку (или отметьте «Ищу соперника»). После партии можно предложить реванш и отправить реакцию. Друзья могут смотреть партию: кнопка «👁 Зрителям» даёт ссылку для просмотра.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>

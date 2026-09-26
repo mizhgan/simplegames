@@ -27,9 +27,10 @@
   </header>
 
   <main class="container game-page">
-    <a class="back-link" href="../../index.html">← Все игры</a>
-    <div class="game-head">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
       <h1>Пятнашки</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">0</span></div>
         <div class="stat"><span class="stat-label">Время</span><span class="stat-value" id="time">0:00</span></div>
@@ -59,9 +60,9 @@
         </div>
       </div>
 
-      <aside>
-        <div class="info-card">
-          <h2>Как играть</h2>
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
           <ul>
             <li>Расставьте плитки по порядку: слева направо, сверху вниз, пустая клетка — в правом нижнем углу.</li>
             <li>Кликните по плитке рядом с пустой клеткой, чтобы сдвинуть её. Клик по плитке в том же ряду сдвигает сразу несколько.</li>
@@ -69,7 +70,7 @@
             <li>Плитки на своих местах подсвечиваются зелёным.</li>
             <li>Рекорд — наименьшее число ходов для каждого размера поля.</li>
           </ul>
-        </div>
+        </details>
       </aside>
     </div>
   </main>
