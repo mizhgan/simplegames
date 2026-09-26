@@ -161,7 +161,7 @@
     if (v.phase !== 'pick' || !mine) sel = [];
     const selV = score(sel.map((i) => v.roll[i]));
     const seats = v.players
-      .map((p) => `<div class="pt-seat${p.id === v.turn && !v.over ? ' turn' : ''}${p.id === me ? ' me' : ''}"><b>${esc(p.name)}</b><span>${p.score} / ${GOAL}</span><i class="dk-bar" style="width:${Math.min(100, (p.score / GOAL) * 100)}%"></i></div>`)
+      .map((p) => `<div class="pt-seat${p.id === v.turn && !v.over ? ' turn' : ''}${p.id === me ? ' me' : ''}" data-seat="${p.id}" data-num="${p.score}" data-unit="очков"><b>${esc(p.name)}</b><span>${p.score} / ${GOAL}</span><i class="dk-bar" style="width:${Math.min(100, (p.score / GOAL) * 100)}%"></i></div>`)
       .join('');
     const dice = v.roll.map((d, i) => `<button type="button" class="dk-die${sel.includes(i) ? ' sel' : ''}" data-i="${i}" ${mine && v.phase === 'pick' ? '' : 'disabled'}>${FACES[d]}</button>`).join('');
     let status;

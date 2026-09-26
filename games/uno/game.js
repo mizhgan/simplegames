@@ -198,7 +198,7 @@
 
   function render(v, ui) {
     const el = ui.el;
-    const seats = v.seats.map((p) => `<div class="pt-seat${p.turn ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}"><b>${esc(p.name)}${p.id === ui.me ? ' (вы)' : ''}</b><span>🂠 ${p.n}${p.n === 1 ? ' · УНО!' : ''}</span></div>`).join('');
+    const seats = v.seats.map((p) => `<div class="pt-seat${p.turn ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}" data-seat="${p.id}" data-num="${p.n}" data-unit="карт" data-less-good="1"><b>${esc(p.name)}${p.id === ui.me ? ' (вы)' : ''}</b><span>🂠 ${p.n}${p.n === 1 ? ' · УНО!' : ''}</span></div>`).join('');
     let status;
     if (v.over) status = v.winner === ui.me ? 'Вы победили! 🎉' : esc(ui.name(v.winner)) + ' побеждает.';
     else if (v.myTurn) status = (v.drew ? 'Сыграйте взятую карту или пасуйте.' : 'Ваш ход: карта того же цвета или значения.') + ` <span class="pt-timer" data-left="${v.left}">${Math.ceil(v.left)}</span>`;

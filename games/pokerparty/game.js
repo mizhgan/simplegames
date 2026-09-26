@@ -417,7 +417,7 @@
   function render(v, ui) {
     const el = ui.el;
     const seats = v.seats
-      .map((p) => `<div class="pt-seat pk-seat${p.turn ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.folded || p.out ? ' out' : ''}">` +
+      .map((p) => `<div class="pt-seat pk-seat${p.turn ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.folded || p.out ? ' out' : ''}" data-seat="${p.id}" data-num="${p.chips}" data-unit="фишек">` +
         `<b>${p.dealer ? '<span class="pk-d">D</span> ' : ''}${esc(p.name)}</b><span>💰 ${p.chips}${p.allin ? ' · ва-банк' : ''}</span>` +
         `<div class="pk-cards">${p.cards.map((c) => card(c, 'mini')).join('')}</div>` +
         `<span class="pk-bet">${p.bet ? 'ставка ' + p.bet : p.folded ? 'пас' : p.out ? 'выбыл' : '&nbsp;'}</span></div>`)

@@ -870,8 +870,35 @@
       view = v;
       viewAt = performance.now();
       cfg.render(view, ui());
+      showDeltas();
       renderEvents(v && Array.isArray(v.log) ? v.log : null);
       updateBar();
+    }
+
+    // ---------- всплывающие изменения у игроков ----------
+    // Игра помечает место игрока: data-seat="id" data-num="число" (фишки, очки, карты); data-less-good — если меньше лучше.
+    let seatNums = {};
+    function showDeltas() {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const next = {};
+      tableEl.querySelectorAll('[data-seat][data-num]').forEach((el) => {
+        const id = el.dataset.seat;
+        const val = +el.dataset.num;
+        if (!Number.isFinite(val)) return;
+        next[id] = val;
+        const before = seatNums[id];
+        if (before === undefined || before === val || reduce) return;
+        const d = val - before;
+        const good = el.dataset.lessGood ? d < 0 : d > 0;
+        const f = document.createElement('span');
+        f.className = 'pt-delta ' + (good ? 'up' : 'down');
+        f.textContent = (d > 0 ? '+' : '−') + Math.abs(d);
+        if (el.dataset.unit) f.title = f.textContent + ' ' + el.dataset.unit;
+        if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+        el.appendChild(f);
+        setTimeout(() => f.remove(), 1800);
+      });
+      seatNums = next;
     }
 
     // ---------- лента событий «Ход игры» и строка «что произошло» ----------
@@ -1230,6 +1257,7 @@
       }
       chatLog.length = 0;
       shownLog = [];
+      seatNums = {};
       eventsList.innerHTML = '';
       eventsEl.hidden = true;
       nowEl.hidden = true;

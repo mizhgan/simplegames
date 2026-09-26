@@ -629,3 +629,44 @@
   border-color: var(--success);
   background: color-mix(in srgb, var(--success) 18%, var(--surface));
 }
+
+/* всплывающее изменение у игрока: «+200», «−3» */
+.pt-delta {
+  position: absolute;
+  top: -8px;
+  right: 4px;
+  z-index: var(--z-raised);
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  pointer-events: none;
+  animation: pt-delta 1.8s var(--ease) forwards;
+}
+
+.pt-delta.up {
+  background: var(--success);
+}
+
+.pt-delta.down {
+  background: var(--danger);
+}
+
+@keyframes pt-delta {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}

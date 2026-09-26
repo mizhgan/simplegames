@@ -154,10 +154,12 @@
         s.table[pi].d = c;
         hand.splice(i, 1);
         s.passed = [];
+        say(s, s.names[id] + ' кроет ' + C.name(s.table[pi].a) + ' картой ' + C.name(c), { w: id, i: '🛡' });
       } else {
         if (!canAdd(s, id, c)) return false;
         s.table.push({ a: c, d: null, by: id });
         hand.splice(i, 1);
+        say(s, s.names[id] + (s.table.length > 1 ? ' подкидывает ' : ' ходит ') + C.name(c), { w: id, i: '⚔' });
         s.passed = s.passed.filter((x) => x !== id);
       }
       s.last = now;
@@ -284,7 +286,7 @@
     const el = ui.el;
     const def = v.seats.find((p) => p.def);
     const seats = v.seats
-      .map((p) => `<div class="pt-seat${p.def ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.out ? ' out' : ''}"><b>${esc(p.name)}${p.id === ui.me ? ' (вы)' : ''}</b><span>${p.out ? 'вышел' : '🂠 ' + p.n}${p.def ? ' · 🛡' : p.att ? ' · ⚔' : ''}${p.passed ? ' · пас' : ''}</span></div>`)
+      .map((p) => `<div class="pt-seat${p.def ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.out ? ' out' : ''}" data-seat="${p.id}" data-num="${p.n}" data-unit="карт" data-less-good="1"><b>${esc(p.name)}${p.id === ui.me ? ' (вы)' : ''}</b><span>${p.out ? 'вышел' : '🂠 ' + p.n}${p.def ? ' · 🛡' : p.att ? ' · ⚔' : ''}${p.passed ? ' · пас' : ''}</span></div>`)
       .join('');
     let status;
     if (v.over) status = v.loser === null ? 'Ничья!' : v.loser === ui.me ? 'Вы остались в дураках 🃏' : esc(ui.name(v.loser)) + ' — дурак!';
