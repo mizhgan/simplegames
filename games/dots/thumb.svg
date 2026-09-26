@@ -1,4 +1,4 @@
-<svg viewBox="0 0 160 100" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true">
   <rect x="38" y="18" width="28" height="28" fill="rgba(147,197,253,.55)"/>
   <rect x="66" y="46" width="28" height="28" fill="rgba(252,165,165,.6)"/>
   <g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M38 18H66V46H38Z M66 46H94V74H66 M94 74V46 M94 18H122 M122 46V74"/></g>

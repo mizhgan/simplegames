@@ -1,3 +1,3 @@
-<svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
   <path d="M52 18 H108 V36 C108 54 94 62 80 62 C66 62 52 54 52 36 Z" fill="#fbbf24"/><path d="M52 24 H40 C40 40 50 44 54 44 M108 24 H120 C120 40 110 44 106 44" stroke="#fbbf24" stroke-width="4"/><rect x="74" y="62" width="12" height="14" fill="#f59e0b"/><rect x="60" y="76" width="40" height="10" rx="2" fill="#b45309"/><text x="80" y="44" font-size="18" font-weight="900" text-anchor="middle" fill="#92400e" font-family="system-ui,sans-serif">1</text>
 </svg>

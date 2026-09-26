@@ -1,4 +1,4 @@
-<svg viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="700" font-size="13" text-anchor="middle">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true" font-family="system-ui, sans-serif" font-weight="700" font-size="13" text-anchor="middle">
   <rect x="44" y="8" width="84" height="84" rx="8" fill="#f0fdfa"/>
   <path d="M72 8v84M100 8v84M44 36h84M44 64h84" stroke="#0f766e" stroke-width="2"/>
   <path d="M53.3 8v84M62.6 8v84M81.3 8v84M90.6 8v84M109.3 8v84M118.6 8v84M44 17.3h84M44 26.6h84M44 45.3h84M44 54.6h84M44 73.3h84M44 82.6h84" stroke="#99f6e4" stroke-width=".8"/>

@@ -484,6 +484,135 @@
     return a;
   }
 
+
+  // ---------- каталог на главной: полки, фильтры, поиск ----------
+
+  const SHELVES = [
+    ['online', '🌐 Вдвоём по сети', (c) => c.dataset.online === '1' && c.dataset.party !== '1'],
+    ['party', '👥 Компанией', (c) => c.dataset.party === '1'],
+    ['puzzle', '🧩 Головоломки', (c) => c.dataset.cat === 'puzzle'],
+    ['arcade', '🕹️ Аркады', (c) => c.dataset.cat === 'arcade'],
+    ['board', '♟️ Настольные и карточные', (c) => c.dataset.cat === 'board' && c.dataset.party !== '1'],
+  ];
+  const SHELF_SIZE = 14;
+  const GRID_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+  const LIST_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="18" height="7" rx="1.5"/></svg>';
+
+  function initCatalog() {
+    const catalog = document.getElementById('catalog');
+    const grid = document.getElementById('games-grid');
+    if (!catalog || !grid) return;
+    const cards = [...grid.querySelectorAll('.game-card')];
+    const search = document.getElementById('search');
+    const empty = document.getElementById('no-results');
+    const shelvesEl = document.getElementById('shelves');
+    const norm = (t) => t.toLowerCase().replace(/ё/g, 'е');
+    cards.forEach((c) => (c.dataset.text = norm(c.textContent)));
+    let category = store.get('catalog-filter', 'home');
+    let players = store.get('home-players', 'any');
+
+    // полки: по нескольку игр каждого раздела в прокручиваемой строке
+    SHELVES.forEach(([key, title, test]) => {
+      const list = cards.filter(test);
+      if (!list.length) return;
+      const shelf = document.createElement('section');
+      shelf.className = 'shelf';
+      shelf.innerHTML =
+        '<div class="shelf-head"><h3></h3><button class="shelf-all" type="button"></button>' +
+        '<div class="shelf-nav"><button class="icon-btn" type="button" data-dir="-1" aria-label="Назад">‹</button><button class="icon-btn" type="button" data-dir="1" aria-label="Вперёд">›</button></div></div>' +
+        '<div class="shelf-row"></div>';
+      shelf.querySelector('h3').textContent = title;
+      const all = shelf.querySelector('.shelf-all');
+      all.textContent = 'Все ' + list.length + ' →';
+      all.addEventListener('click', () => setCategory(key, true));
+      const row = shelf.querySelector('.shelf-row');
+      list.slice(0, SHELF_SIZE).forEach((c) => row.appendChild(c.cloneNode(true)));
+      shelf.querySelectorAll('.shelf-nav button').forEach((b) =>
+        b.addEventListener('click', () => row.scrollBy({ left: +b.dataset.dir * row.clientWidth * 0.8, behavior: 'smooth' }))
+      );
+      shelvesEl.appendChild(shelf);
+    });
+
+    const fitsPlayers = (c) => {
+      if (players === 'any') return true;
+      const [a, b] = (c.dataset.players || '1-1').split('-').map(Number);
+      return players === '1' ? a <= 1 : players === '2' ? a <= 2 && b >= 2 : b >= 3;
+    };
+    const inCategory = (c) =>
+      category === 'all' || category === 'home' ||
+      (category === 'fav' ? c.dataset.fav === '1' : category === 'online' ? c.dataset.online === '1' : category === 'party' ? c.dataset.party === '1' : c.dataset.cat === category);
+
+    function apply() {
+      const q = norm(search.value.trim());
+      const overview = category === 'home' && !q && players === 'any';
+      shelvesEl.hidden = !overview;
+      grid.hidden = overview;
+      let shown = 0;
+      if (!overview) {
+        cards.forEach((c) => {
+          const ok = inCategory(c) && fitsPlayers(c) && (!q || c.dataset.text.includes(q));
+          c.hidden = !ok;
+          if (ok) shown++;
+        });
+      }
+      empty.hidden = overview || shown > 0;
+      empty.textContent =
+        category === 'fav' && !q ? 'В избранном пока пусто. Нажмите ☆ на карточке или на странице игры, чтобы добавить её сюда.' : 'Ничего не нашлось. Попробуйте другое слово или сбросьте фильтры.';
+    }
+
+    const seg = SG.segmented(document.getElementById('filter'), category, (v) => {
+      category = v;
+      store.set('catalog-filter', v);
+      apply();
+    });
+    SG.segmented(document.getElementById('players'), players, (v) => {
+      players = v;
+      store.set('home-players', v);
+      apply();
+    });
+    function setCategory(v, scroll) {
+      category = v;
+      store.set('catalog-filter', v);
+      const btn = document.querySelector('#filter [data-value="' + v + '"]');
+      if (btn) btn.click();
+      else apply();
+      if (seg && seg.set) seg.set(v);
+      if (scroll) document.getElementById('catalog').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => setCategory(b.dataset.go, true)));
+
+    // компактный вид сетки
+    const view = document.getElementById('view-toggle');
+    const renderView = () => {
+      const compact = store.get('home-compact', false);
+      grid.classList.toggle('compact', compact);
+      view.innerHTML = compact ? LIST_ICON : GRID_ICON;
+      view.setAttribute('aria-pressed', String(compact));
+      view.title = compact ? 'Крупные карточки' : 'Компактный вид';
+      view.setAttribute('aria-label', view.title);
+    };
+    view.addEventListener('click', () => {
+      store.set('home-compact', !store.get('home-compact', false));
+      renderView();
+    });
+    renderView();
+
+    search.addEventListener('input', apply);
+    document.addEventListener('sg:favchange', apply);
+    // «/» — быстрый переход к поиску, Esc — очистить
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== search && !/input|textarea/i.test(document.activeElement.tagName)) {
+        e.preventDefault();
+        search.focus();
+      } else if (e.key === 'Escape' && document.activeElement === search) {
+        search.value = '';
+        apply();
+        search.blur();
+      }
+    });
+    apply();
+  }
+
   function initHome() {
     const cards = document.querySelectorAll('.game-card');
     if (!cards.length) return;
@@ -515,9 +644,13 @@
         favs = favs.includes(id) ? favs.filter((x) => x !== id) : favs.concat(id);
         store.set('favorites', favs);
         SG.sound.play('flag');
-        render();
         document.dispatchEvent(new CustomEvent('sg:favchange'));
       };
+      // у игры может быть несколько карточек (полка и сетка) — обновляем все
+      document.addEventListener('sg:favchange', () => {
+        favs = store.get('favorites', []);
+        render();
+      });
       star.addEventListener('click', toggle);
       star.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && toggle(e));
       render();
@@ -681,6 +814,7 @@
     checkDaily();
     checkAchievements(false);
     initHeaderLink();
+    initCatalog();
     initHome();
     initAchievementsPage();
     initGamePage();

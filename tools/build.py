@@ -87,6 +87,9 @@ def load():
         for key in ('title', 'description', 'category', 'tag', 'card', 'rules'):
             if key not in meta:
                 errors.append('%s: в meta.json нет поля %s' % (gid, key))
+        pl = meta.get('players', [1, 1])
+        if not (isinstance(pl, list) and len(pl) == 2 and 1 <= pl[0] <= pl[1]):
+            errors.append('%s: players должно быть [мин, макс]' % gid)
         if meta.get('category') not in CATEGORIES:
             errors.append('%s: неизвестная категория %r' % (gid, meta.get('category')))
         games.append(meta)
@@ -129,11 +132,11 @@ def card(g):
         extra = ''.join(' data-best-%s="%s"' % (k, html.escape(v, quote=True)) for k, v in best.items() if k != 'key')
         tags += '<span class="best" data-best="%s"%s></span>' % (best['key'], extra)
     g1, g2 = g['card']['colors']
+    pmin, pmax = g.get('players', [1, 1])
+    attrs += ' data-players="%d-%d"' % (pmin, pmax)
     return (
         '        <a class="game-card" href="games/%s/index.html"%s data-cat="%s" style="--g1:%s;--g2:%s">\n' % (g['id'], attrs, g['category'], g1, g2)
-        + '          <div class="thumb">\n'
-        + indent(g['thumbSvg'], 12) + '\n'
-        + '          </div>\n'
+        + '          <div class="thumb"><img src="games/%s/thumb.svg" alt="" width="160" height="100" loading="lazy" decoding="async"></div>\n' % g['id']
         + '          <div class="card-body">\n'
         + '            <h3>%s</h3>\n' % g.get('cardTitle', g['title'])
         + '            <p>%s</p>\n' % g['card']['text']
@@ -226,7 +229,7 @@ def css_bundle():
 # ---------- service worker ----------
 
 SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src'}
-SW_SKIP_FILES = {'sw.js', 'styleguide.html', 'README.md', '.htaccess', 'robots.txt', '.gitignore', '404.html', 'meta.json', 'stage.html', 'thumb.svg', 'catalog.json'}
+SW_SKIP_FILES = {'sw.js', 'styleguide.html', 'README.md', '.htaccess', 'robots.txt', '.gitignore', '404.html', 'meta.json', 'stage.html', 'catalog.json'}
 SW_EXTS = {'.html', '.css', '.js', '.svg', '.png', '.webmanifest', '.json'}
 
 
