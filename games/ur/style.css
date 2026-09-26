@@ -107,6 +107,28 @@
   background: radial-gradient(circle at 50% 70%, #fff 20%, #a8a29e 22%);
 }
 
+.ur-dice.rolling .ur-die {
+  animation: ur-roll 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+@keyframes ur-roll {
+  0% {
+    transform: translateY(-8px) rotate(-450deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(6deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ur-dice.rolling .ur-die {
+    animation: none;
+  }
+}
+
 .ur-dice b {
   margin-left: 6px;
   font-size: 1.6rem;

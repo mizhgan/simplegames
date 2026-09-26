@@ -13,6 +13,10 @@
        ai(state, level) { return move },  // ход компьютера (можно вернуть Promise)
        hint(state, view) { return '' },   // необязательная подсказка к строке состояния
        sound(state, move) { return 'place' },
+       roll(state, move) { return 0 },    // необязательно: сколько мс идёт анимация хода (бросок кубиков);
+                                        // пока она идёт, view.busy = true, человек и компьютер ждут,
+                                        // ходы соперника по сети откладываются до её конца
+       rollText: 'Бросок…',             // строка состояния во время анимации
      });
      duel.play(move) — ход человека (проверяется очередь и правила)
 
@@ -49,10 +53,15 @@
     let seed = 1;
     let hostSide = 0; // у зрителя: за кого играет хозяин (игрок 1)
     const scores = [0, 0, 0]; // сторона 0, сторона 1, ничьи
+    // анимация хода (cfg.roll): до её конца никто не ходит, а ходы из сети ждут в очереди
+    let busyUntil = 0;
+    let busyTimer = 0;
+    let later = [];
+    const busy = () => Date.now() < busyUntil;
 
     const me = () => (mode === 'ai' ? humanSide : mode === 'net' ? mySide : null);
     const isHumanTurn = () => {
-      if (finished || thinking || mode === 'watch') return false;
+      if (finished || thinking || busy() || mode === 'watch') return false;
       if (mode === 'pvp') return true;
       if (mode === 'net') return net.active && state.turn === mySide;
       return state.turn === humanSide;
@@ -69,13 +78,14 @@
         over: finished,
         watch: mode === 'watch',
         hostSide,
+        busy: busy(),
       };
     }
 
     function render() {
       cfg.render(state, view());
       updateStatus();
-      if (undoBtn) undoBtn.disabled = mode === 'net' || mode === 'watch' || !history.length || !!thinking || (mode === 'ai' && !history.some((h) => h.side === humanSide));
+      if (undoBtn) undoBtn.disabled = mode === 'net' || mode === 'watch' || !history.length || !!thinking || busy() || (mode === 'ai' && !history.some((h) => h.side === humanSide));
     }
 
     function sideName(s) {
@@ -89,6 +99,10 @@
     function updateStatus() {
       if (!statusEl) return;
       if (finished) return;
+      if (busy()) {
+        statusEl.textContent = cfg.rollText || 'Бросок…';
+        return;
+      }
       const v = view();
       const hint = cfg.hint ? cfg.hint(state, v) : '';
       let text;
@@ -149,9 +163,30 @@
       history.push({ m: move, side });
       if (!fromNet && mode === 'net') net.send({ t: 'move', m: move, n: history.length - 1 });
       SG.sound.play(cfg.sound ? cfg.sound(state, move) : 'place');
+      const ms = cfg.roll ? cfg.roll(state, move) : 0;
+      if (ms > 0) hold(ms);
       const done = checkOver();
       render();
       if (!done) maybeAi();
+    }
+
+    // пока идёт анимация, ходы ждут; по её окончании всё перерисовывается
+    function hold(ms) {
+      busyUntil = Date.now() + ms;
+      clearTimeout(busyTimer);
+      const my = token;
+      busyTimer = setTimeout(() => {
+        if (my !== token) return;
+        busyUntil = 0;
+        render();
+        while (later.length && !busy()) later.shift()();
+      }, ms);
+    }
+    const whenFree = (fn) => (busy() ? later.push(fn) : fn());
+    function unhold() {
+      clearTimeout(busyTimer);
+      busyUntil = 0;
+      later = [];
     }
 
     function maybeAi() {
@@ -171,7 +206,7 @@
         thinking = false;
         if (m === undefined || m === null) return render();
         doMove(m);
-      }, cfg.aiDelay === undefined ? 350 : cfg.aiDelay);
+      }, (cfg.aiDelay === undefined ? 350 : cfg.aiDelay) + Math.max(0, busyUntil - Date.now()));
     }
 
     // ход человека из интерфейса игры
@@ -185,6 +220,7 @@
 
     function newGame(side, sd) {
       token++;
+      unhold();
       thinking = false;
       finished = null;
       history = [];
@@ -197,8 +233,9 @@
     }
 
     function undo() {
-      if (mode === 'net' || !history.length || thinking) return;
+      if (mode === 'net' || !history.length || thinking || busy()) return;
       token++;
+      unhold();
       let n = history.length - 1;
       if (mode === 'ai') {
         // откатываем до последнего хода человека включительно
@@ -257,8 +294,10 @@
             },
             onForward(m, from) {
               if (m.t === 'move') {
-                if (finished || m.n !== history.length || !cfg.legal(state, m.m)) return;
-                doMove(m.m, true);
+                whenFree(() => {
+                  if (finished || m.n !== history.length || !cfg.legal(state, m.m)) return;
+                  doMove(m.m, true);
+                });
               } else if (m.t === 'new' && (m.side === 0 || m.side === 1)) {
                 // «new» от хозяина называет сторону гостя, от гостя — сторону хозяина
                 hostSide = from === 'host' ? 1 - m.side : m.side;
@@ -288,8 +327,10 @@
           },
           onMessage(msg) {
             if (msg.t === 'move') {
-              if (finished || state.turn === mySide || msg.n !== history.length || !cfg.legal(state, msg.m)) return;
-              doMove(msg.m, true);
+              whenFree(() => {
+                if (finished || state.turn === mySide || msg.n !== history.length || !cfg.legal(state, msg.m)) return;
+                doMove(msg.m, true);
+              });
             } else if (msg.t === 'new' && (msg.side === 0 || msg.side === 1)) {
               mySide = msg.side;
               net.info('вы играете: ' + sideName(mySide).toLowerCase());
