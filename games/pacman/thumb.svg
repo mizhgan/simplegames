@@ -1,4 +1,4 @@
-<svg viewBox="0 0 160 100" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true">
   <rect x="14" y="14" width="132" height="72" rx="10" fill="#05061a" stroke="#3b5bdb" stroke-width="3"/>
   <path d="M52 50 L74 37 A26 26 0 1 0 74 63 Z" fill="#facc15" transform="translate(-14 0)"/>
   <g fill="#fde68a"><circle cx="78" cy="50" r="3"/><circle cx="92" cy="50" r="3"/><circle cx="106" cy="50" r="6"/></g>

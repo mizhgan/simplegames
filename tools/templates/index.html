@@ -30,38 +30,57 @@
   </header>
 
   <main>
-    <section class="hero container">
-      <div class="hero-badge"><span class="dot"></span>{{count}} · бесплатно · без регистрации · работает офлайн</div>
-      <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
-      <p>Классика, в которую приятно сыграть пару минут: на компьютере, планшете или телефоне. Ничего не нужно устанавливать, а рекорды сохраняются у вас в браузере.</p>
-    </section>
-
-    <section class="container home-top" id="home-top">
-      <div id="daily" hidden></div>
-      <div class="recent-box" id="recent" hidden>
-        <h2>Вы недавно играли</h2>
-        <div class="mini-list"></div>
+    <section class="container home-hero">
+      <div class="hero-text">
+        <div class="hero-badge"><span class="dot"></span>{{count}} · бесплатно · без регистрации · работает офлайн</div>
+        <h1>Простые игры.<br><span class="grad">Прямо в браузере.</span></h1>
+        <p>Классика на пару минут и игры с друзьями — на компьютере или телефоне. Ничего не нужно устанавливать.</p>
+        <div class="hero-links">
+          <button class="btn btn-ghost" type="button" data-go="online">🌐 Вдвоём по сети</button>
+          <button class="btn btn-ghost" type="button" data-go="party">👥 Компанией</button>
+          <button class="btn btn-ghost" type="button" data-go="puzzle">🧩 Головоломки</button>
+        </div>
       </div>
+      <div id="daily" hidden></div>
     </section>
 
-    <section class="container" aria-labelledby="games-title">
-      <div class="section-title">
-        <h2 id="games-title">Игры</h2>
-        <input class="search" type="search" id="search" placeholder="Поиск игры…" aria-label="Поиск игры" autocomplete="off">
-        <div class="seg" id="filter" role="group" aria-label="Категории">
-          <button type="button" data-value="all">Все</button>
-          <button type="button" data-value="arcade">Аркады</button>
-          <button type="button" data-value="puzzle">Головоломки</button>
-          <button type="button" data-value="board">Настольные</button>
-          <button type="button" data-value="online">🌐 По сети</button>
-          <button type="button" data-value="party">👥 Компанией</button>
-          <button type="button" data-value="fav">★ Избранное</button>
+    <section class="container shelf" id="recent" hidden aria-labelledby="recent-title">
+      <div class="shelf-head"><h2 id="recent-title">Продолжить</h2></div>
+      <div class="mini-list"></div>
+    </section>
+
+    <section class="container catalog" id="catalog" aria-labelledby="games-title">
+      <div class="catalog-bar">
+        <div class="catalog-top">
+          <h2 id="games-title">Игры</h2>
+          <input class="search" type="search" id="search" placeholder="Поиск игры…  /" aria-label="Поиск игры" autocomplete="off">
+        </div>
+        <div class="catalog-filters">
+          <div class="seg" id="filter" role="group" aria-label="Категории">
+            <button type="button" data-value="home">Обзор</button>
+            <button type="button" data-value="all">Все</button>
+            <button type="button" data-value="arcade">Аркады</button>
+            <button type="button" data-value="puzzle">Головоломки</button>
+            <button type="button" data-value="board">Настольные</button>
+            <button type="button" data-value="online">🌐 По сети</button>
+            <button type="button" data-value="party">👥 Компанией</button>
+            <button type="button" data-value="fav">★ Избранное</button>
+          </div>
+          <div class="seg" id="players" role="group" aria-label="Сколько игроков">
+            <button type="button" data-value="any">Любое число</button>
+            <button type="button" data-value="1">Один</button>
+            <button type="button" data-value="2">Вдвоём</button>
+            <button type="button" data-value="3">3 и больше</button>
+          </div>
+          <button class="icon-btn" type="button" id="view-toggle" aria-pressed="false" aria-label="Компактный вид" title="Компактный вид"></button>
         </div>
       </div>
 
-      <div class="games-grid">
+      <div id="shelves"></div>
+
+      <div class="games-grid" id="games-grid">
 {{cards}}      </div>
-      <p class="no-results" id="no-results" hidden>Ничего не нашлось. Попробуйте другое слово или категорию «Все».</p>
+      <p class="no-results" id="no-results" hidden>Ничего не нашлось.</p>
     </section>
 
     <section class="container features" aria-label="Особенности">
@@ -97,48 +116,5 @@
 
   <script src="sg/js/common.js"></script>
   <script src="sg/js/site.js"></script>
-  <script>
-    (function () {
-      var cards = document.querySelectorAll('.game-card');
-      var search = document.getElementById('search');
-      var empty = document.getElementById('no-results');
-      var category = SG.store.get('home-filter', 'all');
-      var norm = function (t) { return t.toLowerCase().replace(/ё/g, 'е'); };
-      cards.forEach(function (c) { c.dataset.text = norm(c.textContent); });
-      var apply = function () {
-        var q = norm(search.value.trim());
-        var shown = 0;
-        cards.forEach(function (c) {
-          var inCat = category === 'all' || (category === 'fav' ? c.dataset.fav === '1' : category === 'online' ? c.dataset.online === '1' : category === 'party' ? c.dataset.party === '1' : c.dataset.cat === category);
-          var ok = inCat && (!q || c.dataset.text.indexOf(q) !== -1);
-          c.hidden = !ok;
-          if (ok) shown++;
-        });
-        empty.hidden = shown > 0;
-        empty.textContent = category === 'fav' && !q
-          ? 'В избранном пока пусто. Нажмите ☆ на карточке игры, чтобы добавить её сюда.'
-          : 'Ничего не нашлось. Попробуйте другое слово или категорию «Все».';
-      };
-      SG.segmented(document.getElementById('filter'), category, function (v) {
-        category = v;
-        SG.store.set('home-filter', v);
-        apply();
-      });
-      search.addEventListener('input', apply);
-      document.addEventListener('sg:favchange', apply);
-      // «/» — быстрый переход к поиску
-      document.addEventListener('keydown', function (e) {
-        if (e.key === '/' && document.activeElement !== search) {
-          e.preventDefault();
-          search.focus();
-        } else if (e.key === 'Escape' && document.activeElement === search) {
-          search.value = '';
-          apply();
-          search.blur();
-        }
-      });
-      apply();
-    })();
-  </script>
 </body>
 </html>

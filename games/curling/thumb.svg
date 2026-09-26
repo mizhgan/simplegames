@@ -1,3 +1,3 @@
-<svg viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
   <rect x="0" y="20" width="160" height="60" fill="#eef6fb"/><circle cx="124" cy="50" r="26" fill="#2563eb"/><circle cx="124" cy="50" r="17" fill="#fff"/><circle cx="124" cy="50" r="9" fill="#dc2626"/><circle cx="118" cy="44" r="6" fill="#9ca3af"/><circle cx="118" cy="44" r="3.6" fill="#ef4444"/><circle cx="70" cy="52" r="6" fill="#9ca3af"/><circle cx="70" cy="52" r="3.6" fill="#3b82f6"/><path d="M20 50 C 50 50, 60 48, 64 51" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
 </svg>

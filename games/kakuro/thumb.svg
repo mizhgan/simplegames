@@ -1,4 +1,4 @@
-<svg viewBox="0 0 160 100" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true">
   <g font-family="system-ui, sans-serif" font-weight="800">
     <g fill="#374151"><rect x="40" y="12" width="26" height="26"/><rect x="68" y="12" width="26" height="26"/><rect x="96" y="12" width="26" height="26"/><rect x="40" y="40" width="26" height="26"/><rect x="40" y="68" width="26" height="26"/></g>
     <g stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M68 12 L94 38 M96 12 L122 38 M40 40 L66 66 M40 68 L66 94"/></g>

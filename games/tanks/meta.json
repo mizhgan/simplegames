@@ -5,6 +5,7 @@
   "tag": "Аркада",
   "online": false,
   "party": false,
+  "players": [1, 1],
   "card": {
     "text": "По мотивам Battle City: защищайте штаб и уничтожайте вражеские танки.",
     "colors": ["#78716c", "#292524"]
