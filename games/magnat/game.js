@@ -122,9 +122,7 @@
       s.money[id] += PASS_GO;
       say(s, s.names[id] + ' проходит Старт: +' + PASS_GO, { w: id, i: '🏁', k: 'good' });
     }
-    // последний переход — для анимации фишки: шагом по клеткам (бросок) или сразу (карточка «Шанс»)
-    s.moveN = (s.moveN || 0) + 1;
-    s.lastMove = { id, from: s.pos[id], to, walk: passGo, n: s.moveN };
+    track(s, id, to, passGo);
     s.pos[id] = to;
     land(s, id);
   }
@@ -148,23 +146,37 @@
     } else if (c.t === 'gojail') toJail(s, id);
     else if (c.t === 'ch') {
       const [text, v] = CHANCE[Math.floor(Math.random() * CHANCE.length)];
-      say(s, name + ': ' + text, { w: id, i: '❓', big: true });
+      const card = name + ' тянет «Шанс»: ' + text.toLowerCase();
       if (typeof v === 'number') {
+        say(s, card + (v > 0 ? ' +' + v : ' −' + -v), { w: id, i: '❓', k: v > 0 ? 'good' : 'bad', big: true });
         if (v > 0) s.money[id] += v;
         else pay(s, id, -v);
-      } else if (v === 'go') moveTo(s, id, 0, true);
-      else if (v === 'jail') toJail(s, id);
-      else if (v === 'back') moveTo(s, id, (s.pos[id] + N - 3) % N, false);
-      else if (v === 'gift')
-        alive(s).forEach((x) => {
-          if (x !== id && !s.out.includes(x)) pay(s, x, 30, id);
-        });
+      } else if (v === 'go') {
+        say(s, card, { w: id, i: '❓', big: true });
+        moveTo(s, id, 0, true);
+      } else if (v === 'jail') {
+        say(s, card, { w: id, i: '❓', k: 'bad', big: true });
+        toJail(s, id);
+      } else if (v === 'back') {
+        const to = (s.pos[id] + N - 3) % N;
+        say(s, card + ' → ' + B[to].n, { w: id, i: '❓', big: true });
+        moveTo(s, id, to, false);
+      } else if (v === 'gift') {
+        const from = alive(s).filter((x) => x !== id && !s.out.includes(x));
+        const before = s.money[id];
+        from.forEach((x) => pay(s, x, 30, id));
+        say(s, card + ' +' + (s.money[id] - before), { w: id, i: '🎁', k: 'good', big: true });
+      }
     }
   }
 
+  // путь фишки за бросок — для анимации: шагом по клеткам (бросок) или прыжком (карточка «Шанс», тюрьма)
+  function track(s, id, to, walk) {
+    if (s.lastMove && s.lastMove.id === id && s.lastMove.path) s.lastMove.path.push({ from: s.pos[id], to, walk: !!walk });
+  }
+
   function toJail(s, id) {
-    s.moveN = (s.moveN || 0) + 1;
-    s.lastMove = { id, from: s.pos[id], to: JAIL, walk: false, n: s.moveN };
+    track(s, id, JAIL, false);
     s.pos[id] = JAIL;
     s.jail[id] = 3;
     s.doubles = 0;
@@ -195,6 +207,8 @@
     if (a.roll && s.phase === 'roll') {
       const d = [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)];
       s.dice = d;
+      s.moveN = (s.moveN || 0) + 1;
+      s.lastMove = { id, n: s.moveN, path: [] };
       const dbl = d[0] === d[1];
       if (s.jail[id]) {
         if (dbl) {
@@ -356,8 +370,8 @@
   const ICON = { go: '🏁', jail: '🚔', park: '🅿', gojail: '👮', ch: '❓', tax: '💰', tr: '🚆' };
   const DIE = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
-  // что уже показано: позиции фишек, деньги, последний ход и кубики — чтобы анимировать только изменения
-  const seen = { pos: {}, money: {}, move: 0, dice: '' };
+  // что уже показано: позиции фишек, деньги и последний ход — чтобы анимировать только изменения
+  const seen = { pos: {}, money: {}, jail: {}, move: 0 };
   const letter = (name) => (Array.from(String(name).trim().replace(/^Бот\s+/, ''))[0] || '?').toUpperCase();
 
   function render(v, ui) {
@@ -403,7 +417,7 @@
         (p) =>
           `<div class="pt-seat${p.id === v.turn && !v.over ? ' turn' : ''}${p.id === ui.me ? ' me' : ''}${p.out ? ' out' : ''}" data-seat="${p.id}" title="Капитал ${p.worth}">` +
           `<b><span class="mg-ava" style="background:${p.color}">${esc(letter(p.name))}</span>${esc(p.name)}</b>` +
-          `<span class="mg-money">${p.out ? 'банкрот' : '💵 ' + p.money}${p.jail ? ' · 🚔' : ''}</span></div>`
+          `<span class="mg-money"><span>${p.out ? 'банкрот' : '💵 ' + p.money}</span><span>${p.jail ? ' · 🚔' : ''}</span></span></div>`
       )
       .join('');
     const tokens = v.players
@@ -421,7 +435,7 @@
     on('[data-end]', { end: 1 });
     el.querySelectorAll('.mg-cell.can').forEach((c) => c.addEventListener('click', () => ui.send({ build: +c.dataset.i })));
 
-    animate(v, el);
+    animate(v, el, ui);
 
     const key = v.dice.join() + (v.log.length ? v.log[v.log.length - 1].n : 0);
     if (render.key !== key) {
@@ -467,79 +481,138 @@
     });
   }
 
-  function animate(v, el) {
+  const ROLL_MS = 620; // бросок кубиков
+  const STEP_MS = 170; // шаг фишки по клетке
+  const JUMP_MS = 420; // прыжок по карточке «Шанс» или в тюрьму
+  const PAUSE_MS = 900; // пауза перед прыжком: успеть прочитать, что выпало
+
+  // порядок хода: катятся кубики → фишка едет по клеткам → встала: записи ленты →
+  // (если «Шанс» или «В тюрьму») пауза и прыжок → деньги, кнопки
+  function animate(v, el, ui) {
     const target = {};
     v.players.forEach((p) => (target[p.id] = p.pos));
     const layer = el.querySelector('.mg-tokens');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const mv = v.move;
-    const fresh = mv && mv.n !== seen.move && seen.pos[mv.id] !== undefined;
-    // сначала ставим фишки туда, где их видели в прошлый раз, без анимации
+    const fresh = !reduce && mv && mv.n !== seen.move && seen.pos[mv.id] !== undefined;
+    const path = fresh && mv.path ? mv.path : [];
+    const dice = el.querySelector('.mg-dice');
+
+    // шаги фишки со временем каждого
+    const steps = [];
+    let arrive = 0; // когда фишка встала на первую клетку — тогда и видно, что там произошло
+    path.forEach((seg, i) => {
+      if (seg.walk) for (let c = seg.from; c !== seg.to; ) steps.push({ cell: (c = (c + 1) % N), ms: STEP_MS });
+      else steps.push({ cell: seg.to, ms: JUMP_MS, pre: i ? PAUSE_MS : 0 });
+      if (!i) arrive = steps.reduce((t, x) => t + (x.pre || 0) + x.ms, 0);
+    });
+    const rollMs = fresh && dice && v.dice[0] ? ROLL_MS : 0;
+    const total = rollMs + steps.reduce((t, x) => t + (x.pre || 0) + x.ms, 0);
+    arrive += rollMs;
+
+    // фишки сначала там, где их видели в прошлый раз
     const start = Object.assign({}, target);
-    if (fresh && !reduce) start[mv.id] = mv.from;
+    if (path.length) start[mv.id] = path[0].from;
     layer.classList.add('still');
     placeTokens(el, start);
     void layer.offsetWidth;
     layer.classList.remove('still');
-    if (fresh && !reduce) {
+
+    if (rollMs) rollDice(dice, v.dice);
+    if (total) {
+      if (ui.hold) ui.hold(arrive, total + 150);
+      // пока ход не закончился, кнопки видны, но не нажимаются
+      const acts = el.querySelector('.tb-actions');
+      if (acts) acts.classList.add('mg-wait');
+      setTimeout(() => acts && acts.classList.remove('mg-wait'), total);
+    }
+    if (steps.length) {
       const tok = layer.querySelector('[data-tok="' + mv.id + '"]');
-      const steps = [];
-      if (mv.walk) for (let c = mv.from; c !== mv.to; ) steps.push((c = (c + 1) % N));
-      else steps.push(mv.to);
-      if (tok) tok.classList.add('moving');
+      const pos = Object.assign({}, start);
       let k = 0;
       const next = () => {
         if (!layer.isConnected) return;
         if (k >= steps.length) {
           if (tok) tok.classList.remove('moving');
-          const cell = el.querySelector('.mg-cell[data-i="' + mv.to + '"]');
+          const cell = el.querySelector('.mg-cell[data-i="' + steps[steps.length - 1].cell + '"]');
           if (cell) cell.classList.add('landed');
           return;
         }
-        const pos = Object.assign({}, target, { [mv.id]: steps[k++] });
-        placeTokens(el, pos);
-        setTimeout(next, mv.walk ? 170 : 380);
+        const st = steps[k++];
+        setTimeout(() => {
+          if (!layer.isConnected) return;
+          pos[mv.id] = st.cell;
+          placeTokens(el, pos);
+          setTimeout(next, st.ms);
+        }, st.pre || 0);
       };
-      next();
+      setTimeout(() => {
+        if (!layer.isConnected) return;
+        if (tok) tok.classList.add('moving');
+        next();
+      }, rollMs);
     } else placeTokens(el, target);
     if (mv) seen.move = mv.n;
     seen.pos = target;
 
-    // кубики «катятся» при новом броске
-    const dk = v.dice.join();
-    const dice = el.querySelector('.mg-dice');
-    if (dice && v.dice[0] && dk !== seen.dice && seen.dice !== '' && !reduce) {
-      // один спокойный бросок: грани меняются всё реже, кубики докатываются и встают
-      const rnd = () => 1 + Math.floor(Math.random() * 6);
-      dice.innerHTML = diceHtml([rnd(), rnd()]);
-      dice.classList.add('rolling');
-      [110, 250, 420].forEach((ms) => setTimeout(() => {
-        if (dice.isConnected && dice.classList.contains('rolling')) dice.innerHTML = diceHtml([rnd(), rnd()]);
-      }, ms));
-      setTimeout(() => {
-        if (!dice.isConnected) return;
-        dice.innerHTML = diceHtml(v.dice);
-        dice.classList.remove('rolling');
-      }, 620);
-    }
-    seen.dice = dk;
-
-    // деньги: всплывающие «+200» / «−140» у игрока
+    // деньги: пока фишка едет, у игроков старые суммы; когда встала — новые и всплывающие «+200» / «−140»
+    const changes = [];
+    const jailed = [];
     v.players.forEach((p) => {
       const before = seen.money[p.id];
-      if (before !== undefined && before !== p.money) {
-        const seat = el.querySelector('[data-seat="' + p.id + '"]');
-        if (seat) {
-          const d = p.money - before;
-          const f = document.createElement('span');
-          f.className = 'mg-delta ' + (d > 0 ? 'up' : 'down');
-          f.textContent = (d > 0 ? '+' : '−') + Math.abs(d);
-          seat.appendChild(f);
-          setTimeout(() => f.remove(), 1800);
-        }
-      }
+      if (before !== undefined && before !== p.money) changes.push([p, before]);
+      if (p.jail && !seen.jail[p.id]) jailed.push(p);
       seen.money[p.id] = p.money;
+      seen.jail[p.id] = !!p.jail;
     });
+    const moneyOf = (id) => el.querySelector('[data-seat="' + id + '"] .mg-money');
+    if (total) {
+      changes.forEach(([p, before]) => {
+        const m = moneyOf(p.id);
+        if (m && !p.out) m.firstChild.textContent = '💵 ' + before;
+      });
+      jailed.forEach((p) => {
+        const m = moneyOf(p.id);
+        if (m) m.lastChild.textContent = '';
+      });
+    }
+    const reveal = () => {
+      jailed.forEach((p) => {
+        const m = moneyOf(p.id);
+        if (m && m.isConnected) m.lastChild.textContent = ' · 🚔';
+      });
+      changes.forEach(([p, before]) => {
+        const seat = el.querySelector('[data-seat="' + p.id + '"]');
+        if (!seat || !seat.isConnected) return;
+        const m = moneyOf(p.id);
+        if (m && !p.out) m.firstChild.textContent = '💵 ' + p.money;
+        const d = p.money - before;
+        const f = document.createElement('span');
+        f.className = 'mg-delta ' + (d > 0 ? 'up' : 'down');
+        f.textContent = (d > 0 ? '+' : '−') + Math.abs(d);
+        seat.appendChild(f);
+        setTimeout(() => f.remove(), 1800);
+      });
+    };
+    if (total) setTimeout(reveal, total);
+    else reveal();
+  }
+
+  function rollDice(dice, final) {
+    // один спокойный бросок: грани меняются всё реже, кубики докатываются и встают
+    const rnd = () => 1 + Math.floor(Math.random() * 6);
+    dice.innerHTML = diceHtml([rnd(), rnd()]);
+    dice.classList.add('rolling');
+    [110, 250, 420].forEach((ms) =>
+      setTimeout(() => {
+        if (dice.isConnected && dice.classList.contains('rolling')) dice.innerHTML = diceHtml([rnd(), rnd()]);
+      }, ms)
+    );
+    setTimeout(() => {
+      if (!dice.isConnected) return;
+      dice.innerHTML = diceHtml(final);
+      dice.classList.remove('rolling');
+    }, ROLL_MS);
   }
 
   // при изменении размера окна фишки встают на свои клетки заново

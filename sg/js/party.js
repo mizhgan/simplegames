@@ -17,7 +17,7 @@
        chat(state, id, text) → undefined | false (не показывать) | 'другой текст',
        relay(state, id, msg) → true (разослать остальным), // поток данных мимо «вида» (рисунок)
        onRelay(msg, ui),                          // у всех: пришли данные потока
-       render(view, ui),                          // ui: { el, me, send(action), relay(msg), players, host, left(sec), mode }
+       render(view, ui),                          // ui: { el, me, send(action), relay(msg), players, host, left(sec), mode, hold(ms, busy) }
        local: { label, start(ui) },               // свой режим «на одном устройстве» (необязательно)
      });
    Разметка: <div id="party"></div> внутри .game-stage.
@@ -552,7 +552,7 @@
             return;
           }
           if (!botReady[p.id]) botReady[p.id] = now + (cfg.botDelay ? cfg.botDelay(state, p.id) : 700 + Math.random() * 900);
-          else if (now >= botReady[p.id] && now >= lastChangeAt + pace()) {
+          else if (now >= botReady[p.id] && now >= lastChangeAt + pace() && now >= busyUntil) {
             botReady[p.id] = 0;
             if (cfg.act(state, p.id, a, now)) changed = true;
           }
@@ -857,6 +857,11 @@
           return p ? p.name : '?';
         },
         chat: (text) => sysChat(text),
+        // игра показывает анимацию (кубики, ход фишки): новые записи ленты, кроме первой, ждут ms, ходы ботов — busy (по умолчанию столько же)
+        hold(ms, busy) {
+          holdUntil = Math.max(holdUntil, Date.now() + ms);
+          busyUntil = Math.max(busyUntil, Date.now() + (busy === undefined ? ms : busy));
+        },
         // сообщение в чат от своего имени (например, догадка в «Крокодиле»)
         say(text) {
           if (role === 'watcher' || !String(text).trim()) return;
@@ -906,6 +911,11 @@
     // Имена игроков в тексте подсвечиваются их цветом, новые записи дописываются без перерисовки ленты.
 
     let shownLog = [];
+    // пока идёт анимация хода (ui.hold), в ленте видна только первая новая запись — остальные после неё
+    let holdUntil = 0;
+    let busyUntil = 0;
+    let holdTimer = 0;
+    let pendingLog = null;
     const entryOf = (x) => (typeof x === 'string' ? { t: x } : x && typeof x === 'object' ? x : { t: String(x) });
     const keyOf = (x) => (typeof x === 'string' ? x : x && x.n !== undefined ? '#' + x.n : JSON.stringify(x));
     const ICONS = [
@@ -959,6 +969,31 @@
       return { cls: 'pt-ev' + (tone ? ' tone-' + tone : '') + (isBig(e) ? ' big' : ''), html: '<span class="pt-ev-ico" aria-hidden="true">' + iconFor(e) + '</span>' + ava + '<span class="pt-ev-text">' + markNames(e.t) + '</span>' };
     }
     function renderEvents(log) {
+      pendingLog = log;
+      if (holdTimer) return;
+      const wait = holdUntil - Date.now();
+      if (wait > 0 && log && shownLog.length) {
+        const n = freshCount(log);
+        if (n > 1) {
+          drawEvents(log.slice(0, log.length - n + 1));
+          holdTimer = setTimeout(() => {
+            holdTimer = 0;
+            renderEvents(pendingLog);
+          }, wait);
+          return;
+        }
+      }
+      drawEvents(log);
+    }
+    // сколько записей в конце log ещё не показано
+    function freshCount(log) {
+      const keys = log.map(keyOf);
+      const prev = shownLog;
+      let overlap = Math.min(prev.length, keys.length);
+      while (overlap > 0 && prev.slice(prev.length - overlap).join('\u0001') !== keys.slice(0, overlap).join('\u0001')) overlap--;
+      return overlap === 0 && prev.length ? keys.length : keys.length - overlap;
+    }
+    function drawEvents(log) {
       if (!log) {
         eventsEl.hidden = true;
         nowEl.hidden = true;
@@ -1257,6 +1292,10 @@
       }
       chatLog.length = 0;
       shownLog = [];
+      clearTimeout(holdTimer);
+      holdTimer = 0;
+      holdUntil = busyUntil = 0;
+      pendingLog = null;
       seatNums = {};
       eventsList.innerHTML = '';
       eventsEl.hidden = true;

@@ -295,3 +295,10 @@
     animation: none;
   }
 }
+
+/* пока идёт ход (кубики, фишка), кнопки ждут */
+.tb-actions.mg-wait {
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease);
+}
