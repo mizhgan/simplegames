@@ -112,3 +112,23 @@
   color: var(--muted);
   font-size: 0.8rem;
 }
+
+/* телефон: поле не выше экрана за вычетом переключателей и статуса,
+   кнопки расстановки и сводка боя сразу под ним */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .st-wrap {
+    gap: 8px;
+  }
+
+  .st-board {
+    width: min(100%, max(260px, calc(100svh - 330px)));
+  }
+
+  .st-dead {
+    gap: 2px 12px;
+  }
+}

@@ -9,6 +9,7 @@
 @media (max-width: 640px) {
   .bs-boards {
     grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
   }
   .bs-boards .bs-side.enemy {
     order: -1;
@@ -123,4 +124,108 @@
 .bs-cell.aim::after {
   content: '◎';
   color: #fff;
+}
+
+/* телефон: крупным — поле, по которому сейчас играем (в бою — противник, при расстановке — свой флот),
+   своё поле в бою — мини-картой с подписью сбоку, чтобы поле и кнопки помещались на экран без прокрутки */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  /* поля становятся прямыми детьми сцены: кнопки хода («Огонь!», «Сдаться») встают
+     сразу под полем противника, а мини-карта своего флота — ниже них */
+  .bs-boards {
+    display: contents;
+  }
+
+  .bs-side {
+    width: 100%;
+  }
+
+  .bs-boards .bs-side.enemy {
+    order: 1;
+  }
+
+  .bs-boards + .game-controls {
+    order: 2;
+  }
+
+  .bs-boards .bs-side:not(.enemy) {
+    order: 3;
+  }
+
+  .bs-grid {
+    padding: 4px;
+    gap: 1px;
+    /* крупное поле не выше экрана за вычетом переключателей и строки статуса */
+    width: min(100%, calc(100svh - 230px));
+    min-width: 260px;
+    margin: 0 auto;
+  }
+
+  .bs-side h2 {
+    margin-bottom: 4px;
+  }
+
+  .bs-side:not(.enemy) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
+  }
+
+  .bs-side:not(.enemy) .bs-grid {
+    grid-row: 1;
+    grid-column: 1;
+    width: min(46vw, 190px);
+    min-width: 0;
+    padding: 3px;
+    gap: 1px;
+  }
+
+  .bs-side:not(.enemy) h2 {
+    grid-column: 2;
+    flex-direction: column;
+    gap: 2px;
+    margin: 4px 0 0;
+  }
+
+  /* у мини-карты подписи координат не нужны: убираем их, клетки встают ровно 10×10 */
+  .bs-side:not(.enemy) .bs-grid {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+
+  .bs-side:not(.enemy) .bs-label {
+    display: none;
+  }
+
+  .bs-side:not(.enemy) .bs-cell::after {
+    font-size: 0.55rem;
+  }
+
+  /* расстановка: свой флот крупно, пустое поле противника пока не показываем */
+  .game-stage:has(#setup:not([hidden])) .bs-side.enemy {
+    display: none;
+  }
+
+  .game-stage:has(#setup:not([hidden])) .bs-side:not(.enemy) {
+    display: block;
+  }
+
+  .game-stage:has(#setup:not([hidden])) .bs-side:not(.enemy) h2 {
+    flex-direction: row;
+    margin: 0 0 4px;
+  }
+
+  .game-stage:has(#setup:not([hidden])) .bs-side:not(.enemy) .bs-grid {
+    width: min(100%, calc(100svh - 330px));
+    min-width: 240px;
+    padding: 4px;
+    grid-template-columns: 0.7fr repeat(10, minmax(0, 1fr));
+  }
+
+  .game-stage:has(#setup:not([hidden])) .bs-side:not(.enemy) .bs-label {
+    display: grid;
+  }
 }

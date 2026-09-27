@@ -242,3 +242,79 @@
     display: none;
   }
 }
+
+/* телефон: счёт одной строкой, фишки и все кнопки хода в один ряд прямо под полем —
+   поле, фишки и «Сделать ход» помещаются на экран вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 8px;
+  }
+
+  .game-stage > .status-line {
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .er-layout {
+    gap: 8px;
+  }
+
+  .er-board {
+    width: min(100%, max(270px, calc(100svh - 365px)));
+    padding: 4px;
+    gap: 1px;
+  }
+
+  .er-side {
+    gap: 6px;
+    width: 100%;
+  }
+
+  .er-points {
+    gap: 6px;
+  }
+
+  .er-points div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 10px;
+  }
+
+  .er-points b {
+    font-size: 1.05rem;
+  }
+
+  .er-rack {
+    gap: 5px;
+    min-height: 0;
+    padding: 5px;
+    border-radius: 10px;
+  }
+
+  .er-tile {
+    font-size: 1.2rem;
+  }
+
+  .er-tile small {
+    font-size: 0.56em;
+  }
+
+  .er-preview {
+    min-height: 1.3em;
+    font-size: 0.85rem;
+  }
+
+  .er-actions {
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .er-actions .btn {
+    min-height: 38px;
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+}

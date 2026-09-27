@@ -102,3 +102,23 @@
   line-height: 1;
   letter-spacing: -0.05em;
 }
+
+/* на телефоне шапка ниже, а на странице игры не прилипает к верху: при прокрутке к полю ему достаётся весь экран */
+@media (max-width: 640px) {
+  .header-inner {
+    height: 52px;
+  }
+
+  .logo {
+    font-size: 1.05rem;
+  }
+
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .page-game .site-header {
+    position: relative;
+  }
+}

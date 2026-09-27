@@ -391,7 +391,7 @@
       const [r, col] = cellPos(i);
       const owner = v.own[i];
       const h = v.houses[i] || 0;
-      return `<div class="mg-cell ${c.t}${v.offer === i ? ' offer' : ''}${v.canBuild.includes(i) ? ' can' : ''}${i === dest ? ' dest' : ''}" style="grid-row:${r};grid-column:${col}${i === dest ? ';--c:' + destColor : ''}" data-i="${i}">` +
+      return `<div class="mg-cell ${c.t}${v.offer === i ? ' offer' : ''}${v.canBuild.includes(i) ? ' can' : ''}${i === dest ? ' dest' : ''}" style="grid-row:${r};grid-column:${col}${i === dest ? ';--c:' + destColor : ''}" data-i="${i}" title="${esc(c.n)}${c.p && c.t !== 'tax' ? ' · ' + c.p : ''}">` +
         (c.g !== undefined ? `<span class="mg-band" style="background:${GROUPS[c.g]}">${h ? '🏠'.repeat(h) : ''}</span>` : `<span class="mg-icon">${c.t === 'tr' && i > 10 ? '✈' : ICON[c.t] || ''}</span>`) +
         `<span class="mg-name">${esc(c.n)}</span>${c.p && c.t !== 'tax' ? `<span class="mg-price">${c.p}</span>` : ''}` +
         (owner !== undefined ? `<span class="mg-owner" style="background:${colorOf(owner)}" title="${esc(ui.name(owner))}"></span>` : '') +

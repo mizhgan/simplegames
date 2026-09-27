@@ -113,3 +113,61 @@
   opacity: 0.85;
   text-align: center;
 }
+
+/* ---------- телефон: стол, рука и кнопки хода — на одном экране ---------- */
+@media (max-width: 640px) {
+  .pt-table .un-table {
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  /* игроки — в один ряд (при 5–6 игроках — в два), компактно */
+  .un-table .pt-seats {
+    gap: 4px;
+  }
+
+  .un-table .pt-seat {
+    flex: 1 1 64px;
+    min-width: 0;
+    max-width: 110px;
+    padding: 3px 4px;
+    font-size: 0.75rem;
+  }
+
+  .un-table .pt-seat b {
+    max-width: 100%;
+    font-size: 0.78rem;
+  }
+
+  .un-table .tb-center {
+    gap: 6px;
+    padding: 6px;
+  }
+
+  /* колода, верхняя карта, цвет и направление — одной строкой */
+  .un-table .tb-row {
+    flex-wrap: nowrap;
+    gap: 6px;
+    min-height: 0;
+  }
+
+  .un-table .tb-pot {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .un-table .tb-msg {
+    font-size: 0.85rem;
+  }
+
+  /* рука — внахлёст, чтобы даже 10 карт помещались в ряд */
+  .un-hand {
+    gap: 12px 0;
+    padding-top: 6px;
+  }
+
+  .un-hand .un-card + .un-card {
+    margin-left: -8px;
+  }
+}

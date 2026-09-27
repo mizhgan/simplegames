@@ -111,10 +111,12 @@
       starts[cellsOf(k)[0]] = starts[cellsOf(k)[0]] || k + 1;
     });
     const selCells = sel >= 0 ? new Set(cellsOf(sel)) : new Set();
+    // строки сетки без единой клетки помечаем: на телефоне их прячем, чтобы кроссворд был ниже
+    const usedRows = new Set(Object.keys(slot).map((c) => Math.floor(c / S)));
     let html = '';
     for (let c = 0; c < S * S; c++) {
       if (!slot[c]) {
-        html += '<div class="cd-x"></div>';
+        html += usedRows.has(Math.floor(c / S)) ? '<div class="cd-x"></div>' : '<div class="cd-x cd-empty"></div>';
         continue;
       }
       html += `<button type="button" class="cd-c${selCells.has(c) ? ' sel' : ''}${letter[c] ? ' ok' : ''}" data-c="${c}">${starts[c] ? `<small>${starts[c]}</small>` : ''}${letter[c] ? letter[c].toUpperCase() : ''}</button>`;

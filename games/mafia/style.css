@@ -129,3 +129,69 @@
   justify-content: center;
   font-size: 0.8rem;
 }
+
+/* ---------- телефон: роль, действие фазы и список игроков — на одном экране ---------- */
+@media (max-width: 640px) {
+  .pt-panel.mf {
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  .mf h3 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .pt-panel.mf > p {
+    margin: 0;
+    font-size: 0.92rem;
+  }
+
+  /* карточка роли — строкой: значок слева, название и подсказка справа */
+  .mf-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0 10px;
+    align-items: center;
+    width: 100%;
+    padding: 8px 12px;
+    text-align: left;
+  }
+
+  .mf-icon {
+    grid-row: span 2;
+    font-size: 1.9rem;
+    line-height: 1;
+  }
+
+  .mf-card small {
+    font-size: 0.78rem;
+    line-height: 1.3;
+  }
+
+  .mf-targets {
+    gap: 6px;
+  }
+
+  .mf-targets .btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .mf-mchat {
+    max-height: 84px;
+  }
+
+  .mf-list {
+    gap: 4px;
+  }
+
+  .mf-list li {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+  }
+
+  .mf-list em {
+    font-size: 0.7rem;
+  }
+}

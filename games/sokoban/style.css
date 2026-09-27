@@ -86,3 +86,17 @@
   border-right: 4px solid #fff;
   box-sizing: border-box;
 }
+
+/* Телефон: плотнее отступы и чуть меньше крестовина —
+   поле и управление помещаются на экране вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .dpad {
+    grid-template-columns: repeat(3, 52px);
+    grid-template-rows: repeat(3, 52px);
+    gap: 5px;
+  }
+}

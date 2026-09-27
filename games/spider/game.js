@@ -87,7 +87,8 @@
   function offsets(pile) {
     const maxH = Math.max(window.innerHeight - 200, geo.ch * 4);
     let down = geo.ch * 0.1;
-    let upOff = geo.ch * 0.26;
+    // не меньше 15px — чтобы на телефоне читался индекс «К♠» у закрытых сверху карт
+    let upOff = Math.max(geo.ch * 0.26, 15);
     const total = () => pile.reduce((h, c, k) => (k === pile.length - 1 ? h : h + (c.up ? upOff : down)), 0) + geo.ch;
     while (total() > maxH && upOff > geo.ch * 0.12) {
       upOff *= 0.92;

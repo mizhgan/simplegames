@@ -98,3 +98,43 @@
   opacity: 0.35;
   text-decoration: line-through;
 }
+
+/* телефон: без пустых строк сетки, счёт и слова компактнее —
+   кроссворд и список слов помещаются на экран вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .cd-empty {
+    display: none;
+  }
+
+  .cd-bar {
+    gap: 8px;
+  }
+
+  .cd-side {
+    padding: 3px 8px;
+    line-height: 1.25;
+  }
+
+  /* на невысоком экране сетка уже, чтобы под ней оставались слова */
+  .cd-grid {
+    width: min(100%, max(260px, calc(100svh - 400px)));
+  }
+
+  .cd-time {
+    font-size: 1.35rem;
+  }
+
+  .cd-bank {
+    gap: 5px;
+  }
+
+  .cd-word {
+    min-height: 34px;
+    padding: 4px 10px;
+    font-size: 0.92rem;
+  }
+}

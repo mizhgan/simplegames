@@ -86,3 +86,103 @@
   opacity: 0.85;
   text-align: center;
 }
+
+/* ---------- телефон: карточка и кнопка «БИНГО!» — на одном экране ---------- */
+@media (max-width: 640px) {
+  .pt-panel.bg {
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  /* игроки — в один ряд маленькими плашками */
+  .bg .pt-seats {
+    flex-wrap: nowrap;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .bg .pt-seat {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 3px 4px;
+    font-size: 0.72rem;
+  }
+
+  .bg .pt-seat b {
+    max-width: 100%;
+    font-size: 0.78rem;
+  }
+
+  .bg-status {
+    font-size: 1.05rem;
+  }
+
+  .bg-ball {
+    padding: 2px 12px;
+    font-size: 1.25rem;
+  }
+
+  /* последние номера — одной строкой, лишние (самые старые) прячем */
+  .bg-called {
+    max-height: 22px;
+    overflow: hidden;
+  }
+
+  .bg-called span {
+    padding: 1px 6px;
+    font-size: 0.75rem;
+    line-height: 20px;
+  }
+
+  /* клетки чуть ниже квадрата, а сама карточка не выше свободной части экрана */
+  .bg-card {
+    width: min(100%, 360px, calc((100svh - 250px) * 1.1));
+  }
+
+  .bg-head span {
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+
+  .bg-cell {
+    aspect-ratio: 5 / 4;
+    border-radius: 8px;
+    font-size: 1.15rem;
+  }
+
+  .bg .pt-choices {
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .bg-shout {
+    flex: none;
+  }
+
+  /* флажок: нажимается вся подпись, а не квадратик 13×13 */
+  .bg-auto {
+    flex: 1 1 auto;
+    min-height: 44px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    font-size: 0.8rem;
+    line-height: 1.2;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .bg-auto input {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    accent-color: var(--accent);
+  }
+
+  .bg .pt-muted {
+    font-size: 0.78rem;
+  }
+}

@@ -141,3 +141,109 @@
     animation: none;
   }
 }
+
+/* копия шапки таблицы нужна только в двухколоночном виде на телефоне */
+.yz-table tr.yz-dup {
+  display: none;
+}
+
+/* телефон */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .yz-dice .yz-die.held {
+    transform: translateY(-5px);
+  }
+}
+
+/* невысокий телефон (таблица в одну колонку не помещается под костями): таблица очков
+   в две колонки — верхняя секция слева, нижняя справа, — и кости, «Бросить» и вся таблица
+   видны вместе */
+@media (max-width: 640px) and (max-height: 800px) {
+  .yz-table {
+    display: block;
+    max-width: none;
+    font-size: 0.8rem;
+  }
+
+  .yz-table thead,
+  .yz-table tbody {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 10px;
+  }
+
+  .yz-table tbody {
+    grid-auto-flow: column;
+    grid-template-rows: repeat(8, auto);
+  }
+
+  /* нижняя секция (с «Тройки» по «Итого») — во второй колонке */
+  .yz-table tbody tr:nth-child(n + 8) {
+    grid-column: 2;
+  }
+
+  .yz-table tbody tr:nth-child(8) { grid-row: 1; }
+  .yz-table tbody tr:nth-child(9) { grid-row: 2; }
+  .yz-table tbody tr:nth-child(10) { grid-row: 3; }
+  .yz-table tbody tr:nth-child(11) { grid-row: 4; }
+  .yz-table tbody tr:nth-child(12) { grid-row: 5; }
+  .yz-table tbody tr:nth-child(13) { grid-row: 6; }
+  .yz-table tbody tr:nth-child(14) { grid-row: 7; }
+  .yz-table tbody tr:nth-child(15) { grid-row: 8; }
+
+  .yz-table tr,
+  .yz-table thead tr.yz-dup {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-columns: 34px;
+    grid-auto-flow: column;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .yz-table th,
+  .yz-table td {
+    padding: 3px 2px;
+    border-bottom: 0;
+  }
+
+  .yz-table tbody th {
+    padding-left: 4px;
+    line-height: 1.15;
+  }
+
+  .yz-table td {
+    width: auto;
+  }
+
+  .yz-table thead th {
+    font-size: 0.72rem;
+  }
+
+  /* подсказки к строкам есть в правилах, в узкой колонке им нет места */
+  .yz-table small {
+    display: none;
+  }
+
+  .yz-table tr.sub,
+  .yz-table tr.sub th,
+  .yz-table tr.sub td {
+    font-size: 0.78rem;
+  }
+
+  .yz-table tr.sub {
+    background: var(--surface-2);
+  }
+
+  .yz-table tr.total th,
+  .yz-table tr.total td {
+    font-size: 1rem;
+  }
+
+  .yz-pick {
+    min-height: 28px;
+  }
+}

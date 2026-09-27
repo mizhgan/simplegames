@@ -108,3 +108,57 @@
 .lt-card span.row-win {
   box-shadow: inset 0 0 0 2px #22c55e;
 }
+
+/* телефон: карточки и бочонок ниже — все четыре карточки и кнопка «Достать бочонок»
+   помещаются на экран вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .lt-wrap {
+    gap: 8px;
+  }
+
+  .lt-side h3 {
+    margin-bottom: 4px;
+  }
+
+  .lt-cards {
+    gap: 6px;
+  }
+
+  .lt-card {
+    padding: 3px;
+  }
+
+  .lt-card span {
+    aspect-ratio: 1.45;
+  }
+
+  .lt-mid {
+    gap: 12px;
+  }
+
+  .lt-barrel {
+    width: 84px;
+    height: 84px;
+  }
+
+  .lt-barrel b {
+    font-size: 2.1rem;
+  }
+
+  .lt-barrel small {
+    max-width: 76px;
+    font-size: 0.68rem;
+  }
+
+  .lt-info {
+    gap: 5px;
+  }
+
+  .lt-info .btn {
+    min-height: 38px;
+  }
+}

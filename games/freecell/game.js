@@ -78,7 +78,8 @@
     const maxH = Math.max(window.innerHeight - 200, geo.ch * 4);
     let maxBottom = geo.tabY + geo.ch;
     tableau.forEach((pile, t) => {
-      let off = geo.ch * 0.27;
+      // не меньше 15px — чтобы на телефоне читался индекс «К♠» у закрытых сверху карт
+      let off = Math.max(geo.ch * 0.27, 15);
       while (pile.length > 1 && (pile.length - 1) * off + geo.ch > maxH && off > geo.ch * 0.12) off *= 0.92;
       pile.forEach((c, k) => setPos(c.el, colX(t), geo.tabY + k * off, 100 + k));
       maxBottom = Math.max(maxBottom, geo.tabY + (pile.length - 1) * off + geo.ch);

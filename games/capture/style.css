@@ -69,3 +69,14 @@
   font-size: 0.85rem;
   text-align: center;
 }
+
+/* Телефон: плотнее отступы, чтобы поле и кнопки помещались на экране вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .cp-info {
+    margin: 0;
+  }
+}

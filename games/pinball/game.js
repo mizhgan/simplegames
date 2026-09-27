@@ -295,6 +295,7 @@
     pad: true,
     flipGuest: true,
     fireLabel: '▶',
+    padKeys: 'l', // на телефоне два флиппера: ◀ слева и ▶ справа
     over: (s) => (s.score[0] >= WIN || s.score[1] >= WIN ? { winner: s.score[0] >= WIN ? 0 : 1, text: 'Счёт ' + s.score[0] + ' : ' + s.score[1] + '.' } : null),
     hud(s, v) {
       const n = names(v);
