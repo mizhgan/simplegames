@@ -1,0 +1,245 @@
+.pr .pt-seat {
+  position: relative;
+  gap: 2px;
+}
+
+.pr .pt-seat.out {
+  opacity: 0.45;
+}
+
+/* проигравший раунда — красная рамка на время вскрытия */
+.pr .pt-seat.pr-lost {
+  box-shadow: 0 0 0 2px var(--danger, #ef4444);
+}
+
+.pr-cups {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* открытые кости на вскрытии: подходящие под ставку — ярко */
+.pr-open {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.pr-open i {
+  font-style: normal;
+  opacity: 0.35;
+}
+
+.pr-open i.hit {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.pr-status {
+  margin: 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pr-hist {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* текущая ставка — крупно */
+.pr-bid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+
+.pr-bid.empty {
+  color: var(--muted);
+  font-weight: 600;
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.pr-bid-who {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.pr-bid-val {
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.pr-mine-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.pr-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pr-mine {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.pr-mine .dk-die {
+  display: inline-block;
+  font-size: 3.6rem;
+  line-height: 0.9;
+}
+
+.pr-mine .dk-die.hit {
+  color: var(--accent);
+}
+
+.pr-mine.rolling .dk-die {
+  animation: pr-roll 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+.pr-mine.rolling .dk-die:nth-child(even) {
+  animation-name: pr-roll-2;
+}
+
+@keyframes pr-roll {
+  0% {
+    transform: translateY(-8px) rotate(-450deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(6deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes pr-roll-2 {
+  0% {
+    transform: translateY(-6px) rotate(420deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(-4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-mine.rolling .dk-die {
+    animation: none;
+  }
+}
+
+/* выбор ставки: количество и грань */
+.pr-pick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pr-qty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pr-qty b {
+  min-width: 2ch;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.pr-qty .btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.4rem;
+}
+
+.pr-x {
+  font-size: 1.3rem;
+  color: var(--muted);
+}
+
+.pr-faces {
+  display: flex;
+  gap: 4px;
+}
+
+.pr-face {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pr-face.sel {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+}
+
+.pr-face:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pr-call {
+  background: var(--danger, #ef4444);
+  color: #fff;
+}
+
+.pr-call:hover {
+  filter: brightness(1.08);
+}
+
+.pr-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .pr-bid-val {
+    font-size: 2rem;
+  }
+
+  .pr-mine .dk-die {
+    font-size: 3rem;
+  }
+
+  .pr-face,
+  .pr-qty .btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pr-face {
+    font-size: 1.8rem;
+  }
+}

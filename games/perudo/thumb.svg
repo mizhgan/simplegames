@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+  <path d="M26 30 h34 l-5 40 h-24 z" fill="#b45309" stroke="#fde68a" stroke-width="2"/>
+  <path d="M100 30 h34 l-5 40 h-24 z" fill="#b45309" stroke="#fde68a" stroke-width="2" transform="rotate(-18 117 50)"/>
+  <rect x="64" y="52" width="22" height="22" rx="4" fill="#fff"/><circle cx="75" cy="63" r="2.4" fill="#111"/>
+  <rect x="90" y="58" width="22" height="22" rx="4" fill="#fff"/><circle cx="95.5" cy="63.5" r="2.4" fill="#111"/><circle cx="101" cy="69" r="2.4" fill="#111"/><circle cx="106.5" cy="74.5" r="2.4" fill="#111"/>
+  <rect x="112" y="70" width="18" height="18" rx="3.5" fill="#fff"/><circle cx="116.5" cy="74.5" r="2" fill="#111"/><circle cx="125.5" cy="83.5" r="2" fill="#111"/><circle cx="121" cy="79" r="2" fill="#111"/>
+  <text x="80" y="20" font-size="15" font-weight="900" text-anchor="middle" fill="#fde68a" font-family="system-ui,sans-serif">Не верю!</text>
+</svg>
