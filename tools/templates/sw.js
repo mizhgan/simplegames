@@ -49,9 +49,11 @@ self.addEventListener('fetch', (event) => {
 
   // код (скрипты, стили, данные): сначала сеть — иначе после обновления сайта страница
   // получила бы из кеша старый код вперемешку с новым; без сети — из кеша
+  // cache: 'no-cache' — сверяться с сервером даже если он разрешил браузеру кешировать файл надолго
+  // (у файлов нет версии в адресе; неизменённый файл приходит коротким ответом 304)
   if (/\.(js|css|json)$/.test(new URL(request.url).pathname)) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-cache' })
         .then((response) => saveCopy(request, response))
         .catch(() => caches.match(request, { ignoreSearch: true }))
     );
