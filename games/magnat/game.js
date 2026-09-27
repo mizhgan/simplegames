@@ -373,6 +373,8 @@
 
   // что уже показано: позиции фишек, деньги и последний ход — чтобы анимировать только изменения
   const seen = { pos: {}, money: {}, jail: {}, move: 0, dice: [0, 0] };
+  // нажатие, сделанное во время анимации хода
+  const waiting = { act: null, timer: 0 };
   const letter = (name) => (Array.from(String(name).trim().replace(/^Бот\s+/, ''))[0] || '?').toUpperCase();
 
   function render(v, ui) {
@@ -380,11 +382,16 @@
     lastV = v;
     lastEl = el;
     const colorOf = (pid) => (v.players.find((p) => p.id === pid) || {}).color;
+    // куда пришёл последний ход — рамка цвета игрока держится до следующего броска;
+    // пока фишка ещё едет (новый ход), рамку ставит анимация, когда фишка встанет
+    const mv = v.move;
+    const dest = mv && mv.path && mv.path.length && mv.n === seen.move ? mv.path[mv.path.length - 1].to : -1;
+    const destColor = dest >= 0 ? colorOf(mv.id) : '';
     const cells = B.map((c, i) => {
       const [r, col] = cellPos(i);
       const owner = v.own[i];
       const h = v.houses[i] || 0;
-      return `<div class="mg-cell ${c.t}${v.offer === i ? ' offer' : ''}${v.canBuild.includes(i) ? ' can' : ''}" style="grid-row:${r};grid-column:${col}" data-i="${i}">` +
+      return `<div class="mg-cell ${c.t}${v.offer === i ? ' offer' : ''}${v.canBuild.includes(i) ? ' can' : ''}${i === dest ? ' dest' : ''}" style="grid-row:${r};grid-column:${col}${i === dest ? ';--c:' + destColor : ''}" data-i="${i}">` +
         (c.g !== undefined ? `<span class="mg-band" style="background:${GROUPS[c.g]}">${h ? '🏠'.repeat(h) : ''}</span>` : `<span class="mg-icon">${c.t === 'tr' && i > 10 ? '✈' : ICON[c.t] || ''}</span>`) +
         `<span class="mg-name">${esc(c.n)}</span>${c.p && c.t !== 'tax' ? `<span class="mg-price">${c.p}</span>` : ''}` +
         (owner !== undefined ? `<span class="mg-owner" style="background:${colorOf(owner)}" title="${esc(ui.name(owner))}"></span>` : '') +
@@ -428,7 +435,15 @@
     el.innerHTML = `<div class="pt-panel mg"><div class="pt-seats">${players}</div><div class="mg-board">${cells}${center}<div class="mg-tokens">${tokens}</div></div></div>`;
     const on = (sel, a) => {
       const b = el.querySelector(sel);
-      if (b) b.addEventListener('click', () => ui.send(a));
+      if (!b) return;
+      b.addEventListener('click', () => {
+        // фишка ещё едет — нажатие запоминаем и выполняем, как только она встанет
+        if (b.closest('.mg-wait')) {
+          waiting.act = a;
+          el.querySelectorAll('.tb-actions .queued').forEach((x) => x.classList.remove('queued'));
+          b.classList.add('queued');
+        } else ui.send(a);
+      });
     };
     on('[data-roll]', { roll: 1 });
     on('[data-bail]', { bail: 1 });
@@ -530,7 +545,15 @@
       // пока ход не закончился, кнопки видны, но не нажимаются
       const acts = el.querySelector('.tb-actions');
       if (acts) acts.classList.add('mg-wait');
-      setTimeout(() => acts && acts.classList.remove('mg-wait'), total);
+      waiting.act = null;
+      clearTimeout(waiting.timer);
+      waiting.timer = setTimeout(() => {
+        if (!acts || !acts.isConnected) return;
+        acts.classList.remove('mg-wait');
+        const a = waiting.act;
+        waiting.act = null;
+        if (a) ui.send(a);
+      }, total);
     }
     if (steps.length) {
       const tok = layer.querySelector('[data-tok="' + mv.id + '"]');
@@ -541,7 +564,10 @@
         if (k >= steps.length) {
           if (tok) tok.classList.remove('moving');
           const cell = el.querySelector('.mg-cell[data-i="' + steps[steps.length - 1].cell + '"]');
-          if (cell) cell.classList.add('landed');
+          if (cell) {
+            cell.style.setProperty('--c', (v.players.find((p) => p.id === mv.id) || {}).color || '');
+            cell.classList.add('dest', 'landed');
+          }
           return;
         }
         const st = steps[k++];
