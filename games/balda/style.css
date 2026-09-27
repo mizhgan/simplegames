@@ -173,3 +173,66 @@
     transform: scale(1.15);
   }
 }
+
+/* ---------- телефон: доска, клавиатура и кнопки хода помещаются на экран вместе ---------- */
+@media (max-width: 640px) {
+  .bd-layout {
+    gap: 8px;
+  }
+
+  /* доска подстраивается под высоту экрана: под ней ещё клавиатура и кнопки */
+  .bd-board {
+    width: min(100%, max(220px, calc(100svh - 370px)));
+    margin: 0 auto;
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .bd-word {
+    min-height: 1.3em;
+    font-size: 1.1rem;
+  }
+
+  .bd-side {
+    padding: 6px 10px;
+  }
+
+  .bd-side h2 {
+    margin: 0;
+    align-items: center;
+  }
+
+  .bd-side ul {
+    max-height: 4.4em;
+    margin-top: 4px;
+  }
+
+  .bd-keyboard {
+    gap: 3px;
+  }
+
+  .bd-key {
+    height: 34px;
+  }
+
+  /* «Готово», «Сбросить ход», «Пропустить» — в одну строку */
+  .bd-keyboard + .game-controls {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .bd-keyboard + .game-controls .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 4px;
+    font-size: clamp(0.74rem, 3.6vw, 0.9rem);
+    white-space: nowrap;
+  }
+}
+
+/* на невысоких экранах списки слов прячем — счёт остаётся */
+@media (max-width: 640px) and (max-height: 760px) {
+  .bd-side ul {
+    display: none;
+  }
+}
