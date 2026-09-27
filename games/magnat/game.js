@@ -373,6 +373,8 @@
 
   // что уже показано: позиции фишек, деньги и последний ход — чтобы анимировать только изменения
   const seen = { pos: {}, money: {}, jail: {}, move: 0, dice: [0, 0] };
+  // нажатие, сделанное во время анимации хода
+  const waiting = { act: null, timer: 0 };
   const letter = (name) => (Array.from(String(name).trim().replace(/^Бот\s+/, ''))[0] || '?').toUpperCase();
 
   function render(v, ui) {
@@ -428,7 +430,15 @@
     el.innerHTML = `<div class="pt-panel mg"><div class="pt-seats">${players}</div><div class="mg-board">${cells}${center}<div class="mg-tokens">${tokens}</div></div></div>`;
     const on = (sel, a) => {
       const b = el.querySelector(sel);
-      if (b) b.addEventListener('click', () => ui.send(a));
+      if (!b) return;
+      b.addEventListener('click', () => {
+        // фишка ещё едет — нажатие запоминаем и выполняем, как только она встанет
+        if (b.closest('.mg-wait')) {
+          waiting.act = a;
+          el.querySelectorAll('.tb-actions .queued').forEach((x) => x.classList.remove('queued'));
+          b.classList.add('queued');
+        } else ui.send(a);
+      });
     };
     on('[data-roll]', { roll: 1 });
     on('[data-bail]', { bail: 1 });
@@ -530,7 +540,15 @@
       // пока ход не закончился, кнопки видны, но не нажимаются
       const acts = el.querySelector('.tb-actions');
       if (acts) acts.classList.add('mg-wait');
-      setTimeout(() => acts && acts.classList.remove('mg-wait'), total);
+      waiting.act = null;
+      clearTimeout(waiting.timer);
+      waiting.timer = setTimeout(() => {
+        if (!acts || !acts.isConnected) return;
+        acts.classList.remove('mg-wait');
+        const a = waiting.act;
+        waiting.act = null;
+        if (a) ui.send(a);
+      }, total);
     }
     if (steps.length) {
       const tok = layer.querySelector('[data-tok="' + mv.id + '"]');

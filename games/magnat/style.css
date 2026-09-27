@@ -296,9 +296,13 @@
   }
 }
 
-/* пока идёт ход (кубики, фишка), кнопки ждут */
+/* пока идёт ход (кубики, фишка), кнопки приглушены; нажатие запоминается и срабатывает, когда фишка встанет */
 .tb-actions.mg-wait {
-  opacity: 0.45;
-  pointer-events: none;
+  opacity: 0.55;
   transition: opacity var(--dur) var(--ease);
+}
+
+.tb-actions .queued {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
