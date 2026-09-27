@@ -155,15 +155,23 @@
   scale: 1.18;
 }
 
-/* клетка, куда только что встали */
+/* клетка, куда пришёл последний ход: рамка цвета игрока */
+.mg-cell.dest {
+  outline: 3px solid var(--c, var(--accent));
+  outline-offset: -2px;
+}
+
+/* клетка, куда только что встали: вспышка поверх постоянной рамки */
 .mg-cell.landed {
-  animation: mg-landed 1.6s var(--ease);
+  animation: mg-landed 1.2s var(--ease);
 }
 
 @keyframes mg-landed {
-  0%,
-  60% {
-    box-shadow: inset 0 0 0 3px var(--accent), 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--c, var(--accent)) 70%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
   }
 }
 

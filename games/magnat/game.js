@@ -382,11 +382,16 @@
     lastV = v;
     lastEl = el;
     const colorOf = (pid) => (v.players.find((p) => p.id === pid) || {}).color;
+    // куда пришёл последний ход — рамка цвета игрока держится до следующего броска;
+    // пока фишка ещё едет (новый ход), рамку ставит анимация, когда фишка встанет
+    const mv = v.move;
+    const dest = mv && mv.path && mv.path.length && mv.n === seen.move ? mv.path[mv.path.length - 1].to : -1;
+    const destColor = dest >= 0 ? colorOf(mv.id) : '';
     const cells = B.map((c, i) => {
       const [r, col] = cellPos(i);
       const owner = v.own[i];
       const h = v.houses[i] || 0;
-      return `<div class="mg-cell ${c.t}${v.offer === i ? ' offer' : ''}${v.canBuild.includes(i) ? ' can' : ''}" style="grid-row:${r};grid-column:${col}" data-i="${i}">` +
+      return `<div class="mg-cell ${c.t}${v.offer === i ? ' offer' : ''}${v.canBuild.includes(i) ? ' can' : ''}${i === dest ? ' dest' : ''}" style="grid-row:${r};grid-column:${col}${i === dest ? ';--c:' + destColor : ''}" data-i="${i}">` +
         (c.g !== undefined ? `<span class="mg-band" style="background:${GROUPS[c.g]}">${h ? '🏠'.repeat(h) : ''}</span>` : `<span class="mg-icon">${c.t === 'tr' && i > 10 ? '✈' : ICON[c.t] || ''}</span>`) +
         `<span class="mg-name">${esc(c.n)}</span>${c.p && c.t !== 'tax' ? `<span class="mg-price">${c.p}</span>` : ''}` +
         (owner !== undefined ? `<span class="mg-owner" style="background:${colorOf(owner)}" title="${esc(ui.name(owner))}"></span>` : '') +
@@ -559,7 +564,10 @@
         if (k >= steps.length) {
           if (tok) tok.classList.remove('moving');
           const cell = el.querySelector('.mg-cell[data-i="' + steps[steps.length - 1].cell + '"]');
-          if (cell) cell.classList.add('landed');
+          if (cell) {
+            cell.style.setProperty('--c', (v.players.find((p) => p.id === mv.id) || {}).color || '');
+            cell.classList.add('dest', 'landed');
+          }
           return;
         }
         const st = steps[k++];
