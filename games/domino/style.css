@@ -97,3 +97,26 @@
   font-weight: 800;
   cursor: pointer;
 }
+
+/* Телефон: стол компактнее, кости соперника (рубашкой вверх) меньше —
+   чтобы поле и кнопка «Новая партия» помещались на экране вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .tb {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .dm-hand:not(.mine) {
+    gap: 4px;
+    min-height: 20px;
+  }
+
+  .dm-tile.back {
+    width: 36px;
+    height: 20px;
+  }
+}

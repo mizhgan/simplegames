@@ -116,3 +116,61 @@
   opacity: 0.85;
   text-align: center;
 }
+
+/* ---------- телефон: поле законов, игроки и текущее действие — на одном экране ---------- */
+@media (max-width: 640px) {
+  .pt-panel.cs {
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  .cs-role {
+    padding: 4px 12px;
+    font-size: 0.9rem;
+  }
+
+  .cs-board {
+    gap: 4px;
+  }
+
+  .cs-track {
+    gap: 3px;
+    padding: 4px;
+  }
+
+  .cs-track span {
+    width: 38px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .cs-track span small {
+    font-size: 0.75rem;
+  }
+
+  .cs .cs-board .pt-muted {
+    margin: 0;
+    font-size: 0.78rem;
+  }
+
+  .rs-list {
+    gap: 4px;
+  }
+
+  .rs-p {
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+  }
+
+  .pt-panel.cs > p {
+    margin: 0;
+    font-size: 0.92rem;
+  }
+
+  .cs-law {
+    width: 60px;
+    height: 78px;
+    font-size: 1.6rem;
+  }
+}

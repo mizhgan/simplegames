@@ -80,3 +80,14 @@
   font-size: 0.85rem;
   text-align: center;
 }
+
+/* Телефон: плотнее отступы, чтобы доска и кнопки помещались на экране вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .go-info {
+    margin: 0;
+  }
+}

@@ -344,6 +344,8 @@
         const mine = v.canMove && p === s.turn && (v.mode === 'pvp' || p === me);
         el.innerHTML = '';
         el.parentElement.classList.toggle('active', p === s.turn && !v.over);
+        // свой лоток (вдвоём за одним экраном — оба): на телефоне он крупнее и стоит под полем
+        el.parentElement.classList.toggle('mine', v.mode === 'pvp' || p === me);
         el.parentElement.querySelector('.bk-score').textContent = score(s, p);
         for (const pi of s.left[p]) {
           const b = document.createElement('button');

@@ -312,6 +312,26 @@ button {
   letter-spacing: -0.05em;
 }
 
+/* на телефоне шапка ниже, а на странице игры не прилипает к верху: при прокрутке к полю ему достаётся весь экран */
+@media (max-width: 640px) {
+  .header-inner {
+    height: 52px;
+  }
+
+  .logo {
+    font-size: 1.05rem;
+  }
+
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .page-game .site-header {
+    position: relative;
+  }
+}
+
 /* ---------- buttons.css ---------- */
 
 /* ---------- Buttons ---------- */
@@ -2430,6 +2450,38 @@ body.sg-watching .game-stage > :not(.net-bar):not(.net-mirror):not(.net-watch-no
   color: var(--text);
   font-size: 1.1rem;
   touch-action: none;
+}
+
+/* джойстик из одних нужных стрелок (padKeys): в ряд, кнопки размером с «огонь» */
+.rt-dpad.rt-dpad-row {
+  display: flex;
+  gap: 12px;
+}
+
+.rt-dpad-row button {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+}
+
+.rt-pad:has(.rt-dpad-row) .rt-fire {
+  font-size: 1.3rem;
+}
+
+/* подпись «Игрок 1/2» — над круглыми кнопками, а не поверх них */
+.rt-pad:has(.rt-dpad-row) {
+  position: relative;
+}
+
+.rt-pad:has(.rt-dpad-row) .rt-pad-name {
+  top: -16px;
+  left: 4px;
+}
+
+.rt-pad.side-1:has(.rt-dpad-row) .rt-pad-name {
+  right: 4px;
+  left: auto;
 }
 
 .rt-dpad [data-k="u"] {

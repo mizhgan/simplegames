@@ -56,3 +56,25 @@
 .sd-board {
   grid-template-rows: repeat(9, minmax(0, 1fr));
 }
+
+/* Телефон: сумма клетки не мельче 11px, цифру чуть сдвигаем вниз, чтобы не наезжала */
+@media (max-width: 640px) {
+  .kl-sum {
+    left: 1px;
+    padding: 0 1px;
+    font-size: max(11px, 2.3cqw);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  .kl-val {
+    top: 0.16em;
+  }
+
+  /* счётчик оставшихся цифр на кнопках */
+  .sd-digit small {
+    top: 2px;
+    right: 3px;
+    font-size: 0.7rem;
+  }
+}

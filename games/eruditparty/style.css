@@ -18,3 +18,63 @@
   overflow-y: auto;
   text-align: left;
 }
+
+/* ---------- телефон: поле, фишки и кнопки хода — на одном экране ---------- */
+@media (max-width: 640px) {
+  .pt-panel.ep {
+    gap: 6px;
+    padding: 8px 6px;
+  }
+
+  /* игроки — в один ряд маленькими плашками */
+  .ep .pt-seats {
+    flex-wrap: nowrap;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .ep .pt-seat {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 2px 4px;
+    font-size: 0.72rem;
+  }
+
+  .ep .pt-seat b {
+    max-width: 100%;
+    font-size: 0.78rem;
+  }
+
+  .ep-status {
+    font-size: 0.88rem;
+    line-height: 1.3;
+  }
+
+  .ep-status .pt-timer {
+    padding: 0 6px;
+  }
+
+  .ep .er-rack {
+    gap: 4px;
+    min-height: 0;
+    padding: 5px;
+  }
+
+  /* очки на фишке не мельче 10,5 px */
+  .ep .er-tile small {
+    font-size: 0.66rem;
+  }
+
+  .ep .er-preview {
+    font-size: 0.82rem;
+  }
+
+  .ep .er-actions {
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .ep .er-actions .btn {
+    padding: 8px 6px;
+  }
+}

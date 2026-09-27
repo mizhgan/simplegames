@@ -139,3 +139,10 @@
   stroke: var(--accent);
   stroke-width: 1;
 }
+
+/* Телефон: плотнее отступы, чтобы доска и кнопки помещались на экране вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+}

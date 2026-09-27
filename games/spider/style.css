@@ -12,3 +12,26 @@
   font-weight: 600;
   text-align: center;
 }
+
+/* Телефон: 10 столбцов — карты узкие, поэтому вместо мелкого двухстрочного
+   индекса показываем крупный «К♠» в одну строку, а нижний индекс убираем */
+@media (max-width: 640px) {
+  .spider-wrap .sol-face .tl {
+    top: 2px;
+    left: 2px;
+    font-size: max(11px, calc(var(--cw) * 0.37));
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+
+  .spider-wrap .sol-face .tl br,
+  .spider-wrap .sol-face .br {
+    display: none;
+  }
+
+  .spider-wrap .sol-face .mid {
+    padding-top: 35%;
+    font-size: calc(var(--cw) * 0.55);
+  }
+}

@@ -314,3 +314,108 @@
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* ---------- телефон: игроки компактно, поле с кнопками хода — на одном экране ---------- */
+@media (max-width: 640px) {
+  .pt-panel.mg {
+    gap: 6px;
+    padding: 8px 6px;
+  }
+
+  /* игроки — плашками по 3–4 в ряд: имя сверху, деньги под ним */
+  .mg .pt-seats {
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .mg .pt-seat {
+    flex: 1 1 64px;
+    flex-direction: column;
+    gap: 0;
+    padding: 3px 4px;
+    font-size: 0.75rem;
+  }
+
+  .mg .pt-seat b {
+    max-width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .mg .pt-seat .mg-ava {
+    width: 16px;
+    height: 16px;
+    margin-right: 3px;
+    font-size: 0.66rem;
+    vertical-align: -3px;
+  }
+
+  .mg-board {
+    width: 100%;
+  }
+
+  .mg-tok {
+    font-size: 0.66rem;
+  }
+
+  .mg-center {
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .mg-center .tb-actions {
+    gap: 6px;
+  }
+
+  .mg-center .tb-actions .btn {
+    padding: 8px 12px;
+    font-size: 0.88rem;
+  }
+
+  .mg-center .pt-muted {
+    margin: 0;
+    font-size: 0.75rem;
+  }
+}
+
+/* узкий экран: клетки ~40 px — название улицы не прочесть, оставляем цвет района, цену и значок
+   (полное название — во всплывающей подсказке клетки, в кнопке «Купить…» и в ленте событий) */
+@media (max-width: 480px) {
+  .mg-cell {
+    justify-content: space-between;
+    font-size: 0.66rem;
+    line-height: 1.15;
+  }
+
+  .mg-cell .mg-name {
+    display: none;
+  }
+
+  .mg-band {
+    min-height: 24%;
+    font-size: 0.6rem;
+    line-height: 1;
+  }
+
+  .mg-icon {
+    margin-top: 2px;
+    font-size: 1.35em;
+    line-height: 1;
+  }
+
+  .mg-price {
+    padding-bottom: 2px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  /* на угловых и особых клетках без цены значок — по центру */
+  .mg-cell:not(:has(.mg-price)) {
+    justify-content: center;
+  }
+
+  .mg-cell:not(:has(.mg-price)) .mg-icon {
+    margin-top: 0;
+    font-size: 1.6em;
+  }
+}

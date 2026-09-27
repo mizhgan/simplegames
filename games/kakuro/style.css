@@ -27,7 +27,8 @@
   background: linear-gradient(to top right, #4b5563 calc(50% - 1px), rgba(255, 255, 255, 0.35) 50%, #4b5563 calc(50% + 1px));
   color: #fff;
   font-weight: 700;
-  font-size: clamp(0.55rem, 2.4vw, 0.85rem);
+  /* на телефоне подсказки не мельче 11px */
+  font-size: clamp(11px, 2.4vw, 0.85rem);
 }
 
 .kk-block span {
@@ -121,4 +122,29 @@
 .kk-pad button:active {
   background: var(--accent);
   color: #fff;
+}
+
+/* Телефон: плотнее отступы и ниже кнопки цифр —
+   поле и клавиатура помещаются на экране вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .status-line {
+    font-size: 0.92rem;
+  }
+
+  .kk-board {
+    width: min(520px, 92vw, max(260px, 100svh - 330px));
+    margin: 0 auto;
+  }
+
+  .kk-combos {
+    min-height: 2.4em;
+  }
+
+  .kk-pad button {
+    height: 42px;
+  }
 }

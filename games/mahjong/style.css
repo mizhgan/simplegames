@@ -92,3 +92,12 @@
   25% { transform: translateX(-3px); }
   75% { transform: translateX(3px); }
 }
+
+/* Телефон: знак масти (條 筒 萬) не мельче 11px — по нему различают кости */
+@media (max-width: 640px) {
+  .mj-sub {
+    margin-top: 1px;
+    font-size: max(11px, calc(var(--tw) * 0.32));
+    font-weight: 700;
+  }
+}

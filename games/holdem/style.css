@@ -44,3 +44,55 @@
 .hd-raise .btn {
   padding: 6px 10px;
 }
+
+/* Телефон: стол компактнее, а кнопки хода в две строки вместо трёх:
+   «Сбросить / Колл / Рейз» в первой, ползунок ставки с быстрыми суммами — во второй */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .tb {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .tb-center {
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .tb-pot {
+    padding: 3px 8px;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .tb-actions {
+    gap: 6px;
+    align-items: center;
+  }
+
+  .tb-actions .btn {
+    padding: 0 10px;
+    font-size: 0.85rem;
+  }
+
+  .hd-raise {
+    display: contents;
+  }
+
+  .hd-raise input[type="range"] {
+    order: 1;
+    flex: 1 1 110px;
+    width: auto;
+    height: 30px;
+  }
+
+  .hd-raise .btn-ghost {
+    order: 1;
+    min-height: 34px;
+    padding: 0 10px;
+  }
+}

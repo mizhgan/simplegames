@@ -282,7 +282,9 @@
 
     const cols = mode === 'ai' || mode === 'net' ? [0, 1] : [0];
     const t = sheets.map(totals);
-    let h = '<thead><tr><th></th>' + cols.map((p) => `<th>${p === 0 ? 'Вы' : mode === 'net' ? 'Соперн.' : 'Комп.'}</th>`).join('') + '</tr></thead><tbody>';
+    const head = '<th></th>' + cols.map((p) => `<th>${p === 0 ? 'Вы' : mode === 'net' ? 'Соперн.' : 'Комп.'}</th>`).join('');
+    // копия шапки для второй колонки таблицы: видна только на телефоне, где таблица в две колонки
+    let h = '<thead><tr>' + head + '</tr><tr class="yz-dup">' + head + '</tr></thead><tbody>';
     const row = (k) => {
       const c = CATS[k];
       let tr = `<tr><th>${c.name}${c.hint ? `<small>${c.hint}</small>` : ''}</th>`;

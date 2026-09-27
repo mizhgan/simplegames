@@ -123,3 +123,72 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* телефон: при строительстве — поле по высоте экрана, стены толще (в них легче попасть),
+   кнопки в один ряд; в игре оба лабиринта рядом, под ними сразу стрелки */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .bm-build {
+    gap: 6px;
+  }
+
+  .bm-build p {
+    margin: 0;
+  }
+
+  .bm-build .bm-grid {
+    grid-template-columns: repeat(5, 1fr 12px) 1fr;
+    grid-template-rows: repeat(5, 1fr 12px) 1fr;
+    max-width: min(320px, max(250px, calc(100svh - 340px)));
+    padding: 4px;
+  }
+
+  .bm-build .game-controls {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .bm-build .btn {
+    padding: 0 10px;
+    font-size: 0.86rem;
+    white-space: nowrap;
+  }
+
+  .bm-play {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .bm-play h3 {
+    min-height: 2.5em;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  .bm-play .bm-grid {
+    padding: 3px;
+    border-width: 3px;
+    grid-template-columns: repeat(5, 1fr 5px) 1fr;
+    grid-template-rows: repeat(5, 1fr 5px) 1fr;
+  }
+
+  .bm-play .bm-c {
+    font-size: 0.9rem;
+  }
+
+  .bm-note {
+    margin: 0;
+  }
+
+  .bm-pad {
+    grid-template-columns: repeat(3, 60px);
+  }
+
+  .bm-pad .btn {
+    padding: 6px 0;
+  }
+}

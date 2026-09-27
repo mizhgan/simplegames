@@ -12,7 +12,8 @@
        over(state) { return null | { winner: 0 | 1 | null, text } },
        hud(state, view) { return 'строка состояния' },
        pointer: 'y' | 'xy',                   // указатель задаёт px/py (ракетка, бита)
-       pad: true,                             // экранный джойстик на телефоне
+       pad: true,                             // экранный джойстик на телефоне (у игр с указателем без кнопок не нужен)
+       padKeys: 'l',                          // какие стрелки джойстика показывать (по умолчанию все четыре)
        keys: { KeyQ: 'w' }, buttons: [{ k: 'w', label: '🔄' }], // доп. действия: клавиши и кнопки на экране
        flipGuest: true,                       // у гостя поле повёрнуто на 180° (своя сторона снизу)
        shared: true,                          // пошаговая игра: вдвоём за одним экраном управление общее
@@ -74,7 +75,31 @@
       colors = { bg: c.boardBg, line: c.boardLine, cell: c.boardCell, text: c.text, muted: c.muted, accent: c.accent, accent2: c.accent2, accent3: c.accent3, success: c.success, danger: c.danger, warning: c.warning, players: c.players };
     }
 
+    // на телефоне поле ужимается по высоте экрана, чтобы вместе с кнопками и джойстиком помещалось без прокрутки
+    const wrapEl = canvas.closest('.stage-wrap');
+    const stageEl = canvas.closest('.game-stage');
+    const wrapMW = wrapEl ? wrapEl.style.maxWidth : '';
+    const phoneMQ = window.matchMedia('(max-width: 640px)');
+    function fit() {
+      if (!wrapEl || !stageEl) return;
+      if (!phoneMQ.matches) {
+        wrapEl.style.maxWidth = wrapMW;
+        return;
+      }
+      // всё, что в .game-stage кроме поля; строку статуса считаем в две строки, чтобы поле не прыгало от счёта
+      let other = stageEl.getBoundingClientRect().height - wrapEl.getBoundingClientRect().height;
+      if (statusEl) {
+        const cs = getComputedStyle(statusEl);
+        const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.5;
+        const sh = statusEl.getBoundingClientRect().height;
+        other += Math.max(0, 2 * lh - sh);
+      }
+      const byH = `max(200px, calc((100svh - ${Math.ceil(other) + 12}px) * ${(W / H).toFixed(4)}))`;
+      wrapEl.style.maxWidth = wrapMW ? `min(${wrapMW}, ${byH})` : byH;
+    }
+
     function resize() {
+      fit();
       const dpr = window.devicePixelRatio || 1;
       const w = canvas.clientWidth;
       canvas.width = Math.round(w * dpr);
@@ -166,15 +191,17 @@
 
     // экранный джойстик для телефонов
     const pads = [];
-    if (cfg.pad) {
+    // игрой с указателем без кнопок (аэрохоккей) на телефоне управляют пальцем по полю — джойстик лишний
+    const padButtons = !!cfg.fireLabel || !!(cfg.buttons && cfg.buttons.length);
+    if (cfg.pad && (!cfg.pointer || padButtons)) {
       const wrap = document.createElement('div');
       wrap.className = 'rt-pads';
       for (let side = 0; side < 2; side++) {
         const pad = document.createElement('div');
         pad.className = 'rt-pad side-' + side;
         pad.innerHTML =
-          '<span class="rt-pad-name"></span><div class="rt-dpad">' +
-          ['u:▲', 'l:◀', 'r:▶', 'd:▼'].map((x) => `<button type="button" data-k="${x[0]}" aria-label="${x.slice(2)}">${x.slice(2)}</button>`).join('') +
+          `<span class="rt-pad-name"></span><div class="rt-dpad${cfg.padKeys ? ' rt-dpad-row' : ''}">` +
+          ['u:▲', 'l:◀', 'r:▶', 'd:▼'].filter((x) => !cfg.padKeys || cfg.padKeys.includes(x[0])).map((x) => `<button type="button" data-k="${x[0]}" aria-label="${x.slice(2)}">${x.slice(2)}</button>`).join('') +
           '</div>' +
           (cfg.buttons || []).map((b) => `<button type="button" class="rt-fire rt-extra" data-k="${b.k}">${b.label}</button>`).join('') +
           (cfg.fireLabel ? `<button type="button" class="rt-fire" data-k="f">${cfg.fireLabel}</button>` : '');

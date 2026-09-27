@@ -507,6 +507,16 @@
   }
 }
 
+/* телефон: строка «что произошло» пониже, чтобы стол с кнопками хода влезал в экран */
+@media (max-width: 640px) {
+  .pt-now {
+    min-height: 38px;
+    padding: 5px var(--sp-3);
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+}
+
 /* общие элементы стола */
 
 .pt-seats {

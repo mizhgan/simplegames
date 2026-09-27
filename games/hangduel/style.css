@@ -98,3 +98,67 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* телефон: своя виселица и соперник остаются рядом, всё компактнее —
+   слово, виселица и клавиатура помещаются на экран вместе */
+@media (max-width: 640px) {
+  .game-stage {
+    gap: 10px;
+  }
+
+  .hd-wrap {
+    gap: 10px;
+  }
+
+  .hd-setup input {
+    flex: 1 1 100%;
+    min-width: 0;
+    padding: 8px 12px;
+  }
+
+  .hd-cols {
+    grid-template-columns: minmax(0, 1fr) 118px;
+    gap: 10px;
+  }
+
+  .hd-cols h3 {
+    margin-bottom: 4px;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .hd-main {
+    gap: 6px;
+  }
+
+  .hd-main .hg-gallows {
+    width: 116px;
+  }
+
+  .hd-main .hg-word {
+    gap: 4px;
+  }
+
+  .hd-main .hg-letter {
+    width: 24px;
+    height: 32px;
+    padding-bottom: 2px;
+    font-size: 1.2rem;
+  }
+
+  .hd-opp {
+    padding: 6px;
+  }
+
+  .hd-opp .hg-gallows {
+    width: 64px;
+  }
+
+  .hg-keyboard {
+    gap: 5px;
+  }
+
+  .hg-key {
+    height: 42px;
+  }
+}

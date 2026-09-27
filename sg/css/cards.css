@@ -152,3 +152,30 @@
     filter: brightness(1.2) drop-shadow(0 0 8px gold);
   }
 }
+
+/* Телефон: индекс карты не мельче 11px */
+@media (max-width: 640px) {
+  .sol-face .tl,
+  .sol-face .br {
+    font-size: max(11px, calc(var(--cw) * 0.2));
+  }
+
+  /* Пасьянсы (веер вниз): индекс «К♠» в одну строку, чтобы читался
+     на полоске прикрытой карты; нижний индекс не нужен */
+  .sol-table .sol-face .tl {
+    top: 2px;
+    left: 3px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+
+  .sol-table .sol-face .tl br,
+  .sol-table .sol-face .br {
+    display: none;
+  }
+
+  .sol-table .sol-face .mid {
+    padding-top: 30%;
+  }
+}
