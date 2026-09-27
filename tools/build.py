@@ -245,7 +245,7 @@ def js_bundle(name):
 
 # ---------- service worker ----------
 
-SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src'}
+SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src', 'tests'}
 SW_SKIP_FILES = {'sw.js', 'styleguide.html', 'README.md', '.htaccess', 'robots.txt', '.gitignore', '404.html', 'meta.json', 'stage.html', 'catalog.json'}
 SW_EXTS = {'.html', '.css', '.js', '.svg', '.png', '.webmanifest', '.json'}
 

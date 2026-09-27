@@ -1,0 +1,42 @@
+# Автотесты: запускаются на каждый пулл-реквест и на каждое изменение main.
+# Локально то же самое: cd tests && npm ci && npx playwright install chromium && npm test
+name: Тесты
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+
+      - name: Сборка актуальна (python3 tools/build.py --check)
+        run: python3 tools/build.py --check
+
+      - name: Установка Playwright
+        working-directory: tests
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Автотесты
+        working-directory: tests
+        run: node run.js --jobs=4
