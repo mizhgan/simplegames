@@ -181,3 +181,33 @@
     font-size: 0.8rem;
   }
 }
+
+/* невысокий телефон: история катастрофы — в две строки (что в бункере и сколько мест — целиком),
+   свои карты и игроки по три в ряд, чтобы вместе со строкой хода помещались на экран */
+@media (max-width: 640px) and (max-height: 760px) {
+  .bk-cat p:not(.pt-muted) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .bk-mine,
+  .bk-table {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bk-mine h4 {
+    grid-column: 1 / -1;
+  }
+
+  .bk-card {
+    padding: 4px 6px;
+    font-size: 0.76rem;
+  }
+
+  .bk-p {
+    padding: 4px 6px;
+  }
+}
