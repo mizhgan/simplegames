@@ -82,6 +82,9 @@
   function setPos(el, x, y, z) {
     el.style.transform = `translate(${x}px, ${y}px)`;
     el.style.zIndex = z;
+    // координаты храним на самой карте: Firefox сокращает «translate(Xpx, 0px)» до «translate(Xpx)», и разбирать строку ненадёжно
+    el._x = x;
+    el._y = y;
   }
 
   function offsets(pile) {
@@ -322,10 +325,7 @@
       sx: e.clientX,
       sy: e.clientY,
       moved: false,
-      origin: g.group.map((c) => {
-        const m = /translate\(([-\d.]+)px, ([-\d.]+)px\)/.exec(c.el.style.transform);
-        return { x: +m[1], y: +m[2] };
-      }),
+      origin: g.group.map((c) => ({ x: c.el._x || 0, y: c.el._y || 0 })),
     };
     table.setPointerCapture(e.pointerId);
   });
