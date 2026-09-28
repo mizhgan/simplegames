@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+  <g transform="rotate(-14 60 60)"><rect x="40" y="26" width="34" height="48" rx="4" fill="#fff" stroke="#14532d" stroke-width="1.5"/><text x="57" y="57" font-size="22" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">♠</text></g>
+  <rect x="63" y="22" width="34" height="48" rx="4" fill="#fff" stroke="#14532d" stroke-width="1.5"/><text x="80" y="53" font-size="22" text-anchor="middle" fill="#dc2626" font-family="system-ui,sans-serif">♥</text>
+  <g transform="rotate(14 100 60)"><rect x="86" y="26" width="34" height="48" rx="4" fill="#fff" stroke="#14532d" stroke-width="1.5"/><text x="103" y="57" font-size="22" text-anchor="middle" fill="#111" font-family="system-ui,sans-serif">♣</text></g>
+  <text x="80" y="93" font-size="14" font-weight="900" text-anchor="middle" fill="#fde68a" font-family="system-ui,sans-serif">6♠ · вист · пас</text>
+</svg>
