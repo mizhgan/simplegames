@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Доббль — SimpleGames</title>
+  <meta name="description" content="Доббль — игра на внимательность и реакцию: на любых двух карточках ровно один общий символ. Найдите его первым! От 2 до 8 игроков по сети или с ботами.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/party.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body class="page-game">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
+      <h1>Доббль</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
+    </div>
+
+    <div class="game-layout wide">
+      <div class="game-stage">
+        <div id="party"></div>
+      </div>
+
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
+          <ul>
+            <li>В колоде 57 карточек, на каждой по 8 символов. На <b>любых двух</b> карточках есть ровно один общий символ.</li>
+            <li>В центре — стопка карточек, у каждого игрока — своя карточка. Найдите символ, который есть и на вашей карточке, и на верхней карточке стопки, и нажмите его (на любой из двух).</li>
+            <li>Успели первым — забираете карточку из центра: она становится вашей новой карточкой, и следующий символ ищите уже на ней.</li>
+            <li>Нажали не тот символ — пауза на 2 секунды, пока другие ищут.</li>
+            <li>Когда стопка закончится, побеждает тот, кто собрал больше всех карточек.</li>
+            <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте друзьям ссылку. Скорость ботов зависит от выбранной сложности.</li>
+          </ul>
+        </details>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/party.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

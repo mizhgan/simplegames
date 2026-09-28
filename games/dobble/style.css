@@ -1,0 +1,147 @@
+.db-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  justify-content: center;
+  margin: 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+.db-status.pen {
+  color: var(--danger, #ef4444);
+}
+
+.db-left {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* две карточки: центр и своя — рядом на широком экране, друг под другом на телефоне */
+.db-table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  transition: filter 0.2s;
+}
+
+.db-table.frozen {
+  filter: grayscale(0.8) opacity(0.6);
+}
+
+.db-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.db-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.db-card {
+  position: relative;
+  width: min(300px, 80vw, calc((100svh - 260px) / 2));
+  min-width: 190px;
+  aspect-ratio: 1;
+  border: 3px solid var(--border);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow);
+  container-type: inline-size;
+}
+
+.db-card.center {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+}
+
+.db-card.fresh {
+  animation: db-in 0.35s var(--ease);
+}
+
+.db-card.empty {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+}
+
+.db-count {
+  font-size: 4rem;
+  color: var(--accent);
+}
+
+.db-sym {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: calc(var(--s) * 1.25cqw);
+  height: calc(var(--s) * 1.25cqw);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: calc(var(--s) * 1cqw);
+  line-height: 1;
+  transform: translate(-50%, -50%) rotate(var(--r));
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: transform 0.1s;
+}
+
+.db-sym:active {
+  transform: translate(-50%, -50%) rotate(var(--r)) scale(0.88);
+}
+
+.db-table.frozen .db-sym {
+  cursor: default;
+}
+
+/* кто взял карточку — вспышка на его месте */
+.db .pt-seat.db-hit {
+  box-shadow: 0 0 0 3px var(--success, #22c55e);
+}
+
+@keyframes db-in {
+  from {
+    transform: scale(0.7) rotate(-20deg);
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .db-card.fresh {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .db-table {
+    gap: 8px;
+  }
+
+  /* две карточки друг под другом, вместе с местами игроков и строкой хода — в один экран */
+  .db-card {
+    width: min(78vw, calc((100svh - 330px) / 2));
+    min-width: 150px;
+  }
+
+  .db-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .db-card:not(.empty) {
+    background: #f8fafc;
+  }
+}
