@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Преферанс — SimpleGames</title>
+  <meta name="description" content="Преферанс втроём по правилам «Сочинки»: торговля, прикуп, вист и пас, мизер и распасы, пуля, гора и висты. По сети с друзьями или с ботами.">
+  <meta name="theme-color" content="#0d0e1a">
+  <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
+  <link rel="stylesheet" href="../../sg/css/style.css">
+  <link rel="stylesheet" href="../../sg/css/cards.css">
+  <link rel="stylesheet" href="../../sg/css/cardtable.css">
+  <link rel="stylesheet" href="../../sg/css/party.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body class="page-game">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../../index.html">
+        <img class="logo-mark" src="../../sg/img/favicon.svg" alt="">
+        <span>Simple<b>Games</b></span>
+      </a>
+      <div class="header-nav">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <div class="page-head">
+      <a class="back-link" href="../../index.html" aria-label="Все игры"><span class="back-arrow" aria-hidden="true">←</span><span class="back-text">Все игры</span></a>
+      <h1>Преферанс</h1>
+      <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
+    </div>
+
+    <div class="game-layout wide">
+      <div class="game-stage">
+        <div id="party"></div>
+      </div>
+
+      <aside class="game-aside">
+        <details class="info-card rules" data-rules open>
+          <summary><h2>Как играть</h2></summary>
+          <ul>
+            <li>Играют трое. Колода — 32 карты (от семёрки до туза). Каждому по 10 карт, 2 карты — в прикуп. Раздающий меняется по кругу.</li>
+            <li><b>Торговля.</b> Игроки по очереди заказывают, сколько взяток из 10 возьмут и с каким козырем: от «6♠» до «10 БК» (без козыря). Масти по старшинству: ♠ ♣ ♦ ♥, выше — БК. Можно сказать «пас» — тогда в торговлю больше не вступаете. <b>Мизер</b> (обязуетесь не взять ни одной взятки) можно заказать только первым своим словом; перебить его можно девяткой.</li>
+            <li><b>Прикуп.</b> Выигравший торговлю открывает прикуп, берёт его, сносит две карты и называет игру — не ниже своей заявки.</li>
+            <li><b>Вист или пас.</b> Двое других решают, вистовать (играть против и получать висты за свои взятки) или пасовать. Если оба спасовали — игра засчитывается без розыгрыша.</li>
+            <li><b>Розыгрыш.</b> Первым ходит игрок слева от раздающего. Нужно класть масть хода; нет масти — козырь; нет и козыря — любую карту. Взятку берёт старший козырь, иначе старшая карта масти хода.</li>
+            <li><b>Распасы:</b> если все спасовали, каждый играет за себя и старается взять как можно меньше взяток.</li>
+            <li><b>Запись.</b> Стоимость игры: шесть — 2, семь — 4, восемь — 6, девять — 8, десять — 10, мизер — 10. Сыграл — стоимость в пулю, недобор — стоимость × недобор в гору. Вистующие пишут висты: стоимость × взятки; недобор вистов — полстоимости за взятку в гору. На распасах — по очку горы за взятку, ни одной взятки — очко в пулю.</li>
+            <li>Партия идёт заданное число раздач. <b>Итог</b> = 10 × (пуля − гора) + висты. Больше итог — победа. На ход — 45 секунд.</li>
+            <li><b>👥 Компанией</b> — нажмите «Создать комнату» и отправьте ссылку двум друзьям: каждый видит только свои карты. Не хватает игроков — добавьте ботов.</li>
+          </ul>
+        </details>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span data-year></span> SimpleGames</span>
+      <a href="../../index.html">Все игры</a>
+    </div>
+  </footer>
+
+  <script src="../../sg/js/common.js"></script>
+  <script src="../../sg/js/site.js"></script>
+  <script src="../../sg/js/net.js"></script>
+  <script src="../../sg/js/cards.js"></script>
+  <script src="../../sg/js/party.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

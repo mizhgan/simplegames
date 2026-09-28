@@ -1,0 +1,139 @@
+.pf .pt-seat {
+  gap: 2px;
+}
+
+.pf .pt-seat span {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* разыгрывающий — золотая рамка */
+.pf .pt-seat.pf-decl {
+  box-shadow: 0 0 0 2px var(--gold, #eab308);
+}
+
+.pf-talon,
+.pf-trick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ch);
+}
+
+.pf-play {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.pf-play small {
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+/* кто взял взятку */
+.pf-play.won .sol-card {
+  box-shadow: 0 0 0 3px #fde047;
+  border-radius: 8px;
+}
+
+.pf-result {
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* сетка заявок: пять мастей в ряд */
+.pf-bids {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.pf-bid {
+  min-height: 36px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #111;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.pf-bid.red {
+  color: #dc2626;
+}
+
+.pf-bid.misere {
+  grid-column: 1 / -1;
+  background: #fde68a;
+}
+
+.pf-bid:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.pf-bid:not(:disabled):hover {
+  background: #fff;
+  box-shadow: 0 0 0 2px #fde047;
+}
+
+.pf-sheet-wrap {
+  font-size: 0.85rem;
+}
+
+.pf-sheet-wrap summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.pf-sheet {
+  width: 100%;
+  margin-top: 6px;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.pf-sheet th,
+.pf-sheet td {
+  padding: 3px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.pf-sheet td:first-child {
+  text-align: left;
+}
+
+.pf-sheet tr.me td {
+  color: #fde047;
+}
+
+.pf-deal {
+  margin-top: 4px;
+  opacity: 0.8;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  /* 10–12 карт в руке на узком экране: карты теснее */
+  .pf .tb-hand.mine {
+    --ov: -0.5;
+  }
+
+  .pf-bid {
+    min-height: 34px;
+    font-size: 0.82rem;
+  }
+}
