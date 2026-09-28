@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" aria-hidden="true" fill="none" stroke-linecap="round">
+  <circle cx="52" cy="50" r="36" fill="#fff" stroke="#f9a8d4" stroke-width="3"/>
+  <circle cx="110" cy="50" r="36" fill="#fff" stroke="#f9a8d4" stroke-width="3"/>
+  <text x="52" y="58" font-size="22" text-anchor="middle">⭐</text><text x="36" y="36" font-size="13" text-anchor="middle">🍎</text><text x="66" y="80" font-size="13" text-anchor="middle">🐱</text>
+  <text x="110" y="40" font-size="18" text-anchor="middle">⭐</text><text x="96" y="72" font-size="13" text-anchor="middle">🚀</text><text x="126" y="70" font-size="13" text-anchor="middle">🔑</text>
+</svg>

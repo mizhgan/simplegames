@@ -1,5 +1,5 @@
 /* Service worker SimpleGames: офлайн-режим. Файл генерируется: python3 tools/build.py */
-const VERSION = 'f0709ff39a4e';
+const VERSION = '0b5325e6006b';
 const CACHE = 'sg-' + VERSION;
 const PRECACHE = [
   "./",
@@ -128,6 +128,10 @@ const PRECACHE = [
   "games/dixit/index.html",
   "games/dixit/style.css",
   "games/dixit/thumb.svg",
+  "games/dobble/game.js",
+  "games/dobble/index.html",
+  "games/dobble/style.css",
+  "games/dobble/thumb.svg",
   "games/dogfight/game.js",
   "games/dogfight/index.html",
   "games/dogfight/thumb.svg",
