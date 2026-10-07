@@ -686,10 +686,61 @@
     const swUrl = new URL('../../sw.js', SCRIPT_URL);
     const scope = new URL('../../', SCRIPT_URL).pathname;
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register(swUrl.href, { scope }).catch(() => {
-        /* без офлайн-режима сайт работает как обычно */
+      navigator.serviceWorker
+        .register(swUrl.href, { scope })
+        .then(watchUpdates)
+        .catch(() => {
+          /* без офлайн-режима сайт работает как обычно */
+        });
+    });
+
+    // Новая версия сайта: новый service worker сам становится активным (skipWaiting + clients.claim),
+    // но открытая страница продолжает работать на старом коде — предлагаем перезагрузить её.
+    // Если вкладка открыта долго, проверяем sw.js раз в 30 минут и при возвращении на вкладку.
+    let hadController = !!navigator.serviceWorker.controller;
+    let stale = false;
+    let notified = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      // первая установка тоже вызывает controllerchange — это не обновление
+      if (!hadController) {
+        hadController = true;
+        return;
+      }
+      if (!stale || notified) return;
+      notified = true;
+      toast({
+        icon: '✨',
+        title: 'Сайт обновился',
+        text: 'Перезагрузите страницу, чтобы получить новую версию. Если идёт партия — можно доиграть.',
+        tone: 'info',
+        timeout: 0,
+        sound: false,
+        actions: [
+          { label: 'Обновить', primary: true, onClick: () => location.reload() },
+          { label: 'Позже' },
+        ],
       });
     });
+
+    function watchUpdates(reg) {
+      // обновление, найденное сразу при открытии страницы, её не касается: страница и так
+      // загрузила свежий код из сети — устарела только та, что была открыта до выкладки
+      reg.addEventListener('updatefound', () => {
+        if (performance.now() > 15000) stale = true;
+      });
+      let lastCheck = Date.now();
+      const check = () => {
+        if (notified || !navigator.onLine) return;
+        lastCheck = Date.now();
+        reg.update().catch(() => {
+          /* нет сети — проверим в следующий раз */
+        });
+      };
+      setInterval(check, 30 * 60 * 1000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && Date.now() - lastCheck > 5 * 60 * 1000) check();
+      });
+    }
 
     const installBtn = document.querySelector('[data-install]');
     if (!installBtn) return;

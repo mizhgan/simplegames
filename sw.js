@@ -1,5 +1,5 @@
 /* Service worker SimpleGames: офлайн-режим. Файл генерируется: python3 tools/build.py */
-const VERSION = '46af58e84b88';
+const VERSION = '7aa6778fd569';
 const CACHE = 'sg-' + VERSION;
 const PRECACHE = [
   "./",
