@@ -1385,11 +1385,23 @@ main {
   }
 }
 
+/* место под две строки: длинная подсказка переносится, а поле под ней не прыгает */
 .status-line {
-  min-height: 1.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.7em;
   font-weight: 700;
   text-align: center;
   font-size: 1.05rem;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+@media (max-width: 640px) {
+  .status-line {
+    font-size: 0.95rem;
+  }
 }
 
 .overlay {
