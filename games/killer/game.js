@@ -432,6 +432,7 @@
 
   function render() {
     if (!game) return;
+    SG.hintCount('hint-btn', game.hints);
     if (cageDeco.length !== 81 || cageDeco.game !== game) {
       buildCages();
       cageDeco.game = game;

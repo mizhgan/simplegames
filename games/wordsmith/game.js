@@ -25,6 +25,7 @@
   const listEl = $('found');
 
   let base, all, found, picked;
+  let hints = 0; // сколько раз брали подсказку для этого слова
 
   const counts = (w) => {
     const m = {};
@@ -48,6 +49,7 @@
   // ---------- отрисовка ----------
 
   function render() {
+    SG.hintCount('hint-btn', hints);
     tilesEl.innerHTML = [...base]
       .map((ch, i) => `<button type="button" class="ws-tile ${picked.includes(i) ? 'used' : ''}" data-i="${i}">${ch}</button>`)
       .join('');
@@ -110,7 +112,10 @@
     if (!pool.length) return;
     const w = pool[Math.floor(Math.random() * pool.length)];
     statusEl.textContent = 'Подсказка: слово из ' + w.length + ' букв, начинается на «' + w[0].toUpperCase() + '».';
+    hints++;
+    SG.hintCount('hint-btn', hints);
     SG.sound.play('hint');
+    save();
   }
 
   function reveal() {
@@ -122,13 +127,14 @@
   }
 
   function save() {
-    SG.store.set('wordsmith-state', { base, found });
+    SG.store.set('wordsmith-state', { base, found, hints });
   }
 
-  function load(b, f) {
+  function load(b, f, h) {
     base = b;
     all = subwords(base);
     found = f || [];
+    hints = h || 0;
     picked = [];
     statusEl.textContent = 'Составляйте слова из букв слова «' + base.toUpperCase() + '».';
     save();
@@ -184,6 +190,6 @@
   });
 
   const saved = SG.store.get('wordsmith-state', null);
-  if (saved && saved.base && Array.isArray(saved.found)) load(saved.base, saved.found);
+  if (saved && saved.base && Array.isArray(saved.found)) load(saved.base, saved.found, saved.hints);
   else newWord();
 })();

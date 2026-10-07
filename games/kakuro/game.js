@@ -64,6 +64,7 @@
   }
 
   function render() {
+    SG.hintCount('hint-btn', game.hints);
     const { runs, vals } = game;
     const selRuns = sel != null ? runsOf(sel) : [];
     const bad = new Set();

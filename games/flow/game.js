@@ -207,6 +207,7 @@
 
   function update() {
     rebuildOwner();
+    SG.hintCount('hint-btn', hints);
     const done = ends.filter((e, k) => complete(k)).length;
     const filled = paths.reduce((n, q) => n + (q.length > 1 ? q.length : 0), 0);
     const pct = Math.round((filled / (N * N)) * 100);

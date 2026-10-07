@@ -35,6 +35,7 @@
   let startTime = 0;
   let timer = 0;
   let geo = {};
+  let hints = 0; // сколько раз брали подсказку в этой партии
 
   const positions = [];
   LAYOUT_ROWS.forEach(([z, r, c0, c1]) => {
@@ -193,7 +194,7 @@
     SG.store.set('mahjong-wins', SG.store.get('mahjong-wins', 0) + 1);
     renderBest();
     SG.sound.play('win');
-    overlay.text = 'Все кости убраны за ' + SG.formatTime(seconds) + '.' + (record ? ' Новый рекорд! 🏆' : '');
+    overlay.text = 'Все кости убраны за ' + SG.formatTime(seconds) + (hints ? ', подсказок: ' + hints : '') + '.' + (record ? ' Новый рекорд! 🏆' : '');
     overlay.hidden = false;
   }
 
@@ -214,6 +215,8 @@
       SG.sound.play('error');
       return;
     }
+    hints++;
+    SG.hintCount('hint-btn', hints);
     SG.sound.play('hint');
     m.forEach((t) => t.el.classList.add('hint'));
   }
@@ -251,6 +254,8 @@
     timeEl.textContent = '0:00';
     selected = null;
     history = [];
+    hints = 0;
+    SG.hintCount('hint-btn', 0);
     statusEl.textContent = '';
     $('undo-btn').disabled = true;
     tiles = positions.map((p) => ({ ...p, kind: 0, alive: true }));

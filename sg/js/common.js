@@ -649,6 +649,22 @@
     };
   }
 
+  // SG.hintCount(btn, n) — сколько раз в этой партии брали подсказку: число на кнопке подсказки (при 0 скрыто)
+  function hintCount(btn, n) {
+    n = n || 0;
+    const el = typeof btn === 'string' ? document.getElementById(btn) : btn;
+    if (!el) return;
+    let badge = el.querySelector('.hint-count');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'hint-count';
+      el.appendChild(badge);
+    }
+    badge.textContent = n;
+    badge.hidden = !n;
+    el.title = n ? 'Подсказок в этой партии: ' + n : 'Подсказка';
+  }
+
   // SG.record('snake-best', { el: 'best', lower: false, initial: 0, format: String })
   // — рекорд в хранилище и на табло. record.submit(value) сохраняет, если результат лучше, и возвращает true.
   function record(key, opts = {}) {
@@ -677,7 +693,7 @@
     };
   }
 
-  window.SG = { store, cssVar, colors, toast, modal, overlay, record, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound, fx };
+  window.SG = { store, cssVar, colors, toast, modal, overlay, record, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound, fx, hintCount };
 
   // ---------- офлайн-режим и установка как приложения ----------
 
