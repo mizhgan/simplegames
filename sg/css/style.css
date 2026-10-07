@@ -1779,6 +1779,73 @@ kbd {
   }
 }
 
+/* ---------- Эффекты итога партии (SG.fx) ---------- */
+
+.sg-fx-confetti,
+.sg-fx-flash {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-toast);
+  pointer-events: none;
+}
+
+.sg-fx-confetti {
+  width: 100%;
+  height: 100%;
+}
+
+/* свечение по краям экрана: золотое — победа, красное — поражение, голубое — ничья */
+.sg-fx-flash {
+  --fx-c: var(--gold);
+  box-shadow: inset 0 0 120px 24px color-mix(in srgb, var(--fx-c) 55%, transparent);
+  opacity: 0;
+  animation: sg-fx-flash 1.4s ease-out;
+}
+
+.sg-fx-flash[data-kind='lose'] {
+  --fx-c: var(--danger);
+}
+
+.sg-fx-flash[data-kind='draw'] {
+  --fx-c: var(--accent-2);
+}
+
+@keyframes sg-fx-flash {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.sg-fx-shake {
+  animation: sg-fx-shake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes sg-fx-shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
 /* ---------- achievements.css ---------- */
 
 /* ---------- Страница достижений ---------- */
