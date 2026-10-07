@@ -266,6 +266,7 @@
 
   function render() {
     if (!game) return;
+    SG.hintCount('hint-btn', game.hints);
     const { values, notes, fixed } = game;
     const selVal = selected >= 0 ? values[selected] : 0;
     const peers = selected >= 0 ? new Set(PEERS[selected]) : new Set();

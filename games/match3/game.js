@@ -22,6 +22,7 @@
   let selected = null; // [r, c]
   let best = SG.store.get('match3-best', 0);
   let hintTimer = 0;
+  let hints = 0; // сколько раз брали подсказку в этой партии
   bestEl.textContent = best;
 
   const randType = () => Math.floor(Math.random() * TYPES);
@@ -234,7 +235,7 @@
   function gameOver() {
     const record = score > 0 && score >= best;
     SG.sound.play(record ? 'win' : 'level');
-    overlay.text = 'Ходы закончились. Счёт: ' + score + '.' + (record ? ' Новый рекорд! 🏆' : '');
+    overlay.text = 'Ходы закончились. Счёт: ' + score + (hints ? ', подсказок: ' + hints : '') + '.' + (record ? ' Новый рекорд! 🏆' : '');
     overlay.hidden = false;
   }
 
@@ -244,6 +245,8 @@
     movesLeft = MOVES;
     busy = false;
     selected = null;
+    hints = 0;
+    SG.hintCount('hint-btn', 0);
     scoreEl.textContent = '0';
     movesEl.textContent = MOVES;
     fillFresh();
@@ -259,6 +262,8 @@
     clearHint();
     const m = findMove();
     if (!m) return;
+    hints++;
+    SG.hintCount('hint-btn', hints);
     SG.sound.play('hint');
     m.forEach(([r, c]) => grid[r][c].el.classList.add('hint'));
     hintTimer = setTimeout(clearHint, 2500);

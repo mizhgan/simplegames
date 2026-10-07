@@ -26,6 +26,7 @@
   let startTime = 0;
   let timer = 0;
   let done = false;
+  let hints = 0; // сколько раз брали подсказку в этой партии
 
   // ---------- генерация ----------
 
@@ -222,6 +223,8 @@
     const left = segments.filter((s) => !s.found);
     if (!left.length) return;
     const s = left[Math.floor(Math.random() * left.length)];
+    hints++;
+    SG.hintCount('hint-btn', hints);
     SG.sound.play('hint');
     cellEls.forEach((el) => el.classList.remove('hint'));
     s.cells.slice(0, 2).forEach((c, k) => {
@@ -246,7 +249,7 @@
     renderBest();
     SG.sound.play('win');
     overlay.text =
-      'Все ' + segments.length + ' слов найдены за ' + SG.formatTime(seconds) + '.' + (record ? ' Новый рекорд! 🏆' : '');
+      'Все ' + segments.length + ' слов найдены за ' + SG.formatTime(seconds) + (hints ? ', подсказок: ' + hints : '') + '.' + (record ? ' Новый рекорд! 🏆' : '');
     setTimeout(() => (overlay.hidden = false), 500);
   }
 
@@ -254,6 +257,8 @@
     clearInterval(timer);
     overlay.hidden = true;
     done = false;
+    hints = 0;
+    SG.hintCount('hint-btn', 0);
     startTime = 0;
     path = [];
     timeEl.textContent = '0:00';

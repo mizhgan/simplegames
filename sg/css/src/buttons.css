@@ -83,3 +83,20 @@
   background: var(--accent);
   color: var(--on-accent);
 }
+
+/* сколько раз брали подсказку (SG.hintCount) */
+.hint-count {
+  min-width: 1.5em;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--warning);
+  color: #1a1400;
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.hint-count[hidden] {
+  display: none;
+}
