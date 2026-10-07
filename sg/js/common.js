@@ -178,6 +178,140 @@
     return arr;
   };
 
+  // ---------- Эффекты итога партии: конфетти, вспышка, встряска поля ----------
+
+  // SG.fx.play('win' | 'lose' | 'draw') — вызывается сам из SG.sound.play для тех же имён, даже при выключенном звуке.
+  // SG.fx.last — имя последнего эффекта (для тестов). При prefers-reduced-motion эффектов нет.
+  const fx = (() => {
+    const api = { last: '', play };
+    let lastAt = 0;
+    let stopConfetti = null;
+    const reduced = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    function flash(kind) {
+      const el = document.createElement('div');
+      el.className = 'sg-fx-flash';
+      el.dataset.kind = kind;
+      el.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1500);
+    }
+
+    function shake() {
+      const el = document.querySelector('.game-stage');
+      if (!el) return;
+      el.classList.remove('sg-fx-shake');
+      void el.offsetWidth; // перезапуск анимации, если она ещё идёт
+      el.classList.add('sg-fx-shake');
+      setTimeout(() => el.classList.remove('sg-fx-shake'), 650);
+    }
+
+    // конфетти вылетают из двух нижних углов и падают с покачиванием
+    function confetti() {
+      if (stopConfetti) stopConfetti();
+      const cv = document.createElement('canvas');
+      const ctx = cv.getContext && cv.getContext('2d');
+      if (!ctx) return;
+      cv.className = 'sg-fx-confetti';
+      cv.setAttribute('aria-hidden', 'true');
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = W * dpr;
+      cv.height = H * dpr;
+      ctx.scale(dpr, dpr);
+      document.body.appendChild(cv);
+      const pal = [colors.accent, colors.accent2, colors.accent3, colors.gold, colors.success, colors.players[0], colors.players[5]].filter(Boolean);
+      const k = Math.max(0.7, Math.min(1.3, H / 800));
+      const spread = Math.max(0.8, Math.min(1.6, W / 1000));
+      const parts = [];
+      for (let i = 0, n = W < 600 ? 110 : 170; i < n; i++) {
+        const left = i % 2 === 0;
+        parts.push({
+          x: left ? -10 : W + 10,
+          y: H * (0.75 + Math.random() * 0.2),
+          vx: (left ? 1 : -1) * (3 + Math.random() * 9) * spread,
+          vy: -(10 + Math.random() * 10) * k,
+          w: 6 + Math.random() * 6,
+          h: 8 + Math.random() * 8,
+          a: Math.random() * Math.PI,
+          va: (Math.random() - 0.5) * 0.3,
+          ph: Math.random() * Math.PI * 2,
+          round: Math.random() < 0.25,
+          c: pal[i % pal.length],
+          delay: Math.random() * 12,
+        });
+      }
+      const LIFE = 3200;
+      const t0 = performance.now();
+      let prev = t0;
+      let raf = 0;
+      const stop = () => {
+        cancelAnimationFrame(raf);
+        cv.remove();
+        if (stopConfetti === stop) stopConfetti = null;
+      };
+      stopConfetti = stop;
+      const frame = (now) => {
+        const dt = Math.min(3, Math.max(0, now - prev) / 16.7);
+        prev = now;
+        const age = now - t0;
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalAlpha = age > LIFE - 700 ? Math.max(0, (LIFE - age) / 700) : 1;
+        let alive = 0;
+        for (const p of parts) {
+          if (p.delay > 0) {
+            p.delay -= dt;
+            alive++;
+            continue;
+          }
+          p.vy += 0.28 * dt;
+          p.vx *= Math.pow(0.985, dt);
+          p.vy *= Math.pow(0.99, dt);
+          p.x += p.vx * dt + Math.sin(p.ph) * 0.6 * dt;
+          p.y += p.vy * dt;
+          p.a += p.va * dt;
+          p.ph += 0.12 * dt;
+          if (p.y > H + 20) continue;
+          alive++;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.a);
+          ctx.scale(1, Math.cos(p.ph)); // листочек переворачивается в полёте
+          ctx.fillStyle = p.c;
+          if (p.round) {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+            ctx.fill();
+          } else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+        if (!alive || age > LIFE) stop();
+        else raf = requestAnimationFrame(frame);
+      };
+      raf = requestAnimationFrame(frame);
+    }
+
+    function play(name) {
+      if (name !== 'win' && name !== 'lose' && name !== 'draw') return;
+      const now = Date.now();
+      // одна партия может «закончиться» дважды подряд (у хозяина и по сети) — второй эффект не нужен
+      if (name === api.last && now - lastAt < 1500) return;
+      api.last = name;
+      lastAt = now;
+      if (document.hidden || reduced() || !document.body) return;
+      try {
+        flash(name);
+        if (name === 'win') confetti();
+        else if (name === 'lose') shake();
+      } catch (e) {
+        /* эффекты — не критичная часть игры */
+      }
+    }
+
+    return api;
+  })();
+
   // ---------- Звуки: синтезируются через Web Audio API, без аудиофайлов ----------
 
   const sound = (() => {
@@ -301,6 +435,7 @@
     };
 
     function play(name, arg) {
+      fx.play(name);
       if (!enabled || !PRESETS[name]) return;
       if (!ensure()) return;
       try {
@@ -542,7 +677,7 @@
     };
   }
 
-  window.SG = { store, cssVar, colors, toast, modal, overlay, record, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound };
+  window.SG = { store, cssVar, colors, toast, modal, overlay, record, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound, fx };
 
   // ---------- офлайн-режим и установка как приложения ----------
 
