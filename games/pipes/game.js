@@ -147,7 +147,7 @@
       SG.sound.play('win');
       setTimeout(() => (overlay.hidden = false), 700);
     }
-    statusEl.textContent = solved ? 'Вода дошла до всех домов! 🎉' : 'Поворачивайте трубы: клик — по часовой, правый клик — против.';
+    statusEl.textContent = solved ? 'Вода дошла до всех домов! 🎉' : 'Поворачивайте трубы: клик — по часовой, правый — против.';
   }
 
   function turn(i, dir) {

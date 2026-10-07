@@ -428,7 +428,7 @@
     phase = 'setup';
     $('start-btn').disabled = false;
     $('shuffle-btn').disabled = false;
-    statusEl.textContent = 'Расставьте флот: нажмите «Перемешать», пока расстановка не понравится.';
+    statusEl.textContent = 'Расставьте флот: «Перемешать» — пока не понравится.';
     $('restart-row').hidden = true;
     render();
   }

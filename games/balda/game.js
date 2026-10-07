@@ -135,7 +135,7 @@
     pendingLetter = ch;
     path = [];
     SG.sound.play('place');
-    statusEl.textContent = 'Составьте слово: кликайте по буквам по порядку (новая буква обязательна), затем «Готово».';
+    statusEl.textContent = 'Нажимайте буквы слова по порядку (с новой буквой), затем «Готово».';
     render();
   }
 

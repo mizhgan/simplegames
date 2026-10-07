@@ -315,7 +315,7 @@
       else if (rollsLeft === 3)
         // что только что записал соперник — сколько и куда
         statusEl.textContent = (lastAi >= 0 && mode !== 'solo' ? (mode === 'net' ? 'Соперник' : 'Компьютер') + ' записал ' + sheets[1][lastAi] + ' в «' + CATS[lastAi].name + '». ' : '') + 'Бросайте кости.';
-      else if (rollsLeft > 0) statusEl.textContent = 'Отметьте кости, которые оставить, и перебросьте остальные — или запишите результат.';
+      else if (rollsLeft > 0) statusEl.textContent = 'Отметьте нужные кости и перебросьте — или запишите результат.';
       else statusEl.textContent = 'Выберите, куда записать результат.';
     }
   }
