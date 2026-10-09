@@ -20,6 +20,23 @@
     ],
   };
 
+  // Сайт открыт из локальной сети (http://192.168.1.10/games/, http://имя-компьютера/ и т. п.) —
+  // сервер знакомств ищем на том же компьютере, порт LAN_PORT (установка: deploy/peerjs-lan),
+  // без STUN/TURN: внутри одной сети браузеры соединяются напрямую. Интернет для этого не нужен.
+  const LAN_PORT = 9000;
+  const LAN = (() => {
+    const h = location.hostname;
+    if (/^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$/.test(h)) return true;
+    // имя компьютера без точки или домашние зоны
+    return !!h && !h.includes(':') && (!h.includes('.') || /\.(local|lan|home|internal|home\.arpa)$/.test(h));
+  })();
+  // что посоветовать, если сервер знакомств не ответил
+  const serverHint = () => (LAN ? 'Проверьте, что на компьютере с сайтом запущен сервер знакомств (порт ' + LAN_PORT + ').' : 'Проверьте интернет.');
+  if (LAN) {
+    CONFIG.peerServer = { host: location.hostname, port: LAN_PORT, path: '/', secure: location.protocol === 'https:' };
+    CONFIG.iceServers = [];
+  }
+
   const PREFIX = 'simplegames-';
   const ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
   // для проверки своего TURN без правки файла: localStorage['sg:ice-servers'] = '[{"urls":"turn:…","username":"…","credential":"…"}]',
