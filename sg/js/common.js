@@ -698,31 +698,14 @@
   // ---------- офлайн-режим и установка как приложения ----------
 
   function initOffline() {
-    if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
+    if (!/^https?:$/.test(location.protocol)) return;
     const swUrl = new URL('../../sw.js', SCRIPT_URL);
     const scope = new URL('../../', SCRIPT_URL).pathname;
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register(swUrl.href, { scope })
-        .then(watchUpdates)
-        .catch(() => {
-          /* без офлайн-режима сайт работает как обычно */
-        });
-    });
 
-    // Новая версия сайта: новый service worker сам становится активным (skipWaiting + clients.claim),
-    // но открытая страница продолжает работать на старом коде — предлагаем перезагрузить её.
-    // Если вкладка открыта долго, проверяем sw.js раз в 30 минут и при возвращении на вкладку.
-    let hadController = !!navigator.serviceWorker.controller;
-    let stale = false;
+    // Новая версия сайта, а открытая страница работает на старом коде — предлагаем перезагрузить её.
     let notified = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      // первая установка тоже вызывает controllerchange — это не обновление
-      if (!hadController) {
-        hadController = true;
-        return;
-      }
-      if (!stale || notified) return;
+    function notifyUpdate() {
+      if (notified) return;
       notified = true;
       toast({
         icon: '✨',
@@ -736,6 +719,63 @@
           { label: 'Позже' },
         ],
       });
+    }
+
+    // если вкладка открыта долго, проверяем раз в 30 минут и при возвращении на вкладку
+    function every(check) {
+      let lastCheck = Date.now();
+      const run = () => {
+        if (notified || !navigator.onLine) return;
+        lastCheck = Date.now();
+        check();
+      };
+      setInterval(run, 30 * 60 * 1000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && Date.now() - lastCheck > 5 * 60 * 1000) run();
+      });
+      return run;
+    }
+
+    // Без service worker (сайт открыт по HTTP из локальной сети, старый браузер) сравниваем версию
+    // скриптов и стилей страницы (<meta name="sg-build">) с той, что сейчас на сервере (BUILD в sw.js)
+    if (!('serviceWorker' in navigator) || !window.isSecureContext) {
+      const meta = document.querySelector('meta[name="sg-build"]');
+      if (!meta || !window.fetch) return;
+      const run = every(() =>
+        fetch(swUrl.href, { cache: 'no-store' })
+          .then((r) => (r.ok ? r.text() : ''))
+          .then((t) => {
+            const m = t.match(/const BUILD = '([0-9a-f]+)'/);
+            if (m && m[1] !== meta.content) notifyUpdate();
+          })
+          .catch(() => {
+            /* нет сети — проверим в следующий раз */
+          })
+      );
+      // страница могла прийти из кеша браузера уже устаревшей — сверяемся и сразу после загрузки
+      window.addEventListener('load', () => setTimeout(run, 3000));
+      return;
+    }
+
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register(swUrl.href, { scope })
+        .then(watchUpdates)
+        .catch(() => {
+          /* без офлайн-режима сайт работает как обычно */
+        });
+    });
+
+    // новый service worker сам становится активным (skipWaiting + clients.claim)
+    let hadController = !!navigator.serviceWorker.controller;
+    let stale = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      // первая установка тоже вызывает controllerchange — это не обновление
+      if (!hadController) {
+        hadController = true;
+        return;
+      }
+      if (stale) notifyUpdate();
     });
 
     function watchUpdates(reg) {
@@ -744,18 +784,11 @@
       reg.addEventListener('updatefound', () => {
         if (performance.now() > 15000) stale = true;
       });
-      let lastCheck = Date.now();
-      const check = () => {
-        if (notified || !navigator.onLine) return;
-        lastCheck = Date.now();
+      every(() =>
         reg.update().catch(() => {
           /* нет сети — проверим в следующий раз */
-        });
-      };
-      setInterval(check, 30 * 60 * 1000);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && Date.now() - lastCheck > 5 * 60 * 1000) check();
-      });
+        })
+      );
     }
 
     const installBtn = document.querySelector('[data-install]');
