@@ -64,9 +64,11 @@
   };
 
   // Сайт открыт из локальной сети (http://192.168.1.10/games/, http://имя-компьютера/ и т. п.) —
-  // сервер знакомств ищем на том же компьютере, порт LAN_PORT (установка: deploy/peerjs-lan),
-  // без STUN/TURN: внутри одной сети браузеры соединяются напрямую. Интернет для этого не нужен.
+  // сервер знакомств и STUN/TURN ищем на том же компьютере (установка: deploy/peerjs-lan).
+  // STUN/TURN там нужен: браузеры прячут свой адрес в сети за именем «….local», которое в локалке
+  // находится не всегда, а через STUN браузер узнаёт настоящий адрес. Интернет для этого не нужен.
   const LAN_PORT = 9000;
+  const LAN_TURN_PORT = 3478;
   const LAN = (() => {
     const h = location.hostname;
     if (/^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$/.test(h)) return true;
@@ -77,7 +79,12 @@
   const serverHint = () => (LAN ? 'Проверьте, что на компьютере с сайтом запущен сервер знакомств (порт ' + LAN_PORT + ').' : 'Проверьте интернет.');
   if (LAN) {
     CONFIG.peerServer = { host: location.hostname, port: LAN_PORT, path: '/', secure: location.protocol === 'https:' };
-    CONFIG.iceServers = [];
+    const turnHost = location.hostname + ':' + LAN_TURN_PORT;
+    CONFIG.iceServers = [
+      { urls: 'stun:' + turnHost },
+      // логин и пароль — как в deploy/peerjs-lan/server.js
+      { urls: 'turn:' + turnHost, username: 'simplegames', credential: 'simplegames' },
+    ];
   }
 
   const PREFIX = 'simplegames-';
