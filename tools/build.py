@@ -27,6 +27,7 @@ import hashlib
 import html
 import json
 import os
+import posixpath
 import re
 import sys
 
@@ -243,6 +244,56 @@ def js_bundle(name):
     return head + "(() => {\n  'use strict';\n\n" + body + '})();\n'
 
 
+# ---------- версии в ссылках на скрипты и стили ----------
+
+# Браузер может держать скрипты и стили в кеше, не спрашивая сервер (особенно по HTTP, где нет
+# service worker). Поэтому к каждой ссылке на свой .js/.css добавляем ?v=<хэш содержимого>:
+# файл изменился — адрес новый, и браузер скачивает его заново.
+# Плюс <meta name="sg-build"> — общая версия скриптов и стилей; она же записана в sw.js (BUILD),
+# и открытая по HTTP страница сравнивает их, чтобы предложить перезагрузку после выкладки.
+ASSET_RE = re.compile(r'((?:src|href)=")([^":?#]+\.(?:js|css))(?:\?v=[0-9a-f]+)?(")')
+BUILD_META_RE = re.compile(r'\n  <meta name="sg-build" content="[0-9a-f]*">')
+VERSIONED_PAGES = ['achievements.html', 'turn-test.html', 'styleguide.html', '404.html']
+
+
+def file_bytes(rel, outputs):
+    if rel in outputs:
+        return outputs[rel].encode('utf-8')
+    path = os.path.join(ROOT, rel)
+    if not os.path.isfile(path):
+        return None
+    with open(path, 'rb') as fh:
+        return fh.read()
+
+
+def build_version(outputs):
+    """Хэш всех скриптов и стилей сайта (без HTML и sw.js)."""
+    digest = hashlib.sha256()
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        dirnames[:] = sorted(d for d in dirnames if d not in SW_SKIP_DIRS)
+        for name in sorted(filenames):
+            if os.path.splitext(name)[1] in ('.js', '.css') and name != 'sw.js':
+                rel = os.path.relpath(os.path.join(dirpath, name), ROOT).replace(os.sep, '/')
+                digest.update(rel.encode())
+                digest.update(file_bytes(rel, outputs))
+    return digest.hexdigest()[:12]
+
+
+def versioned(html_rel, text, outputs, build):
+    base = posixpath.dirname(html_rel)
+
+    def sub(m):
+        url = m.group(2)
+        rel = url.lstrip('/') if url.startswith('/') else posixpath.normpath(posixpath.join(base, url))
+        data = file_bytes(rel, outputs)
+        if data is None:
+            return m.group(0)
+        return m.group(1) + url + '?v=' + hashlib.sha256(data).hexdigest()[:8] + m.group(3)
+
+    text = ASSET_RE.sub(sub, BUILD_META_RE.sub('', text))
+    return text.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n  <meta name="sg-build" content="%s">' % build, 1)
+
+
 # ---------- service worker ----------
 
 SW_SKIP_DIRS = {'.git', 'tools', 'deploy', 'node_modules', '.github', 'src', 'tests'}
@@ -273,7 +324,7 @@ def service_worker(outputs):
                 digest.update(fh.read())
     version = digest.hexdigest()[:12]
     template = read(os.path.join(TPL, 'sw.js'))
-    return template.replace('%VERSION%', version).replace('%PRECACHE%', json.dumps(['./'] + files, ensure_ascii=False, indent=2)), len(files), version
+    return template.replace('%VERSION%', version).replace('%BUILD%', build_version(outputs)).replace('%PRECACHE%', json.dumps(['./'] + files, ensure_ascii=False, indent=2)), len(files), version
 
 
 # ---------- заготовка новой игры (python3 tools/build.py --new <id> "Название") ----------
@@ -411,6 +462,12 @@ def main():
     out['sg/js/site.js'] = site_js(games, read(os.path.join(ROOT, 'sg/js/site.js')))
     out['README.md'] = readme(games, read(os.path.join(ROOT, 'README.md')))
     out['games/tournament/game.js'] = tournament_js(games, read(os.path.join(GAMES, 'tournament', 'game.js')))
+    build = build_version(out)
+    for rel in VERSIONED_PAGES:
+        if os.path.exists(os.path.join(ROOT, rel)):
+            out[rel] = read(os.path.join(ROOT, rel))
+    for rel in [r for r in out if r.endswith('.html')]:
+        out[rel] = versioned(rel, out[rel], out, build)
     sw, nfiles, version = service_worker(out)
     out['sw.js'] = sw
     stale = [rel for rel, text in out.items() if not os.path.exists(os.path.join(ROOT, rel)) or read(os.path.join(ROOT, rel)) != text]
