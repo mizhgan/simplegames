@@ -6,7 +6,7 @@
 #
 #   x64   — обычный компьютер (по умолчанию), arm64 — Raspberry Pi 4/5 и т. п. с 64-битной системой.
 #
-# Получится архив peerjs-lan-<arch>.tar.gz: в нём Node.js, peerjs-server и install.sh.
+# Получится архив peerjs-lan-<arch>.tar.gz: в нём Node.js, сервер знакомств PeerJS, STUN/TURN (node-turn) и install.sh.
 # Перенесите его (например, на флешке) на компьютер в локальной сети, где лежит сайт, и там:
 #   tar -xzf peerjs-lan-x64.tar.gz && cd peerjs-lan && sudo bash install.sh
 set -euo pipefail
@@ -18,6 +18,7 @@ case "$ARCH" in
 esac
 NODE_VERSION="20.18.0"
 PEER_VERSION="1.0.2"
+TURN_VERSION="0.0.6"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 WORK="$(mktemp -d)"
 OUT="$WORK/peerjs-lan"
@@ -27,7 +28,7 @@ echo "==> Скачиваем Node.js $NODE_VERSION ($ARCH)"
 mkdir -p "$OUT/node" "$OUT/app"
 curl -fsSL "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" | tar -xJ -C "$OUT/node" --strip-components=1
 
-echo "==> Ставим peer@$PEER_VERSION"
+echo "==> Ставим peer@$PEER_VERSION и node-turn@$TURN_VERSION"
 # npm и node берём из скачанного архива; на машине сборки нужна та же архитектура, иначе ставим через свой npm
 NPM="$OUT/node/bin/npm"
 if ! "$OUT/node/bin/node" --version >/dev/null 2>&1; then
@@ -39,7 +40,8 @@ if ! "$OUT/node/bin/node" --version >/dev/null 2>&1; then
   fi
 fi
 printf '{ "name": "simplegames-peerjs-lan", "private": true }\n' > "$OUT/app/package.json"
-(cd "$OUT/app" && PATH="$OUT/node/bin:$PATH" "$NPM" install --omit=dev --no-audit --no-fund "peer@$PEER_VERSION" >/dev/null)
+(cd "$OUT/app" && PATH="$OUT/node/bin:$PATH" "$NPM" install --omit=dev --no-audit --no-fund "peer@$PEER_VERSION" "node-turn@$TURN_VERSION" >/dev/null)
+cp "$HERE/server.js" "$OUT/app/server.js"
 
 cp "$HERE/install.sh" "$HERE/README.md" "$OUT/"
 tar -czf "$HERE/peerjs-lan-$ARCH.tar.gz" -C "$WORK" peerjs-lan
