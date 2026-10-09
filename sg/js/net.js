@@ -63,6 +63,23 @@
     ],
   };
 
+  // Сайт открыт из локальной сети (http://192.168.1.10/games/, http://имя-компьютера/ и т. п.) —
+  // сервер знакомств ищем на том же компьютере, порт LAN_PORT (установка: deploy/peerjs-lan),
+  // без STUN/TURN: внутри одной сети браузеры соединяются напрямую. Интернет для этого не нужен.
+  const LAN_PORT = 9000;
+  const LAN = (() => {
+    const h = location.hostname;
+    if (/^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$/.test(h)) return true;
+    // имя компьютера без точки или домашние зоны
+    return !!h && !h.includes(':') && (!h.includes('.') || /\.(local|lan|home|internal|home\.arpa)$/.test(h));
+  })();
+  // что посоветовать, если сервер знакомств не ответил
+  const serverHint = () => (LAN ? 'Проверьте, что на компьютере с сайтом запущен сервер знакомств (порт ' + LAN_PORT + ').' : 'Проверьте интернет.');
+  if (LAN) {
+    CONFIG.peerServer = { host: location.hostname, port: LAN_PORT, path: '/', secure: location.protocol === 'https:' };
+    CONFIG.iceServers = [];
+  }
+
   const PREFIX = 'simplegames-';
   const ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
   // для проверки своего TURN без правки файла: localStorage['sg:ice-servers'] = '[{"urls":"turn:…","username":"…","credential":"…"}]',
@@ -1582,7 +1599,10 @@
         stop();
         await collectStats(diag);
         let why;
-        if (!diag.server) why = 'Не удалось связаться с сервером знакомств. Проверьте интернет или попросите друга включить «Ручной режим» в окне приглашения.';
+        if (!diag.server)
+          why = LAN
+            ? 'Не удалось связаться с сервером знакомств на компьютере с сайтом (порт ' + LAN_PORT + '). Проверьте, что он запущен (deploy/peerjs-lan), или попросите друга включить «Ручной режим» в окне приглашения.'
+            : 'Не удалось связаться с сервером знакомств. Проверьте интернет или попросите друга включить «Ручной режим» в окне приглашения.';
         else if (!diag.answered) why = 'Друг не отвечает: похоже, он закрыл окно приглашения или страницу игры (или она свёрнута). Попросите его открыть страницу или прислать новую ссылку — и нажмите «Повторить».';
         else why = NO_DIRECT;
         fail(why + '<br><small class="net-diag">' + diagText(diag) + '</small>', token);
@@ -1909,6 +1929,6 @@
   }
 
   // общие части для игр на компанию (sg/js/party.js)
-  const util = { profile, startInbox, rivalsBlock, nameField, bindName, inboxPeerId, loadPeer, peerOptions, serverList, roomToken, parseToken, roomPeerId, code, baseUrl, dialog, closeDialog, linkBlock, bindLink, copy, REACTIONS };
+  const util = { profile, startInbox, rivalsBlock, nameField, bindName, inboxPeerId, loadPeer, peerOptions, serverList, roomToken, parseToken, roomPeerId, code, baseUrl, dialog, closeDialog, linkBlock, bindLink, copy, serverHint, REACTIONS };
   SG.net = { setup, ice: ICE, config: CONFIG, util, profile };
 })();

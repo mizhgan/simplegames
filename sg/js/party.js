@@ -283,7 +283,7 @@
       const fallback = (why) => {
         if (idx + 1 < servers.length) return hostRoom(idx + 1);
         teardown();
-        const b = U().dialog(`<h2 id="net-title">Не получилось</h2><p>${why} Проверьте интернет и попробуйте ещё раз.</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Понятно</button></div>`);
+        const b = U().dialog(`<h2 id="net-title">Не получилось</h2><p>${why} ${U().serverHint()} Попробуйте ещё раз.</p><div class="net-actions"><button class="btn btn-primary" type="button" data-close>Понятно</button></div>`);
         b.querySelector('[data-close]').addEventListener('click', () => {
           U().closeDialog();
           showSetup();
@@ -683,7 +683,7 @@
               retry = setTimeout(attempt, 2500);
             } else if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(err.type)) {
               clearTimeout(giveUp);
-              failJoin('Сервер знакомств недоступен. Проверьте интернет.');
+              failJoin('Сервер знакомств недоступен. ' + U().serverHint());
             }
           });
         });
