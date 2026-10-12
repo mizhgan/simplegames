@@ -156,6 +156,7 @@
 
   const duel = SG.duel({
     game: 'quarto',
+    anim: { cells: '#board .q-cell', piece: 'svg' },
     sides: ['Первый', 'Второй'],
     create,
     legal,

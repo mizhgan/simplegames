@@ -188,6 +188,7 @@
 
   const duel = SG.duel({
     game: 'pentago',
+    anim: { cells: '#board .pg-cell', piece: '.pg-cell.w, .pg-cell.b' },
     sides: ['Белые', 'Чёрные'],
     create,
     legal,

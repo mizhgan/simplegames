@@ -17,6 +17,8 @@
                                         // пока она идёт, view.busy = true, человек и компьютер ждут,
                                         // ходы соперника по сети откладываются до её конца
        rollText: 'Бросок…',             // строка состояния во время анимации
+       anim: { cells: '#board .x-cell', piece: '.x-piece' },  // необязательно: ход соперника фишки проезжают
+                                        // по доске плавно (SG.moveAnim); cells — клетки по порядку, piece — фишка в клетке
      });
      duel.play(move) — ход человека (проверяется очередь и правила)
 
@@ -157,8 +159,13 @@
       return true;
     }
 
+    // ход соперника (компьютера, друга по сети или любой — для зрителя) показываем плавно,
+    // свой — нет: фишку только что двигал сам игрок
+    const animate = (side) => cfg.anim && (mode === 'watch' || ((mode === 'ai' || mode === 'net') && side !== me()));
+
     function doMove(move, fromNet) {
       const side = state.turn;
+      const anim = animate(side) ? SG.moveAnim(cfg.anim.cells, cfg.anim.piece) : null;
       cfg.apply(state, move);
       history.push({ m: move, side });
       if (!fromNet && mode === 'net') net.send({ t: 'move', m: move, n: history.length - 1 });
@@ -167,6 +174,7 @@
       if (ms > 0) hold(ms);
       const done = checkOver();
       render();
+      if (anim) anim.play();
       if (!done) maybeAi();
     }
 

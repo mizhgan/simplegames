@@ -263,6 +263,7 @@
 
   const duel = SG.duel({
     game: 'stratego',
+    anim: { cells: '#board .st-cell', piece: '.st-cell.o0, .st-cell.o1' },
     sides: ['Синие', 'Красные'],
     create,
     legal,

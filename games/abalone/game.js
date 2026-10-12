@@ -236,6 +236,7 @@
 
   const duel = SG.duel({
     game: 'abalone',
+    anim: { cells: '#board .ab-cell', piece: '.ab-cell.w, .ab-cell.k' },
     sides: ['Белые', 'Чёрные'],
     create,
     legal,

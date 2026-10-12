@@ -92,6 +92,7 @@
 
   const duel = SG.duel({
     game: 'uttt',
+    anim: { cells: '#board .ut-cell', piece: '.ut-cell.x, .ut-cell.o' },
     sides: ['Крестики', 'Нолики'],
     create,
     legal,
