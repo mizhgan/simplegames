@@ -649,6 +649,114 @@
     };
   }
 
+  // ---------- Плавный ход на доске из клеток ----------
+
+  // const anim = SG.moveAnim(cells, piece); …перерисовка…; anim.play();
+  // cells — селектор, массив или функция, возвращающая клетки доски по порядку; piece — селектор фишки в клетке.
+  // До перерисовки запоминаем, где какая фишка, после — сравниваем: переехавшая фишка плавно едет
+  // со старой клетки на новую, новая (поставленная) появляется, снятая с доски тает.
+  const reducedMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const TRANSIENT = /^(sel|selected|active|hint|last|win|movable|can|target|pulse|glow|hover|drag|dragging|moved|mine|from|ghost|gone)$/;
+  function moveAnim(cells, piece) {
+    const list = () => [...(typeof cells === 'string' ? document.querySelectorAll(cells) : typeof cells === 'function' ? cells() : cells || [])];
+    const keyOf = (el) => [...el.classList].filter((c) => !TRANSIENT.test(c)).sort().join('.') + '|' + el.innerHTML;
+    const read = (els, clone) =>
+      els.map((cell) => {
+        const p = cell.matches(piece) ? cell : cell.querySelector(piece);
+        return p ? { el: p, key: keyOf(p), rect: p.getBoundingClientRect(), clone: clone ? p.cloneNode(true) : null } : null;
+      });
+    const before = reducedMotion() || !Element.prototype.animate ? null : read(list(), true);
+    const useTranslate = window.CSS && CSS.supports && CSS.supports('translate', '1px 1px');
+
+    // поднять фишку над соседними клетками, пока она едет
+    function lift(el, cell) {
+      const saved = [el.style.position, el.style.zIndex, cell.style.position, cell.style.zIndex, cell.style.overflow];
+      if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+      el.style.zIndex = '20';
+      if (getComputedStyle(cell).position === 'static') cell.style.position = 'relative';
+      cell.style.zIndex = '20';
+      cell.style.overflow = 'visible';
+      return () => ([el.style.position, el.style.zIndex, cell.style.position, cell.style.zIndex, cell.style.overflow] = saved);
+    }
+
+    function slide(item, from, cell) {
+      const dx = from.left - item.rect.left;
+      const dy = from.top - item.rect.top;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 2) return 0;
+      const duration = Math.round(Math.min(520, 240 + dist * 0.5));
+      const restore = lift(item.el, cell);
+      const start = useTranslate ? { translate: dx + 'px ' + dy + 'px' } : { transform: 'translate(' + dx + 'px, ' + dy + 'px)' };
+      const end = useTranslate ? { translate: '0px 0px' } : { transform: 'none' };
+      const a = item.el.animate([start, end], { duration, easing: 'cubic-bezier(.3,.7,.3,1)' });
+      a.onfinish = a.oncancel = restore;
+      return duration;
+    }
+
+    function pop(el) {
+      el.animate([{ opacity: 0, scale: '0.5' }, { opacity: 1, scale: '1' }], { duration: 260, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+    }
+
+    // снятую фишку ненадолго возвращаем на её клетку и растворяем — когда до неё доедет «съевшая»
+    function fade(item, cell, delay) {
+      const c = item.clone;
+      const box = cell.getBoundingClientRect();
+      if (getComputedStyle(cell).position === 'static') cell.style.position = 'relative';
+      Object.assign(c.style, {
+        position: 'absolute',
+        left: item.rect.left - box.left - cell.clientLeft + 'px',
+        top: item.rect.top - box.top - cell.clientTop + 'px',
+        width: item.rect.width + 'px',
+        height: item.rect.height + 'px',
+        margin: '0',
+        pointerEvents: 'none',
+      });
+      c.setAttribute('aria-hidden', 'true');
+      cell.appendChild(c);
+      const a = c.animate([{ opacity: 1, scale: '1' }, { opacity: 0, scale: '0.6' }], { duration: 280, delay, fill: 'backwards', easing: 'ease-in' });
+      a.onfinish = a.oncancel = () => c.remove();
+    }
+
+    return {
+      play() {
+        if (!before) return;
+        const els = list();
+        if (els.length !== before.length) return;
+        const after = read(els, false);
+        const gone = [];
+        const came = [];
+        after.forEach((a, i) => {
+          const b = before[i];
+          if (b && (!a || a.key !== b.key)) gone.push(i);
+          if (a && (!b || b.key !== a.key)) came.push(i);
+        });
+        // ничего не поменялось или поменялось слишком много (новая партия, отмена хода) — без анимации
+        if (!came.length && !gone.length) return;
+        if (came.length + gone.length > 16) return;
+        const used = new Set();
+        let longest = 0;
+        for (const i of came) {
+          const a = after[i];
+          let best = -1;
+          let bestDist = Infinity;
+          for (const j of gone) {
+            if (used.has(j) || before[j].key !== a.key) continue;
+            const d = Math.hypot(before[j].rect.left - a.rect.left, before[j].rect.top - a.rect.top);
+            if (d < bestDist) {
+              bestDist = d;
+              best = j;
+            }
+          }
+          if (best >= 0) {
+            used.add(best);
+            longest = Math.max(longest, slide(a, before[best].rect, els[i]));
+          } else pop(a.el);
+        }
+        for (const j of gone) if (!used.has(j)) fade(before[j], els[j], Math.round(longest * 0.6));
+      },
+    };
+  }
+
   // SG.hintCount(btn, n) — сколько раз в этой партии брали подсказку: число на кнопке подсказки (при 0 скрыто)
   function hintCount(btn, n) {
     n = n || 0;
@@ -693,7 +801,7 @@
     };
   }
 
-  window.SG = { store, cssVar, colors, toast, modal, overlay, record, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound, fx, hintCount };
+  window.SG = { store, cssVar, colors, toast, modal, overlay, record, currentTheme, formatTime, onSwipe, touchKeys, segmented, shuffle, sound, fx, hintCount, moveAnim };
 
   // ---------- офлайн-режим и установка как приложения ----------
 

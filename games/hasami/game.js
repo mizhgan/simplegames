@@ -159,6 +159,7 @@
 
   const duel = SG.duel({
     game: 'hasami',
+    anim: { cells: '#board .hs-cell', piece: '.hs-pc' },
     sides: ['Красные', 'Синие'],
     create,
     legal,

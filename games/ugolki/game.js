@@ -217,6 +217,7 @@
 
   const duel = SG.duel({
     game: 'ugolki',
+    anim: { cells: '#board .ug-cell', piece: '.ug-man' },
     sides: ['Белые', 'Чёрные'],
     create,
     legal,

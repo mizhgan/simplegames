@@ -7,6 +7,7 @@
   const DIRS = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
   const DEPTH = { easy: 2, normal: 4, hard: 7 };
   const STEP_MS = 190;
+  const OPP_STEP_MS = 360; // ход соперника — медленнее, чтобы было видно, кто куда пошёл
 
   const $ = (id) => document.getElementById(id);
   const boardEl = $('board');
@@ -287,14 +288,18 @@
     const el = pieceEls[m.from];
     delete pieceEls[m.from];
     const steps = m.path.slice(m.path.indexOf(start) + 1);
+    const opp = !humanTurn();
+    const stepMs = opp ? OPP_STEP_MS : STEP_MS;
+    if (opp) el.style.transitionDuration = (OPP_STEP_MS - 30) / 1000 + 's';
     let k = 0;
     const next = () => {
       if (k < steps.length) {
         place(el, steps[k]);
         k++;
-        setTimeout(next, STEP_MS);
+        setTimeout(next, stepMs);
         return;
       }
+      el.style.transitionDuration = '';
       m.captured.forEach((i) => {
         const ce = pieceEls[i];
         delete pieceEls[i];

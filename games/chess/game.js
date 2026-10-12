@@ -472,6 +472,7 @@
   const duel = SG.duel({
     game: 'chess',
     sides: ['Белые', 'Чёрные'],
+    anim: { cells: '#board .ch-cell', piece: '.ch-piece' },
     create,
     legal: (s, mv) => !!findMove(s, mv),
     apply(s, mv) {
