@@ -113,7 +113,8 @@
   max-width: 620px;
   padding: 6px 6px 6px 14px;
   border: 1px solid color-mix(in srgb, var(--success) 50%, var(--border));
-  border-radius: var(--radius-pill);
+  /* не «таблетка»: в конце партии кнопок больше, и панель бывает в две строки */
+  border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--success) 10%, var(--surface));
   font-size: 0.9rem;
   font-weight: 600;
@@ -128,8 +129,9 @@
   background: color-mix(in srgb, var(--danger) 10%, var(--surface));
 }
 
+/* у текста своя ширина: если всё не помещается в строку, на следующую уходят кнопки, а не буквы */
 .net-bar .net-text {
-  flex: 1;
+  flex: 1 1 13em;
   min-width: 0;
 }
 
@@ -161,6 +163,9 @@
 .net-bar {
   position: relative;
   flex-wrap: wrap;
+  row-gap: 6px;
+  /* то, что перенеслось на следующую строку, прижимается вправо */
+  justify-content: flex-end;
 }
 
 .net-score {
