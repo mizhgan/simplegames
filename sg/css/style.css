@@ -437,6 +437,13 @@ button {
   display: none;
 }
 
+/* «Новая партия» / «Новое слово»: спокойная кнопка со значком, чтобы её не путали с «Ввод» или «Ход» */
+.btn-new::before {
+  content: '↻';
+  font-size: 1.1em;
+  line-height: 1;
+}
+
 /* ---------- home.css ---------- */
 
 /* ---------- Home ---------- */
@@ -1873,6 +1880,14 @@ kbd {
   60% {
     transform: translateX(7px);
   }
+}
+
+.sg-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 /* ---------- achievements.css ---------- */

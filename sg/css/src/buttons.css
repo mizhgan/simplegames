@@ -100,3 +100,10 @@
 .hint-count[hidden] {
   display: none;
 }
+
+/* «Новая партия» / «Новое слово»: спокойная кнопка со значком, чтобы её не путали с «Ввод» или «Ход» */
+.btn-new::before {
+  content: '↻';
+  font-size: 1.1em;
+  line-height: 1;
+}
