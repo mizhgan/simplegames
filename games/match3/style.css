@@ -97,3 +97,357 @@
     opacity: 0;
   }
 }
+
+/* ---------- особые камни ---------- */
+
+.m3-gem.born span {
+  animation: m3-born 0.5s ease-out;
+}
+
+/* молния: светящиеся полосы вдоль строки или столбца */
+.m3-gem.sp-h span::after,
+.m3-gem.sp-v span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0 22%, rgba(255, 255, 255, 0.85) 22% 34%, transparent 34% 44%);
+  mix-blend-mode: screen;
+}
+
+.m3-gem.sp-v span::after {
+  background: repeating-linear-gradient(90deg, transparent 0 22%, rgba(255, 255, 255, 0.85) 22% 34%, transparent 34% 44%);
+}
+
+.m3-gem.sp-h span,
+.m3-gem.sp-v span {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+}
+
+/* бомба: пульсирующее свечение и тёмное ядро */
+.m3-gem.sp-bomb span {
+  animation: m3-pulse 1.2s ease-in-out infinite;
+}
+
+.m3-gem.sp-bomb::before {
+  content: "💣";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+  font-size: min(5vw, 26px);
+  filter: drop-shadow(0 0 3px #fff);
+  pointer-events: none;
+}
+
+.m3-gem.vanish::before {
+  opacity: 0;
+}
+
+.m3-gem[data-t="r"] span {
+  border-radius: 50%;
+  background: conic-gradient(#ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ef4444);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.7);
+  animation: m3-spin 3s linear infinite;
+}
+
+/* каменный блок из атаки */
+.m3-gem[data-t="s"] span {
+  border-radius: 18%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25) 0 12%, transparent 13%),
+    radial-gradient(circle at 70% 65%, rgba(0, 0, 0, 0.25) 0 10%, transparent 11%),
+    linear-gradient(145deg, #a8a29e, #57534e 60%, #292524);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.m3-gem[data-t="s"] {
+  cursor: not-allowed;
+}
+
+/* лёд: камень нельзя двигать */
+.m3-gem.ice::after {
+  content: "";
+  position: absolute;
+  inset: 6%;
+  border-radius: 14%;
+  background: linear-gradient(135deg, rgba(224, 242, 254, 0.75), rgba(125, 211, 252, 0.35) 55%, rgba(224, 242, 254, 0.6));
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+
+.m3-gem.ice {
+  cursor: not-allowed;
+}
+
+.m3-gem.nope span {
+  animation: m3-nope 0.35s;
+}
+
+/* луч молнии и вспышки взрыва / радуги */
+.m3-ray,
+.m3-flash {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.m3-ray.h {
+  left: 0;
+  right: 0;
+  top: calc(var(--r) * 12.5% + 4%);
+  height: 4.5%;
+  background: linear-gradient(90deg, transparent, #fff 20%, #fde047 50%, #fff 80%, transparent);
+  box-shadow: 0 0 14px 4px rgba(253, 224, 71, 0.8);
+  animation: m3-ray-h 0.45s ease-out forwards;
+}
+
+.m3-ray.v {
+  top: 0;
+  bottom: 0;
+  left: calc(var(--c) * 12.5% + 4%);
+  width: 4.5%;
+  background: linear-gradient(180deg, transparent, #fff 20%, #fde047 50%, #fff 80%, transparent);
+  box-shadow: 0 0 14px 4px rgba(253, 224, 71, 0.8);
+  animation: m3-ray-v 0.45s ease-out forwards;
+}
+
+.m3-flash {
+  top: calc(var(--r) * 12.5%);
+  left: calc(var(--c) * 12.5%);
+  width: 12.5%;
+  height: 12.5%;
+  border-radius: 30%;
+  animation: m3-flash 0.45s ease-out forwards;
+}
+
+.m3-flash.blast {
+  background: radial-gradient(circle, #fff 0 20%, #fb923c 45%, rgba(239, 68, 68, 0) 72%);
+}
+
+.m3-flash.rainbow {
+  background: radial-gradient(circle, #fff 0 25%, rgba(168, 85, 247, 0.7) 50%, rgba(59, 130, 246, 0) 72%);
+}
+
+/* ---------- дуэль ---------- */
+
+.m3-duel {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.m3-duel .m3-wrap {
+  flex: 1 1 auto;
+  width: 100%;
+  margin: 0;
+}
+
+.m3-wrap {
+  position: relative;
+}
+
+.m3-opp {
+  flex: 0 0 150px;
+  margin: 0;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.m3-opp[hidden] {
+  display: none;
+}
+
+.m3-opp p {
+  margin: 0;
+}
+
+.m3-opp-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 6px !important;
+}
+
+.m3-opp-stat {
+  margin-top: 6px !important;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.m3-opp-stat b {
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.m3-mini {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  aspect-ratio: 1;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--board-bg);
+}
+
+.m3-mini i {
+  border-radius: 30%;
+  background: transparent;
+}
+
+.m3-mini i[data-k="0"], .m3-mini i[data-k="A"], .m3-mini i[data-k="a"] { background: #ef4444; }
+.m3-mini i[data-k="1"], .m3-mini i[data-k="B"], .m3-mini i[data-k="b"] { background: #3b82f6; }
+.m3-mini i[data-k="2"], .m3-mini i[data-k="C"], .m3-mini i[data-k="c"] { background: #22c55e; }
+.m3-mini i[data-k="3"], .m3-mini i[data-k="D"], .m3-mini i[data-k="d"] { background: #eab308; }
+.m3-mini i[data-k="4"], .m3-mini i[data-k="E"], .m3-mini i[data-k="e"] { background: #a855f7; }
+.m3-mini i[data-k="5"], .m3-mini i[data-k="F"], .m3-mini i[data-k="f"] { background: #f97316; }
+.m3-mini i[data-k="s"] { background: #57534e; border-radius: 2px; }
+.m3-mini i[data-k="r"] { background: conic-gradient(#ef4444, #eab308, #22c55e, #3b82f6, #a855f7, #ef4444); border-radius: 50%; }
+.m3-mini i[data-k="A"], .m3-mini i[data-k="B"], .m3-mini i[data-k="C"],
+.m3-mini i[data-k="D"], .m3-mini i[data-k="E"], .m3-mini i[data-k="F"] { box-shadow: inset 0 0 0 2px #fff; }
+.m3-mini i[data-k="a"], .m3-mini i[data-k="b"], .m3-mini i[data-k="c"],
+.m3-mini i[data-k="d"], .m3-mini i[data-k="e"], .m3-mini i[data-k="f"] { box-shadow: inset 0 0 0 2px #bae6fd; opacity: 0.6; }
+
+/* туман закрывает половину поля */
+.m3-fog {
+  position: absolute;
+  z-index: 3;
+  border-radius: var(--radius);
+  background: rgba(203, 213, 225, 0.55);
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+  pointer-events: none;
+  animation: m3-fog-in 0.4s ease-out;
+}
+
+.m3-fog[hidden] {
+  display: none;
+}
+
+.m3-fog[data-side="top"] { inset: 0 0 50% 0; }
+.m3-fog[data-side="bottom"] { inset: 50% 0 0 0; }
+.m3-fog[data-side="left"] { inset: 0 50% 0 0; }
+.m3-fog[data-side="right"] { inset: 0 0 0 50%; }
+
+/* предупреждение об атаке с полоской оставшегося времени */
+.m3-incoming {
+  position: absolute;
+  z-index: 6;
+  left: 8px;
+  right: 8px;
+  top: 8px;
+  overflow: hidden;
+  padding: 8px 12px 12px;
+  border-radius: 10px;
+  background: rgba(127, 29, 29, 0.92);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  pointer-events: none;
+  animation: m3-warn 0.5s ease-in-out infinite alternate;
+}
+
+.m3-incoming[hidden] {
+  display: none;
+}
+
+.m3-incoming i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: #fde047;
+  transform-origin: left;
+}
+
+@media (max-width: 640px) {
+  .m3-duel {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  /* на телефоне соперник — строка над полем: маленькая картинка и счёт */
+  .m3-opp {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    text-align: left;
+  }
+
+  .m3-opp-name {
+    margin: 0 !important;
+  }
+
+  .m3-opp .m3-mini {
+    order: -1;
+    width: 56px;
+    flex: none;
+    padding: 2px;
+    gap: 0;
+  }
+
+  .m3-opp-stat {
+    margin: 0 0 0 auto !important;
+  }
+}
+
+@keyframes m3-born {
+  0% { transform: scale(0.4); }
+  60% { transform: scale(1.3); }
+}
+
+@keyframes m3-pulse {
+  50% { filter: drop-shadow(0 0 8px #fff) brightness(1.2); }
+}
+
+@keyframes m3-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes m3-nope {
+  25% { transform: translateX(-12%); }
+  75% { transform: translateX(12%); }
+}
+
+@keyframes m3-ray-h {
+  from { transform: scaleX(0.1); opacity: 1; }
+  60% { transform: scaleX(1); opacity: 1; }
+  to { transform: scaleX(1) scaleY(0.2); opacity: 0; }
+}
+
+@keyframes m3-ray-v {
+  from { transform: scaleY(0.1); opacity: 1; }
+  60% { transform: scaleY(1); opacity: 1; }
+  to { transform: scaleY(1) scaleX(0.2); opacity: 0; }
+}
+
+@keyframes m3-flash {
+  from { transform: scale(0.3); opacity: 1; }
+  to { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes m3-fog-in {
+  from { opacity: 0; }
+}
+
+@keyframes m3-warn {
+  to { background: rgba(185, 28, 28, 0.95); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m3-gem[data-t="r"] span,
+  .m3-gem.sp-bomb span,
+  .m3-incoming {
+    animation: none;
+  }
+}

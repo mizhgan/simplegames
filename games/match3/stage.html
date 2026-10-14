@@ -1,15 +1,37 @@
 <div class="game-controls">
-  <button class="btn btn-ghost btn-new" type="button" id="new-btn">Новая игра</button>
-  <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+  <div class="seg" id="mode" role="group" aria-label="Режим">
+    <button type="button" data-value="solo">Один</button>
+  </div>
+  <div class="seg" id="variant" role="group" aria-label="Правила">
+    <button type="button" data-value="moves">30 ходов</button>
+    <button type="button" data-value="blitz">⏱ Блиц</button>
+  </div>
 </div>
-<div class="stage-wrap m3-wrap">
-  <div class="m3-board" id="board" aria-label="Игровое поле 8 на 8"></div>
-  <div class="m3-toast" id="toast"></div>
-  <div class="overlay" id="overlay" hidden>
-    <h2>Игра окончена</h2>
-    <p id="overlay-text"></p>
-    <div class="overlay-actions">
-      <button class="btn btn-primary" type="button" id="again-btn">Сыграть ещё</button>
+
+<div class="status-line" id="status" aria-live="polite"></div>
+
+<div class="m3-duel">
+  <div class="stage-wrap m3-wrap">
+    <div class="m3-board" id="board" aria-label="Игровое поле 8 на 8"></div>
+    <div class="m3-fog" id="fog" hidden></div>
+    <div class="m3-incoming" id="incoming" hidden><span></span><i></i></div>
+    <div class="m3-toast" id="toast"></div>
+    <div class="overlay" id="overlay" hidden>
+      <h2 id="overlay-title">Игра окончена</h2>
+      <p id="overlay-text"></p>
+      <div class="overlay-actions">
+        <button class="btn btn-primary" type="button" id="again-btn">Сыграть ещё</button>
+      </div>
     </div>
   </div>
+  <aside class="m3-opp" id="opp" hidden aria-label="Поле соперника">
+    <p class="m3-opp-name">Соперник</p>
+    <div class="m3-mini" id="opp-board"></div>
+    <p class="m3-opp-stat"><b id="opp-score">0</b> очков · <span id="opp-left"></span></p>
+  </aside>
+</div>
+
+<div class="game-controls">
+  <button class="btn btn-ghost btn-new" type="button" id="new-btn">Новая игра</button>
+  <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
 </div>
