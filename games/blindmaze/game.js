@@ -143,6 +143,11 @@
 
   const $ = (id) => document.getElementById(id);
   let draft = empty();
+  // Лабиринты строят оба сразу: свой можно достроить, пока строит соперник. Готовый раньше своей
+  // очереди лабиринт ждёт здесь и уходит сам, как только очередь дошла. «Вдвоём» за одним экраном —
+  // по очереди, чтобы не подсмотреть.
+  let queued = null;
+  const together = (v) => v.mode !== 'pvp' && !v.watch;
 
   // сетка 11×11: клетки на чётных позициях, стены между ними
   function drawGrid(el, opt) {
@@ -195,7 +200,12 @@
     if (!validMaze(draft)) return;
     const m = { maze: draft };
     draft = empty();
-    duel.play(m);
+    if (duel.canMove()) duel.play(m);
+    else {
+      queued = m;
+      SG.sound.play('place');
+      duel.render();
+    }
   });
   document.querySelectorAll('[data-dir]').forEach((b) => b.addEventListener('click', () => duel.play({ dir: b.dataset.dir })));
   document.addEventListener('keydown', (e) => {
@@ -222,8 +232,15 @@
     ai,
     aiDelay: 450,
     sound: (s) => (s.last && s.last.bump ? 'hit' : s.last && s.last.built ? 'place' : 'move'),
+    status(s, v) {
+      if (s.phase !== 'build' || !together(v) || v.over) return '';
+      const me = v.me || 0;
+      if (s.maze[me] || queued) return 'Ваш лабиринт готов — ждём, пока соперник достроит свой…';
+      return 'Постройте лабиринт для соперника — он строит свой одновременно (до ' + MAXW + ' стен)';
+    },
     onNew() {
       draft = empty();
+      queued = null;
     },
     render(s, v) {
       const me = v.watch ? v.hostSide : v.mode === 'pvp' ? s.turn : v.me === null || v.me === undefined ? 0 : v.me;
@@ -232,8 +249,18 @@
       $('bm-play').hidden = build;
       $('bm-pad').hidden = build || !v.canMove;
       if (build) {
-        $('bm-wait').hidden = v.canMove;
-        if (v.canMove) {
+        const mineDone = together(v) && (!!s.maze[me] || !!queued);
+        const canEdit = together(v) ? !mineDone && !v.over : v.canMove;
+        $('bm-build').hidden = !canEdit;
+        $('bm-wait').hidden = canEdit;
+        $('bm-wait').textContent = mineDone ? 'Ваш лабиринт готов — ждём соперника…' : 'Соперник строит лабиринт…';
+        // свой лабиринт готов раньше своей очереди — отправляем, как только она дошла
+        if (queued && v.canMove) {
+          const m = queued;
+          queued = null;
+          setTimeout(() => duel.play(m), 0);
+        }
+        if (canEdit) {
           drawGrid($('bm-editor'), { w: draft, edit: true, side: me });
           const ok = validMaze(draft);
           $('bm-count').textContent = 'Стен: ' + count(draft) + ' из ' + MAXW + (ok ? '' : ' — нужен проход от старта к флажку!');

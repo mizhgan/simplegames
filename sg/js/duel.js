@@ -12,6 +12,7 @@
        render(state, view) {},          // view: { me, canMove, last, flip, mode }
        ai(state, level) { return move },  // ход компьютера (можно вернуть Promise)
        hint(state, view) { return '' },   // необязательная подсказка к строке состояния
+       status(state, view) { return '' }, // необязательно: свой текст строки состояния вместо «Ваш ход / Ход соперника»
        sound(state, move) { return 'place' },
        roll(state, move) { return 0 },    // необязательно: сколько мс идёт анимация хода (бросок кубиков);
                                         // пока она идёт, view.busy = true, человек и компьютер ждут,
@@ -106,6 +107,11 @@
         return;
       }
       const v = view();
+      const own = cfg.status ? cfg.status(state, v) : '';
+      if (own) {
+        statusEl.textContent = own;
+        return;
+      }
       const hint = cfg.hint ? cfg.hint(state, v) : '';
       let text;
       if (mode === 'net') text = !net.active ? 'Нет соединения с соперником' : state.turn === mySide ? 'Ваш ход' : 'Ход соперника…';
