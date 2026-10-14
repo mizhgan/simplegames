@@ -54,8 +54,10 @@
       for (let c = 1; c <= N; c++) {
         if (c < N && g[r][c] && g[r][start] && g[r][c].type === g[r][start].type) continue;
         if (c - start >= 3 && g[r][start]) {
-          runs.push(c - start);
-          for (let k = start; k < c; k++) hit.add(r * N + k);
+          const run = [];
+          for (let k = start; k < c; k++) run.push(r * N + k);
+          runs.push(run);
+          run.forEach((k) => hit.add(k));
         }
         start = c;
       }
@@ -65,13 +67,37 @@
       for (let r = 1; r <= N; r++) {
         if (r < N && g[r][c] && g[start][c] && g[r][c].type === g[start][c].type) continue;
         if (r - start >= 3 && g[start][c]) {
-          runs.push(r - start);
-          for (let k = start; k < r; k++) hit.add(k * N + c);
+          const run = [];
+          for (let k = start; k < r; k++) run.push(k * N + c);
+          runs.push(run);
+          run.forEach((k) => hit.add(k));
         }
         start = r;
       }
     }
     return { hit, runs };
+  }
+
+  // Бонус за фигуры. Ряды, у которых есть общий камень (уголок «Г», «Т», крест), — одна фигура:
+  // из 5 камней +60, из 6 и больше +100. Прямой ряд: 4 камня +40, 5 и больше +100.
+  const lineBonus = (n) => (n >= 5 ? 100 : n === 4 ? 40 : 0);
+  function shapeBonus(runs) {
+    const shapes = [];
+    for (const run of runs) {
+      const touching = shapes.filter((sh) => run.some((k) => sh.cells.has(k)));
+      const merged = { cells: new Set(run), runs: [run] };
+      touching.forEach((sh) => {
+        sh.cells.forEach((k) => merged.cells.add(k));
+        merged.runs.push(...sh.runs);
+        shapes.splice(shapes.indexOf(sh), 1);
+      });
+      shapes.push(merged);
+    }
+    return shapes.reduce((sum, sh) => {
+      let b = Math.max(...sh.runs.map((r) => lineBonus(r.length)));
+      if (sh.runs.length > 1) b = Math.max(b, sh.cells.size >= 6 ? 100 : 60);
+      return sum + b;
+    }, 0);
   }
 
   function swapIn(g, a, b) {
@@ -152,8 +178,8 @@
       afterResolve();
       return;
     }
-    // очки: 10 за камень, бонус за длинные ряды, множитель за каскады
-    const bonus = runs.reduce((s, n) => s + (n >= 5 ? 100 : n === 4 ? 40 : 0), 0);
+    // очки: 10 за камень, бонус за длинные ряды и уголки, множитель за каскады
+    const bonus = shapeBonus(runs);
     const gained = (hit.size * 10 + bonus) * combo;
     setScore(score + gained);
     showPopup(hit, gained, combo);
