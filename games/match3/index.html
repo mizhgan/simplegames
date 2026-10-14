@@ -2,16 +2,16 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="sg-build" content="98c00288fcd8">
+  <meta name="sg-build" content="3a8c256156ef">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Три в ряд — SimpleGames</title>
-  <meta name="description" content="Три в ряд: меняйте соседние камни местами и собирайте ряды из трёх и больше.">
+  <meta name="description" content="Три в ряд: меняйте соседние камни, собирайте ряды, молнии, бомбы и радуги. Одному на 30 ходов или на время — или дуэль с другом по сети с атаками.">
   <meta name="theme-color" content="#0d0e1a">
   <link rel="icon" href="../../sg/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../../manifest.webmanifest">
   <link rel="apple-touch-icon" href="../../sg/img/icon-180.png">
   <link rel="stylesheet" href="../../sg/css/style.css?v=54985bdd">
-  <link rel="stylesheet" href="style.css?v=519b6872">
+  <link rel="stylesheet" href="style.css?v=79e2a9fe">
   <script>try{var t=localStorage.getItem('sg-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body class="page-game">
@@ -34,7 +34,7 @@
       <button class="icon-btn fav-toggle" type="button" data-fav-page hidden></button>
       <div class="stats">
         <div class="stat"><span class="stat-label">Счёт</span><span class="stat-value" id="score">0</span></div>
-        <div class="stat"><span class="stat-label">Ходы</span><span class="stat-value" id="moves">30</span></div>
+        <div class="stat"><span class="stat-label" id="left-label">Ходы</span><span class="stat-value" id="moves">30</span></div>
         <div class="stat"><span class="stat-label">Рекорд</span><span class="stat-value" id="best">0</span></div>
       </div>
     </div>
@@ -42,19 +42,41 @@
     <div class="game-layout">
       <div class="game-stage">
         <div class="game-controls">
-          <button class="btn btn-ghost btn-new" type="button" id="new-btn">Новая игра</button>
-          <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
+          <div class="seg" id="mode" role="group" aria-label="Режим">
+            <button type="button" data-value="solo">Один</button>
+          </div>
+          <div class="seg" id="variant" role="group" aria-label="Правила">
+            <button type="button" data-value="moves">30 ходов</button>
+            <button type="button" data-value="blitz">⏱ Блиц</button>
+          </div>
         </div>
-        <div class="stage-wrap m3-wrap">
-          <div class="m3-board" id="board" aria-label="Игровое поле 8 на 8"></div>
-          <div class="m3-toast" id="toast"></div>
-          <div class="overlay" id="overlay" hidden>
-            <h2>Игра окончена</h2>
-            <p id="overlay-text"></p>
-            <div class="overlay-actions">
-              <button class="btn btn-primary" type="button" id="again-btn">Сыграть ещё</button>
+
+        <div class="status-line" id="status" aria-live="polite"></div>
+
+        <div class="m3-duel">
+          <div class="stage-wrap m3-wrap">
+            <div class="m3-board" id="board" aria-label="Игровое поле 8 на 8"></div>
+            <div class="m3-fog" id="fog" hidden></div>
+            <div class="m3-incoming" id="incoming" hidden><span></span><i></i></div>
+            <div class="m3-toast" id="toast"></div>
+            <div class="overlay" id="overlay" hidden>
+              <h2 id="overlay-title">Игра окончена</h2>
+              <p id="overlay-text"></p>
+              <div class="overlay-actions">
+                <button class="btn btn-primary" type="button" id="again-btn">Сыграть ещё</button>
+              </div>
             </div>
           </div>
+          <aside class="m3-opp" id="opp" hidden aria-label="Поле соперника">
+            <p class="m3-opp-name">Соперник</p>
+            <div class="m3-mini" id="opp-board"></div>
+            <p class="m3-opp-stat"><b id="opp-score">0</b> очков · <span id="opp-left"></span></p>
+          </aside>
+        </div>
+
+        <div class="game-controls">
+          <button class="btn btn-ghost btn-new" type="button" id="new-btn">Новая игра</button>
+          <button class="btn btn-ghost" type="button" id="hint-btn">💡 Подсказка</button>
         </div>
       </div>
 
@@ -62,11 +84,15 @@
         <details class="info-card rules" data-rules open>
           <summary><h2>Как играть</h2></summary>
           <ul>
-            <li>Меняйте местами два соседних камня, чтобы собрать ряд из трёх и более одинаковых по горизонтали или вертикали.</li>
-            <li>Кликните по камню, затем по соседнему — или просто проведите камень пальцем или мышью в нужную сторону.</li>
-            <li>Собранные ряды исчезают, сверху падают новые камни. Каскады умножают очки: ×2, ×3…</li>
-            <li>Ряд из 4 камней даёт +40 очков сверху, из 5 и больше — +100. Уголок или «Т» из 5 камней — +60, из 6 и больше — +100.</li>
-            <li>У вас 30 ходов — наберите как можно больше очков. Если ходов на поле не осталось, камни перемешаются.</li>
+            <li>Меняйте местами два соседних камня, чтобы собрать ряд из трёх и более одинаковых по горизонтали или вертикали. Кликните по камню, затем по соседнему — или проведите камень пальцем или мышью.</li>
+            <li>Собранные ряды исчезают, сверху падают новые камни. Каскады умножают очки: ×2, ×3… Камень — 10 очков; ряд из 4 даёт +40, уголок или «Т» из 5 — +60, из 6 и больше или 5 в ряд — +100.</li>
+            <li><b>Особые камни.</b> 4 в ряд — ⚡ молния: сжигает всю строку (или столбец, если ряд был вертикальным). Уголок или «Т» — 💣 бомба: взрывает квадрат 3×3. 5 в ряд — 🌈 радуга: поменяйте её с любым камнем, и исчезнут все камни этого цвета.</li>
+            <li>Особые камни можно менять друг с другом: две молнии — крест, молния и бомба — крест шириной в 3 клетки, две бомбы — квадрат 5×5, радуга с особым камнем — весь цвет и взрыв, две радуги — всё поле.</li>
+            <li><b>30 ходов</b> — наберите как можно больше очков. <b>⏱ Блиц</b> — 60 секунд, ходов сколько успеете. У каждого режима свой рекорд. Если ходов на поле не осталось, камни перемешаются.</li>
+            <li><b>🌐 По сети</b> — дуэль с другом: у обоих одинаковое поле и одни и те же падающие камни, ходите одновременно; побеждает тот, у кого больше очков. Рядом видно поле и счёт соперника.</li>
+            <li><b>Атаки в дуэли.</b> Каскад ×3 и больше — сопернику прилетают 🪨 2 каменных блока (их не собрать, ломаются, когда рядом что-то собрали). Бомба — ❄️ лёд на 3 камня (их нельзя двигать, лёд тает от сбора рядом). Радуга — 🌫 туман на 5 секунд закрывает половину поля соперника.</li>
+            <li><b>Отбивайтесь!</b> После предупреждения об атаке есть 3 секунды: соберите каскад (×2 и больше) — и атака улетит обратно к сопернику.</li>
+            <li>После партии можно предложить реванш и отправить реакцию; друзья могут смотреть дуэль по кнопке «👁 Зрителям».</li>
           </ul>
         </details>
       </aside>
@@ -80,8 +106,9 @@
     </div>
   </footer>
 
-  <script src="../../sg/js/common.js?v=5f30209a"></script>
+  <script src="../../sg/js/common.js?v=576c7feb"></script>
   <script src="../../sg/js/site.js?v=468da739"></script>
-  <script src="game.js?v=7d19355c"></script>
+  <script src="../../sg/js/net.js?v=edbcea1e"></script>
+  <script src="game.js?v=75d7504b"></script>
 </body>
 </html>
