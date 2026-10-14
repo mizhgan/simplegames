@@ -182,6 +182,69 @@
 
   // SG.fx.play('win' | 'lose' | 'draw') — вызывается сам из SG.sound.play для тех же имён, даже при выключенном звуке.
   // SG.fx.last — имя последнего эффекта (для тестов). При prefers-reduced-motion эффектов нет.
+  // ---------- Защита от случайного сброса партии ----------
+
+  // Кнопки RESET_BTNS («Новая партия», «Новое слово», «Заново»…) начинают игру заново. Если игрок уже что-то
+  // делал на поле и партия не закончилась, сначала спрашиваем — её легко нажать вместо «Ввод» или «Ход».
+  // Партия «идёт» после любого нажатия на поле или клавиши; «закончилась» — когда прозвучал итог
+  // (win / lose / draw, см. SG.fx) или игру начали заново.
+  let partyDirty = false;
+  const partyOver = () => (partyDirty = false);
+
+  const RESET_BTNS = '#new-btn, #new-round, #next-btn, #again-btn, #restart-btn';
+
+  function initResetGuard() {
+    const stage = document.querySelector('.game-stage');
+    if (!stage || !document.querySelector(RESET_BTNS)) return;
+    const touched = (e) => {
+      if (e.target.closest(RESET_BTNS + ', #mode, #difficulty, .net-bar, .sg-modal, .overlay')) return;
+      partyDirty = true;
+    };
+    stage.addEventListener('pointerdown', touched, true);
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.key === 'Tab' || e.key === 'Escape') return;
+      const t = e.target;
+      // набор текста вне поля (чат, имя) — не ход
+      if (t && t.closest && (t.closest('input, textarea, select, [contenteditable]') && !stage.contains(t))) return;
+      if (modal.isOpen()) return;
+      partyDirty = true;
+    });
+    let confirmed = false;
+    document.addEventListener(
+      'click',
+      (e) => {
+        const b = e.target.closest && e.target.closest(RESET_BTNS);
+        // программные нажатия (реванш по сети и т. п.) не спрашиваем
+        if (!b || !e.isTrusted || confirmed) return;
+        if (!partyDirty || b.disabled) {
+          partyDirty = false;
+          return;
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const label = b.textContent.trim() || 'Новая партия';
+        const box = modal(
+          '<h2>Начать заново?</h2><p>Текущая партия ещё не закончена — если начать заново, она пропадёт.</p>' +
+            '<div class="sg-modal-actions"><button class="btn btn-ghost" type="button" data-restart></button>' +
+            '<button class="btn btn-primary" type="button" data-cancel>Продолжить партию</button></div>'
+        );
+        box.querySelector('[data-restart]').textContent = '↻ ' + label;
+        box.querySelector('[data-cancel]').addEventListener('click', () => modal.close());
+        box.querySelector('[data-restart]').addEventListener('click', () => {
+          modal.close();
+          partyDirty = false;
+          confirmed = true;
+          try {
+            b.click();
+          } finally {
+            confirmed = false;
+          }
+        });
+      },
+      true
+    );
+  }
+
   const fx = (() => {
     const api = { last: '', play };
     let lastAt = 0;
@@ -294,6 +357,7 @@
 
     function play(name) {
       if (name !== 'win' && name !== 'lose' && name !== 'draw') return;
+      partyOver();
       const now = Date.now();
       // одна партия может «закончиться» дважды подряд (у хозяина и по сети) — второй эффект не нужен
       if (name === api.last && now - lastAt < 1500) return;
@@ -922,6 +986,7 @@
     initSoundToggle();
     initThemeToggle();
     initBestBadges();
+    initResetGuard();
     document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
   };
 
