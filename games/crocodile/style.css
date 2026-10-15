@@ -85,6 +85,40 @@
   font-weight: 700;
 }
 
+.cr-own {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.cr-own input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 2px solid var(--border, rgba(127, 127, 127, 0.35));
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.cr-pick .cr-own-err {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #ef4444;
+}
+
+.cr-pick .cr-own-err[hidden] {
+  display: none;
+}
+
+/* у гостя по сети режим слов только показан — меняет его хозяин */
+.seg.cr-locked {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
 .cr-tools {
   display: flex;
   flex-wrap: wrap;

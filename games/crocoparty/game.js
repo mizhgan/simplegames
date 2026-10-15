@@ -6,14 +6,27 @@
   const COLORS = ['#1f2233', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#8b5a2b', '#ffffff'];
   const SIZES = [3, 7, 16];
   const CHOOSE = 15;
+  const CHOOSE_OWN = 40; // придумать своё слово — дольше, чем выбрать из трёх
+  const RECENT = 300; // столько последних слов не предлагаем снова (и между партиями)
   const REVEAL = 6000;
   const pretty = (w) => w.replace(/-/g, ' ');
   const norm = (w) => String(w).toLowerCase().replace(/ё/g, 'е').replace(/[\s-]+/g, ' ').replace(/[.!?,]/g, '').trim();
+  const LETTER = /[a-zа-яё]/i;
+  // своё слово: буквы, пробелы и дефисы, 2–30 символов
+  const ownWord = (t) => {
+    const w = String(t || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    return /^[a-zа-яё]+([ -][a-zа-яё]+)*$/.test(w) && w.length >= 2 && w.length <= 30 ? w : '';
+  };
+  const recent = () => {
+    const r = SG.store.get('croc-recent', []);
+    return Array.isArray(r) ? r : [];
+  };
 
   // ---------- правила ----------
 
   function pool(level) {
     const W = window.CROC_WORDS;
+    // в режиме «свои слова» список нужен только на случай, если рисующий не успел придумать
     return level === 'hard' ? W.hard : level === 'mix' ? W.easy.concat(W.hard) : W.easy;
   }
 
@@ -50,14 +63,18 @@
     }
     s.round++;
     s.drawer = s.ids[s.turn % s.ids.length];
-    const words = pool(s.level).filter((w) => !s.used.includes(w));
+    const old = recent();
+    let words = pool(s.level).filter((w) => !s.used.includes(w) && !old.includes(w));
+    if (words.length < 3) words = pool(s.level).filter((w) => !s.used.includes(w));
     s.options = SG.shuffle(words.slice()).slice(0, 3);
+    if (s.level !== 'own') SG.store.set('croc-recent', old.concat(s.options).slice(-RECENT));
     s.word = null;
     s.phase = 'choose';
-    s.deadline = now + CHOOSE * 1000;
+    s.deadline = now + (s.level === 'own' ? CHOOSE_OWN : CHOOSE) * 1000;
     s.guessed = [];
     s.strokes = [];
     s.hints = [];
+    s.auto = false;
   }
 
   function begin(s, w, now) {
@@ -77,8 +94,12 @@
 
   function act(s, id, a, now) {
     if (!a) return false;
-    if (s.phase === 'choose' && id === s.drawer && s.options.includes(a.word)) {
+    if (s.phase === 'choose' && id === s.drawer && s.level !== 'own' && s.options.includes(a.word)) {
       begin(s, a.word, now);
+      return true;
+    }
+    if (s.phase === 'choose' && id === s.drawer && s.level === 'own' && ownWord(a.own)) {
+      begin(s, ownWord(a.own), now);
       return true;
     }
     if (s.phase === 'draw' && id === s.drawer && a.skip) {
@@ -125,14 +146,18 @@
       const part = (now - s.started) / (s.time * 1000);
       const want = part > 0.75 ? 2 : part > 0.5 ? 1 : 0;
       if (s.hints.length < want) {
-        const idx = [...s.word].map((ch, i) => i).filter((i) => /[а-яё]/i.test(s.word[i]) && !s.hints.includes(i));
+        const idx = [...s.word].map((ch, i) => i).filter((i) => LETTER.test(s.word[i]) && !s.hints.includes(i));
         if (idx.length > 2) s.hints.push(idx[Math.floor(Math.random() * idx.length)]);
         else s.hints.push(-1);
         return true;
       }
     }
     if (now < s.deadline) return false;
-    if (s.phase === 'choose') begin(s, s.options[0], now);
+    if (s.phase === 'choose') {
+      // не успели выбрать или придумать — берём слово из списка
+      begin(s, s.options[0], now);
+      if (s.level === 'own') s.auto = true;
+    }
     else if (s.phase === 'draw') endRound(s, now);
     else if (s.phase === 'reveal') nextRound(s, now);
     return true;
@@ -163,13 +188,16 @@
   function view(s, id) {
     const drawing = s.drawer === id;
     const reveal = s.phase === 'reveal' || s.phase === 'end';
-    const mask = s.word ? [...s.word].map((ch, i) => (/[а-яё]/i.test(ch) ? (s.hints.includes(i) ? ch : '_') : ch === '-' ? ' ' : ch)).join('') : '';
+    const mask = s.word ? [...s.word].map((ch, i) => (LETTER.test(ch) ? (s.hints.includes(i) ? ch : '_') : ch === '-' ? ' ' : ch)).join('') : '';
     return {
       phase: s.phase,
       round: s.round,
       total: s.ids.length * s.laps,
       drawer: s.drawer,
-      options: drawing && s.phase === 'choose' ? s.options : null,
+      own: s.level === 'own',
+      auto: !!s.auto,
+      options: drawing && s.phase === 'choose' && s.level !== 'own' ? s.options : null,
+      ask: drawing && s.phase === 'choose' && s.level === 'own',
       word: s.word && (drawing || reveal || s.guessed.includes(id)) ? pretty(s.word) : null,
       mask,
       guessed: s.guessed,
@@ -369,10 +397,12 @@
     b.timer.hidden = v.over;
     let status;
     if (v.over) status = 'Игра окончена';
+    else if (v.phase === 'choose' && v.own) status = drawing ? 'Придумайте слово' : esc(ui.name(v.drawer)) + ' придумывает слово…';
     else if (v.phase === 'choose') status = drawing ? 'Выберите слово' : esc(ui.name(v.drawer)) + ' выбирает слово…';
+    else if (v.phase === 'draw' && drawing && v.auto) status = 'Время вышло — слово выбрано за вас. Рисуйте! Угадали: ' + v.guessed.length + ' из ' + (v.scores.length - 1);
     else if (v.phase === 'draw') status = drawing ? 'Рисуйте! Угадали: ' + v.guessed.length + ' из ' + (v.scores.length - 1) : 'Рисует ' + esc(ui.name(v.drawer)) + ' — пишите догадки';
     else status = 'Это было слово:';
-    b.status.innerHTML = `Раунд ${Math.min(v.round, v.total)} из ${v.total} · ${status}`;
+    b.status.innerHTML = `${v.own ? '<span class="cp-own-badge">✍️ Свои слова</span> ' : ''}Раунд ${Math.min(v.round, v.total)} из ${v.total} · ${status}`;
     b.word.textContent = v.phase === 'draw' ? (v.word ? v.word : v.mask.split('').join(' ')) : v.phase === 'reveal' ? v.word : '';
     b.word.classList.toggle('mask', v.phase === 'draw' && !v.word);
     if (v.close) b.word.textContent += '  · почти!';
@@ -385,11 +415,39 @@
     tools(b);
     b.guess.hidden = drawing || v.phase !== 'draw' || v.guessed.includes(me) || ui.watcher;
     b.canvas.style.cursor = drawing && v.phase === 'draw' ? 'crosshair' : 'default';
-    if (v.options) {
+    if (v.ask) {
+      // форму строим один раз за раунд, чтобы не стереть набранное
+      if (b.pickKey !== 'ask' + v.round) {
+        b.pickKey = 'ask' + v.round;
+        b.pick.hidden = false;
+        b.pick.innerHTML =
+          '<p>✍️ Свои слова: придумайте, что будете рисовать</p>' +
+          '<form class="cr-own" autocomplete="off"><input type="text" maxlength="30" placeholder="Например: кот в сапогах" aria-label="Своё слово">' +
+          '<button class="btn btn-primary" type="submit">Рисовать</button></form>' +
+          '<p class="cr-own-err" hidden>Только буквы, пробелы и дефис — от 2 до 30 символов</p>';
+        const form = b.pick.querySelector('form');
+        const input = form.querySelector('input');
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const w = ownWord(input.value);
+          if (!w) {
+            b.pick.querySelector('.cr-own-err').hidden = false;
+            SG.sound.play('error');
+            return;
+          }
+          b.ui.send({ own: w });
+        });
+        setTimeout(() => input.focus(), 0);
+      }
+    } else if (v.options) {
+      b.pickKey = '';
       b.pick.hidden = false;
       b.pick.innerHTML = '<p>Что будете рисовать?</p>' + v.options.map((w) => `<button class="btn btn-primary" type="button" data-w="${esc(w)}">${esc(pretty(w))}</button>`).join('');
       b.pick.querySelectorAll('[data-w]').forEach((x) => x.addEventListener('click', () => ui.send({ word: x.dataset.w })));
-    } else b.pick.hidden = true;
+    } else {
+      b.pickKey = '';
+      b.pick.hidden = true;
+    }
     b.end.hidden = !v.over;
     if (v.over) {
       const w = v.winners || [];
@@ -438,7 +496,7 @@
     onReset: () => (built = null),
     options: {
       html:
-        '<label>Слова <select data-level><option value="easy">Простые</option><option value="mix">Смешанные</option><option value="hard">Сложные</option></select></label>' +
+        '<label>Слова <select data-level><option value="easy">Простые</option><option value="mix">Смешанные</option><option value="hard">Сложные</option><option value="own">✍️ Свои (рисующий придумывает)</option></select></label>' +
         '<label>Каждый рисует <select data-laps><option value="1">1 раз</option><option value="2">2 раза</option><option value="3">3 раза</option></select></label>' +
         '<label>Время на рисунок <select data-time><option value="60">60 секунд</option><option value="80" selected>80 секунд</option><option value="100">100 секунд</option></select></label>',
       read: (el) => ({ level: el.querySelector('[data-level]').value, laps: +el.querySelector('[data-laps]').value, time: +el.querySelector('[data-time]').value }),

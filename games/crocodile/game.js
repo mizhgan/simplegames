@@ -7,6 +7,12 @@
   const SIZES = [3, 7, 16];
   const pretty = (w) => w.replace(/-/g, ' ');
   const norm = (w) => w.toLowerCase().replace(/ё/g, 'е').replace(/[\s-]+/g, ' ').trim();
+  // своё слово: буквы, пробелы и дефисы, 2–30 символов
+  const ownWord = (t) => {
+    const w = String(t).toLowerCase().replace(/\s+/g, ' ').trim();
+    return /^[a-zа-яё]+([ -][a-zа-яё]+)*$/.test(w) && w.length >= 2 && w.length <= 30 ? w : '';
+  };
+  const RECENT = 300; // столько последних слов не предлагаем снова
 
   const $ = (id) => document.getElementById(id);
   const canvas = $('canvas');
@@ -23,7 +29,7 @@
   const diffEl = $('difficulty');
 
   let mode = 'pvp'; // pvp — компания у одного экрана, net — по сети
-  let level = SG.store.get('croc-diff', 'easy');
+  let level = SG.store.get('croc-diff', 'easy'); // easy | hard | own (рисующий пишет слово сам)
   let drawer = true; // рисую ли я
   let word = '';
   let revealed = false;
@@ -180,11 +186,20 @@
     return level === 'hard' ? window.CROC_WORDS.hard : window.CROC_WORDS.easy;
   }
 
+  // недавно предложенные слова (между партиями тоже) — чтобы не повторялись
+  function freshWords(n) {
+    const recent = SG.store.get('croc-recent', []);
+    let p = pool().filter((w) => !recent.includes(w));
+    if (p.length < n) p = pool().slice();
+    const opts = SG.shuffle(p).slice(0, n);
+    SG.store.set('croc-recent', recent.concat(opts).slice(-RECENT));
+    return opts;
+  }
+
   function offerWords() {
+    if (level === 'own') return askWord();
     // рисующий выбирает одно из трёх слов
-    const p = pool();
-    const opts = new Set();
-    while (opts.size < 3) opts.add(p[Math.floor(Math.random() * p.length)]);
+    const opts = freshWords(3);
     pickEl.innerHTML = '<p>Выберите слово, которое будете рисовать:</p>';
     for (const w of opts) {
       const b = document.createElement('button');
@@ -197,10 +212,32 @@
     pickEl.hidden = false;
   }
 
+  // режим «Своё слово»: рисующий сам пишет, что будет рисовать
+  function askWord() {
+    pickEl.innerHTML =
+      '<p>✍️ Режим «Своё слово». Придумайте, что будете рисовать' + (mode === 'pvp' ? ' (так, чтобы не видели остальные)' : '') + ':</p>' +
+      '<form class="cr-own" autocomplete="off"><input type="text" maxlength="30" placeholder="Например: кот в сапогах" aria-label="Своё слово">' +
+      '<button class="btn btn-primary" type="submit">Рисовать</button></form><p class="cr-own-err" hidden>Только буквы, пробелы и дефис — от 2 до 30 символов</p>';
+    const form = pickEl.querySelector('form');
+    const input = form.querySelector('input');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const w = ownWord(input.value);
+      if (!w) {
+        pickEl.querySelector('.cr-own-err').hidden = false;
+        SG.sound.play('error');
+        return;
+      }
+      beginRound(w);
+    });
+    pickEl.hidden = false;
+    setTimeout(() => input.focus(), 0);
+  }
+
   function beginRound(w) {
     pickEl.hidden = true;
     word = w;
-    revealed = mode === 'net';
+    revealed = mode === 'net' || level === 'own';
     strokes = [];
     redraw();
     roundOn = true;
@@ -208,7 +245,7 @@
     clearInterval(timerId);
     timerId = setInterval(tick, 250);
     tick();
-    if (mode === 'net') net.send({ t: 'round', len: [...w].length, hint: pretty(w).replace(/[^ ]/g, '_') });
+    if (mode === 'net') net.send({ t: 'round', len: [...w].length, hint: pretty(w).replace(/[^ ]/g, '_'), own: level === 'own' });
     chatEl.innerHTML = '';
     render();
   }
@@ -280,18 +317,22 @@
     partyEl.hidden = !roundOn || !(mode === 'pvp' || drawer);
     $('ok-btn').hidden = mode !== 'pvp';
     if (mode === 'pvp') {
-      wordEl.innerHTML = roundOn ? (revealed ? 'Рисуйте: <b>' + pretty(word) + '</b>' : '<button class="btn btn-ghost" type="button" id="reveal">Показать слово (только рисующему)</button>') : '';
+      // своё слово рисующий знает и так — не показываем его остальным
+      wordEl.innerHTML = roundOn ? (level === 'own' ? 'Рисуйте своё слово ✍️' : revealed ? 'Рисуйте: <b>' + pretty(word) + '</b>' : '<button class="btn btn-ghost" type="button" id="reveal">Показать слово (только рисующему)</button>') : '';
       const rv = $('reveal');
       if (rv) rv.addEventListener('click', () => {
         revealed = true;
         render();
       });
       if (roundOn) statusEl.textContent = 'Рисуйте — остальные угадывают вслух!';
-      else if (!pickEl.hidden) statusEl.textContent = 'Новый раунд: выберите слово (так, чтобы не видели остальные)';
+      else if (!pickEl.hidden) statusEl.textContent = level === 'own' ? 'Своё слово: рисующий пишет, что будет рисовать' : 'Новый раунд: выберите слово (так, чтобы не видели остальные)';
     } else if (mode === 'net') {
       if (!net.active) statusEl.textContent = 'Нет соединения с соперником';
-      else if (roundOn) statusEl.textContent = drawer ? 'Рисуйте! Друг угадывает.' : 'Угадайте, что рисует друг!';
-      else if (!word) statusEl.textContent = drawer ? 'Выберите слово' : 'Друг выбирает слово…';
+      else if (roundOn) statusEl.textContent = (level === 'own' ? '✍️ Своё слово · ' : '') + (drawer ? 'Рисуйте! Друг угадывает.' : 'Угадайте, что рисует друг!');
+      else if (!word) {
+        if (level === 'own') statusEl.textContent = drawer ? '✍️ Своё слово: придумайте, что будете рисовать' : '✍️ Своё слово: друг придумывает, что нарисовать…';
+        else statusEl.textContent = drawer ? 'Выберите слово' : 'Друг выбирает слово…';
+      }
       wordEl.innerHTML = roundOn ? (drawer ? 'Рисуйте: <b>' + pretty(word) + '</b>' : 'Слово: <b class="cr-mask">' + hintMask + '</b>') : '';
     }
     $('score-me').textContent = score.me;
@@ -323,7 +364,10 @@
     modeEl: $('mode'),
     onConnect(role) {
       mode = 'net';
-      diffEl.style.display = 'none';
+      // какие слова — решает хозяин, у гостя переключатель только показывает режим
+      diffEl.style.display = '';
+      diffEl.classList.toggle('cr-locked', role !== 'host');
+      if (role === 'host') net.send({ t: 'lvl', v: level });
       score.me = score.them = score.rounds = 0;
       drawer = role === 'host';
       net.info('по очереди рисуем и угадываем');
@@ -348,9 +392,18 @@
       } else if (msg.t === 'clear' && !drawer) {
         strokes = [];
         redraw();
+      } else if (msg.t === 'lvl' && net.role === 'guest' && ['easy', 'hard', 'own'].includes(msg.v)) {
+        level = msg.v;
+        diffSeg.set(level);
+        if (!roundOn && drawer) offerWords();
+        render();
       } else if (msg.t === 'round' && !drawer) {
         word = '?';
-        hintMask = String(msg.hint || '').slice(0, 40);
+        if (msg.own && level !== 'own') {
+          level = 'own';
+          diffSeg.set(level);
+        }
+        hintMask = String(msg.hint || '').replace(/[^_ ]/g, '').slice(0, 40);
         strokes = [];
         redraw();
         roundOn = true;
@@ -382,7 +435,9 @@
       if (voluntary) {
         mode = 'pvp';
         modeSeg.set('pvp');
-        diffEl.style.display = '';
+        diffEl.classList.remove('cr-locked');
+        level = SG.store.get('croc-diff', 'easy');
+        diffSeg.set(level);
         score.me = score.them = score.rounds = 0;
         drawer = true;
         nextRound();
@@ -397,14 +452,20 @@
   const modeSeg = SG.segmented($('mode'), 'pvp', () => {
     mode = 'pvp';
     drawer = true;
-    diffEl.style.display = '';
+    diffEl.classList.remove('cr-locked');
     score.me = score.them = score.rounds = 0;
     nextRound();
   });
-  SG.segmented(diffEl, level, (v) => {
+  const diffSeg = SG.segmented(diffEl, level, (v) => {
+    if (mode === 'net' && net.role !== 'host') {
+      diffSeg.set(level); // у гостя режим слов меняет только хозяин
+      return;
+    }
     level = v;
     SG.store.set('croc-diff', v);
-    if (mode === 'pvp' && !roundOn) offerWords();
+    if (mode === 'net') net.send({ t: 'lvl', v });
+    if (!roundOn && drawer) offerWords();
+    render();
   });
 
   window.addEventListener('resize', fit);
