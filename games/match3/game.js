@@ -159,26 +159,35 @@
     return shapes;
   }
 
-  // Бонус за фигуру: из 5 камней +60, из 6 и больше +100. Прямой ряд: 4 камня +40, 5 и больше +100.
-  const lineBonus = (n) => (n >= 5 ? 100 : n === 4 ? 40 : 0);
+  // Бонус за фигуру: из 5 камней +60, из 6 +100, из 7 и больше +200.
+  // Прямой ряд: 4 камня +40, 5 — +100, 6 — +200, 7 и больше — +300.
+  const lineBonus = (n) => (n >= 7 ? 300 : n === 6 ? 200 : n === 5 ? 100 : n === 4 ? 40 : 0);
   function shapeBonus(sh) {
     let b = Math.max(...sh.runs.map((r) => lineBonus(r.length)));
-    if (sh.runs.length > 1) b = Math.max(b, sh.cells.size >= 6 ? 100 : 60);
+    if (sh.runs.length > 1) b = Math.max(b, sh.cells.size >= 7 ? 200 : sh.cells.size >= 6 ? 100 : 60);
     return b;
   }
 
-  // Какой особый камень даёт фигура и где он появится: 5 в ряд — радуга, уголок/«Т» — бомба, 4 в ряд — молния
+  // Какие особые камни даёт фигура и где они появятся: 5 в ряд — радуга (7 и больше — две),
+  // уголок/«Т» — бомба, 4 в ряд — молния
   function specialFor(sh, swapped) {
     const longest = sh.runs.reduce((a, b) => (b.length > a.length ? b : a));
     let sp = null;
     if (longest.length >= 5) sp = 'rainbow';
     else if (sh.runs.length > 1 && sh.cells.size >= 5) sp = 'bomb';
     else if (longest.length === 4) sp = Math.floor(longest[0] / N) === Math.floor(longest[1] / N) ? 'h' : 'v';
-    if (!sp) return null;
+    if (!sp) return [];
     const cross = [...sh.cells].filter((k) => sh.runs.filter((r) => r.includes(k)).length > 1);
     const order = [...swapped.filter((k) => sh.cells.has(k)), ...cross, longest[Math.floor(longest.length / 2)], ...sh.cells];
     const k = order.find((j) => !at(j).sp);
-    return k === undefined ? null : { k, sp };
+    if (k === undefined) return [];
+    const out = [{ k, sp }];
+    if (longest.length >= 7) {
+      // вторая радуга — в дальнем от первой конце ряда
+      const far = longest.filter((j) => j !== k && !at(j).sp).sort((a, b) => Math.abs(b - k) - Math.abs(a - k))[0];
+      if (far !== undefined) out.push({ k: far, sp });
+    }
+    return out;
   }
 
   function mostCommonType() {
@@ -297,7 +306,7 @@
     setTimeout(() => {
       const ka = a[0] * N + a[1];
       const kb = b[0] * N + b[1];
-      turn = { combo: 0, bombs: 0, rainbows: 0 };
+      turn = { combo: 0, bombs: 0, rainbows: 0, big: 0 };
       let forced = null;
       // ga теперь стоит в b, gb — в a
       if (ga.sp && gb.sp) forced = comboSpecials(ga, gb, b);
@@ -393,8 +402,8 @@
     const created = new Map(); // клетка -> какой особый камень в ней появится
     for (const sh of shapesOf(runs)) {
       bonus += shapeBonus(sh);
-      const s = specialFor(sh, swapped || []);
-      if (s && !created.has(s.k)) created.set(s.k, s.sp);
+      for (const s of specialFor(sh, swapped || [])) if (!created.has(s.k)) created.set(s.k, s.sp);
+      if (sh.runs.some((r) => r.length >= 6)) turn.big++;
     }
 
     // что исчезнет: собранные ряды, сработавшие особые камни и всё, что они задели
@@ -733,7 +742,9 @@
       SG.sound.play('coin');
     }
     const out = [];
-    if (t.combo >= 3) out.push({ kind: 'stone', n: 2 });
+    // каскад ×3 — 2 блока, ряд из 6 и больше — ещё 3
+    const stones = (t.combo >= 3 ? 2 : 0) + (t.big ? 3 : 0);
+    if (stones) out.push({ kind: 'stone', n: stones });
     if (t.bombs) out.push({ kind: 'ice', n: 3 });
     if (t.rainbows) out.push({ kind: 'fog', ms: FOG_MS });
     out.forEach((a) => net.send({ t: 'atk', ...a }));
